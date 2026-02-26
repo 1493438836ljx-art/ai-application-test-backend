@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.HttpRequestMethodNotSupportedExceptionException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -127,8 +127,8 @@ public class GlobalExceptionHandler {
      * @param e 方法不支持异常
      * @return 标准化的错误响应
      */
-    @ExceptionHandler(HttpRequestMethodNotSupportedExceptionException.class)
-    public ResponseEntity<ApiResponse<Void>> handleHttpRequestMethodNotSupportedExceptionException(HttpRequestMethodNotSupportedExceptionException e) {
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.warn("Method not supported: {}", e.getMethod());
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(ApiResponse.error(405, "不支持的请求方法: " + e.getMethod()));
