@@ -29,18 +29,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 测试报告服务类
+ *
+ * 提供测试报告的生成、查询、删除等功能，以及测试结果摘要的生成
+ *
+ * @author AI Test Platform Team
+ * @version 1.0.0
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TestReportService {
 
+    /** 测试报告数据访问层 */
     private final TestReportRepository testReportRepository;
+
+    /** 测试任务数据访问层 */
     private final TestTaskRepository testTaskRepository;
+
+    /** 测试任务项数据访问层 */
     private final TestTaskItemRepository testTaskItemRepository;
+
+    /** 测评集数据访问层 */
     private final TestSetRepository testSetRepository;
+
+    /** 测试报告对象转换器 */
     private final TestReportMapper testReportMapper;
+
+    /** JSON对象映射器 */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * 为已完成的任务生成测试报告
+     *
+     * @param taskId 任务ID
+     * @return 测试报告响应
+     * @throws BusinessException 如果任务未完成或不存在
+     */
     @Transactional
     public TestReportResponse generateReport(Long taskId) {
         TestTask task = findTaskById(taskId);
@@ -60,6 +86,15 @@ public class TestReportService {
         return testReportMapper.toResponse(saved);
     }
 
+    /**
+     * 获取或创建任务的测试报告
+     *
+     * 如果报告已存在则直接返回，否则为已完成的任务创建新报告
+     *
+     * @param taskId 任务ID
+     * @return 测试报告响应
+     * @throws BusinessException 如果任务未完成或不存在
+     */
     @Transactional
     public TestReportResponse getOrCreateReport(Long taskId) {
         TestTask task = findTaskById(taskId);
@@ -79,6 +114,13 @@ public class TestReportService {
         return testReportMapper.toResponse(saved);
     }
 
+    /**
+     * 分页查询测试报告列表
+     *
+     * @param taskName 任务名称（可选，用于模糊搜索）
+     * @param pageable 分页参数
+     * @return 测试报告分页结果
+     */
     @Transactional(readOnly = true)
     public Page<TestReportResponse> getReports(String taskName, Pageable pageable) {
         Page<TestReport> reports;
@@ -90,12 +132,26 @@ public class TestReportService {
         return reports.map(testReportMapper::toResponse);
     }
 
+    /**
+     * 根据报告ID获取报告详情
+     *
+     * @param id 报告ID
+     * @return 测试报告响应
+     * @throws BusinessException 如果报告不存在
+     */
     @Transactional(readOnly = true)
     public TestReportResponse getReportById(Long id) {
         TestReport report = findReportById(id);
         return testReportMapper.toResponse(report);
     }
 
+    /**
+     * 根据任务ID获取测试报告
+     *
+     * @param taskId 任务ID
+     * @return 测试报告响应
+     * @throws BusinessException 如果该任务没有报告
+     */
     @Transactional(readOnly = true)
     public TestReportResponse getReportByTaskId(Long taskId) {
         TestReport report = testReportRepository.findByTaskId(taskId)
@@ -103,6 +159,15 @@ public class TestReportService {
         return testReportMapper.toResponse(report);
     }
 
+    /**
+     * 获取任务的测试结果摘要
+     *
+     * 包含任务统计信息和每个测试项的详细执行结果
+     *
+     * @param taskId 任务ID
+     * @return 测试结果摘要
+     * @throws BusinessException 如果任务不存在
+     */
     @Transactional(readOnly = true)
     public TestResultSummary getResultSummary(Long taskId) {
         TestTask task = findTaskById(taskId);
@@ -152,6 +217,12 @@ public class TestReportService {
                 .build();
     }
 
+    /**
+     * 删除指定的测试报告
+     *
+     * @param id 报告ID
+     * @throws BusinessException 如果报告不存在
+     */
     @Transactional
     public void deleteReport(Long id) {
         if (!testReportRepository.existsById(id)) {
@@ -160,6 +231,14 @@ public class TestReportService {
         testReportRepository.deleteById(id);
     }
 
+    /**
+     * 创建测试报告实体
+     *
+     * 根据任务信息和执行结果生成报告数据
+     *
+     * @param task 测试任务
+     * @return 测试报告实体
+     */
     private TestReport createReport(TestTask task) {
         List<TestTaskItem> items = testTaskItemRepository.findByTestTaskIdOrderBySequence(task.getId());
 
@@ -205,6 +284,14 @@ public class TestReportService {
                 .build();
     }
 
+    /**
+     * 生成测试报告摘要文本
+     *
+     * @param task 测试任务
+     * @param successRate 成功率
+     * @param averageScore 平均评分
+     * @return 摘要文本
+     */
     private String generateSummary(TestTask task, double successRate, double averageScore) {
         StringBuilder sb = new StringBuilder();
         sb.append("测试任务: ").append(task.getName()).append("\n");
@@ -221,6 +308,14 @@ public class TestReportService {
         return sb.toString();
     }
 
+    /**
+     * 格式化持续时间
+     *
+     * 将毫秒数转换为易读的时间格式
+     *
+     * @param ms 毫秒数
+     * @return 格式化后的时间字符串
+     */
     private String formatDuration(long ms) {
         long seconds = ms / 1000;
         if (seconds < 60) {
@@ -236,11 +331,25 @@ public class TestReportService {
         return hours + "小时" + remainingMinutes + "分" + remainingSeconds + "秒";
     }
 
+    /**
+     * 根据ID查找测试任务
+     *
+     * @param id 任务ID
+     * @return 测试任务
+     * @throws BusinessException 如果任务不存在
+     */
     private TestTask findTaskById(Long id) {
         return testTaskRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.TASK_NOT_FOUND));
     }
 
+    /**
+     * 根据ID查找测试报告
+     *
+     * @param id 报告ID
+     * @return 测试报告
+     * @throws BusinessException 如果报告不存在
+     */
     private TestReport findReportById(Long id) {
         return testReportRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.REPORT_NOT_FOUND));

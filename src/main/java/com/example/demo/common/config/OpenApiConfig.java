@@ -7,9 +7,33 @@ import io.swagger.v3.oas.models.info.License;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * OpenAPI文档配置类
+ * <p>
+ * 配置Swagger/OpenAPI 3.0文档，用于生成和展示RESTful API文档。
+ * 访问地址：http://localhost:8080/swagger-ui.html
+ * </p>
+ *
+ * @author AI Test Platform Team
+ * @version 1.0.0
+ */
 @Configuration
 public class OpenApiConfig {
 
+    /**
+     * 创建OpenAPI文档配置
+     * <p>
+     * 配置API文档的基本信息，包括：
+     * <ul>
+     *   <li>API标题和描述</li>
+     *   <li>版本号</li>
+     *   <li>联系方式</li>
+     *   <li>许可证信息</li>
+     * </ul>
+     * </p>
+     *
+     * @return OpenAPI文档对象
+     */
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()

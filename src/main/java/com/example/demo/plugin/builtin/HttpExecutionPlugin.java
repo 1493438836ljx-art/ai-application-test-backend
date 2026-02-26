@@ -12,24 +12,57 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+/**
+ * HTTP执行插件，通过HTTP API调用生成式AI服务进行推理
+ * <p>
+ * 支持API Key和Bearer Token两种认证方式
+ * </p>
+ *
+ * @author AI Test Platform Team
+ * @version 1.0.0
+ */
 @Slf4j
 @Component
 public class HttpExecutionPlugin implements ExecutionPlugin {
 
+    /** 插件名称常量 */
     public static final String NAME = "http-execution";
+
+    /** REST模板，用于发送HTTP请求 */
     private final RestTemplate restTemplate = new RestTemplate();
+
+    /** JSON对象映射器 */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * 获取插件名称
+     *
+     * @return 插件名称 "http-execution"
+     */
     @Override
     public String getName() {
         return NAME;
     }
 
+    /**
+     * 获取插件描述
+     *
+     * @return 插件功能描述
+     */
     @Override
     public String getDescription() {
         return "通过HTTP API调用生成式AI进行推理";
     }
 
+    /**
+     * 执行HTTP推理请求
+     * <p>
+     * 根据上下文配置构建HTTP请求，调用AI服务API并返回推理结果
+     * </p>
+     *
+     * @param context 执行上下文，包含API端点、认证信息和输入内容
+     * @return 执行结果，包含输出内容和执行状态
+     */
     @Override
     public ExecutionResult execute(ExecutionContext context) {
         long startTime = System.currentTimeMillis();

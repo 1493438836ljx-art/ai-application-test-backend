@@ -15,14 +15,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 测试结果控制器
+ *
+ * 提供测试报告的生成、查询和删除等RESTful API接口
+ *
+ * @author AI Test Platform Team
+ * @version 1.0.0
+ */
 @Tag(name = "测试结果管理", description = "测试报告的生成、查询和导出功能")
 @RestController
 @RequestMapping("/api/v1/results")
 @RequiredArgsConstructor
 public class TestResultController {
 
+    /** 测试报告服务 */
     private final TestReportService testReportService;
 
+    /**
+     * 为已完成的任务生成测试报告
+     *
+     * @param taskId 任务ID
+     * @return 测试报告响应
+     */
     @Operation(summary = "生成测试报告", description = "为已完成的任务生成测试报告")
     @PostMapping("/tasks/{taskId}/report")
     public ApiResponse<TestReportResponse> generateReport(
@@ -30,6 +45,14 @@ public class TestResultController {
         return ApiResponse.success(testReportService.generateReport(taskId));
     }
 
+    /**
+     * 获取指定任务的测试报告
+     *
+     * 如果报告不存在则自动生成
+     *
+     * @param taskId 任务ID
+     * @return 测试报告响应
+     */
     @Operation(summary = "获取任务报告", description = "获取指定任务的测试报告，如不存在则自动生成")
     @GetMapping("/tasks/{taskId}/report")
     public ApiResponse<TestReportResponse> getTaskReport(
@@ -37,6 +60,12 @@ public class TestResultController {
         return ApiResponse.success(testReportService.getOrCreateReport(taskId));
     }
 
+    /**
+     * 获取任务的测试结果摘要
+     *
+     * @param taskId 任务ID
+     * @return 测试结果摘要
+     */
     @Operation(summary = "获取任务结果摘要", description = "获取任务的详细执行结果摘要")
     @GetMapping("/tasks/{taskId}/summary")
     public ApiResponse<TestResultSummary> getTaskResultSummary(
@@ -44,6 +73,16 @@ public class TestResultController {
         return ApiResponse.success(testReportService.getResultSummary(taskId));
     }
 
+    /**
+     * 分页查询测试报告列表
+     *
+     * @param taskName 任务名称（可选，用于模糊搜索）
+     * @param page 页码，从0开始
+     * @param size 每页大小
+     * @param sortBy 排序字段
+     * @param sortDir 排序方向
+     * @return 测试报告分页结果
+     */
     @Operation(summary = "获取报告列表", description = "分页查询测试报告列表")
     @GetMapping("/reports")
     public ApiResponse<PageResponse<TestReportResponse>> getReports(
@@ -62,6 +101,12 @@ public class TestResultController {
         return ApiResponse.success(PageResponse.of(result));
     }
 
+    /**
+     * 根据报告ID获取报告详情
+     *
+     * @param id 报告ID
+     * @return 测试报告响应
+     */
     @Operation(summary = "获取报告详情", description = "根据报告ID获取详细信息")
     @GetMapping("/reports/{id}")
     public ApiResponse<TestReportResponse> getReportById(
@@ -69,6 +114,12 @@ public class TestResultController {
         return ApiResponse.success(testReportService.getReportById(id));
     }
 
+    /**
+     * 删除指定的测试报告
+     *
+     * @param id 报告ID
+     * @return 空响应
+     */
     @Operation(summary = "删除报告", description = "删除指定的测试报告")
     @DeleteMapping("/reports/{id}")
     public ApiResponse<Void> deleteReport(

@@ -39,21 +39,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * 测试任务服务类
+ * 提供测试任务的创建、查询、更新、删除、执行等业务逻辑
+ *
+ * @author AI Test Platform Team
+ * @version 1.0.0
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class TestTaskService {
 
+    /** 测试任务数据访问层 */
     private final TestTaskRepository testTaskRepository;
+
+    /** 测试任务执行项数据访问层 */
     private final TestTaskItemRepository testTaskItemRepository;
+
+    /** 测评集数据访问层 */
     private final TestSetRepository testSetRepository;
+
+    /** 测试用例数据访问层 */
     private final TestCaseRepository testCaseRepository;
+
+    /** 环境数据访问层 */
     private final EnvironmentRepository environmentRepository;
+
+    /** 插件数据访问层 */
     private final PluginRepository pluginRepository;
+
+    /** 测试任务对象转换器 */
     private final TestTaskMapper testTaskMapper;
+
+    /** 插件加载器 */
     private final PluginLoader pluginLoader;
+
+    /** JSON对象映射器 */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * 创建测试任务
+     *
+     * @param request 创建请求DTO
+     * @return 创建的测试任务响应DTO
+     */
     @Transactional
     public TestTaskResponse createTask(TestTaskCreateRequest request) {
         validateTaskRequest(request);
@@ -84,6 +114,14 @@ public class TestTaskService {
         return enrichTaskResponse(testTaskMapper.toResponse(savedTask));
     }
 
+    /**
+     * 分页查询测试任务列表
+     *
+     * @param name 任务名称（模糊搜索）
+     * @param status 任务状态
+     * @param pageable 分页参数
+     * @return 测试任务分页结果
+     */
     @Transactional(readOnly = true)
     public Page<TestTaskResponse> getTasks(String name, TestTaskStatus status, Pageable pageable) {
         Page<TestTask> tasks;
@@ -102,12 +140,24 @@ public class TestTaskService {
         return tasks.map(task -> enrichTaskResponse(testTaskMapper.toResponse(task)));
     }
 
+    /**
+     * 根据ID获取测试任务详情
+     *
+     * @param id 任务ID
+     * @return 测试任务响应DTO
+     */
     @Transactional(readOnly = true)
     public TestTaskResponse getTaskById(Long id) {
         TestTask task = findTaskById(id);
         return enrichTaskResponse(testTaskMapper.toResponse(task));
     }
 
+    /**
+     * 获取测试任务执行进度
+     *
+     * @param id 任务ID
+     * @return 任务进度响应DTO
+     */
     @Transactional(readOnly = true)
     public TaskProgressResponse getTaskProgress(Long id) {
         TestTask task = findTaskById(id);
@@ -129,6 +179,13 @@ public class TestTaskService {
                 .build();
     }
 
+    /**
+     * 更新测试任务信息
+     *
+     * @param id 任务ID
+     * @param request 更新请求DTO
+     * @return 更新后的测试任务响应DTO
+     */
     @Transactional
     public TestTaskResponse updateTask(Long id, TestTaskUpdateRequest request) {
         TestTask task = findTaskById(id);
@@ -142,6 +199,11 @@ public class TestTaskService {
         return enrichTaskResponse(testTaskMapper.toResponse(updated));
     }
 
+    /**
+     * 删除测试任务
+     *
+     * @param id 任务ID
+     */
     @Transactional
     public void deleteTask(Long id) {
         TestTask task = findTaskById(id);
@@ -154,6 +216,12 @@ public class TestTaskService {
         testTaskRepository.delete(task);
     }
 
+    /**
+     * 启动测试任务执行
+     *
+     * @param id 任务ID
+     * @return 更新后的测试任务响应DTO
+     */
     @Transactional
     public TestTaskResponse startTask(Long id) {
         TestTask task = findTaskById(id);
@@ -177,6 +245,11 @@ public class TestTaskService {
         return enrichTaskResponse(testTaskMapper.toResponse(task));
     }
 
+    /**
+     * 异步执行测试任务
+     *
+     * @param taskId 任务ID
+     */
     @Async("taskExecutor")
     public void executeTaskAsync(Long taskId) {
         log.info("Starting async execution for task: {}", taskId);
@@ -231,6 +304,17 @@ public class TestTaskService {
         }
     }
 
+    /**
+     * 执行单个测试任务项
+     *
+     * @param taskId 任务ID
+     * @param item 执行项
+     * @param environment 测试环境
+     * @param executionPlugin 执行插件
+     * @param evaluationPlugin 评估插件
+     * @param executionConfig 执行配置
+     * @param evaluationConfig 评估配置
+     */
     private void executeTaskItem(Long taskId, TestTaskItem item, Environment environment,
                                   ExecutionPlugin executionPlugin, EvaluationPlugin evaluationPlugin,
                                   String executionConfig, String evaluationConfig) {
@@ -298,6 +382,12 @@ public class TestTaskService {
         }
     }
 
+    /**
+     * 更新任务执行进度
+     *
+     * @param taskId 任务ID
+     * @param success 是否执行成功
+     */
     @Transactional
     public void updateTaskProgress(Long taskId, boolean success) {
         TestTask task = testTaskRepository.findById(taskId).orElse(null);
@@ -312,6 +402,12 @@ public class TestTaskService {
         testTaskRepository.save(task);
     }
 
+    /**
+     * 暂停测试任务
+     *
+     * @param id 任务ID
+     * @return 更新后的测试任务响应DTO
+     */
     @Transactional
     public TestTaskResponse pauseTask(Long id) {
         TestTask task = findTaskById(id);
@@ -325,6 +421,12 @@ public class TestTaskService {
         return enrichTaskResponse(testTaskMapper.toResponse(updated));
     }
 
+    /**
+     * 恢复已暂停的测试任务
+     *
+     * @param id 任务ID
+     * @return 更新后的测试任务响应DTO
+     */
     @Transactional
     public TestTaskResponse resumeTask(Long id) {
         TestTask task = findTaskById(id);
@@ -341,6 +443,12 @@ public class TestTaskService {
         return enrichTaskResponse(testTaskMapper.toResponse(updated));
     }
 
+    /**
+     * 取消测试任务
+     *
+     * @param id 任务ID
+     * @return 更新后的测试任务响应DTO
+     */
     @Transactional
     public TestTaskResponse cancelTask(Long id) {
         TestTask task = findTaskById(id);
@@ -355,18 +463,36 @@ public class TestTaskService {
         return enrichTaskResponse(testTaskMapper.toResponse(updated));
     }
 
+    /**
+     * 分页查询测试任务执行项
+     *
+     * @param taskId 任务ID
+     * @param pageable 分页参数
+     * @return 执行项分页结果
+     */
     @Transactional(readOnly = true)
     public Page<TestTaskItemResponse> getTaskItems(Long taskId, Pageable pageable) {
         return testTaskItemRepository.findByTestTaskId(taskId, pageable)
                 .map(testTaskMapper::toItemResponse);
     }
 
+    /**
+     * 获取测试任务的所有执行项
+     *
+     * @param taskId 任务ID
+     * @return 执行项响应DTO列表
+     */
     @Transactional(readOnly = true)
     public List<TestTaskItemResponse> getAllTaskItems(Long taskId) {
         List<TestTaskItem> items = testTaskItemRepository.findByTestTaskIdOrderBySequence(taskId);
         return testTaskMapper.toItemResponseList(items);
     }
 
+    /**
+     * 校验创建任务请求参数
+     *
+     * @param request 创建请求DTO
+     */
     private void validateTaskRequest(TestTaskCreateRequest request) {
         if (!testSetRepository.existsById(request.getTestSetId())) {
             throw new BusinessException(ErrorCode.TEST_SET_NOT_FOUND, "测评集不存在");
@@ -382,17 +508,35 @@ public class TestTaskService {
         }
     }
 
+    /**
+     * 根据ID查找测试任务
+     *
+     * @param id 任务ID
+     * @return 测试任务实体
+     */
     private TestTask findTaskById(Long id) {
         return testTaskRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.TASK_NOT_FOUND));
     }
 
+    /**
+     * 检查任务是否正在运行
+     *
+     * @param taskId 任务ID
+     * @return 是否正在运行
+     */
     private boolean isTaskRunning(Long taskId) {
         return testTaskRepository.findById(taskId)
                 .map(t -> t.getStatus() == TestTaskStatus.RUNNING)
                 .orElse(false);
     }
 
+    /**
+     * 更新任务状态为失败
+     *
+     * @param taskId 任务ID
+     * @param errorMessage 错误信息
+     */
     @Transactional
     public void updateTaskFailed(Long taskId, String errorMessage) {
         testTaskRepository.findById(taskId).ifPresent(task -> {
@@ -403,6 +547,11 @@ public class TestTaskService {
         });
     }
 
+    /**
+     * 完成测试任务
+     *
+     * @param taskId 任务ID
+     */
     @Transactional
     public void completeTask(Long taskId) {
         testTaskRepository.findById(taskId).ifPresent(task -> {
@@ -413,6 +562,12 @@ public class TestTaskService {
         });
     }
 
+    /**
+     * 丰富任务响应信息，填充关联实体名称
+     *
+     * @param response 任务响应DTO
+     * @return 丰富后的任务响应DTO
+     */
     private TestTaskResponse enrichTaskResponse(TestTaskResponse response) {
         testSetRepository.findById(response.getTestSetId())
                 .ifPresent(ts -> response.setTestSetName(ts.getName()));
@@ -425,6 +580,12 @@ public class TestTaskService {
         return response;
     }
 
+    /**
+     * 解析JSON配置字符串为Map
+     *
+     * @param config JSON配置字符串
+     * @return 配置Map
+     */
     @SuppressWarnings("unchecked")
     private Map<String, Object> parseConfig(String config) {
         if (StringUtils.isBlank(config)) {

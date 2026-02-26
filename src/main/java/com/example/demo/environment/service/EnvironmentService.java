@@ -21,16 +21,38 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
+/**
+ * 环境服务类
+ * <p>
+ * 提供环境管理的业务逻辑，包括环境的增删改查及连接测试功能
+ * </p>
+ *
+ * @author AI Test Platform Team
+ * @version 1.0.0
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EnvironmentService {
 
+    /** 环境数据访问层 */
     private final EnvironmentRepository environmentRepository;
+
+    /** 环境对象映射器 */
     private final EnvironmentMapper environmentMapper;
+
+    /** REST请求模板 */
     private final RestTemplate restTemplate = new RestTemplate();
+
+    /** JSON对象映射器 */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * 创建新环境
+     *
+     * @param request 创建环境请求DTO
+     * @return 创建成功后的环境响应DTO
+     */
     @Transactional
     public EnvironmentResponse createEnvironment(EnvironmentCreateRequest request) {
         Environment environment = environmentMapper.toEntity(request);
@@ -41,6 +63,13 @@ public class EnvironmentService {
         return environmentMapper.toResponse(saved);
     }
 
+    /**
+     * 分页查询环境列表
+     *
+     * @param name 环境名称关键字（可选，用于模糊搜索）
+     * @param pageable 分页参数
+     * @return 环境响应DTO分页列表
+     */
     @Transactional(readOnly = true)
     public Page<EnvironmentResponse> getEnvironments(String name, Pageable pageable) {
         Page<Environment> environments;
@@ -52,12 +81,27 @@ public class EnvironmentService {
         return environments.map(environmentMapper::toResponse);
     }
 
+    /**
+     * 根据ID获取环境详情
+     *
+     * @param id 环境ID
+     * @return 环境响应DTO
+     * @throws BusinessException 环境不存在时抛出异常
+     */
     @Transactional(readOnly = true)
     public EnvironmentResponse getEnvironmentById(Long id) {
         Environment environment = findEnvironmentById(id);
         return environmentMapper.toResponse(environment);
     }
 
+    /**
+     * 更新环境信息
+     *
+     * @param id 环境ID
+     * @param request 更新环境请求DTO
+     * @return 更新后的环境响应DTO
+     * @throws BusinessException 环境不存在时抛出异常
+     */
     @Transactional
     public EnvironmentResponse updateEnvironment(Long id, EnvironmentUpdateRequest request) {
         Environment environment = findEnvironmentById(id);
@@ -66,6 +110,12 @@ public class EnvironmentService {
         return environmentMapper.toResponse(updated);
     }
 
+    /**
+     * 删除环境
+     *
+     * @param id 环境ID
+     * @throws BusinessException 环境不存在时抛出异常
+     */
     @Transactional
     public void deleteEnvironment(Long id) {
         if (!environmentRepository.existsById(id)) {
@@ -74,6 +124,17 @@ public class EnvironmentService {
         environmentRepository.deleteById(id);
     }
 
+    /**
+     * 测试环境连接
+     * <p>
+     * 根据环境类型选择相应的测试方法
+     * </p>
+     *
+     * @param id 环境ID
+     * @param request 连接测试请求DTO
+     * @return 连接测试响应DTO
+     * @throws BusinessException 环境不存在时抛出异常
+     */
     public ConnectionTestResponse testConnection(Long id, ConnectionTestRequest request) {
         Environment environment = findEnvironmentById(id);
 
@@ -89,6 +150,13 @@ public class EnvironmentService {
         }
     }
 
+    /**
+     * 测试HTTP类型环境的连接
+     *
+     * @param environment 环境实体
+     * @param request 连接测试请求DTO
+     * @return 连接测试响应DTO
+     */
     private ConnectionTestResponse testHttpConnection(Environment environment, ConnectionTestRequest request) {
         if (StringUtils.isBlank(environment.getApiEndpoint())) {
             return ConnectionTestResponse.builder()
@@ -134,6 +202,16 @@ public class EnvironmentService {
         }
     }
 
+    /**
+     * 测试SDK类型环境的连接
+     * <p>
+     * 当前为模拟实现，返回固定的成功响应
+     * </p>
+     *
+     * @param environment 环境实体
+     * @param request 连接测试请求DTO
+     * @return 连接测试响应DTO
+     */
     private ConnectionTestResponse testSdkConnection(Environment environment, ConnectionTestRequest request) {
         return ConnectionTestResponse.builder()
                 .success(true)
@@ -143,6 +221,15 @@ public class EnvironmentService {
                 .build();
     }
 
+    /**
+     * 构建认证请求头
+     * <p>
+     * 根据环境的认证类型和配置构建相应的HTTP请求头
+     * </p>
+     *
+     * @param environment 环境实体
+     * @return 包含认证信息的HTTP请求头
+     */
     private HttpHeaders buildAuthHeaders(Environment environment) {
         HttpHeaders headers = new HttpHeaders();
 
@@ -175,6 +262,13 @@ public class EnvironmentService {
         return headers;
     }
 
+    /**
+     * 根据ID查找环境实体
+     *
+     * @param id 环境ID
+     * @return 环境实体
+     * @throws BusinessException 环境不存在时抛出异常
+     */
     private Environment findEnvironmentById(Long id) {
         return environmentRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ENVIRONMENT_NOT_FOUND));
