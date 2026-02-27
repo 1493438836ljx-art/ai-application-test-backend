@@ -127,8 +127,7 @@ public class TestTaskService {
         Page<TestTask> tasks;
 
         if (StringUtils.isNotBlank(name) && status != null) {
-            tasks = testTaskRepository.findByNameContainingIgnoreCase(name, pageable)
-                    .filter(t -> t.getStatus() == status);
+            tasks = testTaskRepository.findByNameContainingIgnoreCaseAndStatus(name, status, pageable);
         } else if (StringUtils.isNotBlank(name)) {
             tasks = testTaskRepository.findByNameContainingIgnoreCase(name, pageable);
         } else if (status != null) {

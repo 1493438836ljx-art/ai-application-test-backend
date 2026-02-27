@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "prompt")
+@Table(name = "T_PROMPT")
 public class Prompt {
 
     /** 主键ID */

@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "environment")
+@Table(name = "T_ENVIRONMENT")
 public class Environment {
 
     /** 环境唯一标识ID */

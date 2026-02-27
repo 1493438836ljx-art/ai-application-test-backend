@@ -27,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "test_set")
+@Table(name = "T_TEST_SET")
 public class TestSet {
 
     /** 主键ID */

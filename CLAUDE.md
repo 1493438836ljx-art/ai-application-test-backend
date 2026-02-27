@@ -64,3 +64,14 @@ src/main/java/com/example/demo/
 ## 依赖说明
 
 项目已配置 MySQL 驱动，生产环境需在 `application.yml` 中切换数据库配置。
+
+## Git 工作流
+
+**重要：每次 `git push` 之前，必须先编译运行当前项目，确保代码可以正常构建和启动。**
+
+```bash
+# 推送前验证流程
+./mvnw clean package -DskipTests   # 清理并打包
+java -jar target/demo-0.0.1-SNAPSHOT.jar  # 启动验证
+# 确认启动成功后，停止应用，再执行 git push
+```

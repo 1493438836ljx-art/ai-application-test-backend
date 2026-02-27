@@ -31,6 +31,16 @@ public interface TestTaskRepository extends JpaRepository<TestTask, Long> {
     Page<TestTask> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
     /**
+     * 根据任务名称模糊查询和状态查询（分页）
+     *
+     * @param name 任务名称关键词
+     * @param status 任务状态
+     * @param pageable 分页参数
+     * @return 匹配的测试任务分页结果
+     */
+    Page<TestTask> findByNameContainingIgnoreCaseAndStatus(String name, TestTaskStatus status, Pageable pageable);
+
+    /**
      * 根据任务状态查询（分页）
      *
      * @param status 任务状态

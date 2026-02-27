@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "plugin")
+@Table(name = "T_PLUGIN")
 public class Plugin {
 
     /** 插件ID，主键自增 */

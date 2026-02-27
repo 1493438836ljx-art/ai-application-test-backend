@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "test_task")
+@Table(name = "T_TEST_TASK")
 public class TestTask {
 
     /** 任务唯一标识ID */

@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "test_case")
+@Table(name = "T_TEST_CASE")
 public class TestCase {
 
     /** 主键ID */

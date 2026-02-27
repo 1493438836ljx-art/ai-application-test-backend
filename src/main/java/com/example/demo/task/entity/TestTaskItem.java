@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "test_task_item")
+@Table(name = "T_TEST_TASK_ITEM")
 public class TestTaskItem {
 
     /** 执行项唯一标识ID */
@@ -63,7 +63,7 @@ public class TestTaskItem {
     private String actualOutput;
 
     /** 评估得分 */
-    @Column(precision = 5, scale = 2)
+    @Column
     private Double score;
 
     /** 评估原因 */

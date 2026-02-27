@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "test_report")
+@Table(name = "T_TEST_REPORT")
 public class TestReport {
 
     /** 报告唯一标识ID */
@@ -72,11 +72,11 @@ public class TestReport {
     private Integer failedItems;
 
     /** 成功率（百分比） */
-    @Column(name = "success_rate", precision = 5, scale = 2)
+    @Column(name = "success_rate")
     private Double successRate;
 
     /** 平均评分 */
-    @Column(name = "average_score", precision = 5, scale = 2)
+    @Column(name = "average_score")
     private Double averageScore;
 
     /** 总执行时间（毫秒） */
