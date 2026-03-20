@@ -1,0 +1,12 @@
+{
+  "name": "build-package",
+  "version": "1.0.0",
+  "description": "Build and package Maven project",
+  "author": "AI Test Platform Team",
+  "keywords": ["maven", "build", "package", "java"],
+  "scripts": {
+    "build": "mvn clean package -DskipTests",
+    "build-with-tests": "mvn clean package",
+    "compile": "mvn clean compile"
+  }
+}
