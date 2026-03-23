@@ -47,6 +47,12 @@ public class VariableTypeEntity extends BaseEntity {
     private String fileType;
 
     /**
+     * 数据字典类型（用于Dictionary类型）
+     */
+    @TableField("dictionary_type")
+    private String dictionaryType;
+
+    /**
      * 描述
      */
     @TableField("description")

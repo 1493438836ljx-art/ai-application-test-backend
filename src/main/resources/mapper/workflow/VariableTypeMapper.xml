@@ -9,6 +9,7 @@
         <result column="category" property="category"/>
         <result column="element_type" property="elementType"/>
         <result column="file_type" property="fileType"/>
+        <result column="dictionary_type" property="dictionaryType"/>
         <result column="description" property="description"/>
         <result column="sort_order" property="sortOrder"/>
         <result column="enabled" property="enabled"/>
@@ -17,7 +18,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, code, name, category, element_type, file_type, description, sort_order, enabled, created_at, updated_at
+        id, code, name, category, element_type, file_type, dictionary_type, description, sort_order, enabled, created_at, updated_at
     </sql>
 
     <select id="selectByCode" resultMap="BaseResultMap">
