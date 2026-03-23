@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.chat.mapper.ChatMessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.chat.entity.ChatMessageEntity">
+        <id column="id" property="id"/>
+        <result column="conversation_id" property="conversationId"/>
+        <result column="message_uuid" property="messageUuid"/>
+        <result column="role" property="role"/>
+        <result column="content" property="content"/>
+        <result column="content_type" property="contentType"/>
+        <result column="tokens" property="tokens"/>
+        <result column="model" property="model"/>
+        <result column="latency_ms" property="latencyMs"/>
+        <result column="metadata" property="metadata"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, conversation_id, message_uuid, role, content, content_type,
+        tokens, model, latency_ms, metadata, created_at
+    </sql>
+
+    <!-- 根据UUID查询 -->
+    <select id="selectByMessageUuid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_message
+        WHERE message_uuid = #{messageUuid}
+        LIMIT 1
+    </select>
+
+    <!-- 根据对话ID查询消息列表 -->
+    <select id="selectByConversationId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_message
+        WHERE conversation_id = #{conversationId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 获取对话的最后一条消息 -->
+    <select id="selectLastMessage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_message
+        WHERE conversation_id = #{conversationId}
+        ORDER BY created_at DESC
+        LIMIT 1
+    </select>
+
+    <!-- 统计对话的消息数量 -->
+    <select id="countByConversationId" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM chat_message
+        WHERE conversation_id = #{conversationId}
+    </select>
+
+</mapper>

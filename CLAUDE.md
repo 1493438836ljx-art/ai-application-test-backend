@@ -69,6 +69,11 @@ src/main/java/com/example/demo/
 
 **重要：每次 `git push` 之前，必须先编译运行当前项目，确保代码可以正常构建和启动。**
 
+**禁止提交的文件：**
+- `src/main/resources/application.yml` - 包含数据库密码等敏感信息，禁止提交和推送。
+
+```bash
+
 ```bash
 # 推送前验证流程
 ./mvnw clean package -DskipTests   # 清理并打包

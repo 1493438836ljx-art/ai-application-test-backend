@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.workflow.mapper.WorkflowNodeTypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.workflow.entity.WorkflowNodeTypeEntity">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="category" property="category"/>
+        <result column="description" property="description"/>
+        <result column="icon" property="icon"/>
+        <result column="default_config" property="defaultConfig"/>
+        <result column="input_ports" property="inputPorts"/>
+        <result column="output_ports" property="outputPorts"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="enabled" property="enabled"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, name, category, description, icon, default_config,
+        input_ports, output_ports, sort_order, enabled, created_at, updated_at
+    </sql>
+
+    <!-- 根据编码查询 -->
+    <select id="selectByCode" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node_type
+        WHERE code = #{code}
+        LIMIT 1
+    </select>
+
+    <!-- 根据分类查询 -->
+    <select id="selectByCategory" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node_type
+        WHERE category = #{category}
+        ORDER BY sort_order ASC
+    </select>
+
+    <!-- 查询所有启用的节点类型 -->
+    <select id="selectEnabled" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node_type
+        WHERE enabled = 1
+        ORDER BY sort_order ASC
+    </select>
+
+    <!-- 检查编码是否存在 -->
+    <select id="existsByCode" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM workflow_node_type
+        WHERE code = #{code}
+    </select>
+
+</mapper>

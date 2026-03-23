@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.workflow.mapper.WorkflowExecutionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.workflow.entity.WorkflowExecutionEntity">
+        <id column="id" property="id"/>
+        <result column="workflow_id" property="workflowId"/>
+        <result column="execution_uuid" property="executionUuid"/>
+        <result column="status" property="status"/>
+        <result column="trigger_type" property="triggerType"/>
+        <result column="triggered_by" property="triggeredBy"/>
+        <result column="input_data" property="inputData"/>
+        <result column="output_data" property="outputData"/>
+        <result column="error_message" property="errorMessage"/>
+        <result column="node_executions" property="nodeExecutions"/>
+        <result column="progress" property="progress"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="duration_ms" property="durationMs"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, workflow_id, execution_uuid, status, trigger_type, triggered_by,
+        input_data, output_data, error_message, node_executions, progress,
+        start_time, end_time, duration_ms, created_at, updated_at
+    </sql>
+
+    <!-- 根据执行UUID查询 -->
+    <select id="selectByExecutionUuid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_execution
+        WHERE execution_uuid = #{executionUuid}
+        LIMIT 1
+    </select>
+
+    <!-- 根据工作流ID查询执行记录列表 -->
+    <select id="selectByWorkflowId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_execution
+        WHERE workflow_id = #{workflowId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据状态查询 -->
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_execution
+        WHERE status = #{status}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 查询正在执行的记录 -->
+    <select id="selectRunningExecutions" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_execution
+        WHERE status = 'RUNNING'
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 获取工作流的最新执行记录 -->
+    <select id="selectLatestByWorkflowId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_execution
+        WHERE workflow_id = #{workflowId}
+        ORDER BY created_at DESC
+        LIMIT 1
+    </select>
+
+    <!-- 统计工作流的执行次数 -->
+    <select id="countByWorkflowId" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM workflow_execution
+        WHERE workflow_id = #{workflowId}
+    </select>
+
+</mapper>

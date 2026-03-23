@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.workflow.mapper.WorkflowConnectionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.workflow.entity.WorkflowConnectionEntity">
+        <id column="id" property="id"/>
+        <result column="workflow_id" property="workflowId"/>
+        <result column="connection_uuid" property="connectionUuid"/>
+        <result column="source_node_id" property="sourceNodeId"/>
+        <result column="source_port_id" property="sourcePortId"/>
+        <result column="target_node_id" property="targetNodeId"/>
+        <result column="target_port_id" property="targetPortId"/>
+        <result column="source_param_index" property="sourceParamIndex"/>
+        <result column="target_param_index" property="targetParamIndex"/>
+        <result column="label" property="label"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, workflow_id, connection_uuid, source_node_id, source_port_id,
+        target_node_id, target_port_id, source_param_index, target_param_index,
+        label, created_at
+    </sql>
+
+    <!-- 根据工作流ID查询所有连线 -->
+    <select id="selectByWorkflowId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_connection
+        WHERE workflow_id = #{workflowId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 查询以指定节点为源的所有连线 -->
+    <select id="selectBySourceNodeId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_connection
+        WHERE source_node_id = #{sourceNodeId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 查询以指定节点为目标的所有连线 -->
+    <select id="selectByTargetNodeId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_connection
+        WHERE target_node_id = #{targetNodeId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 删除工作流的所有连线 -->
+    <delete id="deleteByWorkflowId">
+        DELETE FROM workflow_connection
+        WHERE workflow_id = #{workflowId}
+    </delete>
+
+    <!-- 统计工作流的连线数量 -->
+    <select id="countByWorkflowId" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM workflow_connection
+        WHERE workflow_id = #{workflowId}
+    </select>
+
+</mapper>

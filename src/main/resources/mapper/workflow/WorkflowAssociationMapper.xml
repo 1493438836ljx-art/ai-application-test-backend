@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.workflow.mapper.WorkflowAssociationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.workflow.entity.WorkflowAssociationEntity">
+        <id column="id" property="id"/>
+        <result column="workflow_id" property="workflowId"/>
+        <result column="loop_node_id" property="loopNodeId"/>
+        <result column="body_node_id" property="bodyNodeId"/>
+        <result column="association_type" property="associationType"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, workflow_id, loop_node_id, body_node_id, association_type, created_at
+    </sql>
+
+    <!-- 根据工作流ID查询所有关联 -->
+    <select id="selectByWorkflowId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_association
+        WHERE workflow_id = #{workflowId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 根据循环节点ID查询关联 -->
+    <select id="selectByLoopNodeId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_association
+        WHERE loop_node_id = #{loopNodeId}
+        LIMIT 1
+    </select>
+
+    <!-- 删除工作流的所有关联 -->
+    <delete id="deleteByWorkflowId">
+        DELETE FROM workflow_association
+        WHERE workflow_id = #{workflowId}
+    </delete>
+
+</mapper>

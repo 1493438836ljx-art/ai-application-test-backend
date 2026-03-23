@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.workflow.mapper.WorkflowNodeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.workflow.entity.WorkflowNodeEntity">
+        <id column="id" property="id"/>
+        <result column="workflow_id" property="workflowId"/>
+        <result column="node_uuid" property="nodeUuid"/>
+        <result column="type" property="type"/>
+        <result column="type_id" property="typeId"/>
+        <result column="name" property="name"/>
+        <result column="position_x" property="positionX"/>
+        <result column="position_y" property="positionY"/>
+        <result column="input_ports" property="inputPorts"/>
+        <result column="output_ports" property="outputPorts"/>
+        <result column="input_params" property="inputParams"/>
+        <result column="output_params" property="outputParams"/>
+        <result column="config" property="config"/>
+        <result column="parent_node_id" property="parentNodeId"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, workflow_id, node_uuid, type, type_id, name, position_x, position_y,
+        input_ports, output_ports, input_params, output_params, config,
+        parent_node_id, created_at, updated_at
+    </sql>
+
+    <!-- 根据工作流ID查询所有节点 -->
+    <select id="selectByWorkflowId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node
+        WHERE workflow_id = #{workflowId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 根据工作流ID和节点UUID查询 -->
+    <select id="selectByWorkflowIdAndNodeUuid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node
+        WHERE workflow_id = #{workflowId}
+        AND node_uuid = #{nodeUuid}
+        LIMIT 1
+    </select>
+
+    <!-- 根据工作流ID和节点类型查询 -->
+    <select id="selectByWorkflowIdAndType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node
+        WHERE workflow_id = #{workflowId}
+        AND type = #{type}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 查询指定节点的子节点 -->
+    <select id="selectByParentNodeId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node
+        WHERE parent_node_id = #{parentNodeId}
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 删除工作流的所有节点 -->
+    <delete id="deleteByWorkflowId">
+        DELETE FROM workflow_node
+        WHERE workflow_id = #{workflowId}
+    </delete>
+
+    <!-- 统计工作流的节点数量 -->
+    <select id="countByWorkflowId" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM workflow_node
+        WHERE workflow_id = #{workflowId}
+    </select>
+
+</mapper>

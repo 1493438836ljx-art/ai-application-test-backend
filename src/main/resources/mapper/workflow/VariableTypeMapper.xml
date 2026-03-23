@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.workflow.mapper.VariableTypeMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.workflow.entity.VariableTypeEntity">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="category" property="category"/>
+        <result column="element_type" property="elementType"/>
+        <result column="file_type" property="fileType"/>
+        <result column="description" property="description"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="enabled" property="enabled"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, code, name, category, element_type, file_type, description, sort_order, enabled, created_at, updated_at
+    </sql>
+
+    <select id="selectByCode" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM workflow_variable_type
+        WHERE code = #{code}
+    </select>
+
+    <select id="selectEnabled" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM workflow_variable_type
+        WHERE enabled = true
+        ORDER BY sort_order ASC
+    </select>
+
+    <select id="selectEnabledByCategory" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM workflow_variable_type
+        WHERE category = #{category} AND enabled = true
+        ORDER BY sort_order ASC
+    </select>
+
+    <select id="selectAllCategories" resultType="java.lang.String">
+        SELECT DISTINCT category
+        FROM workflow_variable_type
+        WHERE enabled = true
+        ORDER BY category
+    </select>
+
+    <select id="existsByCode" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM workflow_variable_type
+        WHERE code = #{code}
+    </select>
+
+</mapper>

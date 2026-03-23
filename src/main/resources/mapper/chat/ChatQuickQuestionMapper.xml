@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.chat.mapper.ChatQuickQuestionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.chat.entity.ChatQuickQuestionEntity">
+        <id column="id" property="id"/>
+        <result column="icon" property="icon"/>
+        <result column="text" property="text"/>
+        <result column="category" property="category"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="enabled" property="enabled"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, icon, text, category, sort_order, enabled, created_at, updated_at
+    </sql>
+
+    <!-- 查询所有启用的快捷问题 -->
+    <select id="selectEnabled" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_quick_question
+        WHERE enabled = 1
+        ORDER BY sort_order ASC
+    </select>
+
+    <!-- 根据分类查询启用的快捷问题 -->
+    <select id="selectEnabledByCategory" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_quick_question
+        WHERE enabled = 1
+        AND category = #{category}
+        ORDER BY sort_order ASC
+    </select>
+
+</mapper>

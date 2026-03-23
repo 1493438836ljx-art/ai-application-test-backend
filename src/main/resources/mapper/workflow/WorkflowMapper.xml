@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.workflow.mapper.WorkflowMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.workflow.entity.WorkflowEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="published" property="published"/>
+        <result column="has_run" property="hasRun"/>
+        <result column="version" property="version"/>
+        <result column="status" property="status"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, description, published, has_run, version, status,
+        created_by, created_at, updated_by, updated_at, deleted
+    </sql>
+
+    <!-- 根据名称模糊查询 -->
+    <select id="selectByNameLike" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow
+        WHERE deleted = 0
+        AND name LIKE CONCAT('%', #{name}, '%')
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据状态查询 -->
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow
+        WHERE deleted = 0
+        AND status = #{status}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据发布状态查询 -->
+    <select id="selectByPublished" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow
+        WHERE deleted = 0
+        AND published = #{published}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据创建人查询 -->
+    <select id="selectByCreatedBy" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow
+        WHERE deleted = 0
+        AND created_by = #{createdBy}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 统计指定状态的工作流数量 -->
+    <select id="countByStatus" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM workflow
+        WHERE deleted = 0
+        AND status = #{status}
+    </select>
+
+</mapper>
