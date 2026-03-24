@@ -61,21 +61,6 @@ public class WorkflowController {
     }
 
     /**
-     * 获取工作流详情
-     *
-     * @param id 工作流ID
-     * @return 工作流响应
-     */
-    @GetMapping("/{id}")
-    @Operation(summary = "获取工作流详情", description = "根据ID获取工作流的详细信息，包括节点、连线和关联")
-    public ResponseEntity<WorkflowResponse> getWorkflow(
-            @Parameter(description = "工作流ID", required = true)
-            @PathVariable Long id) {
-        WorkflowResponse response = workflowService.getWorkflowById(id);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
      * 获取工作流列表
      *
      * @param page 页码
@@ -83,7 +68,7 @@ public class WorkflowController {
      * @param sort 排序字段
      * @return 工作流分页列表
      */
-    @GetMapping
+    @GetMapping("/list")
     @Operation(summary = "获取工作流列表", description = "分页获取工作流列表")
     public ResponseEntity<Page<WorkflowResponse>> getWorkflowList(
             @Parameter(description = "页码", example = "0")
@@ -97,6 +82,21 @@ public class WorkflowController {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
         Page<WorkflowResponse> response = workflowService.getWorkflowList(pageable);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 获取工作流详情
+     *
+     * @param id 工作流ID
+     * @return 工作流响应
+     */
+    @GetMapping("/{id}")
+    @Operation(summary = "获取工作流详情", description = "根据ID获取工作流的详细信息，包括节点、连线和关联")
+    public ResponseEntity<WorkflowResponse> getWorkflow(
+            @Parameter(description = "工作流ID", required = true)
+            @PathVariable Long id) {
+        WorkflowResponse response = workflowService.getWorkflowById(id);
         return ResponseEntity.ok(response);
     }
 
@@ -250,7 +250,7 @@ public class WorkflowController {
     public ResponseEntity<WorkflowResponse> saveWorkflowDataJson(
             @Parameter(description = "工作流ID", required = true)
             @PathVariable Long id,
-            @RequestBody WorkflowDataRequest request) {
+            @Valid @RequestBody WorkflowDataRequest request) {
         log.info("保存工作流数据(JSON): {}", id);
         WorkflowResponse response = workflowService.saveWorkflowData(
                 id,

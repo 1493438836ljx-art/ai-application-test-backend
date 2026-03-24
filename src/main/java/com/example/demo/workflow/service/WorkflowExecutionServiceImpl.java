@@ -2,6 +2,7 @@ package com.example.demo.workflow.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.demo.common.exception.BusinessException;
 import com.example.demo.workflow.dto.ExecutionResponse;
 import com.example.demo.workflow.entity.ExecutionStatus;
 import com.example.demo.workflow.entity.TriggerType;
@@ -42,7 +43,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
         WorkflowEntity workflow = workflowMapper.selectById(workflowId);
         if (workflow == null) {
-            throw new RuntimeException("工作流不存在: " + workflowId);
+            throw BusinessException.notFound("工作流", workflowId);
         }
 
         // 创建执行记录
@@ -71,7 +72,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
     public ExecutionResponse getExecution(Long id) {
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
-            throw new RuntimeException("执行记录不存在: " + id);
+            throw BusinessException.notFound("执行记录", id);
         }
         return convertToResponse(execution);
     }
@@ -80,7 +81,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
     @Transactional(readOnly = true)
     public ExecutionResponse getExecutionByUuid(String uuid) {
         WorkflowExecutionEntity execution = executionMapper.selectByExecutionUuid(uuid)
-                .orElseThrow(() -> new RuntimeException("执行记录不存在: " + uuid));
+                .orElseThrow(() -> BusinessException.notFound("执行记录", uuid));
         return convertToResponse(execution);
     }
 
@@ -112,7 +113,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
-            throw new RuntimeException("执行记录不存在: " + id);
+            throw BusinessException.notFound("执行记录", id);
         }
 
         if (ExecutionStatus.RUNNING.name().equals(execution.getStatus())) {
@@ -128,7 +129,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
     public void updateProgress(Long id, int progress) {
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
-            throw new RuntimeException("执行记录不存在: " + id);
+            throw BusinessException.notFound("执行记录", id);
         }
 
         execution.setProgress(Math.min(100, Math.max(0, progress)));
@@ -149,7 +150,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
-            throw new RuntimeException("执行记录不存在: " + id);
+            throw BusinessException.notFound("执行记录", id);
         }
 
         execution.setStatus(ExecutionStatus.SUCCESS.name());
@@ -169,7 +170,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
-            throw new RuntimeException("执行记录不存在: " + id);
+            throw BusinessException.notFound("执行记录", id);
         }
 
         execution.setStatus(ExecutionStatus.FAILED.name());

@@ -114,14 +114,20 @@ public class WorkflowResponse {
         @Schema(description = "连线UUID")
         private String connectionUuid;
 
-        @Schema(description = "源节点ID")
+        @Schema(description = "源节点ID（数据库ID，查询时返回）")
         private Long sourceNodeId;
+
+        @Schema(description = "源节点UUID（前端保存时使用）")
+        private String sourceNodeUuid;
 
         @Schema(description = "源端口ID")
         private String sourcePortId;
 
-        @Schema(description = "目标节点ID")
+        @Schema(description = "目标节点ID（数据库ID，查询时返回）")
         private Long targetNodeId;
+
+        @Schema(description = "目标节点UUID（前端保存时使用）")
+        private String targetNodeUuid;
 
         @Schema(description = "目标端口ID")
         private String targetPortId;
@@ -145,11 +151,17 @@ public class WorkflowResponse {
         @Schema(description = "关联ID")
         private Long id;
 
-        @Schema(description = "循环节点ID")
+        @Schema(description = "循环节点ID（数据库ID）")
         private Long loopNodeId;
 
-        @Schema(description = "循环体节点ID")
+        @Schema(description = "循环体节点ID（数据库ID）")
         private Long bodyNodeId;
+
+        @Schema(description = "循环节点UUID（前端使用）")
+        private String loopNodeUuid;
+
+        @Schema(description = "循环体节点UUID（前端使用）")
+        private String bodyNodeUuid;
 
         @Schema(description = "关联类型")
         private String associationType;

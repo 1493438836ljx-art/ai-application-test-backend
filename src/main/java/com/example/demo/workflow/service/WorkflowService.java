@@ -16,9 +16,9 @@ import java.util.List;
 public interface WorkflowService {
 
     /**
-     * 创建工作流
+     * 创建工作流（包含完整数据）
      *
-     * @param request 创建请求
+     * @param request 创建请求（包含节点、连线、关联）
      * @return 工作流响应
      */
     WorkflowResponse createWorkflow(WorkflowCreateRequest request);
