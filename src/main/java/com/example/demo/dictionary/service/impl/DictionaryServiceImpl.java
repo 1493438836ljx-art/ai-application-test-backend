@@ -306,4 +306,20 @@ public class DictionaryServiceImpl implements DictionaryService {
                 .columnCount(columnCount)
                 .build();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ColumnResponse> getColumnsByDictionaryName(String name) {
+        log.info("根据名称获取数据字典columns: {}", name);
+
+        DataDictionary dictionary = dictionaryMapper.selectByName(name);
+        if (dictionary == null) {
+            throw new RuntimeException("数据字典不存在: " + name);
+        }
+
+        List<DictionaryColumn> columns = columnMapper.selectByDictionaryId(dictionary.getId());
+        return columns.stream()
+                .map(this::convertToColumnResponse)
+                .collect(Collectors.toList());
+    }
 }

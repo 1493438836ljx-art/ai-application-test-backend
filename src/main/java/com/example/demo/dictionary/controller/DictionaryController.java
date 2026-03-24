@@ -187,4 +187,25 @@ public class DictionaryController {
                 .data(response)
                 .build());
     }
+
+    /**
+     * 根据名称获取数据字典的columns
+     *
+     * @param name 数据字典名称
+     * @return columns列表
+     */
+    @GetMapping("/by-name/{name}/columns")
+    @Operation(summary = "根据名称获取columns", description = "根据数据字典名称获取字段定义列表")
+    public ResponseEntity<ApiResponse<List<ColumnResponse>>> getColumnsByName(
+            @Parameter(description = "数据字典名称", required = true)
+            @PathVariable String name) {
+
+        log.info("根据名称获取数据字典columns: {}", name);
+        List<ColumnResponse> response = dictionaryService.getColumnsByDictionaryName(name);
+        return ResponseEntity.ok(ApiResponse.<List<ColumnResponse>>builder()
+                .code(200)
+                .message("success")
+                .data(response)
+                .build());
+    }
 }

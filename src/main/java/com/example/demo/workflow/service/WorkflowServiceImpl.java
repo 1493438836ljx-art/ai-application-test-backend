@@ -394,13 +394,29 @@ public class WorkflowServiceImpl implements WorkflowService {
         judgeModelNode.setParentNodeId(null);
         nodes.add(judgeModelNode);
 
-        // 6. end (结束) - 位置(1275, 250)
+        // 6. tableGenerate (表格生成) - 位置(1275, 250)
+        WorkflowResponse.NodeDTO tableGenerateNode = new WorkflowResponse.NodeDTO();
+        tableGenerateNode.setId(6L);
+        tableGenerateNode.setNodeUuid("node-table-generate");
+        tableGenerateNode.setType("tableGenerate");
+        tableGenerateNode.setName("表格生成");
+        tableGenerateNode.setPositionX(1275);
+        tableGenerateNode.setPositionY(250);
+        tableGenerateNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
+        tableGenerateNode.setOutputPorts("[{\"id\":\"output-1\",\"name\":\"输出\"}]");
+        tableGenerateNode.setInputParams("[]");
+        tableGenerateNode.setOutputParams("[]");
+        tableGenerateNode.setConfig("{}");
+        tableGenerateNode.setParentNodeId(null);
+        nodes.add(tableGenerateNode);
+
+        // 7. end (结束) - 位置(1525, 250)
         WorkflowResponse.NodeDTO endNode = new WorkflowResponse.NodeDTO();
-        endNode.setId(6L);
+        endNode.setId(7L);
         endNode.setNodeUuid("node-end");
         endNode.setType("end");
         endNode.setName("结束");
-        endNode.setPositionX(1275);
+        endNode.setPositionX(1525);
         endNode.setPositionY(250);
         endNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
         endNode.setOutputPorts("[]");
@@ -410,9 +426,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         endNode.setParentNodeId(null);
         nodes.add(endNode);
 
-        // 7. loopBodyCanvas (循环体) - 位置(775, 470)，宽度500，高度400
+        // 8. loopBodyCanvas (循环体) - 位置(775, 470)，宽度500，高度400
         WorkflowResponse.NodeDTO loopBodyNode = new WorkflowResponse.NodeDTO();
-        loopBodyNode.setId(7L);
+        loopBodyNode.setId(8L);
         loopBodyNode.setNodeUuid("node-loop-body");
         loopBodyNode.setType("loopBodyCanvas");
         loopBodyNode.setName("循环体");
@@ -433,8 +449,8 @@ public class WorkflowServiceImpl implements WorkflowService {
     private List<WorkflowResponse.ConnectionDTO> createDefaultConnections(List<WorkflowResponse.NodeDTO> nodes) {
         List<WorkflowResponse.ConnectionDTO> connections = new java.util.ArrayList<>();
 
-        // 节点ID映射：start(1), textClean(2), tableExtract(3), loop(4), judgeModel(5), end(6)
-        // 循环体节点ID：loopBody(7)
+        // 节点ID映射：start(1), textClean(2), tableExtract(3), loop(4), judgeModel(5), tableGenerate(6), end(7)
+        // 循环体节点ID：loopBody(8)
 
         // 1. start -> textClean
         WorkflowResponse.ConnectionDTO conn1 = new WorkflowResponse.ConnectionDTO();
@@ -488,10 +504,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn4.setLabel(null);
         connections.add(conn4);
 
-        // 5. judgeModel -> end
+        // 5. judgeModel -> tableGenerate
         WorkflowResponse.ConnectionDTO conn5 = new WorkflowResponse.ConnectionDTO();
         conn5.setId(5L);
-        conn5.setConnectionUuid("conn-judgemodel-end");
+        conn5.setConnectionUuid("conn-judgemodel-tablegenerate");
         conn5.setSourceNodeId(5L);
         conn5.setSourcePortId("output-1");
         conn5.setTargetNodeId(6L);
@@ -501,17 +517,30 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn5.setLabel(null);
         connections.add(conn5);
 
+        // 6. tableGenerate -> end
+        WorkflowResponse.ConnectionDTO conn6 = new WorkflowResponse.ConnectionDTO();
+        conn6.setId(6L);
+        conn6.setConnectionUuid("conn-tablegenerate-end");
+        conn6.setSourceNodeId(6L);
+        conn6.setSourcePortId("output-1");
+        conn6.setTargetNodeId(7L);
+        conn6.setTargetPortId("input-1");
+        conn6.setSourceParamIndex(null);
+        conn6.setTargetParamIndex(null);
+        conn6.setLabel(null);
+        connections.add(conn6);
+
         return connections;
     }
 
     private List<WorkflowResponse.AssociationDTO> createDefaultAssociations() {
         List<WorkflowResponse.AssociationDTO> associations = new java.util.ArrayList<>();
 
-        // 循环节点(ID=4) 与 循环体节点(ID=7) 的关联
+        // 循环节点(ID=4) 与 循环体节点(ID=8) 的关联
         WorkflowResponse.AssociationDTO association = new WorkflowResponse.AssociationDTO();
         association.setId(1L);
         association.setLoopNodeId(4L);  // 循环节点ID
-        association.setBodyNodeId(7L);  // 循环体节点ID
+        association.setBodyNodeId(8L);  // 循环体节点ID
         association.setAssociationType("loop-body");  // 关联类型
         associations.add(association);
 

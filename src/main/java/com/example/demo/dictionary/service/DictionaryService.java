@@ -70,4 +70,12 @@ public interface DictionaryService {
      * @return 简单响应列表
      */
     List<DictionarySimpleResponse> getAllDictionaries();
+
+    /**
+     * 根据名称获取数据字典的columns
+     *
+     * @param name 数据字典名称
+     * @return columns列表
+     */
+    List<ColumnResponse> getColumnsByDictionaryName(String name);
 }

@@ -46,4 +46,13 @@ public interface DataDictionaryMapper extends BaseMapper<DataDictionary> {
      */
     @Select("SELECT * FROM data_dictionary WHERE is_deleted = 0 ORDER BY created_at DESC")
     List<DataDictionary> selectAllForDropdown();
+
+    /**
+     * 根据名称查询数据字典
+     *
+     * @param name 数据字典名称
+     * @return 数据字典实体
+     */
+    @Select("SELECT * FROM data_dictionary WHERE name = #{name} AND is_deleted = 0 LIMIT 1")
+    DataDictionary selectByName(@Param("name") String name);
 }
