@@ -559,9 +559,9 @@ public class WorkflowServiceImpl implements WorkflowService {
         loopBodyNode.setOutputPorts("[]");
         loopBodyNode.setInputParams("[]");
         loopBodyNode.setOutputParams("[]");
-        // 循环体配置：包含内部画布信息
-        loopBodyNode.setConfig("{\"width\":500,\"height\":400,\"belongsTo\":\"node-loop\"}");
-        loopBodyNode.setParentNodeId(null); // 父节点为循环节点
+        // 循环体配置：包含内部画布信息，包括一个默认的HTTP接口调用节点和连线
+        loopBodyNode.setConfig("{\"width\":500,\"height\":400,\"belongsTo\":\"node-loop\",\"loopBody\":{\"canvas\":{\"scale\":1,\"offsetX\":0,\"offsetY\":0},\"nodes\":[{\"id\":\"node-api-auto-1\",\"type\":\"apiAuto\",\"name\":\"HTTPS/HTTP接口调用\",\"x\":200,\"y\":150,\"inputs\":[{\"id\":\"input-1\",\"name\":\"输入\"}],\"outputs\":[{\"id\":\"output-1\",\"name\":\"输出\"}],\"config\":{\"url\":\"\",\"method\":\"GET\",\"headers\":[],\"body\":\"\",\"timeout\":30000}}],\"connections\":[{\"id\":\"conn-left-to-api\",\"sourceId\":\"port-left\",\"sourcePort\":\"out\",\"targetId\":\"node-api-auto-1\",\"targetPort\":\"input-1\"},{\"id\":\"conn-api-to-right\",\"sourceId\":\"node-api-auto-1\",\"sourcePort\":\"output-1\",\"targetId\":\"port-right\",\"targetPort\":\"in\"}],\"leftPort\":{\"id\":\"port-left\",\"name\":\"输入\",\"type\":\"input\",\"y\":200,\"params\":[]},\"rightPort\":{\"id\":\"port-right\",\"name\":\"输出\",\"type\":\"output\",\"y\":200,\"params\":[]}}}");
+        loopBodyNode.setParentNodeId(null);
         nodes.add(loopBodyNode);
 
         return nodes;
@@ -569,6 +569,12 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     private List<WorkflowResponse.ConnectionDTO> createDefaultConnections(List<WorkflowResponse.NodeDTO> nodes) {
         List<WorkflowResponse.ConnectionDTO> connections = new java.util.ArrayList<>();
+
+        // 节点ID到UUID的映射
+        Map<Long, String> nodeIdToUuidMap = new java.util.HashMap<>();
+        for (WorkflowResponse.NodeDTO node : nodes) {
+            nodeIdToUuidMap.put(node.getId(), node.getNodeUuid());
+        }
 
         // 节点ID映射：start(1), textClean(2), tableExtract(3), loop(4), judgeModel(5), tableGenerate(6), end(7)
         // 循环体节点ID：loopBody(8)
@@ -578,8 +584,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn1.setId(1L);
         conn1.setConnectionUuid("conn-start-textclean");
         conn1.setSourceNodeId(1L);
+        conn1.setSourceNodeUuid(nodeIdToUuidMap.get(1L));
         conn1.setSourcePortId("output-1");
         conn1.setTargetNodeId(2L);
+        conn1.setTargetNodeUuid(nodeIdToUuidMap.get(2L));
         conn1.setTargetPortId("input-1");
         conn1.setSourceParamIndex(null);
         conn1.setTargetParamIndex(null);
@@ -591,8 +599,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn2.setId(2L);
         conn2.setConnectionUuid("conn-textclean-tableextract");
         conn2.setSourceNodeId(2L);
+        conn2.setSourceNodeUuid(nodeIdToUuidMap.get(2L));
         conn2.setSourcePortId("output-1");
         conn2.setTargetNodeId(3L);
+        conn2.setTargetNodeUuid(nodeIdToUuidMap.get(3L));
         conn2.setTargetPortId("input-1");
         conn2.setSourceParamIndex(null);
         conn2.setTargetParamIndex(null);
@@ -604,8 +614,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn3.setId(3L);
         conn3.setConnectionUuid("conn-tableextract-loop");
         conn3.setSourceNodeId(3L);
+        conn3.setSourceNodeUuid(nodeIdToUuidMap.get(3L));
         conn3.setSourcePortId("output-1");
         conn3.setTargetNodeId(4L);
+        conn3.setTargetNodeUuid(nodeIdToUuidMap.get(4L));
         conn3.setTargetPortId("input-1");
         conn3.setSourceParamIndex(null);
         conn3.setTargetParamIndex(null);
@@ -617,8 +629,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn4.setId(4L);
         conn4.setConnectionUuid("conn-loop-judgemodel");
         conn4.setSourceNodeId(4L);
+        conn4.setSourceNodeUuid(nodeIdToUuidMap.get(4L));
         conn4.setSourcePortId("output-1");
         conn4.setTargetNodeId(5L);
+        conn4.setTargetNodeUuid(nodeIdToUuidMap.get(5L));
         conn4.setTargetPortId("input-1");
         conn4.setSourceParamIndex(null);
         conn4.setTargetParamIndex(null);
@@ -630,8 +644,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn5.setId(5L);
         conn5.setConnectionUuid("conn-judgemodel-tablegenerate");
         conn5.setSourceNodeId(5L);
+        conn5.setSourceNodeUuid(nodeIdToUuidMap.get(5L));
         conn5.setSourcePortId("output-1");
         conn5.setTargetNodeId(6L);
+        conn5.setTargetNodeUuid(nodeIdToUuidMap.get(6L));
         conn5.setTargetPortId("input-1");
         conn5.setSourceParamIndex(null);
         conn5.setTargetParamIndex(null);
@@ -643,8 +659,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         conn6.setId(6L);
         conn6.setConnectionUuid("conn-tablegenerate-end");
         conn6.setSourceNodeId(6L);
+        conn6.setSourceNodeUuid(nodeIdToUuidMap.get(6L));
         conn6.setSourcePortId("output-1");
         conn6.setTargetNodeId(7L);
+        conn6.setTargetNodeUuid(nodeIdToUuidMap.get(7L));
         conn6.setTargetPortId("input-1");
         conn6.setSourceParamIndex(null);
         conn6.setTargetParamIndex(null);
@@ -657,12 +675,14 @@ public class WorkflowServiceImpl implements WorkflowService {
     private List<WorkflowResponse.AssociationDTO> createDefaultAssociations() {
         List<WorkflowResponse.AssociationDTO> associations = new java.util.ArrayList<>();
 
-        // 循环节点(ID=4) 与 循环体节点(ID=8) 的关联
+        // 循环节点(ID=4, UUID="node-loop") 与 循环体节点(ID=8, UUID="node-loop-body") 的关联
         WorkflowResponse.AssociationDTO association = new WorkflowResponse.AssociationDTO();
         association.setId(1L);
-        association.setLoopNodeId(4L);  // 循环节点ID
-        association.setBodyNodeId(8L);  // 循环体节点ID
-        association.setAssociationType("loop-body");  // 关联类型
+        association.setLoopNodeId(4L);
+        association.setLoopNodeUuid("node-loop");
+        association.setBodyNodeId(8L);
+        association.setBodyNodeUuid("node-loop-body");
+        association.setAssociationType("loop-body");
         associations.add(association);
 
         return associations;

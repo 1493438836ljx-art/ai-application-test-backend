@@ -138,73 +138,83 @@ public class ChatServiceImpl implements ChatService {
                 ChatConversationEntity conversation;
                 boolean isNewConversation = request.getConversationId() == null || request.getConversationId().isEmpty();
 
-                // 获取或创建对话
-                if (isNewConversation) {
+                // 获取 workflowId（从 context 中）
+                Long workflowId = extractWorkflowId(request.getContext());
+
+                // 多轮会话模式：新对话时不立即创建，等获取 sessionId 后再创建
+                if (isNewConversation && agentExecutor != null && workflowId != null) {
+                    // 多轮会话模式 - 新对话
+                    // 先创建一个临时 conversation 用于存储用户消息
                     conversation = createConversationEntity(request.getUserId(), generateTitle(request.getMessage()));
-                } else {
+
+                    // 创建用户消息
+                    ChatMessageEntity userMessage = new ChatMessageEntity();
+                    userMessage.setConversationId(conversation.getId());
+                    userMessage.setMessageUuid(UUID.randomUUID().toString());
+                    userMessage.setRole("user");
+                    userMessage.setContent(request.getMessage());
+                    userMessage.setContentType("text");
+                    messageMapper.insert(userMessage);
+
+                    // 处理多轮会话（会在回调中更新 conversationId）
+                    processMultiRoundMessageWithNewSession(request.getMessage(), workflowId, conversation,
+                            emitter, objectMapper, request.getUserId());
+
+                } else if (!isNewConversation && agentExecutor != null && workflowId != null) {
+                    // 多轮会话模式 - 已有对话
                     conversation = conversationMapper.selectByConversationUuid(request.getConversationId())
                             .orElseThrow(() -> new RuntimeException("对话不存在: " + request.getConversationId()));
+
+                    // 创建用户消息
+                    ChatMessageEntity userMessage = new ChatMessageEntity();
+                    userMessage.setConversationId(conversation.getId());
+                    userMessage.setMessageUuid(UUID.randomUUID().toString());
+                    userMessage.setRole("user");
+                    userMessage.setContent(request.getMessage());
+                    userMessage.setContentType("text");
+                    messageMapper.insert(userMessage);
+
+                    // 发送对话ID
+                    sendStartEvent(emitter, objectMapper, conversation.getConversationUuid());
+
+                    // 处理多轮会话
+                    processMultiRoundMessage(request.getMessage(), workflowId, conversation, emitter, objectMapper);
+
+                } else {
+                    // 传统单轮模式
+                    if (isNewConversation) {
+                        conversation = createConversationEntity(request.getUserId(), generateTitle(request.getMessage()));
+                    } else {
+                        conversation = conversationMapper.selectByConversationUuid(request.getConversationId())
+                                .orElseThrow(() -> new RuntimeException("对话不存在: " + request.getConversationId()));
+                    }
+
+                    // 发送对话ID
+                    sendStartEvent(emitter, objectMapper, conversation.getConversationUuid());
+
+                    // 创建用户消息
+                    ChatMessageEntity userMessage = new ChatMessageEntity();
+                    userMessage.setConversationId(conversation.getId());
+                    userMessage.setMessageUuid(UUID.randomUUID().toString());
+                    userMessage.setRole("user");
+                    userMessage.setContent(request.getMessage());
+                    userMessage.setContentType("text");
+                    messageMapper.insert(userMessage);
+
+                    // 生成 AI 回复
+                    long startTime = System.currentTimeMillis();
+                    String fullContent = generateAIReply(request.getMessage());
+                    long latencyMs = System.currentTimeMillis() - startTime;
+
+                    // 流式发送内容
+                    sendChunkedContent(emitter, objectMapper, fullContent);
+
+                    // 保存AI消息到数据库
+                    saveAssistantMessage(conversation, fullContent, latencyMs);
+
+                    // 发送完成事件
+                    sendDoneEvent(emitter, objectMapper, conversation);
                 }
-
-                // 发送对话ID
-                Map<String, Object> startData = new HashMap<>();
-                startData.put("type", "start");
-                startData.put("conversationId", conversation.getConversationUuid());
-                emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(startData)));
-
-                // 创建用户消息
-                ChatMessageEntity userMessage = new ChatMessageEntity();
-                userMessage.setConversationId(conversation.getId());
-                userMessage.setMessageUuid(UUID.randomUUID().toString());
-                userMessage.setRole("user");
-                userMessage.setContent(request.getMessage());
-                userMessage.setContentType("text");
-                messageMapper.insert(userMessage);
-
-                // 获取AI回复
-                long startTime = System.currentTimeMillis();
-                String fullContent = generateAIReply(request.getMessage());
-                long latencyMs = System.currentTimeMillis() - startTime;
-
-                // 流式发送内容（按字符或词组分块）
-                int chunkSize = 5; // 每次发送5个字符
-                for (int i = 0; i < fullContent.length(); i += chunkSize) {
-                    int end = Math.min(i + chunkSize, fullContent.length());
-                    String chunk = fullContent.substring(i, end);
-
-                    Map<String, Object> chunkData = new HashMap<>();
-                    chunkData.put("type", "chunk");
-                    chunkData.put("content", chunk);
-                    emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
-
-                    // 添加短暂延迟以模拟打字效果
-                    Thread.sleep(30);
-                }
-
-                // 保存AI消息到数据库
-                ChatMessageEntity assistantMessage = new ChatMessageEntity();
-                assistantMessage.setConversationId(conversation.getId());
-                assistantMessage.setMessageUuid(UUID.randomUUID().toString());
-                assistantMessage.setRole("assistant");
-                assistantMessage.setContent(fullContent);
-                assistantMessage.setContentType("markdown");
-                assistantMessage.setLatencyMs(latencyMs);
-                messageMapper.insert(assistantMessage);
-
-                // 更新对话信息
-                conversation.setMessageCount(conversation.getMessageCount() + 2);
-                conversation.setLastMessageAt(LocalDateTime.now());
-                if (isNewConversation) {
-                    conversation.setTitle(generateTitle(request.getMessage()));
-                }
-                conversationMapper.updateById(conversation);
-
-                // 发送完成事件
-                Map<String, Object> doneData = new HashMap<>();
-                doneData.put("type", "done");
-                doneData.put("messageUuid", assistantMessage.getMessageUuid());
-                doneData.put("latencyMs", latencyMs);
-                emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(doneData)));
 
                 emitter.complete();
             } catch (Exception e) {
@@ -234,6 +244,343 @@ public class ChatServiceImpl implements ChatService {
         });
 
         return emitter;
+    }
+
+    /**
+     * 处理新对话的多轮会话消息
+     * 等待 Claude CLI 返回 sessionId 后，用它作为 conversationId
+     */
+    private void processMultiRoundMessageWithNewSession(String userMessage, Long workflowId,
+                                                         ChatConversationEntity tempConversation,
+                                                         SseEmitter emitter, ObjectMapper objectMapper,
+                                                         String userId) {
+        StringBuilder fullContent = new StringBuilder();
+        final long[] startTime = {System.currentTimeMillis()};
+        final boolean[] messageSaved = {false};
+        final boolean[] sessionCreated = {false};
+        final ChatConversationEntity[] finalConversation = {tempConversation};
+
+        agentExecutor.processMessage(
+                userMessage,
+                workflowId,
+                null,  // conversationId 为 null，表示新会话
+                new AgentExecutor.MultiRoundCallback() {
+
+                    @Override
+                    public void onSessionCreated(String sessionId) {
+                        try {
+                            log.info("收到新的 sessionId: {}, 将用作 conversationId", sessionId);
+
+                            // 更新 conversation 的 UUID 为 sessionId
+                            tempConversation.setConversationUuid(sessionId);
+                            conversationMapper.updateById(tempConversation);
+
+                            finalConversation[0] = tempConversation;
+                            sessionCreated[0] = true;
+
+                            // 发送 start 事件给前端
+                            sendStartEvent(emitter, objectMapper, sessionId);
+
+                        } catch (Exception e) {
+                            log.error("处理 sessionId 失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onReasoning(String reasoning) {
+                        try {
+                            // 确保已发送 start 事件
+                            if (!sessionCreated[0]) {
+                                sendStartEvent(emitter, objectMapper, tempConversation.getConversationUuid());
+                                sessionCreated[0] = true;
+                            }
+
+                            Map<String, Object> chunkData = new HashMap<>();
+                            chunkData.put("type", "chunk");
+                            chunkData.put("content", "💭 " + reasoning + "\n\n");
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                            fullContent.append("💭 ").append(reasoning).append("\n\n");
+                        } catch (IOException e) {
+                            log.error("发送推理内容失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onStatus(String status) {
+                        try {
+                            Map<String, Object> chunkData = new HashMap<>();
+                            chunkData.put("type", "chunk");
+                            chunkData.put("content", "⏳ " + status + "\n\n");
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                            fullContent.append("⏳ ").append(status).append("\n\n");
+                        } catch (IOException e) {
+                            log.error("发送状态更新失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onWorkflowUpdate(Object result) {
+                        try {
+                            Map<String, Object> actionData = new HashMap<>();
+                            actionData.put("type", "workflow_update");
+                            actionData.put("workflowId", workflowId);
+                            actionData.put("result", result);
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(actionData)));
+                            log.info("发送工作流更新事件: workflowId={}", workflowId);
+                        } catch (IOException e) {
+                            log.error("发送工作流更新事件失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onComplete(String summary, Object result) {
+                        try {
+                            long latencyMs = System.currentTimeMillis() - startTime[0];
+
+                            if (summary != null && !summary.isBlank()) {
+                                Map<String, Object> chunkData = new HashMap<>();
+                                chunkData.put("type", "chunk");
+                                chunkData.put("content", summary);
+                                emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                                fullContent.append(summary);
+                            }
+
+                            saveAssistantMessage(finalConversation[0], fullContent.toString(), latencyMs);
+                            messageSaved[0] = true;
+
+                            sendDoneEvent(emitter, objectMapper, finalConversation[0]);
+
+                        } catch (IOException e) {
+                            log.error("发送完成事件失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        try {
+                            long latencyMs = System.currentTimeMillis() - startTime[0];
+
+                            Map<String, Object> chunkData = new HashMap<>();
+                            chunkData.put("type", "chunk");
+                            chunkData.put("content", "\n❌ " + error + "\n\n");
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                            fullContent.append("\n❌ ").append(error).append("\n\n");
+
+                            if (!messageSaved[0]) {
+                                saveAssistantMessage(finalConversation[0], fullContent.toString(), latencyMs);
+                            }
+
+                            Map<String, Object> errorData = new HashMap<>();
+                            errorData.put("type", "error");
+                            errorData.put("message", error);
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(errorData)));
+
+                        } catch (IOException e) {
+                            log.error("发送错误事件失败: {}", e.getMessage());
+                        }
+                    }
+                }
+        );
+    }
+
+    /**
+     * 发送 start 事件
+     */
+    private void sendStartEvent(SseEmitter emitter, ObjectMapper objectMapper, String conversationId) throws IOException {
+        Map<String, Object> startData = new HashMap<>();
+        startData.put("type", "start");
+        startData.put("conversationId", conversationId);
+        emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(startData)));
+    }
+
+    /**
+     * 处理多轮会话消息（已有会话）
+     */
+    private void processMultiRoundMessage(String userMessage, Long workflowId,
+                                           ChatConversationEntity conversation,
+                                           SseEmitter emitter, ObjectMapper objectMapper) {
+        StringBuilder fullContent = new StringBuilder();
+        final long[] startTime = {System.currentTimeMillis()};
+        final boolean[] messageSaved = {false};
+
+        agentExecutor.processMessage(
+                userMessage,
+                workflowId,
+                conversation.getConversationUuid(),
+                new AgentExecutor.MultiRoundCallback() {
+
+                    @Override
+                    public void onSessionCreated(String sessionId) {
+                        // 已有会话通常不会触发此回调，但以防万一
+                        log.info("已有会话收到新的 sessionId: {}", sessionId);
+                    }
+
+                    @Override
+                    public void onReasoning(String reasoning) {
+                        try {
+                            // 发送推理内容
+                            Map<String, Object> chunkData = new HashMap<>();
+                            chunkData.put("type", "chunk");
+                            chunkData.put("content", "💭 " + reasoning + "\n\n");
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                            fullContent.append("💭 ").append(reasoning).append("\n\n");
+                        } catch (IOException e) {
+                            log.error("发送推理内容失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onStatus(String status) {
+                        try {
+                            // 发送状态更新
+                            Map<String, Object> chunkData = new HashMap<>();
+                            chunkData.put("type", "chunk");
+                            chunkData.put("content", "⏳ " + status + "\n\n");
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                            fullContent.append("⏳ ").append(status).append("\n\n");
+                        } catch (IOException e) {
+                            log.error("发送状态更新失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onWorkflowUpdate(Object result) {
+                        try {
+                            // 发送工作流更新事件给前端
+                            Map<String, Object> actionData = new HashMap<>();
+                            actionData.put("type", "workflow_update");
+                            actionData.put("workflowId", workflowId);
+                            actionData.put("result", result);
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(actionData)));
+                            log.info("发送工作流更新事件: workflowId={}", workflowId);
+                        } catch (IOException e) {
+                            log.error("发送工作流更新事件失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onComplete(String summary, Object result) {
+                        try {
+                            long latencyMs = System.currentTimeMillis() - startTime[0];
+
+                            // 发送最终摘要
+                            if (summary != null && !summary.isBlank()) {
+                                Map<String, Object> chunkData = new HashMap<>();
+                                chunkData.put("type", "chunk");
+                                chunkData.put("content", summary);
+                                emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                                fullContent.append(summary);
+                            }
+
+                            // 保存AI消息到数据库
+                            saveAssistantMessage(conversation, fullContent.toString(), latencyMs);
+                            messageSaved[0] = true;
+
+                            // 发送完成事件
+                            sendDoneEvent(emitter, objectMapper, conversation);
+
+                        } catch (IOException e) {
+                            log.error("发送完成事件失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        try {
+                            long latencyMs = System.currentTimeMillis() - startTime[0];
+
+                            // 发送错误信息
+                            Map<String, Object> chunkData = new HashMap<>();
+                            chunkData.put("type", "chunk");
+                            chunkData.put("content", "\n❌ " + error + "\n\n");
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                            fullContent.append("\n❌ ").append(error).append("\n\n");
+
+                            // 保存AI消息（包含错误信息）
+                            if (!messageSaved[0]) {
+                                saveAssistantMessage(conversation, fullContent.toString(), latencyMs);
+                            }
+
+                            // 发送错误事件
+                            Map<String, Object> errorData = new HashMap<>();
+                            errorData.put("type", "error");
+                            errorData.put("message", error);
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(errorData)));
+
+                        } catch (IOException e) {
+                            log.error("发送错误事件失败: {}", e.getMessage());
+                        }
+                    }
+                }
+        );
+    }
+
+    /**
+     * 从 context 中提取 workflowId
+     */
+    private Long extractWorkflowId(Object context) {
+        if (context == null) {
+            return null;
+        }
+        try {
+            if (context instanceof Map) {
+                Object workflowId = ((Map<?, ?>) context).get("workflowId");
+                if (workflowId != null) {
+                    return Long.valueOf(workflowId.toString());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("提取 workflowId 失败: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * 流式发送内容
+     */
+    private void sendChunkedContent(SseEmitter emitter, ObjectMapper objectMapper, String content) throws IOException, InterruptedException {
+        int chunkSize = 5; // 每次发送5个字符
+        for (int i = 0; i < content.length(); i += chunkSize) {
+            int end = Math.min(i + chunkSize, content.length());
+            String chunk = content.substring(i, end);
+
+            Map<String, Object> chunkData = new HashMap<>();
+            chunkData.put("type", "chunk");
+            chunkData.put("content", chunk);
+            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+
+            // 添加短暂延迟以模拟打字效果
+            Thread.sleep(30);
+        }
+    }
+
+    /**
+     * 保存AI消息到数据库
+     */
+    private void saveAssistantMessage(ChatConversationEntity conversation, String content, long latencyMs) {
+        ChatMessageEntity assistantMessage = new ChatMessageEntity();
+        assistantMessage.setConversationId(conversation.getId());
+        assistantMessage.setMessageUuid(UUID.randomUUID().toString());
+        assistantMessage.setRole("assistant");
+        assistantMessage.setContent(content);
+        assistantMessage.setContentType("markdown");
+        assistantMessage.setLatencyMs(latencyMs);
+        messageMapper.insert(assistantMessage);
+
+        // 更新对话信息
+        conversation.setMessageCount(conversation.getMessageCount() + 2);
+        conversation.setLastMessageAt(LocalDateTime.now());
+        conversationMapper.updateById(conversation);
+    }
+
+    /**
+     * 发送完成事件
+     */
+    private void sendDoneEvent(SseEmitter emitter, ObjectMapper objectMapper, ChatConversationEntity conversation) throws IOException {
+        Map<String, Object> doneData = new HashMap<>();
+        doneData.put("type", "done");
+        doneData.put("conversationId", conversation.getConversationUuid());
+        emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(doneData)));
     }
 
     @Override

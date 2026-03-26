@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.agent.mapper.AgentSessionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.agent.entity.AgentSessionEntity">
+        <id column="id" property="id"/>
+        <result column="conversation_id" property="conversationId"/>
+        <result column="workflow_id" property="workflowId"/>
+        <result column="status" property="status"/>
+        <result column="query_results" property="queryResults"/>
+        <result column="action_results" property="actionResults"/>
+        <result column="last_reasoning" property="lastReasoning"/>
+        <result column="round_count" property="roundCount"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, conversation_id, workflow_id, status, query_results, action_results,
+        last_reasoning, round_count, created_at, updated_at
+    </sql>
+
+    <!-- 根据会话ID查询 -->
+    <select id="selectByConversationId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM agent_session
+        WHERE conversation_id = #{conversationId}
+        LIMIT 1
+    </select>
+
+    <!-- 根据工作流ID查询活跃会话 -->
+    <select id="selectActiveByWorkflowId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM agent_session
+        WHERE workflow_id = #{workflowId}
+        AND status = 'ACTIVE'
+        ORDER BY updated_at DESC
+        LIMIT 1
+    </select>
+
+</mapper>

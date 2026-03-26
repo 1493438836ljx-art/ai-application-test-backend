@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Skill
+metadata:
+  name: workflow-assistant
+  version: 1.0.0
+  description: 工作流智能助手，帮助用户管理、配置和执行工作流
+  author: AI Test Platform Team
+spec:
+  type: cli
+  runtime: generic
+  mode: plan-only
+  outputFormat: json
+  capabilities:
+    - 查看工作流结构和节点信息
+    - 理解节点类型的参数定义
+    - 智能生成节点配置参数
+    - 批量更新节点配置
+    - 执行工作流
+    - 查看执行结果

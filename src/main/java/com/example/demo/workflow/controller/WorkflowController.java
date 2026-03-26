@@ -63,7 +63,7 @@ public class WorkflowController {
     /**
      * 获取工作流列表
      *
-     * @param page 页码
+     * @param page 页码（前端从1开始，后端自动转换为0开始）
      * @param size 每页大小
      * @param sort 排序字段
      * @return 工作流分页列表
@@ -71,8 +71,8 @@ public class WorkflowController {
     @GetMapping("/list")
     @Operation(summary = "获取工作流列表", description = "分页获取工作流列表")
     public ResponseEntity<Page<WorkflowResponse>> getWorkflowList(
-            @Parameter(description = "页码", example = "0")
-            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "页码（从1开始）", example = "1")
+            @RequestParam(defaultValue = "1") int page,
             @Parameter(description = "每页大小", example = "10")
             @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "排序字段", example = "createdAt")
@@ -80,7 +80,8 @@ public class WorkflowController {
             @Parameter(description = "排序方向", example = "DESC")
             @RequestParam(defaultValue = "DESC") String direction) {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
+        // 前端页码从1开始，Spring Data 页码从0开始，需要减1
+        Pageable pageable = PageRequest.of(Math.max(0, page - 1), size, Sort.by(sortDirection, sort));
         Page<WorkflowResponse> response = workflowService.getWorkflowList(pageable);
         return ResponseEntity.ok(response);
     }

@@ -84,8 +84,22 @@ public class ClaudeCodeApiClient {
      * @return 任务执行响应
      */
     public TaskExecuteResponse executeTask(String taskContent, String configJson, byte[] skillFile, String skillFileName) {
+        return executeTask(taskContent, configJson, skillFile, skillFileName, null);
+    }
+
+    /**
+     * 执行任务（带 Skill 文件和 sessionId）
+     *
+     * @param taskContent  任务内容
+     * @param configJson   配置 JSON 字符串（可选）
+     * @param skillFile    Skill 文件字节数组（可选）
+     * @param skillFileName Skill 文件名（可选）
+     * @param sessionId    会话ID（可选，用于多轮对话）
+     * @return 任务执行响应
+     */
+        public TaskExecuteResponse executeTask(String taskContent, String configJson, byte[] skillFile, String skillFileName, String sessionId) {
         String url = properties.getBaseUrl() + "/api/task";
-        log.debug("执行任务，请求 URL: {}, 任务内容: {}", url, taskContent);
+        log.debug("执行任务，请求 URL: {}, 任务内容: {}, sessionId: {}", url, taskContent, sessionId);
 
         // 构建 multipart/form-data 请求
         HttpHeaders headers = new HttpHeaders();
@@ -110,6 +124,12 @@ public class ClaudeCodeApiClient {
                 }
             };
             body.add("skillFile", resource);
+        }
+
+        // 添加可选字段：sessionId（多轮会话支持）
+        if (sessionId != null && !sessionId.isBlank()) {
+            body.add("sessionId", sessionId);
+            log.info("使用会话ID: {}", sessionId);
         }
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
@@ -155,7 +175,18 @@ public class ClaudeCodeApiClient {
      * @return 任务执行响应
      */
     public TaskExecuteResponse executeTask(String taskContent, String configJson) {
-        return executeTask(taskContent, configJson, null, null);
+        return executeTask(taskContent, configJson, null, null, null);
+    }
+
+    /**
+     * 执行任务（带 sessionId，     *
+     * @param taskContent 任务内容
+     * @param configJson  配置 JSON 字符串（可选）
+     * @param sessionId  会话ID（可选）
+     * @return 任务执行响应
+     */
+    public TaskExecuteResponse executeTask(String taskContent, String configJson, String sessionId) {
+        return executeTask(taskContent, configJson, null, null, sessionId);
     }
 
     /**
@@ -168,7 +199,8 @@ public class ClaudeCodeApiClient {
     public TaskExecuteResponse executeTask(TaskExecuteRequest request, byte[] skillFile) {
         String configJson = request.getConfig();
         String skillFileName = request.getSkillFileName();
-        return executeTask(request.getTaskContent(), configJson, skillFile, skillFileName);
+        String sessionId = request.getSessionId();
+        return executeTask(request.getTaskContent(), configJson, skillFile, skillFileName, sessionId);
     }
 
     /**
