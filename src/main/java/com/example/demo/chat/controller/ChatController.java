@@ -60,7 +60,7 @@ public class ChatController {
     @Operation(summary = "流式发送消息", description = "发送用户消息并流式获取AI回复")
     public SseEmitter streamMessage(@Valid @RequestBody ChatSendRequest request) {
         log.info("流式发送消息: {}", request.getMessage());
-        return chatService.streamMessage(request);
+        return chatService.streamMessageRealtime(request);  // 使用真正的流式方法
     }
 
     /**

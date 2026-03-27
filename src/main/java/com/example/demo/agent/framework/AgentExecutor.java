@@ -1,9 +1,11 @@
 package com.example.demo.agent.framework;
 
 import com.example.demo.agent.client.ClaudeCodeApiClient;
+import com.example.demo.agent.client.ClaudeCodeStreamClient;
 import com.example.demo.agent.dto.AgentConfig;
 import com.example.demo.agent.dto.AgentRequest;
 import com.example.demo.agent.dto.AgentResponse;
+import com.example.demo.agent.dto.StreamChunk;
 import com.example.demo.agent.dto.TaskExecuteResponse;
 import com.example.demo.agent.entity.AgentSessionEntity;
 import com.example.demo.agent.service.AgentSessionService;
@@ -22,6 +24,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,6 +51,7 @@ import java.util.Map;
 public class AgentExecutor {
 
     private final ClaudeCodeApiClient apiClient;
+    private final ClaudeCodeStreamClient streamClient;
     private final AgentSessionService sessionService;
     private final ObjectMapper objectMapper;
 
@@ -63,10 +68,14 @@ public class AgentExecutor {
      * 构造函数
      *
      * @param apiClient      Claude Code API 客户端
+     * @param streamClient   Claude Code 流式客户端
      * @param sessionService Agent 会话服务
      */
-    public AgentExecutor(ClaudeCodeApiClient apiClient, AgentSessionService sessionService) {
+    public AgentExecutor(ClaudeCodeApiClient apiClient,
+                         @org.springframework.beans.factory.annotation.Autowired(required = false) ClaudeCodeStreamClient streamClient,
+                         AgentSessionService sessionService) {
         this.apiClient = apiClient;
+        this.streamClient = streamClient;
         this.sessionService = sessionService;
         this.objectMapper = new ObjectMapper();
         // 注册 Java 8 日期时间模块
@@ -566,6 +575,10 @@ public class AgentExecutor {
      */
     private String buildContext(String userMessage, AgentSessionEntity session) {
         StringBuilder sb = new StringBuilder();
+
+        // 强调使用中文回复
+        sb.append("【重要】必须按要求格式输出，请务必使用中文进行所有回复和输出，包括 reasoning、summary 等字段内容。\n\n");
+
         sb.append("用户请求: ").append(userMessage).append("\n\n");
         sb.append("workflowId: ").append(session.getWorkflowId()).append("\n\n");
 
@@ -590,6 +603,9 @@ public class AgentExecutor {
      */
     private String buildContextWithResults(AgentSessionEntity session, Map<String, Object> newResults, String resultType) {
         StringBuilder sb = new StringBuilder();
+
+        // 强调使用中文回复
+        sb.append("【重要】请务必使用中文进行所有回复和输出。\n\n");
 
         sb.append("本轮").append(resultType.equals("query") ? "查询" : "操作").append("结果:\n");
         try {
@@ -616,6 +632,9 @@ public class AgentExecutor {
     private String buildErrorContext(AgentSessionEntity session, String errorType, String errorDetail) {
         StringBuilder sb = new StringBuilder();
 
+        // 强调使用中文回复
+        sb.append("【重要】必须按要求格式输出，请务必使用中文进行所有回复和输出，包括 reasoning、summary 等字段内容。\n\n");
+
         sb.append("【错误反馈】\n\n");
         sb.append("你的上一轮响应存在问题，请根据以下信息修正后重新生成响应：\n\n");
         sb.append("错误类型: ").append(errorType).append("\n");
@@ -639,7 +658,7 @@ public class AgentExecutor {
             sb.append("之前的操作结果:\n").append(session.getActionResults()).append("\n\n");
         }
 
-        sb.append("请重新生成符合格式要求的响应。");
+        sb.append("请使用中文重新生成符合格式要求的响应。");
 
         return sb.toString();
     }
@@ -1000,6 +1019,364 @@ public class AgentExecutor {
          * @param error 错误信息
          */
         void onError(String error);
+    }
+
+    /**
+     * 流式回调接口（用于真正的实时流式处理）
+     */
+    public interface StreamCallback {
+
+        /**
+         * 会话开始回调
+         *
+         * @param sessionId 会话ID
+         */
+        default void onStart(String sessionId) {
+            log.debug("流式会话开始: sessionId={}", sessionId);
+        }
+
+        /**
+         * 内容块回调（实时接收 AI 输出）
+         *
+         * @param chunk 流式数据块（包含 content, contentType, toolName 等）
+         */
+        void onChunk(StreamChunk chunk);
+
+        /**
+         * 工作流更新回调（当 AI 修改工作流时触发）
+         *
+         * @param result 更新结果
+         */
+        default void onWorkflowUpdate(Object result) {
+            log.debug("工作流更新: {}", result);
+        }
+
+        /**
+         * 任务完成回调
+         *
+         * @param sessionId 会话ID
+         * @param duration  执行耗时（毫秒）
+         */
+        default void onDone(String sessionId, Long duration) {
+            log.debug("流式会话完成: sessionId={}, duration={}ms", sessionId, duration);
+        }
+
+        /**
+         * 错误回调
+         *
+         * @param error 错误信息
+         */
+        void onError(String error);
+    }
+
+    /**
+     * 流式处理用户消息（真正的实时流式）
+     * 支持多轮对话和 Skill 文件
+     *
+     * @param userMessage    用户消息
+     * @param workflowId     工作流ID
+     * @param conversationId 会话ID（即 Claude CLI session ID）
+     * @param callback       流式回调
+     */
+    public void processMessageStream(String userMessage, Long workflowId, String conversationId,
+                                      StreamCallback callback) {
+        processMessageStreamWithMultiRound(userMessage, workflowId, conversationId, callback, true);
+    }
+
+    /**
+     * 流式处理用户消息（支持多轮循环）
+     *
+     * @param userMessage    用户消息
+     * @param workflowId     工作流ID
+     * @param conversationId 会话ID
+     * @param callback       流式回调
+     * @param isFirstRound   是否是第一轮（第一轮需要加载 Skill 文件）
+     */
+    private void processMessageStreamWithMultiRound(String userMessage, Long workflowId, String conversationId,
+                                                     StreamCallback callback, boolean isFirstRound) {
+        if (streamClient == null) {
+            log.warn("流式客户端未初始化，回退到同步模式");
+            callback.onError("流式客户端未初始化");
+            return;
+        }
+
+        try {
+            log.info("开始流式处理消息: conversationId={}, workflowId={}, isFirstRound={}",
+                    conversationId, workflowId, isFirstRound);
+
+            // 判断是否是新会话
+            boolean isNewSession = conversationId == null || conversationId.isEmpty();
+
+            // 获取或创建 session
+            AgentSessionEntity session = sessionService.getOrCreateSession(workflowId, conversationId);
+
+            // 构建上下文（使用和同步方式相同的上下文构建）
+            String context = buildContext(userMessage, session);
+
+            // 确定是否需要加载 Skill 文件（第一轮且新会话时需要）
+            byte[] skillFileBytes = null;
+            String skillFileName = null;
+            String sessionIdForApi = null;
+
+            if (isNewSession && isFirstRound) {
+                log.info("新会话第一轮，加载 Skill 文件: {}", skillFilePath);
+                skillFileBytes = loadSkillFile();
+                skillFileName = "workflow-assistant.zip";
+                sessionIdForApi = null;  // 新会话不传 sessionId，让 Claude CLI 生成
+            } else {
+                log.info("已有会话或后续轮次，sessionId: {}", session.getConversationId());
+                skillFileBytes = null;  // 已有会话不传 Skill 文件
+                skillFileName = null;
+                sessionIdForApi = session.getConversationId();  // 传 sessionId 恢复会话
+            }
+
+            // 收集完整响应用于多轮判断
+            StringBuilder fullResponse = new StringBuilder();
+            java.util.concurrent.atomic.AtomicBoolean completed = new java.util.concurrent.atomic.AtomicBoolean(false);
+
+            // 调用流式 API（使用完整参数，包含 skillFile）
+            // 使用真正的流式处理，每个 chunk 实时转发
+            streamClient.executeTaskStream(context, null, skillFileBytes, skillFileName, sessionIdForApi)
+                    .subscribe(
+                            chunk -> {
+                                // 实时处理每个 chunk
+                                handleStreamChunk(session, chunk, callback, isNewSession && isFirstRound);
+
+                                // 收集文本内容用于多轮判断
+                                if ("chunk".equals(chunk.getType()) && chunk.getContentOrMessage() != null) {
+                                    // 只收集 text 和 result 类型的内容
+                                    String contentType = chunk.getContentType();
+                                    if ("text".equals(contentType) || "result".equals(contentType) || contentType == null) {
+                                        fullResponse.append(chunk.getContentOrMessage());
+                                    }
+                                }
+
+                                // 如果收到 done 事件，标记完成并处理多轮逻辑
+                                if ("done".equals(chunk.getType()) && !completed.getAndSet(true)) {
+                                    // 尝试解析 AgentPlan，判断是否需要继续下一轮
+                                    handleStreamCompletion(session, fullResponse.toString(), workflowId, callback, isFirstRound);
+                                }
+                            },
+                            error -> {
+                                log.error("流式处理错误: {}", error.getMessage());
+                                callback.onError("流式处理错误: " + error.getMessage());
+                            },
+                            () -> {
+                                // 流完成时的回调
+                                log.info("流式传输完成: workflowId={}", workflowId);
+                                // 如果还没有处理完成（可能没有收到 done 事件），在这里处理
+                                if (!completed.getAndSet(true)) {
+                                    handleStreamCompletion(session, fullResponse.toString(), workflowId, callback, isFirstRound);
+                                }
+                            }
+                    );
+
+        } catch (Exception e) {
+            log.error("流式处理异常: {}", e.getMessage(), e);
+            callback.onError("流式处理异常: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 处理流式完成后的多轮判断
+     */
+    private void handleStreamCompletion(AgentSessionEntity session, String fullResponse,
+                                         Long workflowId, StreamCallback callback, boolean isFirstRound) {
+        try {
+            // 尝试解析 AI 响应为 AgentPlan
+            AgentPlan plan = parseAgentPlan(fullResponse);
+
+            log.info("流式响应解析完成: status={}, isFirstRound={}", plan.getStatus(), isFirstRound);
+
+            switch (plan.getStatus()) {
+                case "query":
+                    // AI 需要查询信息
+                    log.info("检测到 query 请求，执行查询...");
+                    Map<String, Object> queryResults = executeQueriesInStream(plan.getQueries(), session);
+                    // 构建带结果的上下文，递归调用下一轮
+                    String queryContext = buildContextWithResults(session, queryResults, "query");
+                    processMessageStreamWithMultiRound(queryContext, workflowId, session.getConversationId(),
+                            callback, false);
+                    break;
+
+                case "action":
+                    // AI 要执行操作
+                    log.info("检测到 action 请求，执行操作...");
+                    Map<String, Object> actionResults = executeActionsInStream(plan.getActions(), session, callback);
+                    // 构建带结果的上下文，递归调用下一轮
+                    String actionContext = buildContextWithResults(session, actionResults, "action");
+                    processMessageStreamWithMultiRound(actionContext, workflowId, session.getConversationId(),
+                            callback, false);
+                    break;
+
+                case "complete":
+                    // 任务完成
+                    log.info("任务完成: {}", plan.getSummary());
+                    callback.onDone(session.getConversationId(), null);
+                    // 异步更新状态
+                    Mono.fromRunnable(() -> {
+                        try {
+                            sessionService.markAsCompleted(session.getConversationId());
+                        } catch (Exception e) {
+                            log.error("标记会话完成失败: {}", e.getMessage());
+                        }
+                    }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                    break;
+
+                case "parse_error":
+                    // 解析错误，将问题反馈给 AI
+                    log.warn("响应格式解析错误: {}", plan.getSummary());
+                    String errorContext = buildErrorContext(session, "响应格式解析错误", plan.getSummary());
+                    processMessageStreamWithMultiRound(errorContext, workflowId, session.getConversationId(),
+                            callback, false);
+                    break;
+
+                default:
+                    // 未知的 status，可能是自然语言响应（非 JSON 格式）
+                    // 这种情况下直接完成任务
+                    log.info("非结构化响应，直接完成");
+                    callback.onDone(session.getConversationId(), null);
+                    break;
+            }
+        } catch (Exception e) {
+            log.error("处理流式完成异常: {}", e.getMessage(), e);
+            // 如果解析失败，可能是纯自然语言响应，直接完成
+            callback.onDone(session.getConversationId(), null);
+        }
+    }
+
+    /**
+     * 在流式模式下执行查询
+     */
+    private Map<String, Object> executeQueriesInStream(List<AgentPlan.Query> queries, AgentSessionEntity session) {
+        Map<String, Object> queryResults = new HashMap<>();
+
+        if (queries == null || queries.isEmpty()) {
+            log.warn("查询请求为空");
+            return queryResults;
+        }
+
+        for (AgentPlan.Query query : queries) {
+            log.info("流式模式执行查询: id={}, path={}", query.getId(), query.getPath());
+            Object result = executeQuery(query.getMethod(), query.getPath(), query.getParams());
+            queryResults.put(query.getId(), result);
+        }
+
+        // 更新 session 的查询结果
+        sessionService.updateQueryResults(session.getConversationId(), queryResults);
+
+        return queryResults;
+    }
+
+    /**
+     * 在流式模式下执行操作
+     */
+    private Map<String, Object> executeActionsInStream(List<AgentPlan.Action> actions, AgentSessionEntity session,
+                                                        StreamCallback callback) {
+        Map<String, Object> actionResults = new HashMap<>();
+
+        if (actions == null || actions.isEmpty()) {
+            log.warn("操作请求为空");
+            return actionResults;
+        }
+
+        for (AgentPlan.Action action : actions) {
+            log.info("流式模式执行操作: id={}, method={}, path={}",
+                    action.getId(), action.getMethod(), action.getPath());
+
+            Object result = executeAction(action.getMethod(), action.getPath(), action.getBody());
+            actionResults.put(action.getId(), result);
+
+            // 如果是更新节点配置，通过特殊回调通知前端
+            if (action.getPath() != null && action.getPath().contains("/data/json")) {
+                // 这里可以发送一个特殊的 chunk 通知前端工作流已更新
+                log.info("工作流数据已更新，通知前端");
+            }
+        }
+
+        // 更新 session 的操作结果
+        sessionService.updateActionResults(session.getConversationId(), actionResults);
+
+        return actionResults;
+    }
+
+    /**
+     * 处理流式数据块
+     * 注意：这个方法在 Reactor 的 Netty 线程中执行，不能进行阻塞操作
+     */
+    private void handleStreamChunk(AgentSessionEntity session, StreamChunk chunk,
+                                    StreamCallback callback, boolean isNewSession) {
+        log.info("处理流式块: type={}, sessionId={}, content={}", chunk.getType(), chunk.getSessionId(),
+                chunk.getContentOrMessage() != null ? chunk.getContentOrMessage().substring(0, Math.min(50, chunk.getContentOrMessage().length())) + "..." : "null");
+
+        switch (chunk.getType()) {
+            case "start":
+                // 会话开始，更新 sessionId
+                if (chunk.getSessionId() != null && isNewSession) {
+                    String oldId = session.getConversationId();
+                    String newId = chunk.getSessionId();
+                    // 更新内存中的 session 对象
+                    session.setConversationId(newId);
+                    // 异步执行数据库更新，不阻塞当前流
+                    Mono.fromRunnable(() -> {
+                        try {
+                            sessionService.updateConversationId(oldId, newId);
+                            log.info("会话ID更新成功: {} -> {}", oldId, newId);
+                        } catch (Exception e) {
+                            log.error("更新会话ID失败: {}", e.getMessage());
+                        }
+                    }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+
+                    callback.onStart(newId);
+                }
+                break;
+
+            case "chunk":
+                // 直接转发内容块给前端（包含 contentType 等元数据）
+                if (chunk.getContentOrMessage() != null) {
+                    log.info("转发 chunk 到回调，contentType={}, toolName={}, contentLength={}",
+                            chunk.getContentType(), chunk.getToolName(), chunk.getContentOrMessage().length());
+                    callback.onChunk(chunk);
+                }
+                break;
+
+            case "done":
+                // 注意：在多轮模式下，done 事件由 handleStreamCompletion 统一处理
+                // 这里只记录日志，不调用 callback.onDone()
+                // 因为 collectList().subscribe() 会在收集完成后调用 handleStreamCompletion
+                log.debug("收到 done 事件，sessionId={}, duration={}", chunk.getSessionId(), chunk.getDuration());
+                break;
+
+            case "error":
+                // 错误
+                String errorMsg = chunk.getContentOrMessage() != null
+                        ? chunk.getContentOrMessage()
+                        : "未知错误";
+                callback.onError(errorMsg);
+                // 异步更新状态
+                Mono.fromRunnable(() -> {
+                    try {
+                        sessionService.markAsError(session.getConversationId(), errorMsg);
+                    } catch (Exception e) {
+                        log.error("标记会话错误失败: {}", e.getMessage());
+                    }
+                }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                break;
+
+            default:
+                log.debug("未知的流式块类型: {}", chunk.getType());
+        }
+    }
+
+    /**
+     * 构建流式上下文（简化版，用于直接流式响应）
+     */
+    private String buildStreamContext(String userMessage, AgentSessionEntity session) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("用户请求: ").append(userMessage).append("\n\n");
+        sb.append("workflowId: ").append(session.getWorkflowId()).append("\n\n");
+        sb.append("请直接响应用户请求，以自然语言形式回复。");
+        return sb.toString();
     }
 
     /**

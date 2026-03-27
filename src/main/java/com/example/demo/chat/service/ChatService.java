@@ -94,4 +94,13 @@ public interface ChatService {
      * @param request     反馈请求
      */
     void submitFeedback(String messageUuid, com.example.demo.chat.dto.FeedbackRequest request);
+
+    /**
+     * 流式发送消息（真正的端到端流式）
+     * 使用 WebClient 流式调用 AI 服务，实时转发给前端
+     *
+     * @param request 发送请求
+     * @return SSE 发射器
+     */
+    SseEmitter streamMessageRealtime(ChatSendRequest request);
 }

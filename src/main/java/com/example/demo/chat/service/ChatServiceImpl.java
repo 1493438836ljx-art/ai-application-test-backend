@@ -28,6 +28,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 /**
  * AI聊天服务实现类 (MyBatis-Plus版本)
  *
@@ -65,6 +68,164 @@ public class ChatServiceImpl implements ChatService {
     @Autowired(required = false)
     public void setAgentExecutor(AgentExecutor agentExecutor) {
         this.agentExecutor = agentExecutor;
+    }
+
+    /**
+     * 流式发送消息（真正的端到端流式）
+     * 使用 WebClient 流式调用 AI 服务，实时转发给前端
+     */
+    @Override
+    public SseEmitter streamMessageRealtime(ChatSendRequest request) {
+        log.info("实时流式发送消息: conversationId={}, message={}", request.getConversationId(), request.getMessage());
+
+        // 创建 SSE 发射器，超时 10 分钟
+        SseEmitter emitter = new SseEmitter(600000L);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // 从 context 中提取 workflowId
+        Long workflowId = extractWorkflowId(request.getContext());
+        boolean isNewConversation = request.getConversationId() == null || request.getConversationId().isEmpty();
+
+        // 创建或获取对话
+        ChatConversationEntity conversation;
+        if (isNewConversation) {
+            conversation = createConversationEntity(request.getUserId(), generateTitle(request.getMessage()));
+        } else {
+            conversation = conversationMapper.selectByConversationUuid(request.getConversationId())
+                    .orElseThrow(() -> new RuntimeException("对话不存在: " + request.getConversationId()));
+        }
+
+        // 创建用户消息
+        ChatMessageEntity userMessage = new ChatMessageEntity();
+        userMessage.setConversationId(conversation.getId());
+        userMessage.setMessageUuid(UUID.randomUUID().toString());
+        userMessage.setRole("user");
+        userMessage.setContent(request.getMessage());
+        userMessage.setContentType("text");
+        messageMapper.insert(userMessage);
+
+        StringBuilder fullContent = new StringBuilder();
+        long[] startTime = {System.currentTimeMillis()};
+        String[] finalSessionId = {conversation.getConversationUuid()};
+
+        // 使用流式 API
+        agentExecutor.processMessageStream(
+                request.getMessage(),
+                workflowId,
+                isNewConversation ? null : conversation.getConversationUuid(),
+                new AgentExecutor.StreamCallback() {
+
+                    @Override
+                    public void onStart(String sessionId) {
+                        log.info("流式会话开始: sessionId={}", sessionId);
+                        finalSessionId[0] = sessionId;
+
+                        // 如果是新会话，异步更新对话的 UUID（非阻塞）
+                        if (isNewConversation && sessionId != null) {
+                            conversation.setConversationUuid(sessionId);
+                            // 异步执行数据库更新，不阻塞响应式流
+                            Mono.fromRunnable(() -> {
+                                try {
+                                    conversationMapper.updateById(conversation);
+                                    log.info("对话UUID更新成功: {}", sessionId);
+                                } catch (Exception e) {
+                                    log.error("更新对话UUID失败: {}", e.getMessage());
+                                }
+                            }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                        }
+
+                        // 发送 start 事件
+                        try {
+                            sendStartEvent(emitter, objectMapper, sessionId);
+                        } catch (Exception e) {
+                            log.error("发送 start 事件失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onChunk(com.example.demo.agent.dto.StreamChunk chunk) {
+                        try {
+                            String content = chunk.getContentOrMessage();
+                            log.info("onChunk 回调被调用，内容类型: {}, 内容长度: {}",
+                                    chunk.getContentType(), content != null ? content.length() : 0);
+
+                            // 仅处理 contentType 为 text 的内容，过滤其他类型（thinking, tool_use, result 等）
+                            if (!"text".equals(chunk.getContentType())) {
+                                log.debug("过滤非 text 类型内容: contentType={}", chunk.getContentType());
+                                return;
+                            }
+
+                            // 处理文本内容：如果包含 JSON 且有 reasoning 和 summary 属性，则提取这两个值
+                            String processedContent = extractReasoningAndSummary(content);
+
+                            // 构建发送给前端的数据
+                            Map<String, Object> chunkData = new HashMap<>();
+                            chunkData.put("type", "chunk");
+                            chunkData.put("content", processedContent);
+                            chunkData.put("contentType", chunk.getContentType());
+
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
+                            log.info("SSE chunk 已发送到前端，contentType={}", chunk.getContentType());
+
+                            // 累积文本内容
+                            fullContent.append(processedContent);
+                        } catch (IOException e) {
+                            log.error("发送 chunk 失败: {}", e.getMessage());
+                        } catch (Exception e) {
+                            log.error("发送 chunk 异常: {}", e.getMessage(), e);
+                        }
+                    }
+
+                    @Override
+                    public void onDone(String sessionId, Long duration) {
+                        try {
+                            log.info("流式会话完成: sessionId={}, duration={}ms", sessionId, duration);
+
+                            // 保存 AI 消息
+                            saveAssistantMessage(conversation, fullContent.toString(),
+                                    System.currentTimeMillis() - startTime[0]);
+
+                            // 发送完成事件
+                            sendDoneEvent(emitter, objectMapper, conversation);
+                            emitter.complete();
+                        } catch (Exception e) {
+                            log.error("处理 onDone 失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        try {
+                            log.error("流式会话错误: {}", error);
+
+                            // 保存包含错误的消息
+                            String errorContent = fullContent.toString() + "\n\n❌ 错误: " + error;
+                            saveAssistantMessage(conversation, errorContent,
+                                    System.currentTimeMillis() - startTime[0]);
+
+                            // 发送错误事件
+                            Map<String, Object> errorData = new HashMap<>();
+                            errorData.put("type", "error");
+                            errorData.put("message", error);
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(errorData)));
+                            emitter.complete();
+                        } catch (Exception e) {
+                            log.error("处理 onError 失败: {}", e.getMessage());
+                        }
+                    }
+                }
+        );
+
+        // 设置超时和完成回调
+        emitter.onTimeout(() -> {
+            log.warn("SSE 连接超时");
+        });
+
+        emitter.onCompletion(() -> {
+            log.debug("SSE 连接完成");
+        });
+
+        return emitter;
     }
 
     @Override
@@ -803,5 +964,103 @@ public class ChatServiceImpl implements ChatService {
                 ),
                 mybatisPage.getTotal()
         );
+    }
+
+    /**
+     * 从内容中提取 reasoning 和 summary 属性
+     * 处理两种情况：
+     * 1. 纯 JSON 内容（以 { 开头）
+     * 2. 包含 JSON 代码块的 markdown 内容（```json ... ```）
+     * 如果 JSON 包含 reasoning 和/或 summary 属性，则只返回这两个属性的值
+     * 否则返回原始内容
+     */
+    private String extractReasoningAndSummary(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            return content;
+        }
+
+        String trimmedContent = content.trim();
+        ObjectMapper localMapper = new ObjectMapper();
+
+        // 情况1：纯 JSON 内容（以 { 开头）
+        if (trimmedContent.startsWith("{")) {
+            return parseAndExtract(localMapper, trimmedContent, content);
+        }
+
+        // 情况2：检查是否包含 markdown JSON 代码块
+        // 匹配 ```json ... ``` 或 ``` ... ```
+        java.util.regex.Pattern codeBlockPattern = java.util.regex.Pattern.compile(
+                "```(?:json)?\\s*\\n?\\s*(\\{[\\s\\S]*?\\})\\s*\\n?\\s*```",
+                java.util.regex.Pattern.CASE_INSENSITIVE
+        );
+        java.util.regex.Matcher matcher = codeBlockPattern.matcher(trimmedContent);
+
+        StringBuffer result = new StringBuffer();
+        boolean foundAndReplaced = false;
+
+        while (matcher.find()) {
+            String jsonStr = matcher.group(1);
+            String extracted = parseAndExtract(localMapper, jsonStr, jsonStr);
+
+            // 如果提取成功（返回的不是原始内容），则替换代码块
+            if (!extracted.equals(jsonStr)) {
+                matcher.appendReplacement(result, java.util.regex.Matcher.quoteReplacement(extracted));
+                foundAndReplaced = true;
+            } else {
+                // 没有提取到 reasoning/summary，保留原始代码块
+                matcher.appendReplacement(result, java.util.regex.Matcher.quoteReplacement(matcher.group(0)));
+            }
+        }
+        matcher.appendTail(result);
+
+        if (foundAndReplaced) {
+            log.debug("从 markdown JSON 代码块中提取 reasoning 和 summary: 原长度={}, 提取后长度={}",
+                    content.length(), result.length());
+            return result.toString();
+        }
+
+        return content;
+    }
+
+    /**
+     * 解析 JSON 并提取 reasoning 和 summary
+     * @return 提取后的内容，如果不包含这两个属性则返回原始内容
+     */
+    private String parseAndExtract(ObjectMapper mapper, String jsonStr, String originalContent) {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> jsonMap = mapper.readValue(jsonStr, Map.class);
+
+            // 检查是否包含 reasoning 或 summary 属性
+            boolean hasReasoning = jsonMap.containsKey("reasoning");
+            boolean hasSummary = jsonMap.containsKey("summary");
+
+            if (!hasReasoning && !hasSummary) {
+                return originalContent;
+            }
+
+            StringBuilder result = new StringBuilder();
+            if (hasReasoning) {
+                Object reasoning = jsonMap.get("reasoning");
+                if (reasoning != null) {
+                    result.append(reasoning.toString());
+                }
+            }
+            if (hasSummary) {
+                if (result.length() > 0) {
+                    result.append("\n");
+                }
+                Object summary = jsonMap.get("summary");
+                if (summary != null) {
+                    result.append(summary.toString());
+                }
+            }
+
+            return result.length() > 0 ? result.toString() : originalContent;
+
+        } catch (Exception e) {
+            log.debug("JSON 解析失败: {}", e.getMessage());
+            return originalContent;
+        }
     }
 }
