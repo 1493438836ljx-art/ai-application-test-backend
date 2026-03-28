@@ -48,13 +48,23 @@ public class VariableTypeDataInitializer implements CommandLineRunner {
         createVariableTypeIfNotExists("Array<Integer>", "整数数组", "COMPOSITE", "Integer", null, null, "整数数组类型", 13);
         createVariableTypeIfNotExists("Array<Object>", "对象数组", "COMPOSITE", "Object", null, null, "对象数组类型", 14);
         createVariableTypeIfNotExists("Array<Times>", "时间数组", "COMPOSITE", "Times", null, null, "时间数组类型", 15);
+        createVariableTypeIfNotExists("Array<Time>", "时间数组", "COMPOSITE", "Time", null, null, "时间数组类型", 16);
+        // Array<File<FileType>> 类型
+        createVariableTypeIfNotExists("Array<File<Zip>>", "ZIP文件数组", "COMPOSITE", "File", "Zip", null, "ZIP压缩文件数组类型", 17);
+        createVariableTypeIfNotExists("Array<File<Doc>>", "文档文件数组", "COMPOSITE", "File", "Doc", null, "文档文件数组类型", 18);
+        createVariableTypeIfNotExists("Array<File<Docx>>", "Docx文件数组", "COMPOSITE", "File", "Docx", null, "Docx文件数组类型", 19);
+        createVariableTypeIfNotExists("Array<File<Excel>>", "Excel文件数组", "COMPOSITE", "File", "Excel", null, "Excel表格文件数组类型", 20);
+        createVariableTypeIfNotExists("Array<File<Pdf>>", "PDF文件数组", "COMPOSITE", "File", "Pdf", null, "PDF文件数组类型", 21);
+        createVariableTypeIfNotExists("Array<File<Txt>>", "文本文件数组", "COMPOSITE", "File", "Txt", null, "文本文件数组类型", 22);
 
         // 复合类型 - File
-        createVariableTypeIfNotExists("File", "文件", "COMPOSITE", null, null, null, "文件类型", 20);
-        createVariableTypeIfNotExists("File<Zip>", "ZIP文件", "COMPOSITE", null, "Zip", null, "ZIP压缩文件类型", 21);
-        createVariableTypeIfNotExists("File<Doc>", "文档文件", "COMPOSITE", null, "Doc", null, "文档文件类型", 22);
-        createVariableTypeIfNotExists("File<Excel>", "Excel文件", "COMPOSITE", null, "Excel", null, "Excel表格文件类型", 23);
-        createVariableTypeIfNotExists("File<Txt>", "文本文件", "COMPOSITE", null, "Txt", null, "文本文件类型", 24);
+        createVariableTypeIfNotExists("File", "文件", "COMPOSITE", null, null, null, "文件类型", 30);
+        createVariableTypeIfNotExists("File<Zip>", "ZIP文件", "COMPOSITE", null, "Zip", null, "ZIP压缩文件类型", 31);
+        createVariableTypeIfNotExists("File<Doc>", "文档文件", "COMPOSITE", null, "Doc", null, "文档文件类型", 32);
+        createVariableTypeIfNotExists("File<Docx>", "Docx文件", "COMPOSITE", null, "Docx", null, "Docx文件类型", 33);
+        createVariableTypeIfNotExists("File<Excel>", "Excel文件", "COMPOSITE", null, "Excel", null, "Excel表格文件类型", 34);
+        createVariableTypeIfNotExists("File<Pdf>", "PDF文件", "COMPOSITE", null, "Pdf", null, "PDF文件类型", 35);
+        createVariableTypeIfNotExists("File<Txt>", "文本文件", "COMPOSITE", null, "Txt", null, "文本文件类型", 36);
 
         // 复合类型 - Dictionary
         initDictionaryTypes();
@@ -67,11 +77,11 @@ public class VariableTypeDataInitializer implements CommandLineRunner {
      */
     private void initDictionaryTypes() {
         // 创建Dictionary父类型
-        createVariableTypeIfNotExists("Dictionary", "数据字典", "COMPOSITE", null, null, null, "数据字典类型", 30);
+        createVariableTypeIfNotExists("Dictionary", "数据字典", "COMPOSITE", null, null, null, "数据字典类型", 50);
 
         // 从数据字典表获取所有字典
         List<DataDictionary> dictionaries = dataDictionaryMapper.selectAllForDropdown();
-        int sortOrder = 31;
+        int sortOrder = 51;
         for (DataDictionary dict : dictionaries) {
             String code = "Dictionary<" + dict.getName() + ">";
             createVariableTypeIfNotExists(

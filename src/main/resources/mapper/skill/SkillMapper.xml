@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.skill.mapper.SkillMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.skill.entity.SkillEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="suite_path" property="suitePath"/>
+        <result column="suite_filename" property="suiteFilename"/>
+        <result column="execution_type" property="executionType"/>
+        <result column="category" property="category"/>
+        <result column="access_type" property="accessType"/>
+        <result column="is_container" property="isContainer"/>
+        <result column="allow_add_input_params" property="allowAddInputParams"/>
+        <result column="allow_add_output_params" property="allowAddOutputParams"/>
+        <result column="status" property="status"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_by" property="updatedBy"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+        <result column="deleted_at" property="deletedAt"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, description, suite_path, suite_filename, execution_type, category, access_type,
+        is_container, allow_add_input_params, allow_add_output_params, status, created_by, created_at, updated_by, updated_at, deleted, deleted_at
+    </sql>
+
+    <!-- 根据名称模糊查询 -->
+    <select id="selectByNameLike" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill
+        WHERE deleted = 0
+        AND name LIKE CONCAT('%', #{name}, '%')
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据分类查询 -->
+    <select id="selectByCategory" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill
+        WHERE deleted = 0
+        AND category = #{category}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据状态查询 -->
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill
+        WHERE deleted = 0
+        AND status = #{status}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据创建人查询 -->
+    <select id="selectByCreatedBy" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill
+        WHERE deleted = 0
+        AND created_by = #{createdBy}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据执行方式查询 -->
+    <select id="selectByExecutionType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill
+        WHERE deleted = 0
+        AND execution_type = #{executionType}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 检查名称是否存在 -->
+    <select id="countByName" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM skill
+        WHERE deleted = 0
+        AND name = #{name}
+    </select>
+
+    <!-- 查询所有未删除的Skill（用于清理孤儿文件） -->
+    <select id="selectAllNonDeleted" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill
+        WHERE deleted = 0
+    </select>
+
+    <!-- 查询已删除超过指定天数的Skill（用于老化清理） -->
+    <select id="selectDeletedOlderThan" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill
+        WHERE deleted = 1
+        AND deleted_at IS NOT NULL
+        AND deleted_at &lt; DATE_SUB(NOW(), INTERVAL #{days} DAY)
+    </select>
+
+    <!-- 物理删除Skill（绕过逻辑删除） -->
+    <delete id="physicalDeleteById">
+        DELETE FROM skill WHERE id = #{id}
+    </delete>
+
+</mapper>

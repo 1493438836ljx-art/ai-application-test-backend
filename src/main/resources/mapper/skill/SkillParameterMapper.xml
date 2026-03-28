@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.skill.mapper.SkillParameterMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.demo.skill.entity.SkillParameterEntity">
+        <id column="id" property="id"/>
+        <result column="skill_id" property="skillId"/>
+        <result column="param_direction" property="paramDirection"/>
+        <result column="param_order" property="paramOrder"/>
+        <result column="param_type" property="paramType"/>
+        <result column="param_name" property="paramName"/>
+        <result column="default_value" property="defaultValue"/>
+        <result column="description" property="description"/>
+        <result column="required" property="required"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, skill_id, param_direction, param_order, param_type, param_name, default_value, description, required
+    </sql>
+
+    <!-- 根据Skill ID和参数方向查询参数列表（按顺序排序） -->
+    <select id="selectBySkillIdAndDirection" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill_parameter
+        WHERE skill_id = #{skillId}
+        AND param_direction = #{direction}
+        ORDER BY param_order ASC
+    </select>
+
+    <!-- 根据Skill ID查询所有参数列表 -->
+    <select id="selectBySkillId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM skill_parameter
+        WHERE skill_id = #{skillId}
+        ORDER BY param_direction ASC, param_order ASC
+    </select>
+
+    <!-- 根据Skill ID删除所有参数 -->
+    <delete id="deleteBySkillId">
+        DELETE FROM skill_parameter
+        WHERE skill_id = #{skillId}
+    </delete>
+
+    <!-- 根据Skill ID和参数方向删除参数 -->
+    <delete id="deleteBySkillIdAndDirection">
+        DELETE FROM skill_parameter
+        WHERE skill_id = #{skillId}
+        AND param_direction = #{direction}
+    </delete>
+
+    <!-- 根据Skill ID和参数方向统计参数数量 -->
+    <select id="countBySkillIdAndDirection" resultType="int">
+        SELECT COUNT(*)
+        FROM skill_parameter
+        WHERE skill_id = #{skillId}
+        AND param_direction = #{direction}
+    </select>
+
+</mapper>
