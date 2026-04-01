@@ -72,4 +72,21 @@ public interface WorkflowNodeMapper extends BaseMapper<WorkflowNodeEntity> {
      * @return 节点数量
      */
     Long countByWorkflowId(@Param("workflowId") Long workflowId);
+
+    /**
+     * 根据Skill ID查询所有引用该Skill的节点
+     *
+     * @param skillId Skill ID
+     * @return 节点列表
+     */
+    List<WorkflowNodeEntity> selectBySkillId(@Param("skillId") String skillId);
+
+    /**
+     * 批量更新节点兼容性状态
+     *
+     * @param nodeIds 节点ID列表
+     * @param status  兼容性状态
+     * @return 更新数量
+     */
+    int batchUpdateCompatibilityStatus(@Param("nodeIds") List<Long> nodeIds, @Param("status") String status);
 }

@@ -22,6 +22,16 @@ public class WorkflowUpdateRequest {
     @Schema(description = "工作流描述", example = "用于测试AI文本生成能力的工作流")
     private String description;
 
+    @Size(max = 50, message = "分类长度不能超过50")
+    @Schema(description = "工作流分类", example = "测试")
+    private String category;
+
+    @Schema(description = "触发类型", example = "MANUAL")
+    private String triggerType;
+
+    @Schema(description = "触发配置（JSON格式）", example = "{}")
+    private String triggerConfig;
+
     @Schema(description = "更新人", example = "admin")
     private String updatedBy;
 }

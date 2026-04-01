@@ -8,9 +8,24 @@ package com.example.demo.workflow.entity;
  */
 public enum AssociationType {
     /**
-     * 循环关联
+     * 循环关联（旧版兼容）
      */
     LOOP,
+
+    /**
+     * 循环体关联
+     */
+    LOOP_BODY,
+
+    /**
+     * 批处理体关联
+     */
+    BATCH_BODY,
+
+    /**
+     * 异步体关联
+     */
+    ASYNC_BODY,
 
     /**
      * 条件关联

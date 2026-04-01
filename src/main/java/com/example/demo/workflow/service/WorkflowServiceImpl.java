@@ -130,21 +130,21 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 4. 保存关联数据（循环与循环体关系）
         if (request.getAssociations() != null && !request.getAssociations().isEmpty()) {
             for (WorkflowCreateRequest.AssociationData assocData : request.getAssociations()) {
-                Long loopNodeId = nodeUuidToIdMap.get(assocData.getLoopNodeUuid());
+                Long containerNodeId = nodeUuidToIdMap.get(assocData.getContainerNodeUuid());
                 Long bodyNodeId = nodeUuidToIdMap.get(assocData.getBodyNodeUuid());
 
-                if (loopNodeId == null || bodyNodeId == null) {
-                    log.warn("关联节点ID映射失败: loopNodeUuid={}, bodyNodeUuid={}",
-                            assocData.getLoopNodeUuid(), assocData.getBodyNodeUuid());
+                if (containerNodeId == null || bodyNodeId == null) {
+                    log.warn("关联节点ID映射失败: containerNodeUuid={}, bodyNodeUuid={}",
+                            assocData.getContainerNodeUuid(), assocData.getBodyNodeUuid());
                     continue;
                 }
 
                 WorkflowAssociationEntity association = new WorkflowAssociationEntity();
                 association.setWorkflowId(workflowId);
-                association.setLoopNodeId(loopNodeId);
+                association.setContainerNodeId(containerNodeId);
                 association.setBodyNodeId(bodyNodeId);
                 association.setAssociationType(assocData.getAssociationType() != null ?
-                        assocData.getAssociationType() : "LOOP");
+                        assocData.getAssociationType() : "LOOP_BODY");
 
                 associationMapper.insert(association);
             }
@@ -231,6 +231,26 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         workflow.setPublished(true);
         workflow.setStatus(WorkflowStatus.PUBLISHED.name());
+        workflowMapper.updateById(workflow);
+
+        return convertToResponse(workflow);
+    }
+
+    @Override
+    @Transactional
+    public WorkflowResponse unpublishWorkflow(Long id) {
+        log.info("取消发布工作流: {}", id);
+
+        WorkflowEntity workflow = workflowMapper.selectById(id);
+        if (workflow == null) {
+            throw BusinessException.notFound("工作流", id);
+        }
+
+        // 检查是否有正在执行的任务
+        // TODO: 添加执行中的任务检查
+
+        workflow.setPublished(false);
+        workflow.setStatus(WorkflowStatus.DRAFT.name());
         workflowMapper.updateById(workflow);
 
         return convertToResponse(workflow);
@@ -381,19 +401,19 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         // 保存关联（使用 UUID 到 ID 的映射）
         for (WorkflowResponse.AssociationDTO assocDTO : associations) {
-            // 使用 loopNodeUuid/bodyNodeUuid 映射到数据库 ID
-            Long loopNodeDbId = uuidToIdMap.get(assocDTO.getLoopNodeUuid());
+            // 使用 containerNodeUuid/bodyNodeUuid 映射到数据库 ID
+            Long containerNodeDbId = uuidToIdMap.get(assocDTO.getContainerNodeUuid());
             Long bodyNodeDbId = uuidToIdMap.get(assocDTO.getBodyNodeUuid());
 
-            if (loopNodeDbId == null || bodyNodeDbId == null) {
-                log.warn("关联节点ID映射失败: loopNodeUuid={}, bodyNodeUuid={}",
-                        assocDTO.getLoopNodeUuid(), assocDTO.getBodyNodeUuid());
+            if (containerNodeDbId == null || bodyNodeDbId == null) {
+                log.warn("关联节点ID映射失败: containerNodeUuid={}, bodyNodeUuid={}",
+                        assocDTO.getContainerNodeUuid(), assocDTO.getBodyNodeUuid());
                 continue;
             }
 
             WorkflowAssociationEntity association = new WorkflowAssociationEntity();
             association.setWorkflowId(id);
-            association.setLoopNodeId(loopNodeDbId);
+            association.setContainerNodeId(containerNodeDbId);
             association.setBodyNodeId(bodyNodeDbId);
             association.setAssociationType(assocDTO.getAssociationType());
             associationMapper.insert(association);
@@ -678,11 +698,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 循环节点(ID=4, UUID="node-loop") 与 循环体节点(ID=8, UUID="node-loop-body") 的关联
         WorkflowResponse.AssociationDTO association = new WorkflowResponse.AssociationDTO();
         association.setId(1L);
-        association.setLoopNodeId(4L);
-        association.setLoopNodeUuid("node-loop");
+        association.setContainerNodeId(4L);
+        association.setContainerNodeUuid("node-loop");
         association.setBodyNodeId(8L);
         association.setBodyNodeUuid("node-loop-body");
-        association.setAssociationType("loop-body");
+        association.setAssociationType("LOOP_BODY");
         associations.add(association);
 
         return associations;
@@ -766,8 +786,8 @@ public class WorkflowServiceImpl implements WorkflowService {
     private WorkflowResponse.AssociationDTO convertToAssociationDTO(WorkflowAssociationEntity assoc, Map<Long, String> nodeIdToUuidMap) {
         WorkflowResponse.AssociationDTO dto = new WorkflowResponse.AssociationDTO();
         dto.setId(assoc.getId());
-        dto.setLoopNodeId(assoc.getLoopNodeId());
-        dto.setLoopNodeUuid(nodeIdToUuidMap.get(assoc.getLoopNodeId()));
+        dto.setContainerNodeId(assoc.getContainerNodeId());
+        dto.setContainerNodeUuid(nodeIdToUuidMap.get(assoc.getContainerNodeId()));
         dto.setBodyNodeId(assoc.getBodyNodeId());
         dto.setBodyNodeUuid(nodeIdToUuidMap.get(assoc.getBodyNodeId()));
         dto.setAssociationType(assoc.getAssociationType());

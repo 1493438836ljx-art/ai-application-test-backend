@@ -70,4 +70,28 @@ public class WorkflowEntity extends BaseEntity {
     @TableLogic
     @TableField("deleted")
     private Boolean deleted;
+
+    /**
+     * 触发类型：MANUAL/SCHEDULE/API
+     */
+    @TableField("trigger_type")
+    private String triggerType;
+
+    /**
+     * 触发配置（JSON格式）
+     */
+    @TableField("trigger_config")
+    private String triggerConfig;
+
+    /**
+     * 发布时间
+     */
+    @TableField("published_at")
+    private java.time.LocalDateTime publishedAt;
+
+    /**
+     * 发布人
+     */
+    @TableField("published_by")
+    private String publishedBy;
 }

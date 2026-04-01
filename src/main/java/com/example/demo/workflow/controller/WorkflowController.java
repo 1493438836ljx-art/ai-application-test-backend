@@ -196,6 +196,22 @@ public class WorkflowController {
     }
 
     /**
+     * 取消发布工作流
+     *
+     * @param id 工作流ID
+     * @return 工作流响应
+     */
+    @PostMapping("/{id}/unpublish")
+    @Operation(summary = "取消发布工作流", description = "将已发布的工作流恢复为草稿状态")
+    public ResponseEntity<WorkflowResponse> unpublishWorkflow(
+            @Parameter(description = "工作流ID", required = true)
+            @PathVariable Long id) {
+        log.info("取消发布工作流: {}", id);
+        WorkflowResponse response = workflowService.unpublishWorkflow(id);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * 复制工作流
      *
      * @param id 工作流ID

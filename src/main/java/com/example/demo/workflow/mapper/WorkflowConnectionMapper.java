@@ -50,6 +50,22 @@ public interface WorkflowConnectionMapper extends BaseMapper<WorkflowConnectionE
     int deleteByWorkflowId(@Param("workflowId") Long workflowId);
 
     /**
+     * 删除以指定节点为源的所有连线
+     *
+     * @param sourceNodeId 源节点ID
+     * @return 删除数量
+     */
+    int deleteBySourceNodeId(@Param("sourceNodeId") Long sourceNodeId);
+
+    /**
+     * 删除以指定节点为目标的所有连线
+     *
+     * @param targetNodeId 目标节点ID
+     * @return 删除数量
+     */
+    int deleteByTargetNodeId(@Param("targetNodeId") Long targetNodeId);
+
+    /**
      * 统计工作流的连线数量
      *
      * @param workflowId 工作流ID

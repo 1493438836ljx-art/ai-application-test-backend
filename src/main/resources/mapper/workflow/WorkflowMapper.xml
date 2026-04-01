@@ -11,6 +11,10 @@
         <result column="has_run" property="hasRun"/>
         <result column="version" property="version"/>
         <result column="status" property="status"/>
+        <result column="trigger_type" property="triggerType"/>
+        <result column="trigger_config" property="triggerConfig"/>
+        <result column="published_at" property="publishedAt"/>
+        <result column="published_by" property="publishedBy"/>
         <result column="created_by" property="createdBy"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_by" property="updatedBy"/>
@@ -21,6 +25,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, name, description, published, has_run, version, status,
+        trigger_type, trigger_config, published_at, published_by,
         created_by, created_at, updated_by, updated_at, deleted
     </sql>
 

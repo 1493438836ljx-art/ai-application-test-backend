@@ -38,6 +38,18 @@ public class WorkflowResponse {
     @Schema(description = "状态")
     private WorkflowStatus status;
 
+    @Schema(description = "触发类型")
+    private String triggerType;
+
+    @Schema(description = "触发配置")
+    private String triggerConfig;
+
+    @Schema(description = "发布时间")
+    private LocalDateTime publishedAt;
+
+    @Schema(description = "发布人")
+    private String publishedBy;
+
     @Schema(description = "创建人")
     private String createdBy;
 
@@ -100,6 +112,69 @@ public class WorkflowResponse {
 
         @Schema(description = "父节点ID")
         private Long parentNodeId;
+
+        @Schema(description = "父节点UUID")
+        private String parentNodeUuid;
+
+        // ========== Skill引用 ==========
+
+        @Schema(description = "引用的Skill ID")
+        private String skillId;
+
+        @Schema(description = "Skill快照（JSON格式）")
+        private String skillSnapshot;
+
+        // ========== 执行配置 ==========
+
+        @Schema(description = "执行位置")
+        private String executionLocation;
+
+        @Schema(description = "错误策略")
+        private String errorStrategy;
+
+        @Schema(description = "重试次数")
+        private Integer retryCount;
+
+        @Schema(description = "重试间隔（毫秒）")
+        private Integer retryInterval;
+
+        @Schema(description = "错误分支节点ID")
+        private Long errorBranchId;
+
+        // ========== 条件节点配置 ==========
+
+        @Schema(description = "条件类型")
+        private String conditionType;
+
+        @Schema(description = "条件配置（JSON格式）")
+        private String conditions;
+
+        // ========== 循环节点配置 ==========
+
+        @Schema(description = "循环类型")
+        private String loopType;
+
+        @Schema(description = "循环配置（JSON格式）")
+        private String loopConfig;
+
+        // ========== 批处理/异步/收集配置 ==========
+
+        @Schema(description = "批处理配置（JSON格式）")
+        private String batchConfig;
+
+        @Schema(description = "异步处理配置（JSON格式）")
+        private String asyncConfig;
+
+        @Schema(description = "结果收集配置（JSON格式）")
+        private String collectConfig;
+
+        // ========== 兼容性状态 ==========
+
+        @Schema(description = "兼容性状态")
+        private String compatibilityStatus;
+
+        @Schema(description = "节点分类")
+        private String nodeCategory;
     }
 
     /**
@@ -140,6 +215,12 @@ public class WorkflowResponse {
 
         @Schema(description = "标签")
         private String label;
+
+        @Schema(description = "分支标签")
+        private String branchLabel;
+
+        @Schema(description = "分支优先级")
+        private Integer branchPriority;
     }
 
     /**
@@ -151,19 +232,19 @@ public class WorkflowResponse {
         @Schema(description = "关联ID")
         private Long id;
 
-        @Schema(description = "循环节点ID（数据库ID）")
-        private Long loopNodeId;
+        @Schema(description = "容器节点ID（数据库ID）")
+        private Long containerNodeId;
 
-        @Schema(description = "循环体节点ID（数据库ID）")
+        @Schema(description = "容器节点UUID（前端使用）")
+        private String containerNodeUuid;
+
+        @Schema(description = "子节点ID（数据库ID）")
         private Long bodyNodeId;
 
-        @Schema(description = "循环节点UUID（前端使用）")
-        private String loopNodeUuid;
-
-        @Schema(description = "循环体节点UUID（前端使用）")
+        @Schema(description = "子节点UUID（前端使用）")
         private String bodyNodeUuid;
 
-        @Schema(description = "关联类型")
+        @Schema(description = "关联类型：LOOP_BODY/BATCH_BODY/ASYNC_BODY")
         private String associationType;
     }
 }

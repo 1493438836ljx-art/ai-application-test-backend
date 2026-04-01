@@ -31,16 +31,28 @@ public class WorkflowAssociationEntity implements Serializable {
     private Long workflowId;
 
     /**
-     * 循环节点ID
+     * 容器节点ID（原loop_node_id）
      */
-    @TableField("loop_node_id")
-    private Long loopNodeId;
+    @TableField("container_node_id")
+    private Long containerNodeId;
 
     /**
-     * 循环体节点ID
+     * 容器节点UUID
+     */
+    @TableField("container_node_uuid")
+    private String containerNodeUuid;
+
+    /**
+     * 子节点ID（原body_node_id）
      */
     @TableField("body_node_id")
     private Long bodyNodeId;
+
+    /**
+     * 子节点UUID
+     */
+    @TableField("body_node_uuid")
+    private String bodyNodeUuid;
 
     /**
      * 关联类型

@@ -79,6 +79,18 @@ public class WorkflowConnectionEntity implements Serializable {
     private String label;
 
     /**
+     * 分支标签（true/false/case1/case2/default）
+     */
+    @TableField("branch_label")
+    private String branchLabel;
+
+    /**
+     * 分支优先级
+     */
+    @TableField("branch_priority")
+    private Integer branchPriority;
+
+    /**
      * 创建时间
      */
     @TableField(value = "created_at", fill = FieldFill.INSERT)

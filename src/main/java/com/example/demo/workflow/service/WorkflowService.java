@@ -82,6 +82,14 @@ public interface WorkflowService {
     WorkflowResponse publishWorkflow(Long id);
 
     /**
+     * 取消发布工作流
+     *
+     * @param id 工作流ID
+     * @return 工作流响应
+     */
+    WorkflowResponse unpublishWorkflow(Long id);
+
+    /**
      * 复制工作流
      *
      * @param id 工作流ID

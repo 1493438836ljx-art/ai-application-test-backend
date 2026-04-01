@@ -18,6 +18,29 @@
         <result column="output_params" property="outputParams"/>
         <result column="config" property="config"/>
         <result column="parent_node_id" property="parentNodeId"/>
+        <!-- Skill引用 -->
+        <result column="skill_id" property="skillId"/>
+        <result column="skill_snapshot" property="skillSnapshot"/>
+        <!-- 执行配置 -->
+        <result column="execution_location" property="executionLocation"/>
+        <result column="error_strategy" property="errorStrategy"/>
+        <result column="retry_count" property="retryCount"/>
+        <result column="retry_interval" property="retryInterval"/>
+        <result column="error_branch_id" property="errorBranchId"/>
+        <!-- 条件节点配置 -->
+        <result column="condition_type" property="conditionType"/>
+        <result column="conditions" property="conditions"/>
+        <!-- 循环节点配置 -->
+        <result column="loop_type" property="loopType"/>
+        <result column="loop_config" property="loopConfig"/>
+        <!-- 批处理/异步/收集配置 -->
+        <result column="batch_config" property="batchConfig"/>
+        <result column="async_config" property="asyncConfig"/>
+        <result column="collect_config" property="collectConfig"/>
+        <!-- 兼容性状态 -->
+        <result column="compatibility_status" property="compatibilityStatus"/>
+        <result column="node_category" property="nodeCategory"/>
+        <!-- 时间字段 -->
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
     </resultMap>
@@ -26,7 +49,12 @@
     <sql id="Base_Column_List">
         id, workflow_id, node_uuid, type, type_id, name, position_x, position_y,
         input_ports, output_ports, input_params, output_params, config,
-        parent_node_id, created_at, updated_at
+        parent_node_id, skill_id, skill_snapshot,
+        execution_location, error_strategy, retry_count, retry_interval, error_branch_id,
+        condition_type, conditions, loop_type, loop_config,
+        batch_config, async_config, collect_config,
+        compatibility_status, node_category,
+        created_at, updated_at
     </sql>
 
     <!-- 根据工作流ID查询所有节点 -->
@@ -79,5 +107,25 @@
         FROM workflow_node
         WHERE workflow_id = #{workflowId}
     </select>
+
+    <!-- 根据Skill ID查询所有引用该Skill的节点 -->
+    <select id="selectBySkillId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM workflow_node
+        WHERE skill_id = #{skillId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 批量更新节点兼容性状态 -->
+    <update id="batchUpdateCompatibilityStatus">
+        UPDATE workflow_node
+        SET compatibility_status = #{status},
+            updated_at = NOW()
+        WHERE id IN
+        <foreach collection="nodeIds" item="nodeId" open="(" separator="," close=")">
+            #{nodeId}
+        </foreach>
+    </update>
 
 </mapper>

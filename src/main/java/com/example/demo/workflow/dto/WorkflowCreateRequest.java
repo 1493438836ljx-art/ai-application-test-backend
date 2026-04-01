@@ -31,6 +31,16 @@ public class WorkflowCreateRequest {
     @Schema(description = "创建人", example = "admin")
     private String createdBy;
 
+    @Size(max = 50, message = "分类长度不能超过50")
+    @Schema(description = "工作流分类", example = "测试")
+    private String category;
+
+    @Schema(description = "触发类型", example = "MANUAL")
+    private String triggerType;
+
+    @Schema(description = "触发配置（JSON格式）", example = "{}")
+    private String triggerConfig;
+
     @Valid
     @Schema(description = "节点列表")
     private List<NodeData> nodes = new ArrayList<>();
@@ -83,6 +93,63 @@ public class WorkflowCreateRequest {
 
         @Schema(description = "父节点UUID（用于循环体内节点）", example = "node-loop")
         private String parentNodeUuid;
+
+        // ========== Skill引用 ==========
+
+        @Schema(description = "引用的Skill ID")
+        private String skillId;
+
+        @Schema(description = "Skill快照（JSON格式）")
+        private String skillSnapshot;
+
+        // ========== 执行配置 ==========
+
+        @Schema(description = "执行位置：CLIENT/SERVICE", example = "SERVICE")
+        private String executionLocation;
+
+        @Schema(description = "错误策略：STOP/SKIP/RETRY/ERROR_BRANCH", example = "STOP")
+        private String errorStrategy;
+
+        @Schema(description = "重试次数", example = "3")
+        private Integer retryCount;
+
+        @Schema(description = "重试间隔（毫秒）", example = "1000")
+        private Integer retryInterval;
+
+        @Schema(description = "错误处理分支节点UUID")
+        private String errorBranchNodeUuid;
+
+        // ========== 条件节点配置 ==========
+
+        @Schema(description = "条件类型：SIMPLE/MULTI", example = "SIMPLE")
+        private String conditionType;
+
+        @Schema(description = "条件配置（JSON格式）")
+        private String conditions;
+
+        // ========== 循环节点配置 ==========
+
+        @Schema(description = "循环类型：COUNT/ARRAY/CONDITION", example = "COUNT")
+        private String loopType;
+
+        @Schema(description = "循环配置（JSON格式）")
+        private String loopConfig;
+
+        // ========== 批处理/异步/收集配置 ==========
+
+        @Schema(description = "批处理配置（JSON格式）")
+        private String batchConfig;
+
+        @Schema(description = "异步处理配置（JSON格式）")
+        private String asyncConfig;
+
+        @Schema(description = "结果收集配置（JSON格式）")
+        private String collectConfig;
+
+        // ========== 节点分类 ==========
+
+        @Schema(description = "节点分类：BASIC/LOGIC/EXECUTION", example = "BASIC")
+        private String nodeCategory;
     }
 
     /**
@@ -118,23 +185,29 @@ public class WorkflowCreateRequest {
 
         @Schema(description = "连线标签")
         private String label;
+
+        @Schema(description = "分支标签（true/false/case1/case2/default）", example = "true")
+        private String branchLabel;
+
+        @Schema(description = "分支优先级", example = "1")
+        private Integer branchPriority;
     }
 
     /**
-     * 关联数据（循环与循环体关系）
+     * 关联数据（容器与子节点关系）
      */
     @Data
     @Schema(description = "关联数据")
     public static class AssociationData {
-        @NotBlank(message = "循环节点UUID不能为空")
-        @Schema(description = "循环节点UUID", example = "node-loop")
-        private String loopNodeUuid;
+        @NotBlank(message = "容器节点UUID不能为空")
+        @Schema(description = "容器节点UUID（循环节点/批处理节点/异步节点）", example = "node-loop")
+        private String containerNodeUuid;
 
-        @NotBlank(message = "循环体节点UUID不能为空")
-        @Schema(description = "循环体节点UUID", example = "node-loop-body")
+        @NotBlank(message = "子节点UUID不能为空")
+        @Schema(description = "子节点UUID（循环体/批处理体/异步体）", example = "node-loop-body")
         private String bodyNodeUuid;
 
-        @Schema(description = "关联类型", example = "LOOP")
-        private String associationType = "LOOP";
+        @Schema(description = "关联类型：LOOP_BODY/BATCH_BODY/ASYNC_BODY", example = "LOOP_BODY")
+        private String associationType = "LOOP_BODY";
     }
 }
