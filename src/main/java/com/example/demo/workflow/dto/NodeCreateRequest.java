@@ -54,4 +54,7 @@ public class NodeCreateRequest {
 
     @Schema(description = "父节点ID（用于循环体内节点）")
     private Long parentNodeId;
+
+    @Schema(description = "节点分类：BASIC/LOGIC/EXECUTION", example = "BASIC")
+    private String nodeCategory;
 }
