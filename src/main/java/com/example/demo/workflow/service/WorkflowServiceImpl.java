@@ -471,93 +471,13 @@ public class WorkflowServiceImpl implements WorkflowService {
         startNode.setParentNodeId(null);
         nodes.add(startNode);
 
-        // 2. textClean (文本清洗) - 位置(400, 250)
-        WorkflowResponse.NodeDTO textCleanNode = new WorkflowResponse.NodeDTO();
-        textCleanNode.setId(2L);
-        textCleanNode.setNodeUuid("node-text-clean");
-        textCleanNode.setType("textClean");
-        textCleanNode.setName("文本清洗");
-        textCleanNode.setPositionX(400);
-        textCleanNode.setPositionY(250);
-        textCleanNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
-        textCleanNode.setOutputPorts("[{\"id\":\"output-1\",\"name\":\"输出\"}]");
-        textCleanNode.setInputParams("[]");
-        textCleanNode.setOutputParams("[]");
-        textCleanNode.setConfig("{}");
-        textCleanNode.setParentNodeId(null);
-        nodes.add(textCleanNode);
-
-        // 3. tableExtract (表格提取) - 位置(525, 250) - 在文本清洗和循环节点之间
-        WorkflowResponse.NodeDTO tableExtractNode = new WorkflowResponse.NodeDTO();
-        tableExtractNode.setId(3L);
-        tableExtractNode.setNodeUuid("node-table-extract");
-        tableExtractNode.setType("tableExtract");
-        tableExtractNode.setName("表格提取");
-        tableExtractNode.setPositionX(525);
-        tableExtractNode.setPositionY(250);
-        tableExtractNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
-        tableExtractNode.setOutputPorts("[{\"id\":\"output-1\",\"name\":\"输出\"}]");
-        tableExtractNode.setInputParams("[{\"name\":\"file\",\"type\":\"File\",\"fileType\":\"Excel\",\"required\":true,\"description\":\"需要提取数据的Excel文件\"}]");
-        tableExtractNode.setOutputParams("[{\"name\":\"output\",\"type\":\"Array\",\"elementType\":\"Object\",\"description\":\"提取的表格数据数组\"}]");
-        tableExtractNode.setConfig("{\"file\":null,\"sheetName\":\"\",\"headerRow\":1,\"startRow\":2,\"endRow\":null,\"columns\":[]}");
-        tableExtractNode.setParentNodeId(null);
-        nodes.add(tableExtractNode);
-
-        // 4. loop (循环) - 位置(775, 250)
-        WorkflowResponse.NodeDTO loopNode = new WorkflowResponse.NodeDTO();
-        loopNode.setId(4L);
-        loopNode.setNodeUuid("node-loop");
-        loopNode.setType("loop");
-        loopNode.setName("循环");
-        loopNode.setPositionX(775);
-        loopNode.setPositionY(250);
-        loopNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
-        loopNode.setOutputPorts("[{\"id\":\"output-1\",\"name\":\"输出\"}]");
-        loopNode.setInputParams("[]");
-        loopNode.setOutputParams("[]");
-        loopNode.setConfig("{}");
-        loopNode.setParentNodeId(null);
-        nodes.add(loopNode);
-
-        // 5. judgeModel (裁判模型) - 位置(1025, 250)
-        WorkflowResponse.NodeDTO judgeModelNode = new WorkflowResponse.NodeDTO();
-        judgeModelNode.setId(5L);
-        judgeModelNode.setNodeUuid("node-judge-model");
-        judgeModelNode.setType("judgeModel");
-        judgeModelNode.setName("裁判模型");
-        judgeModelNode.setPositionX(1025);
-        judgeModelNode.setPositionY(250);
-        judgeModelNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
-        judgeModelNode.setOutputPorts("[{\"id\":\"output-1\",\"name\":\"输出\"}]");
-        judgeModelNode.setInputParams("[]");
-        judgeModelNode.setOutputParams("[]");
-        judgeModelNode.setConfig("{}");
-        judgeModelNode.setParentNodeId(null);
-        nodes.add(judgeModelNode);
-
-        // 6. tableGenerate (表格生成) - 位置(1275, 250)
-        WorkflowResponse.NodeDTO tableGenerateNode = new WorkflowResponse.NodeDTO();
-        tableGenerateNode.setId(6L);
-        tableGenerateNode.setNodeUuid("node-table-generate");
-        tableGenerateNode.setType("tableGenerate");
-        tableGenerateNode.setName("表格生成");
-        tableGenerateNode.setPositionX(1275);
-        tableGenerateNode.setPositionY(250);
-        tableGenerateNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
-        tableGenerateNode.setOutputPorts("[{\"id\":\"output-1\",\"name\":\"输出\"}]");
-        tableGenerateNode.setInputParams("[]");
-        tableGenerateNode.setOutputParams("[]");
-        tableGenerateNode.setConfig("{}");
-        tableGenerateNode.setParentNodeId(null);
-        nodes.add(tableGenerateNode);
-
-        // 7. end (结束) - 位置(1525, 250)
+        // 2. end (结束) - 位置(400, 250)
         WorkflowResponse.NodeDTO endNode = new WorkflowResponse.NodeDTO();
-        endNode.setId(7L);
+        endNode.setId(2L);
         endNode.setNodeUuid("node-end");
         endNode.setType("end");
         endNode.setName("结束");
-        endNode.setPositionX(1525);
+        endNode.setPositionX(400);
         endNode.setPositionY(250);
         endNode.setInputPorts("[{\"id\":\"input-1\",\"name\":\"输入\"}]");
         endNode.setOutputPorts("[]");
@@ -566,23 +486,6 @@ public class WorkflowServiceImpl implements WorkflowService {
         endNode.setConfig("{}");
         endNode.setParentNodeId(null);
         nodes.add(endNode);
-
-        // 8. loopBodyCanvas (循环体) - 位置(775, 470)，宽度500，高度400
-        WorkflowResponse.NodeDTO loopBodyNode = new WorkflowResponse.NodeDTO();
-        loopBodyNode.setId(8L);
-        loopBodyNode.setNodeUuid("node-loop-body");
-        loopBodyNode.setType("loopBodyCanvas");
-        loopBodyNode.setName("循环体");
-        loopBodyNode.setPositionX(775);
-        loopBodyNode.setPositionY(470);
-        loopBodyNode.setInputPorts("[]");
-        loopBodyNode.setOutputPorts("[]");
-        loopBodyNode.setInputParams("[]");
-        loopBodyNode.setOutputParams("[]");
-        // 循环体配置：包含内部画布信息，包括一个默认的HTTP接口调用节点和连线
-        loopBodyNode.setConfig("{\"width\":500,\"height\":400,\"belongsTo\":\"node-loop\",\"loopBody\":{\"canvas\":{\"scale\":1,\"offsetX\":0,\"offsetY\":0},\"nodes\":[{\"id\":\"node-api-auto-1\",\"type\":\"apiAuto\",\"name\":\"HTTPS/HTTP接口调用\",\"x\":200,\"y\":150,\"inputs\":[{\"id\":\"input-1\",\"name\":\"输入\"}],\"outputs\":[{\"id\":\"output-1\",\"name\":\"输出\"}],\"config\":{\"url\":\"\",\"method\":\"GET\",\"headers\":[],\"body\":\"\",\"timeout\":30000}}],\"connections\":[{\"id\":\"conn-left-to-api\",\"sourceId\":\"port-left\",\"sourcePort\":\"out\",\"targetId\":\"node-api-auto-1\",\"targetPort\":\"input-1\"},{\"id\":\"conn-api-to-right\",\"sourceId\":\"node-api-auto-1\",\"sourcePort\":\"output-1\",\"targetId\":\"port-right\",\"targetPort\":\"in\"}],\"leftPort\":{\"id\":\"port-left\",\"name\":\"输入\",\"type\":\"input\",\"y\":200,\"params\":[]},\"rightPort\":{\"id\":\"port-right\",\"name\":\"输出\",\"type\":\"output\",\"y\":200,\"params\":[]}}}");
-        loopBodyNode.setParentNodeId(null);
-        nodes.add(loopBodyNode);
 
         return nodes;
     }
@@ -596,116 +499,26 @@ public class WorkflowServiceImpl implements WorkflowService {
             nodeIdToUuidMap.put(node.getId(), node.getNodeUuid());
         }
 
-        // 节点ID映射：start(1), textClean(2), tableExtract(3), loop(4), judgeModel(5), tableGenerate(6), end(7)
-        // 循环体节点ID：loopBody(8)
-
-        // 1. start -> textClean
-        WorkflowResponse.ConnectionDTO conn1 = new WorkflowResponse.ConnectionDTO();
-        conn1.setId(1L);
-        conn1.setConnectionUuid("conn-start-textclean");
-        conn1.setSourceNodeId(1L);
-        conn1.setSourceNodeUuid(nodeIdToUuidMap.get(1L));
-        conn1.setSourcePortId("output-1");
-        conn1.setTargetNodeId(2L);
-        conn1.setTargetNodeUuid(nodeIdToUuidMap.get(2L));
-        conn1.setTargetPortId("input-1");
-        conn1.setSourceParamIndex(null);
-        conn1.setTargetParamIndex(null);
-        conn1.setLabel(null);
-        connections.add(conn1);
-
-        // 2. textClean -> tableExtract
-        WorkflowResponse.ConnectionDTO conn2 = new WorkflowResponse.ConnectionDTO();
-        conn2.setId(2L);
-        conn2.setConnectionUuid("conn-textclean-tableextract");
-        conn2.setSourceNodeId(2L);
-        conn2.setSourceNodeUuid(nodeIdToUuidMap.get(2L));
-        conn2.setSourcePortId("output-1");
-        conn2.setTargetNodeId(3L);
-        conn2.setTargetNodeUuid(nodeIdToUuidMap.get(3L));
-        conn2.setTargetPortId("input-1");
-        conn2.setSourceParamIndex(null);
-        conn2.setTargetParamIndex(null);
-        conn2.setLabel(null);
-        connections.add(conn2);
-
-        // 3. tableExtract -> loop
-        WorkflowResponse.ConnectionDTO conn3 = new WorkflowResponse.ConnectionDTO();
-        conn3.setId(3L);
-        conn3.setConnectionUuid("conn-tableextract-loop");
-        conn3.setSourceNodeId(3L);
-        conn3.setSourceNodeUuid(nodeIdToUuidMap.get(3L));
-        conn3.setSourcePortId("output-1");
-        conn3.setTargetNodeId(4L);
-        conn3.setTargetNodeUuid(nodeIdToUuidMap.get(4L));
-        conn3.setTargetPortId("input-1");
-        conn3.setSourceParamIndex(null);
-        conn3.setTargetParamIndex(null);
-        conn3.setLabel(null);
-        connections.add(conn3);
-
-        // 4. loop -> judgeModel
-        WorkflowResponse.ConnectionDTO conn4 = new WorkflowResponse.ConnectionDTO();
-        conn4.setId(4L);
-        conn4.setConnectionUuid("conn-loop-judgemodel");
-        conn4.setSourceNodeId(4L);
-        conn4.setSourceNodeUuid(nodeIdToUuidMap.get(4L));
-        conn4.setSourcePortId("output-1");
-        conn4.setTargetNodeId(5L);
-        conn4.setTargetNodeUuid(nodeIdToUuidMap.get(5L));
-        conn4.setTargetPortId("input-1");
-        conn4.setSourceParamIndex(null);
-        conn4.setTargetParamIndex(null);
-        conn4.setLabel(null);
-        connections.add(conn4);
-
-        // 5. judgeModel -> tableGenerate
-        WorkflowResponse.ConnectionDTO conn5 = new WorkflowResponse.ConnectionDTO();
-        conn5.setId(5L);
-        conn5.setConnectionUuid("conn-judgemodel-tablegenerate");
-        conn5.setSourceNodeId(5L);
-        conn5.setSourceNodeUuid(nodeIdToUuidMap.get(5L));
-        conn5.setSourcePortId("output-1");
-        conn5.setTargetNodeId(6L);
-        conn5.setTargetNodeUuid(nodeIdToUuidMap.get(6L));
-        conn5.setTargetPortId("input-1");
-        conn5.setSourceParamIndex(null);
-        conn5.setTargetParamIndex(null);
-        conn5.setLabel(null);
-        connections.add(conn5);
-
-        // 6. tableGenerate -> end
-        WorkflowResponse.ConnectionDTO conn6 = new WorkflowResponse.ConnectionDTO();
-        conn6.setId(6L);
-        conn6.setConnectionUuid("conn-tablegenerate-end");
-        conn6.setSourceNodeId(6L);
-        conn6.setSourceNodeUuid(nodeIdToUuidMap.get(6L));
-        conn6.setSourcePortId("output-1");
-        conn6.setTargetNodeId(7L);
-        conn6.setTargetNodeUuid(nodeIdToUuidMap.get(7L));
-        conn6.setTargetPortId("input-1");
-        conn6.setSourceParamIndex(null);
-        conn6.setTargetParamIndex(null);
-        conn6.setLabel(null);
-        connections.add(conn6);
+        // start(1) -> end(2)
+        WorkflowResponse.ConnectionDTO conn = new WorkflowResponse.ConnectionDTO();
+        conn.setId(1L);
+        conn.setConnectionUuid("conn-start-end");
+        conn.setSourceNodeId(1L);
+        conn.setSourceNodeUuid(nodeIdToUuidMap.get(1L));
+        conn.setSourcePortId("output-1");
+        conn.setTargetNodeId(2L);
+        conn.setTargetNodeUuid(nodeIdToUuidMap.get(2L));
+        conn.setTargetPortId("input-1");
+        conn.setSourceParamIndex(null);
+        conn.setTargetParamIndex(null);
+        conn.setLabel(null);
+        connections.add(conn);
 
         return connections;
     }
 
     private List<WorkflowResponse.AssociationDTO> createDefaultAssociations() {
-        List<WorkflowResponse.AssociationDTO> associations = new java.util.ArrayList<>();
-
-        // 循环节点(ID=4, UUID="node-loop") 与 循环体节点(ID=8, UUID="node-loop-body") 的关联
-        WorkflowResponse.AssociationDTO association = new WorkflowResponse.AssociationDTO();
-        association.setId(1L);
-        association.setContainerNodeId(4L);
-        association.setContainerNodeUuid("node-loop");
-        association.setBodyNodeId(8L);
-        association.setBodyNodeUuid("node-loop-body");
-        association.setAssociationType("LOOP_BODY");
-        associations.add(association);
-
-        return associations;
+        return new java.util.ArrayList<>();
     }
 
     private WorkflowResponse convertToResponse(WorkflowEntity workflow) {
