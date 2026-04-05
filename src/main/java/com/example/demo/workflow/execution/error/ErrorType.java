@@ -1,0 +1,35 @@
+package com.example.demo.workflow.execution.error;
+
+/**
+ * 错误类型枚举
+ *
+ * @author AI Test Platform Team
+ * @version 1.0.0
+ */
+public enum ErrorType {
+
+    /**
+     * 可恢复错误 - 可通过重试解决
+     */
+    RECOVERABLE("可恢复错误"),
+
+    /**
+     * 业务错误 - 业务逻辑导致的错误
+     */
+    BUSINESS("业务错误"),
+
+    /**
+     * 系统错误 - 系统内部错误
+     */
+    SYSTEM("系统错误");
+
+    private final String description;
+
+    ErrorType(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+}

@@ -66,4 +66,18 @@ public class BusinessException extends RuntimeException {
     public static BusinessException conflict(String message) {
         return new BusinessException("CONFLICT", message, 409);
     }
+
+    /**
+     * 业务错误异常
+     */
+    public static BusinessException bizError(String message) {
+        return new BusinessException("BIZ_ERROR", message, 400);
+    }
+
+    /**
+     * 系统错误异常
+     */
+    public static BusinessException systemError(String message) {
+        return new BusinessException("SYSTEM_ERROR", message, 500);
+    }
 }

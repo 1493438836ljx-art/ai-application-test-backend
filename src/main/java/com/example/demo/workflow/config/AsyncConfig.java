@@ -97,4 +97,94 @@ public class AsyncConfig {
 
         return executor;
     }
+
+    /**
+     * 工作流执行线程池
+     * 用于异步执行工作流
+     *
+     * @return 任务执行器
+     */
+    @Bean("workflowExecutor")
+    public ThreadPoolTaskExecutor workflowExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
+        // 核心线程数：10
+        executor.setCorePoolSize(10);
+
+        // 最大线程数：50
+        executor.setMaxPoolSize(50);
+
+        // 队列容量：500
+        executor.setQueueCapacity(500);
+
+        // 线程名前缀
+        executor.setThreadNamePrefix("workflow-exec-");
+
+        // 线程空闲时间（秒）
+        executor.setKeepAliveSeconds(60);
+
+        // 拒绝策略：由调用线程执行
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+
+        // 允许核心线程超时
+        executor.setAllowCoreThreadTimeOut(true);
+
+        // 等待所有任务完成后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+
+        // 等待时间（秒）
+        executor.setAwaitTerminationSeconds(60);
+
+        // 初始化
+        executor.initialize();
+
+        log.info("工作流执行线程池初始化完成: corePoolSize=10, maxPoolSize=50, queueCapacity=500");
+
+        return executor;
+    }
+
+    /**
+     * 节点执行线程池
+     * 用于并行执行工作流中的节点
+     *
+     * @return 任务执行器
+     */
+    @Bean("nodeExecutor")
+    public Executor nodeExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+
+        // 核心线程数：20
+        executor.setCorePoolSize(20);
+
+        // 最大线程数：100
+        executor.setMaxPoolSize(100);
+
+        // 队列容量：1000
+        executor.setQueueCapacity(1000);
+
+        // 线程名前缀
+        executor.setThreadNamePrefix("node-exec-");
+
+        // 线程空闲时间（秒）
+        executor.setKeepAliveSeconds(60);
+
+        // 拒绝策略：由调用线程执行
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+
+        // 允许核心线程超时
+        executor.setAllowCoreThreadTimeOut(true);
+
+        // 等待所有任务完成后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+
+        // 等待时间（秒）
+        executor.setAwaitTerminationSeconds(60);
+
+        // 初始化
+        executor.initialize();
+
+        log.info("节点执行线程池初始化完成: corePoolSize=20, maxPoolSize=100, queueCapacity=1000");
+
+        return executor;
+    }
 }

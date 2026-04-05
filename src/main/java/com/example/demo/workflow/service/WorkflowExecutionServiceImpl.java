@@ -6,10 +6,19 @@ import com.example.demo.common.exception.BusinessException;
 import com.example.demo.workflow.dto.ExecutionResponse;
 import com.example.demo.workflow.entity.ExecutionStatus;
 import com.example.demo.workflow.entity.TriggerType;
+import com.example.demo.workflow.entity.WorkflowConnectionEntity;
 import com.example.demo.workflow.entity.WorkflowEntity;
 import com.example.demo.workflow.entity.WorkflowExecutionEntity;
+import com.example.demo.workflow.entity.WorkflowNodeEntity;
+import com.example.demo.workflow.execution.context.ExecutionContext;
+import com.example.demo.workflow.execution.context.WorkflowDefinition;
+import com.example.demo.workflow.execution.engine.WorkflowScheduler;
+import com.example.demo.workflow.mapper.WorkflowConnectionMapper;
 import com.example.demo.workflow.mapper.WorkflowExecutionMapper;
 import com.example.demo.workflow.mapper.WorkflowMapper;
+import com.example.demo.workflow.mapper.WorkflowNodeMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageImpl;
@@ -18,12 +27,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
  * 工作流执行服务实现类 (MyBatis-Plus版本)
+ *
+ * 集成了执行引擎框架，提供实际的工作流执行能力
  *
  * @author AI Test Platform Team
  * @version 1.0.0
@@ -35,34 +48,56 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     private final WorkflowExecutionMapper executionMapper;
     private final WorkflowMapper workflowMapper;
+    private final WorkflowNodeMapper nodeMapper;
+    private final WorkflowConnectionMapper connectionMapper;
+    private final WorkflowScheduler workflowScheduler;
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
     public Long executeWorkflow(Long workflowId, String triggeredBy, String inputData) {
-        log.info("开始执行工作流: {}", workflowId);
+        log.info("开始执行工作流: workflowId={}, triggeredBy={}", workflowId, triggeredBy);
 
+        // 1. 查询工作流定义
         WorkflowEntity workflow = workflowMapper.selectById(workflowId);
         if (workflow == null) {
             throw BusinessException.notFound("工作流", workflowId);
         }
 
-        // 创建执行记录
-        WorkflowExecutionEntity execution = new WorkflowExecutionEntity();
-        execution.setWorkflowId(workflowId);
-        execution.setExecutionUuid(UUID.randomUUID().toString());
-        execution.setStatus(ExecutionStatus.PENDING.name());
-        execution.setTriggerType(TriggerType.MANUAL.name());
-        execution.setTriggeredBy(triggeredBy);
-        execution.setInputData(inputData);
+        // 2. 检查工作流状态
+        if (!"PUBLISHED".equals(workflow.getStatus())) {
+            throw BusinessException.bizError("工作流未发布或已禁用: " + workflow.getName());
+        }
 
-        executionMapper.insert(execution);
+        // 3. 解析输入数据
+        Map<String, Object> inputMap = new HashMap<>();
+        if (inputData != null && !inputData.isEmpty()) {
+            try {
+                inputMap = objectMapper.readValue(inputData,
+                        new TypeReference<Map<String, Object>>() {});
+            } catch (Exception e) {
+                log.warn("解析输入数据失败，使用空Map", e);
+            }
+        }
 
-        // 更新工作流状态
+        // 4. 提交到执行调度器
+        String executionUuid = workflowScheduler.submitExecution(
+                workflowId,
+                inputMap,
+                triggeredBy,
+                TriggerType.MANUAL.name()
+        );
+
+        // 5. 更新工作流状态
         workflow.setHasRun(true);
         workflowMapper.updateById(workflow);
 
-        // TODO: 实际执行工作流的逻辑（异步执行）
-        // 这里可以集成Agent框架或其他执行引擎
+        // 6. 获取执行记录ID
+        WorkflowExecutionEntity execution = executionMapper.selectByExecutionUuid(executionUuid)
+                .orElseThrow(() -> BusinessException.systemError("创建执行记录失败"));
+
+        log.info("工作流执行已提交: workflowId={}, executionUuid={}, executionId={}",
+                workflowId, executionUuid, execution.getId());
 
         return execution.getId();
     }
