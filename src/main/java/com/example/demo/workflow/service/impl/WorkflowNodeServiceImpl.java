@@ -68,6 +68,14 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
         node.setOutputParams(request.getOutputParams());
         node.setConfig(request.getConfig());
 
+        // 设置 Skill 引用
+        if (request.getSkillId() != null) {
+            node.setSkillId(request.getSkillId());
+        }
+        if (request.getSkillSnapshot() != null) {
+            node.setSkillSnapshot(request.getSkillSnapshot());
+        }
+
         // 设置节点分类
         node.setNodeCategory(determineNodeCategory(request.getType()));
 

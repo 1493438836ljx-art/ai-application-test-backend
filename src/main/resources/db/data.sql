@@ -42,14 +42,5 @@ ON DUPLICATE KEY UPDATE
     enabled = VALUES(enabled),
     updated_at = NOW();
 
--- 7. 确保 skill 节点类型存在
-INSERT INTO workflow_node_type (code, name, category, description, icon, sort_order, enabled, created_at, updated_at)
-VALUES ('skill', '技能', 'EXECUTION', '从 Skill 库加载的执行节点', 'Cpu', 10, true, NOW(), NOW())
-ON DUPLICATE KEY UPDATE
-    name = VALUES(name),
-    category = VALUES(category),
-    description = VALUES(description),
-    icon = VALUES(icon),
-    sort_order = VALUES(sort_order),
-    enabled = VALUES(enabled),
-    updated_at = NOW();
+-- 7. 禁用虚假的 skill 节点类型（真实的 Skill 从 Skill 库动态加载）
+UPDATE workflow_node_type SET enabled = false WHERE code = 'skill';

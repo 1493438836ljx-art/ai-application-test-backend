@@ -57,4 +57,12 @@ public class NodeCreateRequest {
 
     @Schema(description = "节点分类：BASIC/LOGIC/EXECUTION", example = "BASIC")
     private String nodeCategory;
+
+    // ========== Skill 引用 ==========
+
+    @Schema(description = "引用的Skill ID")
+    private String skillId;
+
+    @Schema(description = "Skill快照（JSON格式，包含创建时的参数定义）")
+    private String skillSnapshot;
 }
