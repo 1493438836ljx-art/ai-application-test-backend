@@ -58,9 +58,9 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
             throw BusinessException.notFound("工作流", workflowId);
         }
 
-        // 2. 检查工作流状态
-        if (!"PUBLISHED".equals(workflow.getStatus())) {
-            throw BusinessException.bizError("工作流未发布或已禁用: " + workflow.getName());
+        // 2. 检查工作流状态（允许 DRAFT 和 PUBLISHED 状态执行，用于编辑器中试运行）
+        if ("ARCHIVED".equals(workflow.getStatus())) {
+            throw BusinessException.bizError("工作流已归档，无法执行: " + workflow.getName());
         }
 
         // 3. 解析输入数据

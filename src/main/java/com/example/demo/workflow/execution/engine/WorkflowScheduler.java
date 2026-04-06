@@ -77,11 +77,11 @@ public class WorkflowScheduler {
             );
         }
 
-        // 2. 检查工作流状态
-        if (!"PUBLISHED".equals(workflow.getStatus())) {
+        // 2. 检查工作流状态（允许 DRAFT 和 PUBLISHED 状态执行，用于编辑器中试运行）
+        if ("ARCHIVED".equals(workflow.getStatus())) {
             throw new WorkflowExecutionException(
                     ErrorCode.WORKFLOW_NOT_PUBLISHED,
-                    "工作流未发布或已禁用: " + workflow.getName()
+                    "工作流已归档，无法执行: " + workflow.getName()
             );
         }
 
