@@ -7,7 +7,14 @@ import com.example.demo.workflow.execution.error.ErrorCode;
 import com.example.demo.workflow.execution.error.WorkflowExecutionException;
 import com.example.demo.workflow.execution.executor.NodeExecutionResult;
 import com.example.demo.workflow.execution.executor.NodeExecutor;
+import com.example.demo.workflow.execution.executor.NodeExecutorRegistry;
 import com.example.demo.workflow.execution.executor.ValidationResult;
+import com.example.demo.workflow.execution.executor.skill.dto.SkillExecutionRequest;
+import com.example.demo.workflow.execution.executor.skill.dto.SkillExecutionResult;
+import com.example.demo.workflow.execution.executor.skill.strategy.SkillExecutionStrategy;
+import com.example.demo.workflow.execution.executor.skill.strategy.SkillExecutionStrategyRegistry;
+import com.example.demo.skill.service.SkillService;
+import com.example.demo.skill.dto.SkillResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,15 +23,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 技能节点执行器
- * 根据执行方式和执行位置分发到对应的执行器
- *
- * 当前为框架实现，提供基本的执行流程
+ * 作为统一入口，根据执行方式分发到对应的执行策略
  *
  * @author AI Test Platform Team
  * @version 1.0.0
@@ -36,9 +45,10 @@ public class SkillNodeExecutor implements NodeExecutor {
 
     private final ObjectMapper objectMapper;
     private final ParameterResolver parameterResolver;
+    private final SkillExecutionStrategyRegistry strategyRegistry;
 
-    // 可以通过注入的方式获取Skill服务
-    // private final SkillService skillService;
+    @Autowired(required = false)
+    private SkillService skillService;
 
     @Override
     public String getNodeType() {
@@ -55,7 +65,7 @@ public class SkillNodeExecutor implements NodeExecutor {
         long startTime = System.currentTimeMillis();
 
         try {
-            // 1. 获取 Skill 定义
+            // 1. 获取 Skill ID
             String skillId = node.getSkillId();
             if (skillId == null || skillId.isEmpty()) {
                 throw new WorkflowExecutionException(
@@ -66,25 +76,26 @@ public class SkillNodeExecutor implements NodeExecutor {
                 );
             }
 
-            // 2. 解析并验证输入参数
-            Map<String, Object> resolvedInputs = resolveAndValidateInputs(node, inputs, context);
+            // 2. 构建执行请求（包含所有执行所需信息）
+            SkillExecutionRequest request = buildExecutionRequest(node, inputs, context);
 
-            // 3. 获取执行配置
-            String executionType = getExecutionType(node);
-            String executionLocation = getExecutionLocation(node);
+            // 3. 获取执行策略并执行
+            String executionType = request.getExecutionType();
+            SkillExecutionStrategy strategy = strategyRegistry.getStrategy(executionType);
 
-            log.info("技能执行配置: skillId={}, execType={}, execLocation={}",
-                    skillId, executionType, executionLocation);
+            if (strategy == null) {
+                throw new WorkflowExecutionException(
+                        ErrorCode.SKILL_EXECUTION_FAILED,
+                        node.getNodeUuid(),
+                        node.getName(),
+                        "未找到执行策略: " + executionType
+                );
+            }
 
-            // 4. 执行技能（当前为框架实现）
-            SkillExecutionResult result = executeSkill(
-                    skillId,
-                    node.getSkillSnapshot(),
-                    executionType,
-                    executionLocation,
-                    resolvedInputs,
-                    context
-            );
+            log.info("使用执行策略: {}, executionType={}", strategy.getStrategyName(), executionType);
+
+            // 4. 执行Skill
+            SkillExecutionResult result = strategy.execute(request);
 
             long durationMs = System.currentTimeMillis() - startTime;
 
@@ -122,61 +133,54 @@ public class SkillNodeExecutor implements NodeExecutor {
     }
 
     /**
-     * 解析并验证输入参数
+     * 构建执行请求
+     * 从节点配置和Skill信息中收集所有执行所需的数据
      */
-    private Map<String, Object> resolveAndValidateInputs(WorkflowNodeEntity node,
-                                                         Map<String, Object> inputs,
-                                                         ExecutionContext context) {
-        Map<String, Object> resolved = new HashMap<>();
+    private SkillExecutionRequest buildExecutionRequest(WorkflowNodeEntity node,
+                                                       Map<String, Object> inputs,
+                                                       ExecutionContext context) {
+        // 解析skillSnapshot获取Skill基本信息
+        String skillId = node.getSkillId();
+        String skillName = node.getName();
+        String description = "";
+        String executionType = "AUTOMATED";
+        String suitePath = null;
+        byte[] suiteContent = null;
+        List<SkillExecutionRequest.SkillParameterDef> inputParams = new ArrayList<>();
+        List<SkillExecutionRequest.SkillParameterDef> outputParams = new ArrayList<>();
 
-        // 解析节点配置的输入参数
-        String inputParamsJson = node.getInputParams();
-        if (inputParamsJson != null && !inputParamsJson.isEmpty()) {
+        // 从skillSnapshot解析信息
+        String skillSnapshot = node.getSkillSnapshot();
+        if (skillSnapshot != null && !skillSnapshot.isEmpty()) {
             try {
-                List<Map<String, Object>> inputParams = objectMapper.readValue(
-                        inputParamsJson,
-                        new TypeReference<List<Map<String, Object>>>() {}
+                Map<String, Object> snapshot = objectMapper.readValue(
+                        skillSnapshot,
+                        new TypeReference<Map<String, Object>>() {}
                 );
 
-                for (Map<String, Object> param : inputParams) {
-                    String paramName = (String) param.get("name");
-                    Boolean required = (Boolean) param.get("required");
+                skillName = (String) snapshot.getOrDefault("name", skillName);
+                description = (String) snapshot.getOrDefault("description", "");
+                executionType = (String) snapshot.getOrDefault("executionType", "AUTOMATED");
+                suitePath = (String) snapshot.get("suitePath");
 
-                    Object value = inputs.get(paramName);
-
-                    // 必填校验
-                    if (Boolean.TRUE.equals(required) && value == null) {
-                        throw new WorkflowExecutionException(
-                                ErrorCode.PARAM_REQUIRED_MISSING,
-                                node.getNodeUuid(),
-                                node.getName(),
-                                "必填参数缺失: " + paramName
-                        );
-                    }
-
-                    if (value != null) {
-                        resolved.put(paramName, value);
-                    }
+                // 解析输入参数定义
+                Object inputParamsObj = snapshot.get("inputParameters");
+                if (inputParamsObj instanceof List) {
+                    inputParams = parseParameterDefs((List<?>) inputParamsObj);
                 }
 
-            } catch (JsonProcessingException e) {
-                log.warn("解析输入参数配置失败: {}", e.getMessage());
+                // 解析输出参数定义
+                Object outputParamsObj = snapshot.get("outputParameters");
+                if (outputParamsObj instanceof List) {
+                    outputParams = parseParameterDefs((List<?>) outputParamsObj);
+                }
+
+            } catch (Exception e) {
+                log.warn("解析skillSnapshot失败: {}", e.getMessage());
             }
         }
 
-        // 如果没有配置，直接使用传入的输入
-        if (resolved.isEmpty() && !inputs.isEmpty()) {
-            resolved.putAll(inputs);
-        }
-
-        return resolved;
-    }
-
-    /**
-     * 获取执行方式
-     */
-    private String getExecutionType(WorkflowNodeEntity node) {
-        // 从节点配置中获取
+        // 获取执行配置
         String config = node.getConfig();
         if (config != null && !config.isEmpty()) {
             try {
@@ -184,66 +188,142 @@ public class SkillNodeExecutor implements NodeExecutor {
                         config,
                         new TypeReference<Map<String, Object>>() {}
                 );
-                Object execType = configMap.get("executionType");
-                if (execType != null) {
-                    return execType.toString();
+                if (configMap.containsKey("executionType")) {
+                    executionType = configMap.get("executionType").toString();
                 }
             } catch (Exception e) {
                 log.warn("解析节点配置失败", e);
             }
         }
 
-        // 默认使用自动化脚本执行
-        return "AUTOMATED";
-    }
+        // 从inputs获取已解析的实际输入值（由ParameterResolver解析）
+        // inputs已经包含了从上游节点传递过来的解析后的实际值
+        log.debug("构建Skill执行请求: inputs={}", inputs);
 
-    /**
-     * 获取执行位置
-     */
-    private String getExecutionLocation(WorkflowNodeEntity node) {
-        String config = node.getConfig();
-        if (config != null && !config.isEmpty()) {
+        // 如果inputParams为空但inputs有值，直接从inputs构建参数定义
+        if ((inputParams == null || inputParams.isEmpty()) && inputs != null && !inputs.isEmpty()) {
+            log.debug("从inputs构建参数定义");
+            inputParams = new ArrayList<>();
+            for (Map.Entry<String, Object> entry : inputs.entrySet()) {
+                SkillExecutionRequest.SkillParameterDef param = SkillExecutionRequest.SkillParameterDef.builder()
+                        .name(entry.getKey())
+                        .type(entry.getValue() instanceof Integer ? "Integer" :
+                              entry.getValue() instanceof Double ? "Double" : "String")
+                        .value(entry.getValue())
+                        .build();
+                inputParams.add(param);
+            }
+        } else if (inputParams != null) {
+            // 将inputs的值设置到已有的参数定义中
+            for (Map.Entry<String, Object> entry : inputs.entrySet()) {
+                for (SkillExecutionRequest.SkillParameterDef param : inputParams) {
+                    if (param.getName().equals(entry.getKey())) {
+                        param.setValue(entry.getValue());
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 读取执行套件内容
+        if (suitePath != null && !suitePath.isEmpty()) {
             try {
-                Map<String, Object> configMap = objectMapper.readValue(
-                        config,
-                        new TypeReference<Map<String, Object>>() {}
-                );
-                Object execLocation = configMap.get("executionLocation");
-                if (execLocation != null) {
-                    return execLocation.toString();
+                Path path = Paths.get(suitePath);
+                if (Files.exists(path)) {
+                    suiteContent = Files.readAllBytes(path);
+                    log.debug("读取执行套件: path={}, size={} bytes", suitePath, suiteContent.length);
                 }
             } catch (Exception e) {
-                log.warn("解析节点配置失败", e);
+                log.warn("读取执行套件失败: {}", e.getMessage());
             }
         }
 
-        // 默认在服务端执行
-        return "SERVICE";
-    }
+        // 如果没有套件内容，尝试从SkillService获取
+        if (suiteContent == null && skillService != null) {
+            try {
+                SkillResponse skillResponse = skillService.getSkillById(skillId);
+                if (skillResponse != null && skillResponse.getSuitePath() != null) {
+                    Path path = Paths.get(skillResponse.getSuitePath());
+                    if (Files.exists(path)) {
+                        suiteContent = Files.readAllBytes(path);
+                        log.debug("从SkillService读取执行套件: size={} bytes", suiteContent.length);
+                    }
+                    // 使用Skill定义的执行类型
+                    if (skillResponse.getExecutionType() != null) {
+                        executionType = skillResponse.getExecutionType().name();
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("从SkillService获取执行套件失败: {}", e.getMessage());
+            }
+        }
 
-    /**
-     * 执行技能（框架实现）
-     */
-    private SkillExecutionResult executeSkill(String skillId,
-                                               String skillSnapshot,
-                                               String executionType,
-                                               String executionLocation,
-                                               Map<String, Object> inputs,
-                                               ExecutionContext context) {
-        log.info("执行技能: skillId={}, type={}, location={}",
-                skillId, executionType, executionLocation);
-
-        // TODO: 实现实际的技能执行逻辑
-        // 1. 根据 executionType 选择执行器 (AI_AGENT / AUTOMATED)
-        // 2. 根据 executionLocation 选择执行位置 (CLIENT / SERVICE)
-        // 3. 调用对应的执行器
-
-        // 当前为模拟实现
-        return SkillExecutionResult.builder()
-                .success(true)
-                .outputs(new HashMap<>(inputs))
-                .logs("技能执行完成 (模拟)")
+        return SkillExecutionRequest.builder()
+                .skillId(skillId)
+                .skillName(skillName)
+                .description(description)
+                .executionType(executionType)
+                .executionLocation("SERVICE") // 当前只支持服务端执行
+                .suitePath(suitePath)
+                .suiteContent(suiteContent)
+                .inputParameters(inputParams)
+                .outputParameters(outputParams)
                 .build();
+    }
+
+    /**
+     * 解析参数定义列表
+     */
+    private List<SkillExecutionRequest.SkillParameterDef> parseParameterDefs(List<?> paramsList) {
+        List<SkillExecutionRequest.SkillParameterDef> result = new ArrayList<>();
+        for (Object obj : paramsList) {
+                if (obj instanceof Map) {
+                    Map<String, Object> param = (Map<String, Object>) obj;
+                    SkillExecutionRequest.SkillParameterDef def = SkillExecutionRequest.SkillParameterDef.builder()
+                            .name((String) param.get("paramName"))
+                            .type((String) param.get("paramType"))
+                            .description((String) param.get("description"))
+                            .required((Boolean) param.get("required"))
+                            .build();
+                    result.add(def);
+                }
+            }
+        return result;
+    }
+
+    /**
+     * 解析输入参数值
+     */
+    private Map<String, Object> resolveInputValues(WorkflowNodeEntity node,
+                                                   Map<String, Object> inputs,
+                                                   ExecutionContext context) {
+        Map<String, Object> values = new HashMap<>();
+
+        String inputParamsJson = node.getInputParams();
+        if (inputParamsJson == null || inputParamsJson.isEmpty()) {
+            return values;
+        }
+
+        try {
+            List<Map<String, Object>> inputParams = objectMapper.readValue(
+                    inputParamsJson,
+                    new TypeReference<List<Map<String, Object>>>() {}
+            );
+
+            for (Map<String, Object> param : inputParams) {
+                String paramName = (String) param.get("name");
+                Object value = param.get("value");
+
+                if (value != null) {
+                    values.put(paramName, value);
+                }
+            }
+
+        } catch (Exception e) {
+            log.warn("解析输入参数失败: {}", e.getMessage());
+        }
+
+        return values;
     }
 
     /**
@@ -269,6 +349,10 @@ public class SkillNodeExecutor implements NodeExecutor {
                                             Map<String, Object> rawOutputs) {
         Map<String, Object> outputs = new HashMap<>();
 
+        if (rawOutputs == null) {
+            return outputs;
+        }
+
         String outputParamsJson = node.getOutputParams();
         if (outputParamsJson != null && !outputParamsJson.isEmpty()) {
             try {
@@ -280,7 +364,9 @@ public class SkillNodeExecutor implements NodeExecutor {
                 for (Map<String, Object> param : outputParams) {
                     String paramName = (String) param.get("name");
                     Object value = rawOutputs.get(paramName);
-                    outputs.put(paramName, value);
+                    if (value != null) {
+                        outputs.put(paramName, value);
+                    }
                 }
 
             } catch (Exception e) {
@@ -289,7 +375,7 @@ public class SkillNodeExecutor implements NodeExecutor {
         }
 
         // 如果没有配置输出参数映射，返回原始输出
-        if (outputs.isEmpty() && rawOutputs != null) {
+        if (outputs.isEmpty()) {
             outputs.putAll(rawOutputs);
         }
 
@@ -333,33 +419,5 @@ public class SkillNodeExecutor implements NodeExecutor {
 
         // 默认5分钟超时
         return 5 * 60 * 1000L;
-    }
-
-    /**
-     * 技能执行结果
-     */
-    @lombok.Data
-    @lombok.Builder
-    private static class SkillExecutionResult {
-        private boolean success;
-        private Map<String, Object> outputs;
-        private String logs;
-        private Long durationMs;
-        private String errorMessage;
-        private String errorStack;
-
-        public static SkillExecutionResult success(Map<String, Object> outputs) {
-            return SkillExecutionResult.builder()
-                    .success(true)
-                    .outputs(outputs)
-                    .build();
-        }
-
-        public static SkillExecutionResult failure(String errorMessage) {
-            return SkillExecutionResult.builder()
-                    .success(false)
-                    .errorMessage(errorMessage)
-                    .build();
-        }
     }
 }

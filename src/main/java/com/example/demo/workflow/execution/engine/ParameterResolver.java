@@ -91,10 +91,10 @@ public class ParameterResolver {
         Boolean required = (Boolean) param.get("required");
         Object defaultValue = param.get("defaultValue");
 
-        // 获取值来源配置
-        Map<String, Object> valueSource = (Map<String, Object>) param.get("valueSource");
         Object value = null;
 
+        // 优先使用 valueSource 格式（新格式）
+        Map<String, Object> valueSource = (Map<String, Object>) param.get("valueSource");
         if (valueSource != null) {
             String sourceType = (String) valueSource.get("type");
             Object sourceValue = valueSource.get("value");
@@ -109,10 +109,25 @@ public class ParameterResolver {
                 // 表达式（简单实现，直接返回字符串）
                 value = sourceValue;
             }
+        } else {
+            // 兼容旧格式：直接使用 value 字段
+            Object directValue = param.get("value");
+            if (directValue != null) {
+                String strValue = directValue.toString();
+                // 检查是否是引用格式 ${xxx.yyy}
+                Matcher matcher = REFERENCE_PATTERN.matcher(strValue);
+                if (matcher.matches()) {
+                    // 引用其他节点输出
+                    value = resolveReference(strValue, currentNodeUuid, context);
+                } else {
+                    // 字面值
+                    value = convertValue(directValue, paramType);
+                }
+            }
         }
 
         // 如果值为空，使用默认值
-        if (value == null && defaultValue != null) {
+        if (value == null && defaultValue != null && !"".equals(defaultValue)) {
             value = convertValue(defaultValue, paramType);
         }
 

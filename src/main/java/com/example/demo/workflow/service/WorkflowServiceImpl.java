@@ -361,6 +361,10 @@ public class WorkflowServiceImpl implements WorkflowService {
             node.setOutputParams(nodeDTO.getOutputParams());
             node.setConfig(nodeDTO.getConfig());
             node.setParentNodeId(nodeDTO.getParentNodeId());
+            // Skill节点需要保存skillId和skillSnapshot
+            node.setSkillId(nodeDTO.getSkillId());
+            node.setSkillSnapshot(nodeDTO.getSkillSnapshot());
+            node.setNodeCategory(nodeDTO.getNodeCategory());
             nodeMapper.insert(node);
             // 使用 nodeUuid 作为 key
             uuidToIdMap.put(nodeDTO.getNodeUuid(), node.getId());
@@ -577,6 +581,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         dto.setOutputParams(node.getOutputParams());
         dto.setConfig(node.getConfig());
         dto.setParentNodeId(node.getParentNodeId());
+        // Skill节点字段
+        dto.setSkillId(node.getSkillId());
+        dto.setSkillSnapshot(node.getSkillSnapshot());
+        dto.setNodeCategory(node.getNodeCategory());
         return dto;
     }
 
