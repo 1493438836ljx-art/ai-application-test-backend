@@ -1,5 +1,6 @@
 package com.example.demo.workflow.controller;
 
+import com.example.demo.workflow.dto.ExecutionOutputResponse;
 import com.example.demo.workflow.dto.ExecutionResponse;
 import com.example.demo.workflow.service.WorkflowExecutionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -131,5 +132,20 @@ public class WorkflowExecutionController {
         log.info("中止执行: {}", id);
         executionService.abortExecution(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 获取执行输出参数
+     *
+     * @param id 执行记录ID
+     * @return 输出参数响应
+     */
+    @GetMapping("/execution/{id}/outputs")
+    @Operation(summary = "获取执行输出参数", description = "获取工作流执行的结构化输出参数，支持文本和文件类型")
+    public ResponseEntity<ExecutionOutputResponse> getExecutionOutputs(
+            @Parameter(description = "执行记录ID", required = true)
+            @PathVariable Long id) {
+        ExecutionOutputResponse response = executionService.getExecutionOutputs(id);
+        return ResponseEntity.ok(response);
     }
 }

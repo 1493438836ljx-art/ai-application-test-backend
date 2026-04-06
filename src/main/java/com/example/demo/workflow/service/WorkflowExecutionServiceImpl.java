@@ -3,20 +3,16 @@ package com.example.demo.workflow.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.demo.common.exception.BusinessException;
+import com.example.demo.workflow.dto.ExecutionOutputResponse;
 import com.example.demo.workflow.dto.ExecutionResponse;
+import com.example.demo.workflow.dto.WorkflowOutputParam;
 import com.example.demo.workflow.entity.ExecutionStatus;
 import com.example.demo.workflow.entity.TriggerType;
-import com.example.demo.workflow.entity.WorkflowConnectionEntity;
 import com.example.demo.workflow.entity.WorkflowEntity;
 import com.example.demo.workflow.entity.WorkflowExecutionEntity;
-import com.example.demo.workflow.entity.WorkflowNodeEntity;
-import com.example.demo.workflow.execution.context.ExecutionContext;
-import com.example.demo.workflow.execution.context.WorkflowDefinition;
 import com.example.demo.workflow.execution.engine.WorkflowScheduler;
-import com.example.demo.workflow.mapper.WorkflowConnectionMapper;
 import com.example.demo.workflow.mapper.WorkflowExecutionMapper;
 import com.example.demo.workflow.mapper.WorkflowMapper;
-import com.example.demo.workflow.mapper.WorkflowNodeMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -48,8 +44,6 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     private final WorkflowExecutionMapper executionMapper;
     private final WorkflowMapper workflowMapper;
-    private final WorkflowNodeMapper nodeMapper;
-    private final WorkflowConnectionMapper connectionMapper;
     private final WorkflowScheduler workflowScheduler;
     private final ObjectMapper objectMapper;
 
@@ -214,6 +208,101 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
         execution.setDurationMs(calculateDuration(execution.getStartTime(), execution.getEndTime()));
 
         executionMapper.updateById(execution);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ExecutionOutputResponse getExecutionOutputs(Long id) {
+        WorkflowExecutionEntity execution = executionMapper.selectById(id);
+        if (execution == null) {
+            throw BusinessException.notFound("执行记录", id);
+        }
+
+        List<WorkflowOutputParam> outputs = parseAndEnrichOutputs(execution.getOutputData());
+
+        return ExecutionOutputResponse.builder()
+                .executionId(execution.getId())
+                .executionUuid(execution.getExecutionUuid())
+                .status(execution.getStatus())
+                .outputs(outputs)
+                .build();
+    }
+
+    /**
+     * 解析并增强输出数据
+     */
+    @SuppressWarnings("unchecked")
+    private List<WorkflowOutputParam> parseAndEnrichOutputs(String outputData) {
+        List<WorkflowOutputParam> result = new ArrayList<>();
+
+        if (outputData == null || outputData.isEmpty()) {
+            return result;
+        }
+
+        try {
+            Map<String, Object> outputMap = objectMapper.readValue(outputData,
+                    new TypeReference<Map<String, Object>>() {});
+
+            for (Map.Entry<String, Object> entry : outputMap.entrySet()) {
+                Object value = entry.getValue();
+
+                if (value instanceof Map) {
+                    // 增强格式（带类型信息）
+                    Map<String, Object> paramData = (Map<String, Object>) value;
+                    WorkflowOutputParam param = convertToOutputParam(paramData);
+                    result.add(param);
+                } else {
+                    // 简单格式（兼容旧数据）
+                    result.add(WorkflowOutputParam.builder()
+                            .name(entry.getKey())
+                            .type("String")
+                            .category("BASIC")
+                            .value(value)
+                            .build());
+                }
+            }
+        } catch (Exception e) {
+            log.error("解析输出数据失败", e);
+        }
+
+        return result;
+    }
+
+    /**
+     * 将 Map 转换为 WorkflowOutputParam
+     */
+    @SuppressWarnings("unchecked")
+    private WorkflowOutputParam convertToOutputParam(Map<String, Object> paramData) {
+        WorkflowOutputParam.WorkflowOutputParamBuilder builder = WorkflowOutputParam.builder()
+                .name((String) paramData.get("name"))
+                .label((String) paramData.getOrDefault("label", paramData.get("name")))
+                .type((String) paramData.get("type"))
+                .category((String) paramData.getOrDefault("category", "BASIC"))
+                .fileType((String) paramData.get("fileType"))
+                .value(paramData.get("value"))
+                .fileName((String) paramData.get("fileName"))
+                .fileSize(paramData.get("fileSize") != null ?
+                        ((Number) paramData.get("fileSize")).longValue() : null)
+                .downloadUrl((String) paramData.get("downloadUrl"));
+
+        // 处理文件列表
+        Object filesObj = paramData.get("files");
+        if (filesObj instanceof List) {
+            List<Map<String, Object>> filesData = (List<Map<String, Object>>) filesObj;
+            List<WorkflowOutputParam.FileInfo> files = new ArrayList<>();
+            for (Map<String, Object> fileData : filesData) {
+                files.add(WorkflowOutputParam.FileInfo.builder()
+                        .fileId((String) fileData.get("fileId"))
+                        .fileName((String) fileData.get("fileName"))
+                        .fileSize(fileData.get("fileSize") != null ?
+                                ((Number) fileData.get("fileSize")).longValue() : null)
+                        .downloadUrl((String) fileData.get("downloadUrl"))
+                        .build());
+            }
+            builder.files(files);
+        }
+
+        return builder.build();
     }
 
     private ExecutionResponse convertToResponse(WorkflowExecutionEntity execution) {

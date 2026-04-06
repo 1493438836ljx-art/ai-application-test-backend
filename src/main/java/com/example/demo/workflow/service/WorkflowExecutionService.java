@@ -1,5 +1,6 @@
 package com.example.demo.workflow.service;
 
+import com.example.demo.workflow.dto.ExecutionOutputResponse;
 import com.example.demo.workflow.dto.ExecutionResponse;
 import com.example.demo.workflow.entity.ExecutionStatus;
 import org.springframework.data.domain.Page;
@@ -88,4 +89,12 @@ public interface WorkflowExecutionService {
      * @param errorMessage 错误信息
      */
     void failExecution(Long id, String errorMessage);
+
+    /**
+     * 获取执行的结构化输出参数
+     *
+     * @param id 执行记录ID
+     * @return 输出参数响应
+     */
+    ExecutionOutputResponse getExecutionOutputs(Long id);
 }

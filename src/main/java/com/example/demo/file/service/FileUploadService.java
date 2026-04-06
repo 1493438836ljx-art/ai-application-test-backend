@@ -143,6 +143,27 @@ public class FileUploadService {
     }
 
     /**
+     * 获取文件大小
+     *
+     * @param fileId 文件ID
+     * @return 文件大小（字节）
+     */
+    public long getFileSize(String fileId) {
+        FileInfo fileInfo = fileInfoCache.get(fileId);
+        return fileInfo != null ? fileInfo.getFileSize() : 0L;
+    }
+
+    /**
+     * 检查文件是否存在
+     *
+     * @param fileId 文件ID
+     * @return 是否存在
+     */
+    public boolean fileExists(String fileId) {
+        return fileInfoCache.containsKey(fileId);
+    }
+
+    /**
      * 删除文件
      *
      * @param fileId 文件ID
