@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 /**
  * AI反馈实体类
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @TableName("chat_feedback")

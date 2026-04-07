@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 执行上下文
  * 管理工作流执行过程中的所有状态和数据
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

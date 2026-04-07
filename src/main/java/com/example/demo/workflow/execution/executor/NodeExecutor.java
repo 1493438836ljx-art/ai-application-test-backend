@@ -9,8 +9,8 @@ import java.util.Map;
  * 节点执行器接口
  * 所有节点执行器必须实现此接口
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 public interface NodeExecutor {
 

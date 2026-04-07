@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 文件上传服务
  * 提供文件存储、加载和删除功能
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Service
 public class FileUploadService {

@@ -7,8 +7,8 @@ import com.example.demo.workflow.execution.executor.skill.dto.SkillExecutionResu
  * Skill执行策略接口
  * 定义统一的执行接口，不同的执行方式实现此接口
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 public interface SkillExecutionStrategy {
 

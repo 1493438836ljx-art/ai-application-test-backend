@@ -23,8 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 状态管理器
  * 负责执行状态的持久化和管理
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
  * 结构验证器
  * 验证工作流的结构完整性，包括开始/结束节点、孤立节点等
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

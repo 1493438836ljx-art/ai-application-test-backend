@@ -22,8 +22,8 @@ import java.util.stream.Stream;
  * 执行套件文件清理定时任务
  * 每天凌晨0点执行，清理数据库中未引用的执行套件文件
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

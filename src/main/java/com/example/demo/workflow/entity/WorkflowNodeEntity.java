@@ -8,8 +8,8 @@ import java.io.Serializable;
 /**
  * 工作流节点实体类
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @TableName("workflow_node")

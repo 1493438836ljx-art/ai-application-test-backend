@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * 发送消息请求DTO
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Schema(description = "发送消息请求")

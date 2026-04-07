@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 /**
  * 数据字典简单响应DTO（用于下拉列表）
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

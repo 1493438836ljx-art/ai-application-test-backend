@@ -11,8 +11,8 @@ import java.util.Map;
  * Skill执行策略注册表
  * 自动收集所有策略实现，根据executionType分发
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

@@ -20,8 +20,8 @@ import java.util.Map;
  * 多路条件节点执行器
  * 实现多分支条件判断（类似 switch-case）
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

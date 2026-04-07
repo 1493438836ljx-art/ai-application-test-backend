@@ -11,8 +11,8 @@ import java.util.List;
  * 工作流定义
  * 封装工作流及其节点和连线的完整定义
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 public class WorkflowDefinition {

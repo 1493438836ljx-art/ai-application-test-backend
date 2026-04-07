@@ -8,8 +8,8 @@ import lombok.Data;
 /**
  * 连线创建请求DTO
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Schema(description = "连线创建请求")

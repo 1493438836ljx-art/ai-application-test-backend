@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 /**
  * Claude Code 任务执行请求 DTO
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

@@ -17,8 +17,8 @@ import java.util.Map;
  *
  * 注意：当前为空实现，仅返回成功结果
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

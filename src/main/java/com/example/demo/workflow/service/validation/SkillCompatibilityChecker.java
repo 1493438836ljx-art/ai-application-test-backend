@@ -17,8 +17,8 @@ import java.util.Map;
  * Skill 兼容性检查器
  * 检查 Skill 节点引用的 Skill 是否存在、是否被禁用、参数配置是否正确
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

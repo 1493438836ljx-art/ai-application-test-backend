@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 节点执行器注册表
  * 管理所有节点执行器的注册和分发
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
  * 用于从 application.yml 读取 Claude Code API 的连接配置信息
  * </p>
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Component

@@ -33,8 +33,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 工作流执行调度器
  * 负责接收执行请求并调度执行资源
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

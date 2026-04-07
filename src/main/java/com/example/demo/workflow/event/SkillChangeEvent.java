@@ -12,8 +12,8 @@ import java.util.List;
  * Skill 变更事件
  * 当 Skill 发生变更时发布此事件，通知工作流模块更新相关节点的兼容性状态
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Getter
 public class SkillChangeEvent extends ApplicationEvent {

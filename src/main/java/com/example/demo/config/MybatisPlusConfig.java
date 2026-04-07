@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 /**
  * MyBatis-Plus配置类
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Configuration
 @MapperScan("com.example.demo.**.mapper")

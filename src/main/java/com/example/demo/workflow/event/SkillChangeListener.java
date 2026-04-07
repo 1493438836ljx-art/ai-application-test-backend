@@ -18,8 +18,8 @@ import java.util.List;
  * Skill 变更事件监听器
  * 当 Skill 发生变更时，自动检查相关节点的兼容性并更新状态
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

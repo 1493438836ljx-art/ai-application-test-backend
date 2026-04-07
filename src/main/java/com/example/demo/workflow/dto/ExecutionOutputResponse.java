@@ -11,8 +11,8 @@ import java.util.List;
  * 工作流执行输出响应 DTO
  * 用于返回工作流执行的结构化输出参数
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

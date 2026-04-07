@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
  * 循环依赖检测器
  * 使用 Kahn 算法检测工作流中的循环依赖
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

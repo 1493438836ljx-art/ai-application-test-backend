@@ -34,8 +34,8 @@ import reactor.core.scheduler.Schedulers;
 /**
  * AI聊天服务实现类 (MyBatis-Plus版本)
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Service

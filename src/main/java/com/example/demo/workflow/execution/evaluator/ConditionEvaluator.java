@@ -16,8 +16,8 @@ import java.util.*;
  * 条件表达式评估器
  * 支持多种比较运算符
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

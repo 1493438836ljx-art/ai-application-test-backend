@@ -12,8 +12,8 @@ import java.util.Map;
  * Skill执行请求
  * 包含执行所需的所有信息，不依赖数据库连接
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

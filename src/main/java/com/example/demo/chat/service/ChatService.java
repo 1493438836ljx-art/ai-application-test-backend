@@ -9,8 +9,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 /**
  * AI聊天服务接口
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 public interface ChatService {
 

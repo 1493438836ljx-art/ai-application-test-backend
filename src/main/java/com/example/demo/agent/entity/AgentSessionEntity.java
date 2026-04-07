@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
  * Agent会话实体类
  * 用于多轮对话的会话管理，存储查询结果和操作结果
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @TableName("agent_session")

@@ -12,8 +12,8 @@ import java.util.Map;
  * AI代理执行策略
  * 通过AI Agent执行Skill（当前为骨架实现）
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

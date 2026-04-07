@@ -18,8 +18,8 @@ import java.util.Random;
  * 重试执行器
  * 封装节点执行的重试逻辑
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

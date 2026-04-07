@@ -24,8 +24,8 @@ import java.util.zip.ZipInputStream;
  * 自动化脚本执行策略
  * 执行zip压缩的执行套件
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

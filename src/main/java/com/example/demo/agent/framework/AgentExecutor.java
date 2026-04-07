@@ -42,8 +42,8 @@ import java.util.Map;
  * 支持多轮会话管理
  * </p>
  *
- * @author AI Test Platform Team
- * @version 1.1.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Service

@@ -8,8 +8,8 @@ import java.io.Serializable;
 /**
  * Skill参数实体类（合并入参和出参）
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @TableName("skill_parameter")

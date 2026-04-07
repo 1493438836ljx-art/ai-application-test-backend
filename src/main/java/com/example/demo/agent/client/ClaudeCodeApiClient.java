@@ -23,8 +23,8 @@ import java.nio.charset.StandardCharsets;
  * 负责 Claude Code RESTful API 的底层调用
  * </p>
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

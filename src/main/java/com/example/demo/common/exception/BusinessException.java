@@ -5,8 +5,8 @@ import lombok.Getter;
 /**
  * 业务异常类
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Getter
 public class BusinessException extends RuntimeException {

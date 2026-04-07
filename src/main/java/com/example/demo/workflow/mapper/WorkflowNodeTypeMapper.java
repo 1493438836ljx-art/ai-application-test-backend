@@ -11,8 +11,8 @@ import java.util.Optional;
 /**
  * 节点类型Mapper接口
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Mapper
 public interface WorkflowNodeTypeMapper extends BaseMapper<WorkflowNodeTypeEntity> {

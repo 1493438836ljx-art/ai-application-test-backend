@@ -23,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
  * 提供统一的 Agent 调用接口供外部使用
  * </p>
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @RestController

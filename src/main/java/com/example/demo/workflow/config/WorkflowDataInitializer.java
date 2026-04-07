@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 /**
  * 工作流节点类型数据初始化器
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

@@ -11,8 +11,8 @@ import java.util.List;
  * 工作流输出参数 DTO
  * 用于表示结束节点的输出参数，支持文本和文件类型
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

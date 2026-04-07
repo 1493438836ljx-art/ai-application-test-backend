@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
  * 供外部调用的统一请求格式，包装了 Claude Code 任务执行的所有参数
  * </p>
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

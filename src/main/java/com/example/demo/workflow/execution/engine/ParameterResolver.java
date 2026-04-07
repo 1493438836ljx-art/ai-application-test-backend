@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
  * 参数解析器
  * 解析节点输入参数配置，从上下文中获取值
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

@@ -12,8 +12,8 @@ import java.util.Optional;
 /**
  * AI对话Mapper接口
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Mapper
 public interface ChatConversationMapper extends BaseMapper<ChatConversationEntity> {

@@ -14,15 +14,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * 通过各种注解启用异步处理、缓存、重试、定时任务等功能。
  * </p>
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @SpringBootApplication
 @EnableAsync        // 启用异步方法执行支持
 @EnableCaching      // 启用缓存功能
 @EnableRetry        // 启用方法重试机制
 @EnableScheduling   // 启用定时任务支持
-public class DemoApplication {
+public class AIStudioServiceApplication {
 
     /**
      * 应用程序主入口方法
@@ -30,6 +30,6 @@ public class DemoApplication {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
+        SpringApplication.run(AIStudioServiceApplication.class, args);
     }
 }

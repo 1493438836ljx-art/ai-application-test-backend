@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * 快捷问题Mapper接口
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Mapper
 public interface ChatQuickQuestionMapper extends BaseMapper<ChatQuickQuestionEntity> {

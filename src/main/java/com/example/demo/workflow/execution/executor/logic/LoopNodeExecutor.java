@@ -24,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 循环节点执行器
  * 支持三种循环类型：计数循环、数组遍历、条件循环
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

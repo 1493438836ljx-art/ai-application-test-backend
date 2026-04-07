@@ -19,8 +19,8 @@ import java.util.Map;
  * 文件上传控制器
  * 提供通用的文件上传、下载功能
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @RestController

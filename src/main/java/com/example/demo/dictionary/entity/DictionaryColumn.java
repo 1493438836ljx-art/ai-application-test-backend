@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 /**
  * 字段定义实体类
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -6,8 +6,8 @@ import lombok.Data;
 /**
  * 快捷问题DTO
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Schema(description = "快捷问题")

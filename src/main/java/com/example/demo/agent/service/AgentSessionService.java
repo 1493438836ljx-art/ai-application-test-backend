@@ -21,8 +21,8 @@ import java.util.UUID;
  * Agent会话管理服务
  * 负责多轮对话会话的创建、查询和更新
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Service

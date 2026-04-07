@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
  * 流式响应块
  * 用于解析 AI 服务的 SSE 流式响应
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @AllArgsConstructor

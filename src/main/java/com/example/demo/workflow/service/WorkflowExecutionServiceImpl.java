@@ -34,8 +34,8 @@ import java.util.stream.Collectors;
  *
  * 集成了执行引擎框架，提供实际的工作流执行能力
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Service

@@ -21,8 +21,8 @@ import java.util.Map;
  * 开始节点执行器
  * 负责初始化工作流参数，将输入数据写入执行上下文
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

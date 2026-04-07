@@ -35,8 +35,8 @@ import java.util.Map;
  * 技能节点执行器
  * 作为统一入口，根据执行方式分发到对应的执行策略
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

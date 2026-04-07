@@ -3,8 +3,8 @@ package com.example.demo.chat.entity;
 /**
  * 对话状态枚举
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 public enum ConversationStatus {
 

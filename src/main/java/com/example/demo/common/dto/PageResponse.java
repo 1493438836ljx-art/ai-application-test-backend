@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * 分页响应包装类
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder

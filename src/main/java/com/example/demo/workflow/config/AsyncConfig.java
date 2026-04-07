@@ -13,8 +13,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 异步任务配置
  * 用于配置工作流相关的异步任务执行器
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Configuration

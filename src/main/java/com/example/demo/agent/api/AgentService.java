@@ -48,8 +48,8 @@ import com.example.demo.agent.framework.AgentExecutor.AgentCallback;
  * }</pre>
  * </p>
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 public interface AgentService {
 

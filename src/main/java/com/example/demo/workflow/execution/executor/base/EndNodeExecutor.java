@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
  * 结束节点执行器
  * 负责收集最终输出结果，标记工作流完成
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

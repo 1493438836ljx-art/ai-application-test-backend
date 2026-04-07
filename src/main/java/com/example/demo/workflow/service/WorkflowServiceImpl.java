@@ -24,8 +24,8 @@ import org.springframework.data.domain.PageImpl;
 /**
  * 工作流服务实现类 (MyBatis-Plus版本)
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Service

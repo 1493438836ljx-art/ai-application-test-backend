@@ -6,8 +6,8 @@ import lombok.Data;
 /**
  * Skill查询请求DTO
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Schema(description = "Skill查询请求")

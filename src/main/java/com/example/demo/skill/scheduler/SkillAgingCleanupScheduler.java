@@ -15,8 +15,8 @@ import java.util.List;
  * Skill数据老化清理定时任务
  * 每天凌晨0点5分执行，物理删除已删除超过1年的Skill相关数据
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Slf4j
 @Component

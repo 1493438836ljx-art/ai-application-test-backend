@@ -8,8 +8,8 @@ import java.util.Map;
 /**
  * 工作流执行异常基类
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Getter
 public class WorkflowExecutionException extends RuntimeException {

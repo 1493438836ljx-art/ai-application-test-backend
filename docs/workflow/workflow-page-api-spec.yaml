@@ -1,0 +1,1657 @@
+openapi: 3.0.0
+info:
+  title: 工作流详情页 API
+  version: 1.0.0
+  description: |
+    工作流详情页（/workflow/:id）相关的所有后端 API 接口定义。
+
+    ## 页面功能概述
+
+    工作流详情页是工作流编辑器的核心页面，支持以下功能：
+    - 工作流基本信息管理（名称、描述、触发配置）
+    - 工作流画布编辑（节点、连线、关联）
+    - 工作流执行与状态监控
+    - 执行历史查看
+    - 工作流发布/取消发布
+
+    ## API 分类
+
+    1. **WorkflowController** - 工作流基础管理
+    2. **WorkflowExecutionController** - 工作流执行管理
+    3. **WorkflowNodeController** - 节点管理
+    4. **WorkflowConnectionController** - 连线管理
+    5. **WorkflowValidationController** - 验证与辅助接口
+
+servers:
+  - url: http://localhost:8080
+    description: 后端服务地址
+
+paths:
+  # ==================== 工作流基础管理 (WorkflowController) ====================
+
+  /api/workflow/{id}:
+    get:
+      summary: 获取工作流详情
+      description: |
+        根据ID获取工作流的完整详细信息，包括：
+        - 工作流基本信息（名称、描述、状态等）
+        - 所有节点数据（nodes）
+        - 所有连线数据（connections）
+        - 所有关联数据（associations）
+
+        ## 页面加载时调用
+        访问 /workflow/:id 页面时，首先调用此接口加载工作流数据。
+      operationId: getWorkflowDetail
+      tags:
+        - WorkflowController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+            example: 30
+      responses:
+        '200':
+          description: 工作流详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowResponse'
+
+    put:
+      summary: 更新工作流基本信息
+      description: |
+        更新工作流的基本信息，包括：
+        - 名称（name）
+        - 描述（description）
+        - 触发类型（triggerType）
+        - 触发配置（triggerConfig）
+
+        ## 使用场景
+        - 在工作流设置面板中修改名称/描述
+        - 配置工作流触发方式（手动触发/定时触发/Webhook触发）
+      operationId: updateWorkflow
+      tags:
+        - WorkflowController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowUpdateRequest'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowResponse'
+
+    delete:
+      summary: 删除工作流
+      description: |
+        删除指定的工作流及其所有关联数据（节点、连线、执行记录等）。
+
+        ## 使用场景
+        - 在工作流列表或详情页点击删除按钮
+      operationId: deleteWorkflow
+      tags:
+        - WorkflowController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 删除成功
+
+  /api/workflow/{id}/data/json:
+    post:
+      summary: 保存工作流数据（JSON）
+      description: |
+        ## 接口说明
+
+        此接口用于保存工作流的**完整画布数据**，采用**全量覆盖**的更新策略。
+
+        ### 核心机制：全量覆盖
+
+        **重要**：请求体中的 `nodes`、`connections`、`associations` 三个数组代表了工作流的**全部**数据，而非增量数据。
+        后端收到请求后，会：
+        1. 删除该工作流下所有旧的节点、连线、关联数据
+        2. 插入请求体中传来的新数据
+
+        ### 删除节点的实现方式
+
+        删除节点**不需要单独的删除接口**，而是通过以下方式实现：
+        - 前端从 `nodes` 数组中移除被删除的节点
+        - 前端从 `connections` 数组中移除与该节点相关的连线
+        - 前端从 `associations` 数组中移除相关关联（如有）
+        - 调用此接口，传入剩余的完整数据
+        - 后端全量覆盖，被"移除"的数据自然消失
+
+        ### 使用场景
+
+        - 用户在画布上添加/删除/移动节点后保存
+        - 用户添加/删除连线后保存
+        - 用户修改节点配置后保存
+        - 自动保存（定时或离开页面时）
+      operationId: saveWorkflowData
+      tags:
+        - WorkflowController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        description: 工作流完整数据（全量覆盖）
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowDataRequest'
+      responses:
+        '200':
+          description: 保存成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowResponse'
+
+  /api/workflow/{id}/publish:
+    post:
+      summary: 发布工作流
+      description: |
+        将工作流状态从 DRAFT（草稿）变更为 PUBLISHED（已发布）。
+
+        ## 使用场景
+        - 用户在工作流详情页点击"发布"按钮
+        - 发布后工作流可被外部系统调用（如通过 Webhook）
+      operationId: publishWorkflow
+      tags:
+        - WorkflowController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 发布成功
+
+  /api/workflow/{id}/unpublish:
+    post:
+      summary: 取消发布工作流
+      description: |
+        将工作流状态从 PUBLISHED（已发布）变更为 DRAFT（草稿）。
+
+        ## 使用场景
+        - 用户在工作流详情页点击"取消发布"按钮
+      operationId: unpublishWorkflow
+      tags:
+        - WorkflowController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 取消发布成功
+
+  /api/workflow/{id}/copy:
+    post:
+      summary: 复制工作流
+      description: |
+        复制指定工作流及其所有节点、连线和关联数据，创建一个新的工作流副本。
+
+        ## 使用场景
+        - 用户在工作流详情页点击"复制"按钮
+        - 基于现有工作流创建新版本
+      operationId: copyWorkflow
+      tags:
+        - WorkflowController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 源工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '201':
+          description: 复制成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowResponse'
+
+  /api/workflow/default:
+    get:
+      summary: 获取默认工作流模板
+      description: |
+        获取系统默认的工作流模板，包含：
+        - 默认的开始节点
+        - 默认的结束节点
+        - 基本的节点连线
+
+        ## 使用场景
+        - 创建新工作流时，基于默认模板初始化画布
+      operationId: getDefaultWorkflow
+      tags:
+        - WorkflowController
+      responses:
+        '200':
+          description: 默认工作流模板
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowResponse'
+
+  # ==================== 工作流执行管理 (WorkflowExecutionController) ====================
+
+  /api/workflow/{id}/execute:
+    post:
+      summary: 执行工作流
+      description: |
+        触发工作流的执行。
+
+        ## 执行流程
+        1. 后端创建一条执行记录（Execution）
+        2. 异步执行工作流中的各个节点
+        3. 返回执行记录ID，前端可通过此ID轮询执行状态
+
+        ## 使用场景
+        - 用户在工作流详情页点击"运行"按钮
+        - 通过输入面板配置输入参数后执行
+      operationId: executeWorkflow
+      tags:
+        - WorkflowExecutionController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: triggeredBy
+          in: query
+          description: 触发人/触发来源
+          schema:
+            type: string
+            example: "manual"
+      requestBody:
+        description: 工作流输入参数（JSON格式）
+        content:
+          application/json:
+            schema:
+              type: object
+              description: 键值对形式的工作流输入参数
+              example:
+                input_text: "测试输入文本"
+                dataset_id: 123
+      responses:
+        '200':
+          description: 执行记录ID
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+                description: 执行记录ID，用于后续查询执行状态
+                example: 456
+
+  /api/workflow/execution/{executionId}:
+    get:
+      summary: 获取执行记录详情
+      description: |
+        根据执行记录ID获取详细的执行信息，包括：
+        - 执行状态（RUNNING/COMPLETED/FAILED/ABORTED）
+        - 输入数据
+        - 输出数据
+        - 开始时间和结束时间
+        - 错误信息（如果失败）
+
+        ## 使用场景
+        - 执行工作流后，前端轮询此接口获取执行状态
+        - 在执行日志面板中显示实时执行进度
+      operationId: getExecutionDetail
+      tags:
+        - WorkflowExecutionController
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: 执行记录ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 执行记录详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+
+  /api/workflow/execution/uuid/{uuid}:
+    get:
+      summary: 根据UUID获取执行记录
+      description: |
+        通过执行记录的UUID获取执行详情。
+
+        ## 使用场景
+        - 外部系统通过UUID查询执行结果
+        - Webhook回调时验证执行状态
+      operationId: getExecutionByUuid
+      tags:
+        - WorkflowExecutionController
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: 执行记录UUID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 执行记录详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+
+  /api/workflow/execution/{executionId}/abort:
+    post:
+      summary: 中止执行
+      description: |
+        中止正在执行中的工作流。
+
+        ## 使用场景
+        - 用户点击"停止执行"按钮
+        - 执行超时时自动中止
+      operationId: abortExecution
+      tags:
+        - WorkflowExecutionController
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: 执行记录ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 中止成功
+
+  /api/workflow/{workflowId}/executions:
+    get:
+      summary: 获取工作流执行历史
+      description: |
+        分页获取指定工作流的所有执行记录历史。
+
+        ## 使用场景
+        - 在执行历史面板中查看历史执行记录
+        - 分析工作流的执行情况和成功率
+      operationId: getWorkflowExecutions
+      tags:
+        - WorkflowExecutionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          description: 页码（从0开始）
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: 每页大小
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: 执行记录分页列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionPageResponse'
+
+  /api/workflow/executions/running:
+    get:
+      summary: 获取所有运行中的执行
+      description: |
+        获取当前系统中所有正在运行的工作流执行记录。
+
+        ## 使用场景
+        - 系统监控面板
+        - 管理员查看当前系统负载
+      operationId: getRunningExecutions
+      tags:
+        - WorkflowExecutionController
+      responses:
+        '200':
+          description: 运行中的执行列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExecutionResponse'
+
+  /api/workflow/execution/{executionId}/outputs:
+    get:
+      summary: 获取执行输出参数
+      description: |
+        获取工作流执行完成后的输出参数。
+
+        ## 使用场景
+        - 执行完成后，在结果面板中显示输出
+        - 获取工作流的执行结果数据
+      operationId: getExecutionOutputs
+      tags:
+        - WorkflowExecutionController
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: 执行记录ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 输出参数
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 键值对形式的输出参数
+
+  # ==================== 节点管理 (WorkflowNodeController) ====================
+
+  /api/workflows/{workflowId}/nodes:
+    get:
+      summary: 获取工作流所有节点
+      description: |
+        获取指定工作流中的所有节点列表。
+
+        ## 使用场景
+        - 单独刷新节点数据（不重新加载整个工作流）
+      operationId: getNodes
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 节点列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NodeDTO'
+
+    post:
+      summary: 创建新节点
+      description: |
+        在工作流中创建一个新节点。
+
+        ## 使用场景
+        - 用户从节点面板拖拽新节点到画布
+      operationId: createNode
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeDTO'
+      responses:
+        '201':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDTO'
+
+  /api/workflows/{workflowId}/nodes/{nodeUuid}:
+    get:
+      summary: 获取特定节点
+      description: |
+        根据节点UUID获取节点详情。
+
+        ## 使用场景
+        - 单独刷新某个节点的数据
+      operationId: getNode
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeUuid
+          in: path
+          required: true
+          description: 节点UUID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 节点详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDTO'
+
+    put:
+      summary: 更新节点
+      description: |
+        更新指定节点的信息。
+
+        ## 使用场景
+        - 用户修改节点配置后保存
+        - 用户移动节点位置后保存
+      operationId: updateNode
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeUuid
+          in: path
+          required: true
+          description: 节点UUID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NodeDTO'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeDTO'
+
+    delete:
+      summary: 删除节点
+      description: |
+        删除指定的节点。
+
+        ## 注意事项
+        - 删除节点时，相关的连线也会被删除
+        - 如果是循环节点，关联的循环体画布也会被删除
+
+        ## 使用场景
+        - 用户选中节点后按Delete键或点击删除按钮
+      operationId: deleteNode
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeUuid
+          in: path
+          required: true
+          description: 节点UUID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 删除成功
+
+  /api/workflows/{workflowId}/nodes/batch:
+    post:
+      summary: 批量创建节点
+      description: |
+        批量创建多个节点。
+
+        ## 使用场景
+        - 粘贴多个节点
+        - 导入工作流片段
+      operationId: batchCreateNodes
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NodeDTO'
+      responses:
+        '201':
+          description: 批量创建成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NodeDTO'
+
+    put:
+      summary: 批量更新节点
+      description: |
+        批量更新多个节点。
+
+        ## 使用场景
+        - 批量移动节点位置
+        - 批量修改节点配置
+      operationId: batchUpdateNodes
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NodeDTO'
+      responses:
+        '200':
+          description: 批量更新成功
+
+    delete:
+      summary: 批量删除节点
+      description: |
+        批量删除多个节点。
+
+        ## 使用场景
+        - 选中多个节点后批量删除
+      operationId: batchDeleteNodes
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                description: 节点UUID
+      responses:
+        '204':
+          description: 批量删除成功
+
+  /api/workflows/nodes/by-skill/{skillId}:
+    get:
+      summary: 根据技能ID查询节点
+      description: |
+        查询使用指定技能的所有节点。
+
+        ## 使用场景
+        - 技能管理中查看哪些工作流使用了该技能
+      operationId: getNodesBySkill
+      tags:
+        - WorkflowNodeController
+      parameters:
+        - name: skillId
+          in: path
+          required: true
+          description: 技能ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 节点列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NodeDTO'
+
+  # ==================== 连线管理 (WorkflowConnectionController) ====================
+
+  /api/workflows/{workflowId}/connections:
+    get:
+      summary: 获取工作流所有连线
+      description: |
+        获取指定工作流中的所有连线。
+
+        ## 使用场景
+        - 单独刷新连线数据
+      operationId: getConnections
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 连线列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionDTO'
+
+    post:
+      summary: 创建连线
+      description: |
+        创建一条新的连线，连接两个节点的端口。
+
+        ## 使用场景
+        - 用户从源节点输出端口拖拽到目标节点输入端口
+      operationId: createConnection
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionDTO'
+      responses:
+        '201':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionDTO'
+
+  /api/workflows/{workflowId}/connections/{connectionUuid}:
+    get:
+      summary: 获取特定连线
+      description: |
+        根据连线UUID获取连线详情。
+      operationId: getConnection
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: connectionUuid
+          in: path
+          required: true
+          description: 连线UUID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 连线详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectionDTO'
+
+    delete:
+      summary: 删除连线
+      description: |
+        删除指定的连线。
+
+        ## 使用场景
+        - 用户选中连线后按Delete键或点击删除
+      operationId: deleteConnection
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: connectionUuid
+          in: path
+          required: true
+          description: 连线UUID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 删除成功
+
+  /api/workflows/{workflowId}/connections/batch:
+    post:
+      summary: 批量创建连线
+      description: |
+        批量创建多条连线。
+
+        ## 使用场景
+        - 粘贴多个节点时同时创建相关连线
+      operationId: batchCreateConnections
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConnectionDTO'
+      responses:
+        '201':
+          description: 批量创建成功
+
+    delete:
+      summary: 批量删除连线
+      description: |
+        批量删除多条连线。
+
+        ## 使用场景
+        - 删除多个节点时同时删除相关连线
+      operationId: batchDeleteConnections
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                description: 连线UUID
+      responses:
+        '204':
+          description: 批量删除成功
+
+  /api/workflows/{workflowId}/connections/source/{nodeId}:
+    get:
+      summary: 获取从指定节点出发的连线
+      description: |
+        获取所有从指定节点（作为源节点）出发的连线。
+
+        ## 使用场景
+        - 分析节点的下游连接
+      operationId: getConnectionsBySourceNode
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeId
+          in: path
+          required: true
+          description: 源节点UUID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 连线列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionDTO'
+
+  /api/workflows/{workflowId}/connections/target/{nodeId}:
+    get:
+      summary: 获取到达指定节点的连线
+      description: |
+        获取所有到达指定节点（作为目标节点）的连线。
+
+        ## 使用场景
+        - 分析节点的上游连接
+      operationId: getConnectionsByTargetNode
+      tags:
+        - WorkflowConnectionController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeId
+          in: path
+          required: true
+          description: 目标节点UUID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 连线列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectionDTO'
+
+  # ==================== 验证与辅助接口 (WorkflowValidationController) ====================
+
+  /api/workflows/{workflowId}/validate:
+    post:
+      summary: 验证工作流
+      description: |
+        验证工作流的结构和配置是否正确，包括：
+        - 节点连接是否完整（无孤立节点）
+        - 节点参数配置是否正确
+        - 变量引用是否有效
+        - 循环引用检测
+
+        ## 使用场景
+        - 执行工作流前进行验证
+        - 保存工作流时进行验证
+      operationId: validateWorkflow
+      tags:
+        - WorkflowValidationController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 验证结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+
+  /api/workflows/{workflowId}/predecessors/{nodeUuid}:
+    get:
+      summary: 获取前置节点
+      description: |
+        获取指定节点的所有前置节点（上游节点）。
+
+        ## 使用场景
+        - 在节点配置面板中显示可引用的上游变量
+      operationId: getPredecessorNodes
+      tags:
+        - WorkflowValidationController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeUuid
+          in: path
+          required: true
+          description: 节点UUID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 前置节点列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NodeDTO'
+
+  /api/workflows/{workflowId}/available-variables/{nodeUuid}:
+    get:
+      summary: 获取节点可用变量
+      description: |
+        获取指定节点可以引用的所有变量列表。
+
+        ## 使用场景
+        - 在变量选择器中显示可用的变量
+        - 配置节点参数时提供变量提示
+      operationId: getAvailableVariables
+      tags:
+        - WorkflowValidationController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeUuid
+          in: path
+          required: true
+          description: 节点UUID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 可用变量列表
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailableVariable'
+
+  /api/workflows/{workflowId}/check-reference/{nodeUuid}:
+    get:
+      summary: 检查参数引用有效性
+      description: |
+        检查指定节点中的参数引用是否有效。
+
+        ## 使用场景
+        - 实时验证节点配置中的变量引用
+      operationId: checkReference
+      tags:
+        - WorkflowValidationController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+        - name: nodeUuid
+          in: path
+          required: true
+          description: 节点UUID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 引用检查结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceCheckResult'
+
+  /api/workflows/{workflowId}/execution-order:
+    get:
+      summary: 获取节点执行顺序
+      description: |
+        计算并返回工作流中节点的执行顺序。
+
+        ## 使用场景
+        - 在画布上显示执行顺序编号
+        - 调试工作流执行流程
+      operationId: getExecutionOrder
+      tags:
+        - WorkflowValidationController
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: 工作流ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 执行顺序
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: 节点UUID（按执行顺序排列）
+
+components:
+  schemas:
+    # ==================== 工作流相关 ====================
+
+    WorkflowResponse:
+      type: object
+      description: 工作流完整响应
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 工作流ID
+          example: 30
+        name:
+          type: string
+          description: 工作流名称
+          example: "AI内容评测工作流"
+        description:
+          type: string
+          description: 工作流描述
+          example: "用于测试AI生成内容质量的自动化工作流"
+        published:
+          type: boolean
+          description: 是否已发布
+          example: true
+        hasRun:
+          type: boolean
+          description: 是否已运行过
+          example: true
+        version:
+          type: integer
+          description: 版本号
+          example: 3
+        status:
+          type: string
+          enum: [DRAFT, PUBLISHED, ARCHIVED]
+          description: 工作流状态
+          example: "PUBLISHED"
+        triggerType:
+          type: string
+          description: 触发类型
+          enum: [MANUAL, SCHEDULE, WEBHOOK]
+          example: "MANUAL"
+        triggerConfig:
+          type: string
+          description: 触发配置（JSON格式）
+          example: "{}"
+        nodes:
+          type: array
+          description: 节点列表
+          items:
+            $ref: '#/components/schemas/NodeDTO'
+        connections:
+          type: array
+          description: 连线列表
+          items:
+            $ref: '#/components/schemas/ConnectionDTO'
+        associations:
+          type: array
+          description: 关联列表
+          items:
+            $ref: '#/components/schemas/AssociationDTO'
+        createdAt:
+          type: string
+          format: date-time
+          description: 创建时间
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新时间
+
+    WorkflowUpdateRequest:
+      type: object
+      description: 工作流更新请求
+      properties:
+        name:
+          type: string
+          description: 工作流名称
+          example: "更新后的工作流名称"
+        description:
+          type: string
+          description: 工作流描述
+          example: "更新后的描述"
+        triggerType:
+          type: string
+          enum: [MANUAL, SCHEDULE, WEBHOOK]
+          description: 触发类型
+          example: "MANUAL"
+        triggerConfig:
+          type: string
+          description: 触发配置（JSON格式）
+          example: "{}"
+
+    WorkflowDataRequest:
+      type: object
+      description: |
+        工作流画布数据请求
+
+        **重要**：此请求体包含工作流的**完整画布数据**，采用**全量覆盖**策略更新。
+
+        ### 核心原则
+
+        1. **全量覆盖**：后端收到请求后，会先删除该工作流的所有旧数据，再插入新数据
+        2. **原子操作**：整个保存过程在事务中执行，保证数据一致性
+        3. **前端生成UUID**：`nodeUuid` 和 `connectionUuid` 由前端生成，用于节点匹配
+      properties:
+        nodes:
+          type: array
+          description: 节点列表（完整）
+          items:
+            $ref: '#/components/schemas/NodeDTO'
+        connections:
+          type: array
+          description: 连线列表（完整）
+          items:
+            $ref: '#/components/schemas/ConnectionDTO'
+        associations:
+          type: array
+          description: 关联列表（完整）
+          items:
+            $ref: '#/components/schemas/AssociationDTO'
+
+    # ==================== 节点相关 ====================
+
+    NodeDTO:
+      type: object
+      description: |
+        节点信息
+
+        节点是工作流的基本组成单元，代表一个处理步骤。每个节点包含：
+        - 唯一标识（nodeUuid）
+        - 节点类型（type）
+        - 位置信息（positionX, positionY）
+        - 端口配置（inputPorts, outputPorts）
+        - 参数定义（inputParams, outputParams）
+        - 运行时配置（config）
+
+        **注意**：`inputPorts`、`outputPorts`、`inputParams`、`outputParams`、`config` 字段都是 JSON 字符串格式。
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 节点数据库ID（后端生成，保存时无需传入）
+        nodeUuid:
+          type: string
+          description: |
+            节点UUID，由前端生成的唯一标识符。
+            格式示例：`node-start`、`node-loop`、`node-text-clean`
+          example: "node-start"
+        type:
+          type: string
+          description: |
+            节点类型编码，常见类型：
+            - `start`: 开始节点，定义工作流输入参数
+            - `end`: 结束节点，定义工作流输出
+            - `loop`: 循环节点，遍历数组执行循环体
+            - `loopBodyCanvas`: 循环体画布，包含循环内部节点
+            - `textClean`: 文本清洗节点
+            - `tableExtract`: 表格提取节点
+            - `tableGenerate`: 表格生成节点
+            - `judgeModel`: 裁判模型节点
+            - `apiAuto`: API调用节点
+          example: "start"
+        name:
+          type: string
+          description: 节点名称，用于显示和变量引用（如 `${开始.output}`）
+          example: "开始"
+        positionX:
+          type: integer
+          description: 节点在画布上的X坐标
+          example: 80
+        positionY:
+          type: integer
+          description: 节点在画布上的Y坐标
+          example: 303
+        inputPorts:
+          type: string
+          description: |
+            输入端口配置，JSON字符串格式。
+            示例：`[{"id":"input-1","name":"输入"}]`
+          example: '[{"id":"input-1","name":"输入"}]'
+        outputPorts:
+          type: string
+          description: |
+            输出端口配置，JSON字符串格式。
+            示例：`[{"id":"output-1","name":"输出"}]`
+          example: '[{"id":"output-1","name":"输出"}]'
+        inputParams:
+          type: string
+          description: |
+            输入参数定义，JSON字符串格式。
+            示例：`[{"name":"file","type":"File","fileType":"Excel","required":true}]`
+          example: '[]'
+        outputParams:
+          type: string
+          description: |
+            输出参数定义，JSON字符串格式。
+            示例：`[{"name":"output","type":"Array","elementType":"Object"}]`
+          example: '[{"name":"dict","type":"Dictionary","required":false,"dictionaryType":"Demo数据字典"}]'
+        config:
+          type: string
+          description: |
+            节点运行时配置，JSON字符串格式。
+            包含节点执行所需的具体参数值，支持变量引用。
+          example: '{}'
+        parentNodeUuid:
+          type: string
+          nullable: true
+          description: |
+            父节点UUID，用于嵌套节点（如循环体内部的节点指向循环体画布）。
+            顶级节点此值为 null。
+          example: null
+
+    # ==================== 连线相关 ====================
+
+    ConnectionDTO:
+      type: object
+      description: |
+        连线信息
+
+        连线定义节点之间的数据流向。从源节点的输出端口连接到目标节点的输入端口。
+        连线的唯一标识（connectionUuid）由前端生成。
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 连线数据库ID（后端生成，保存时无需传入）
+        connectionUuid:
+          type: string
+          description: |
+            连线UUID，由前端生成的唯一标识符。
+            格式示例：`37ec2fbc-43bb-4a02-bcdc-28788790862e`
+          example: "37ec2fbc-43bb-4a02-bcdc-28788790862e"
+        sourceNodeUuid:
+          type: string
+          description: 源节点UUID（数据流出方）
+          example: "node-start"
+        sourcePortId:
+          type: string
+          description: 源节点的输出端口ID
+          example: "output-1"
+        targetNodeUuid:
+          type: string
+          description: 目标节点UUID（数据流入方）
+          example: "node-text-clean"
+        targetPortId:
+          type: string
+          description: 目标节点的输入端口ID
+          example: "input-1"
+        sourceParamIndex:
+          type: integer
+          nullable: true
+          description: 源参数索引（用于多输出参数场景）
+          example: null
+        targetParamIndex:
+          type: integer
+          nullable: true
+          description: 目标参数索引（用于多输入参数场景）
+          example: null
+        label:
+          type: string
+          nullable: true
+          description: 连线标签（可选）
+          example: null
+
+    # ==================== 关联相关 ====================
+
+    AssociationDTO:
+      type: object
+      description: |
+        关联信息
+
+        用于定义节点之间的特殊关联关系，目前主要用于：
+        - 循环节点（loop）与循环体画布（loopBodyCanvas）的关联
+
+        当删除循环节点时，需要同时删除关联的循环体画布。
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 关联数据库ID（后端生成，保存时无需传入）
+        loopNodeUuid:
+          type: string
+          description: 循环节点的UUID（关联的发起方）
+          example: "node-loop"
+        bodyNodeUuid:
+          type: string
+          description: 循环体画布节点的UUID（关联的目标方）
+          example: "node-loop-body"
+        associationType:
+          type: string
+          description: |
+            关联类型，目前支持：
+            - `loop-body`: 表示循环节点与循环体画布的关联
+          example: "loop-body"
+
+    # ==================== 执行相关 ====================
+
+    ExecutionResponse:
+      type: object
+      description: 执行记录响应
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 执行记录ID
+          example: 456
+        uuid:
+          type: string
+          description: 执行UUID
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        workflowId:
+          type: integer
+          format: int64
+          description: 工作流ID
+          example: 30
+        status:
+          type: string
+          enum: [RUNNING, COMPLETED, FAILED, ABORTED]
+          description: 执行状态
+          example: "COMPLETED"
+        inputData:
+          type: string
+          description: 输入数据（JSON格式）
+          example: '{"input_text": "测试输入"}'
+        outputData:
+          type: string
+          description: 输出数据（JSON格式）
+          example: '{"result": "处理完成"}'
+        errorMessage:
+          type: string
+          description: 错误信息（失败时）
+          example: null
+        startedAt:
+          type: string
+          format: date-time
+          description: 开始时间
+          example: "2024-04-07T10:30:00Z"
+        finishedAt:
+          type: string
+          format: date-time
+          description: 结束时间
+          example: "2024-04-07T10:31:30Z"
+
+    ExecutionPageResponse:
+      type: object
+      description: 执行记录分页响应
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExecutionResponse'
+        totalElements:
+          type: integer
+          description: 总记录数
+          example: 100
+        totalPages:
+          type: integer
+          description: 总页数
+          example: 10
+        number:
+          type: integer
+          description: 当前页码（从0开始）
+          example: 0
+        size:
+          type: integer
+          description: 每页大小
+          example: 10
+
+    # ==================== 验证相关 ====================
+
+    ValidationResult:
+      type: object
+      description: 工作流验证结果
+      properties:
+        valid:
+          type: boolean
+          description: 是否验证通过
+          example: true
+        errors:
+          type: array
+          description: 错误列表
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: 错误类型
+                example: "INVALID_REFERENCE"
+              message:
+                type: string
+                description: 错误信息
+                example: "节点 '文本清洗' 引用了不存在的变量 '${开始.invalid_param}'"
+              nodeUuid:
+                type: string
+                description: 相关节点UUID
+                example: "node-text-clean"
+
+    AvailableVariable:
+      type: object
+      description: 可用变量信息
+      properties:
+        name:
+          type: string
+          description: 变量名称
+          example: "开始.dict"
+        type:
+          type: string
+          description: 变量类型
+          example: "Dictionary"
+        sourceNodeName:
+          type: string
+          description: 来源节点名称
+          example: "开始"
+        description:
+          type: string
+          description: 变量描述
+          example: "Demo数据字典"
+
+    ReferenceCheckResult:
+      type: object
+      description: 引用检查结果
+      properties:
+        valid:
+          type: boolean
+          description: 引用是否有效
+          example: true
+        invalidReferences:
+          type: array
+          description: 无效的引用列表
+          items:
+            type: string
+          example: []

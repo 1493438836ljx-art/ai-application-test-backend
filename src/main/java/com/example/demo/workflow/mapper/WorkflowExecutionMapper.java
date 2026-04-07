@@ -13,8 +13,8 @@ import java.util.Optional;
 /**
  * 工作流执行记录Mapper接口
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Mapper
 public interface WorkflowExecutionMapper extends BaseMapper<WorkflowExecutionEntity> {

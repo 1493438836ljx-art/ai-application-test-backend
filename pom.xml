@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
+    <artifactId>AIStudioService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ai-test-platform</name>
     <description>生成式AI应用推理测试平台</description>

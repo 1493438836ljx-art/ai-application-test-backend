@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
  * 执行图 - 有向无环图（DAG）表示
  * 用于表示工作流的拓扑结构，支持拓扑排序和并行执行
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Slf4j

@@ -20,8 +20,8 @@ import java.util.Map;
  * 简单条件节点执行器
  * 实现二分支条件判断（是/否）
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Component
 @Slf4j

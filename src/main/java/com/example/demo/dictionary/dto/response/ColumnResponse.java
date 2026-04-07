@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * 字段定义响应DTO
  *
- * @author AI Test Platform Team
- * @version 1.0.0
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
  */
 @Data
 @Builder
