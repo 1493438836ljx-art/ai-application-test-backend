@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  * @version 27.0.1.1
  */
 @Configuration
-@MapperScan("com.example.demo.**.mapper")
+@MapperScan("com.huawei.cloudopenlabs.**.mapper")
 public class MybatisPlusConfig implements MetaObjectHandler {
 
     /**

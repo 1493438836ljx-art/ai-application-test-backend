@@ -3,7 +3,7 @@ package com.huawei.cloudopenlabs.dictionary.controller;
 import com.huawei.cloudopenlabs.common.dto.ApiResponse;
 import com.huawei.cloudopenlabs.common.dto.PageResponse;
 import com.huawei.cloudopenlabs.dictionary.dto.request.DictionaryRequest;
-import com.example.demo.dictionary.dto.response.*;
+import com.huawei.cloudopenlabs.dictionary.dto.response.*;
 import com.huawei.cloudopenlabs.dictionary.dto.response.*;
 import com.huawei.cloudopenlabs.dictionary.service.DictionaryService;
 import jakarta.validation.Valid;

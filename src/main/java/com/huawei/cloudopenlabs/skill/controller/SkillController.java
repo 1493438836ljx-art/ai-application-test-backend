@@ -1,6 +1,6 @@
 package com.huawei.cloudopenlabs.skill.controller;
 
-import com.example.demo.skill.dto.*;
+import com.huawei.cloudopenlabs.skill.dto.*;
 import com.huawei.cloudopenlabs.skill.dto.SkillCreateRequest;
 import com.huawei.cloudopenlabs.skill.dto.SkillQueryRequest;
 import com.huawei.cloudopenlabs.skill.dto.SkillResponse;

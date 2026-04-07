@@ -1,7 +1,7 @@
 package com.huawei.cloudopenlabs.dictionary.service;
 
 import com.huawei.cloudopenlabs.dictionary.dto.request.DictionaryRequest;
-import com.example.demo.dictionary.dto.response.*;
+import com.huawei.cloudopenlabs.dictionary.dto.response.*;
 import com.huawei.cloudopenlabs.dictionary.dto.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

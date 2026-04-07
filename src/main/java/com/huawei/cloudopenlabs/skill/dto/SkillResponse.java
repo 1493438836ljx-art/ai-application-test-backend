@@ -1,6 +1,6 @@
 package com.huawei.cloudopenlabs.skill.dto;
 
-import com.example.demo.skill.entity.*;
+import com.huawei.cloudopenlabs.skill.entity.*;
 import com.huawei.cloudopenlabs.skill.entity.SkillAccessType;
 import com.huawei.cloudopenlabs.skill.entity.SkillCategory;
 import com.huawei.cloudopenlabs.skill.entity.SkillExecutionType;

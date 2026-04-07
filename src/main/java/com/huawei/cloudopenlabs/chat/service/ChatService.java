@@ -1,6 +1,6 @@
 package com.huawei.cloudopenlabs.chat.service;
 
-import com.example.demo.chat.dto.*;
+import com.huawei.cloudopenlabs.chat.dto.*;
 import com.huawei.cloudopenlabs.chat.dto.*;
 import com.huawei.cloudopenlabs.chat.entity.ConversationStatus;
 import org.springframework.data.domain.Page;

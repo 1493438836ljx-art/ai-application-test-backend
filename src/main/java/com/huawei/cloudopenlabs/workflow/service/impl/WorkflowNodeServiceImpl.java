@@ -3,7 +3,7 @@ package com.huawei.cloudopenlabs.workflow.service.impl;
 import com.huawei.cloudopenlabs.workflow.dto.NodeCreateRequest;
 import com.huawei.cloudopenlabs.workflow.dto.NodeResponse;
 import com.huawei.cloudopenlabs.workflow.dto.NodeUpdateRequest;
-import com.example.demo.workflow.entity.*;
+import com.huawei.cloudopenlabs.workflow.entity.*;
 import com.huawei.cloudopenlabs.workflow.entity.*;
 import com.huawei.cloudopenlabs.workflow.mapper.WorkflowConnectionMapper;
 import com.huawei.cloudopenlabs.workflow.mapper.WorkflowNodeMapper;

@@ -1,6 +1,6 @@
 package com.huawei.cloudopenlabs.workflow.controller;
 
-import com.example.demo.workflow.dto.*;
+import com.huawei.cloudopenlabs.workflow.dto.*;
 import com.huawei.cloudopenlabs.workflow.dto.WorkflowCreateRequest;
 import com.huawei.cloudopenlabs.workflow.dto.WorkflowDataRequest;
 import com.huawei.cloudopenlabs.workflow.dto.WorkflowResponse;

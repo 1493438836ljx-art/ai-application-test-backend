@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.huawei.cloudopenlabs.dictionary.dto.request.ColumnRequest;
 import com.huawei.cloudopenlabs.dictionary.dto.request.DictionaryRequest;
-import com.example.demo.dictionary.dto.response.*;
+import com.huawei.cloudopenlabs.dictionary.dto.response.*;
 import com.huawei.cloudopenlabs.dictionary.dto.response.*;
 import com.huawei.cloudopenlabs.dictionary.entity.DataDictionary;
 import com.huawei.cloudopenlabs.dictionary.entity.DictionaryColumn;
