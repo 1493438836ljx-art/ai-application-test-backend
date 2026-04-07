@@ -50,6 +50,18 @@ import java.util.Map;
 @ConditionalOnProperty(prefix = "claude.code", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class AgentExecutor {
 
+    /**
+     * 最大对话轮次限制
+     * 防止无限递归导致栈溢出或资源耗尽
+     */
+    private static final int MAX_ROUNDS = 15;
+
+    /**
+     * 最大解析错误次数限制
+     * 防止 AI 持续返回错误格式导致无限循环
+     */
+    private static final int MAX_PARSE_ERROR_ROUNDS = 3;
+
     private final ClaudeCodeApiClient apiClient;
     private final ClaudeCodeStreamClient streamClient;
     private final AgentSessionService sessionService;
@@ -219,6 +231,19 @@ public class AgentExecutor {
      */
     private void processRound(AgentSessionEntity session, String context,
                               MultiRoundCallback callback, boolean isNewSession) {
+        // 递增轮次计数
+        int currentRound = incrementRoundCount(session);
+
+        // 检查最大轮次限制
+        if (currentRound > MAX_ROUNDS) {
+            log.warn("超过最大轮次限制: currentRound={}, maxRounds={}", currentRound, MAX_ROUNDS);
+            callback.onError(buildMaxRoundsError(session));
+            sessionService.markAsError(session.getConversationId(), "超过最大轮次限制");
+            return;
+        }
+
+        log.info("开始第 {} 轮对话, conversationId={}", currentRound, session.getConversationId());
+
         try {
             // 新会话需要传入 skillFile 和不传 sessionId，已有会话则传 sessionId 恢复
             byte[] skillFileBytes = null;
@@ -295,7 +320,21 @@ public class AgentExecutor {
                 case "parse_error":
                     // 解析错误，将问题反馈给 Claude Code 让其重新生成
                     log.warn("AI 响应格式解析错误，将问题反馈给 Claude Code: {}", plan.getSummary());
-                    callback.onStatus("响应格式有误，正在请求重新生成...");
+
+                    // 递增解析错误计数
+                    int parseErrorCount = incrementParseErrorCount(session);
+
+                    // 检查解析错误次数限制
+                    if (parseErrorCount > MAX_PARSE_ERROR_ROUNDS) {
+                        log.warn("超过最大解析错误次数限制: parseErrorCount={}, maxParseErrorRounds={}",
+                                parseErrorCount, MAX_PARSE_ERROR_ROUNDS);
+                        callback.onError("AI 响应格式持续异常，已尝试 " + MAX_PARSE_ERROR_ROUNDS +
+                                " 次仍无法解析。请尝试简化您的请求或稍后重试。");
+                        sessionService.markAsError(session.getConversationId(), "超过最大解析错误次数限制");
+                        return;
+                    }
+
+                    callback.onStatus("响应格式有误，正在请求重新生成... (尝试 " + parseErrorCount + "/" + MAX_PARSE_ERROR_ROUNDS + ")");
                     String errorContext = buildErrorContext(session, "响应格式解析错误", plan.getSummary());
                     processRound(session, errorContext, callback, false);
                     break;
@@ -661,6 +700,69 @@ public class AgentExecutor {
         sb.append("请使用中文重新生成符合格式要求的响应。");
 
         return sb.toString();
+    }
+
+    /**
+     * 递增轮次计数
+     *
+     * @param session 会话实体
+     * @return 当前轮次数
+     */
+    private int incrementRoundCount(AgentSessionEntity session) {
+        int currentRound = (session.getRoundCount() != null ? session.getRoundCount() : 0) + 1;
+        session.setRoundCount(currentRound);
+
+        // 异步更新数据库
+        try {
+            sessionService.updateRoundCount(session.getConversationId(), currentRound);
+        } catch (Exception e) {
+            log.warn("更新轮次计数失败: {}", e.getMessage());
+        }
+
+        return currentRound;
+    }
+
+    /**
+     * 递增解析错误计数
+     *
+     * @param session 会话实体
+     * @return 当前解析错误次数
+     */
+    private int incrementParseErrorCount(AgentSessionEntity session) {
+        int currentCount = (session.getParseErrorCount() != null ? session.getParseErrorCount() : 0) + 1;
+        session.setParseErrorCount(currentCount);
+
+        // 异步更新数据库
+        try {
+            sessionService.updateParseErrorCount(session.getConversationId(), currentCount);
+        } catch (Exception e) {
+            log.warn("更新解析错误计数失败: {}", e.getMessage());
+        }
+
+        return currentCount;
+    }
+
+    /**
+     * 构建最大轮次错误消息
+     *
+     * @param session 会话实体
+     * @return 友好的错误消息
+     */
+    private String buildMaxRoundsError(AgentSessionEntity session) {
+        int executedRounds = session.getRoundCount() != null ? session.getRoundCount() : 0;
+        int queryCount = session.getQueryResults() != null && !session.getQueryResults().equals("{}") ? 1 : 0;
+        int actionCount = session.getActionResults() != null && !session.getActionResults().equals("{}") ? 1 : 0;
+
+        return String.format(
+                "任务执行超过最大轮次限制（%d 轮）。\n\n" +
+                "可能原因：\n" +
+                "1. 任务过于复杂，建议拆分为多个简单任务分别执行\n" +
+                "2. 请求描述不够明确，请尝试更清晰地描述您的需求\n" +
+                "3. 系统暂时繁忙，请稍后重试\n\n" +
+                "执行统计：已执行 %d 轮对话",
+                MAX_ROUNDS,
+                executedRounds
+        );
     }
 
     /**
@@ -1110,6 +1212,28 @@ public class AgentExecutor {
             // 获取或创建 session
             AgentSessionEntity session = sessionService.getOrCreateSession(workflowId, conversationId);
 
+            // 递增轮次计数（仅在非第一轮时）
+            if (!isFirstRound) {
+                int currentRound = incrementRoundCount(session);
+
+                // 检查最大轮次限制
+                if (currentRound > MAX_ROUNDS) {
+                    log.warn("超过最大轮次限制: currentRound={}, maxRounds={}", currentRound, MAX_ROUNDS);
+                    callback.onError(buildMaxRoundsError(session));
+                    // 异步标记错误状态
+                    Mono.fromRunnable(() -> {
+                        try {
+                            sessionService.markAsError(session.getConversationId(), "超过最大轮次限制");
+                        } catch (Exception e) {
+                            log.error("标记会话错误失败: {}", e.getMessage());
+                        }
+                    }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                    return;
+                }
+
+                log.info("流式处理第 {} 轮对话, conversationId={}", currentRound, session.getConversationId());
+            }
+
             // 构建上下文（使用和同步方式相同的上下文构建）
             String context = buildContext(userMessage, session);
 
@@ -1226,6 +1350,27 @@ public class AgentExecutor {
                 case "parse_error":
                     // 解析错误，将问题反馈给 AI
                     log.warn("响应格式解析错误: {}", plan.getSummary());
+
+                    // 递增解析错误计数
+                    int parseErrorCount = incrementParseErrorCount(session);
+
+                    // 检查解析错误次数限制
+                    if (parseErrorCount > MAX_PARSE_ERROR_ROUNDS) {
+                        log.warn("超过最大解析错误次数限制: parseErrorCount={}, maxParseErrorRounds={}",
+                                parseErrorCount, MAX_PARSE_ERROR_ROUNDS);
+                        callback.onError("AI 响应格式持续异常，已尝试 " + MAX_PARSE_ERROR_ROUNDS +
+                                " 次仍无法解析。请尝试简化您的请求或稍后重试。");
+                        // 异步标记错误状态
+                        Mono.fromRunnable(() -> {
+                            try {
+                                sessionService.markAsError(session.getConversationId(), "超过最大解析错误次数限制");
+                            } catch (Exception e) {
+                                log.error("标记会话错误失败: {}", e.getMessage());
+                            }
+                        }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                        return;
+                    }
+
                     String errorContext = buildErrorContext(session, "响应格式解析错误", plan.getSummary());
                     processMessageStreamWithMultiRound(errorContext, workflowId, session.getConversationId(),
                             callback, false);

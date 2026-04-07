@@ -246,6 +246,48 @@ public class AgentSessionService {
     }
 
     /**
+     * 更新轮次计数
+     *
+     * @param conversationId 会话ID
+     * @param roundCount     轮次计数
+     */
+    @Transactional
+    public void updateRoundCount(String conversationId, int roundCount) {
+        Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
+        if (sessionOpt.isEmpty()) {
+            log.warn("会话不存在，无法更新轮次计数: conversationId={}", conversationId);
+            return;
+        }
+
+        AgentSessionEntity session = sessionOpt.get();
+        session.setRoundCount(roundCount);
+        sessionMapper.updateById(session);
+
+        log.debug("更新轮次计数: conversationId={}, roundCount={}", conversationId, roundCount);
+    }
+
+    /**
+     * 更新解析错误计数
+     *
+     * @param conversationId    会话ID
+     * @param parseErrorCount   解析错误计数
+     */
+    @Transactional
+    public void updateParseErrorCount(String conversationId, int parseErrorCount) {
+        Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
+        if (sessionOpt.isEmpty()) {
+            log.warn("会话不存在，无法更新解析错误计数: conversationId={}", conversationId);
+            return;
+        }
+
+        AgentSessionEntity session = sessionOpt.get();
+        session.setParseErrorCount(parseErrorCount);
+        sessionMapper.updateById(session);
+
+        log.debug("更新解析错误计数: conversationId={}, parseErrorCount={}", conversationId, parseErrorCount);
+    }
+
+    /**
      * 删除会话（物理删除）
      *
      * @param conversationId 会话ID

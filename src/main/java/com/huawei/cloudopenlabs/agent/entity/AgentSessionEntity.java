@@ -69,6 +69,13 @@ public class AgentSessionEntity {
     private Integer roundCount;
 
     /**
+     * 解析错误计数
+     * 用于限制连续解析错误的次数，防止无限循环
+     */
+    @TableField("parse_error_count")
+    private Integer parseErrorCount;
+
+    /**
      * 创建时间
      */
     @TableField(value = "created_at", fill = FieldFill.INSERT)
