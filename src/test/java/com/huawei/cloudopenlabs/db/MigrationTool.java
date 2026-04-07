@@ -33,17 +33,39 @@ public class MigrationTool {
 
             if (count > 0) {
                 System.out.println("Column 'parse_error_count' already exists in agent_session table.");
-                return;
+            } else {
+                // 添加字段
+                String alterSql = "ALTER TABLE agent_session " +
+                        "ADD COLUMN parse_error_count INT NOT NULL DEFAULT 0 " +
+                        "COMMENT 'Parse error count for limiting retry attempts' " +
+                        "AFTER round_count";
+
+                stmt.executeUpdate(alterSql);
+                System.out.println("Successfully added 'parse_error_count' column to agent_session table!");
             }
 
-            // 添加字段
-            String alterSql = "ALTER TABLE agent_session " +
-                    "ADD COLUMN parse_error_count INT NOT NULL DEFAULT 0 " +
-                    "COMMENT 'Parse error count for limiting retry attempts' " +
-                    "AFTER round_count";
+            // 检查 start_time 字段是���存在
+            String checkStartTimeSql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS " +
+                    "WHERE TABLE_SCHEMA = 'ai_test_platform' " +
+                    "AND TABLE_NAME = 'agent_session' " +
+                    "AND COLUMN_NAME = 'start_time'";
 
-            stmt.executeUpdate(alterSql);
-            System.out.println("Successfully added 'parse_error_count' column to agent_session table!");
+            rs = stmt.executeQuery(checkStartTimeSql);
+            rs.next();
+            int startTimeCount = rs.getInt(1);
+
+            if (startTimeCount == 0) {
+                // 添加 start_time 字段
+                String alterStartTimeSql = "ALTER TABLE agent_session " +
+                        "ADD COLUMN start_time BIGINT DEFAULT NULL " +
+                        "COMMENT 'Execution start timestamp in milliseconds' " +
+                        "AFTER parse_error_count";
+
+                stmt.executeUpdate(alterStartTimeSql);
+                System.out.println("Successfully added 'start_time' column to agent_session table!");
+            } else {
+                System.out.println("Column 'start_time' already exists in agent_session table.");
+            }
 
         } catch (Exception e) {
             System.err.println("Migration failed: " + e.getMessage());

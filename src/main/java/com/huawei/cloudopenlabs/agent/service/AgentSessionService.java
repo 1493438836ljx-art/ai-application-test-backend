@@ -67,6 +67,8 @@ public class AgentSessionService {
                 session.setActionResults(null);
                 session.setLastReasoning(null);
                 session.setRoundCount(0);
+                session.setParseErrorCount(0);
+                session.setStartTime(System.currentTimeMillis()); // 重置开始时间
                 sessionMapper.updateById(session);
                 log.info("重置会话状态为ACTIVE: conversationId={}", effectiveConversationId);
             }
@@ -79,6 +81,8 @@ public class AgentSessionService {
         newSession.setWorkflowId(workflowId);
         newSession.setStatus("ACTIVE");
         newSession.setRoundCount(0);
+        newSession.setParseErrorCount(0);
+        newSession.setStartTime(System.currentTimeMillis()); // 设置开始时间
         sessionMapper.insert(newSession);
 
         log.info("创建新会话: conversationId={}, workflowId={}", effectiveConversationId, workflowId);
@@ -285,6 +289,27 @@ public class AgentSessionService {
         sessionMapper.updateById(session);
 
         log.debug("更新解析错误计数: conversationId={}, parseErrorCount={}", conversationId, parseErrorCount);
+    }
+
+    /**
+     * 设置执行开始时间
+     *
+     * @param conversationId 会话ID
+     * @param startTime      开始时间（时间戳，毫秒）
+     */
+    @Transactional
+    public void setStartTime(String conversationId, Long startTime) {
+        Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
+        if (sessionOpt.isEmpty()) {
+            log.warn("会话不存在，无法设置开始时间: conversationId={}", conversationId);
+            return;
+        }
+
+        AgentSessionEntity session = sessionOpt.get();
+        session.setStartTime(startTime);
+        sessionMapper.updateById(session);
+
+        log.debug("设置开始时间: conversationId={}, startTime={}", conversationId, startTime);
     }
 
     /**

@@ -13,6 +13,7 @@
         <result column="last_reasoning" property="lastReasoning"/>
         <result column="round_count" property="roundCount"/>
         <result column="parse_error_count" property="parseErrorCount"/>
+        <result column="start_time" property="startTime"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
     </resultMap>
@@ -20,7 +21,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, conversation_id, workflow_id, status, query_results, action_results,
-        last_reasoning, round_count, parse_error_count, created_at, updated_at
+        last_reasoning, round_count, parse_error_count, start_time, created_at, updated_at
     </sql>
 
     <!-- 根据会话ID查询 -->

@@ -76,6 +76,13 @@ public class AgentSessionEntity {
     private Integer parseErrorCount;
 
     /**
+     * 执行开始时间（时间戳，毫秒）
+     * 用于��算执行超时
+     */
+    @TableField("start_time")
+    private Long startTime;
+
+    /**
      * 创建时间
      */
     @TableField(value = "created_at", fill = FieldFill.INSERT)

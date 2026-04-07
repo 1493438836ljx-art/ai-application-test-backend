@@ -82,7 +82,7 @@
   - 包含风险评估和回滚方案
   - 包含验收标准和监控指标
 
-✻ Worked for 4m 19s
+✻ Cooked for 4m 19s
 
 > /export                                                                       
   ⎿  Conversation exported to:
@@ -540,7 +540,7 @@
 
   是否继续执行下一个任务 T1.2: 添加执行超时机制？
 
-✻ Churned for 6m 53s
+✻ Sautéed for 6m 53s
 
 > 先不着急，T1.1这个任务的改动，如何去验证测试？                                
 
@@ -711,7 +711,7 @@
 
   是否需要我运行集成测试，或者继续其他验证？
 
-✻ Baked for 3m 3s
+✻ Churned for 3m 3s
 
 > 运行集成测试                                                                  
 
@@ -1121,7 +1121,7 @@
   1. 先执行数据库迁移脚本？
   2. 或者继续其他验证方式？
 
-✻ Brewed for 6m 30s
+✻ Sautéed for 6m 30s
 
 > 先执行数据库迁移脚本                                                          
 
@@ -1385,4 +1385,648 @@
 
   T1.1 任务已完成并通过验证。是否继续执行下一个任务 T1.2: 添加执行超时机制？
 
-✻ Worked for 8m 26s
+✻ Baked for 8m 26s
+
+> /export                                                                       
+  ⎿  Conversation exported to: C:\Users\Administrator\Desktop\workspace\ai-appli
+     cation-test-backend\第一阶段实施过程.txt
+
+> 继续执行下一个任务                                                            
+● 首先在 AgentSessionEntity 中添加开始时间字段。
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\entity\AgentSessionEntity.
+        java)
+  ⎿  Added 7 lines
+      76      private Integer parseErrorCount;
+      77  
+      78      /**
+      79 +     * 执行开始时间（时间戳，毫秒）                            
+      80 +     * 用于��算执行超时                                        
+      81 +     */                                                        
+      82 +    @TableField("start_time")                                  
+      83 +    private Long startTime;                                    
+      84 +                                                               
+      85 +    /**                                                        
+      86       * 创建时间
+      87       */
+      88      @TableField(value = "created_at", fill = FieldFill.INSERT)
+
+● 现在在 AgentExecutor 中添加超时检查逻辑。
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\framework\AgentExecutor.ja
+        va)
+  ⎿  Added 7 lines
+      62       */
+      63      private static final int MAX_PARSE_ERROR_ROUNDS = 3;
+      64  
+      65 +    /**                                                        
+      66 +     * 最大执行时间（毫秒）                                    
+      67 +     * 防止任务执行时间过长导致资源耗尽                        
+      68 +     * 默认 5 分钟                                             
+      69 +     */                                                        
+      70 +    private static final long MAX_EXECUTION_TIME_MS = 5 * 60 * 
+         +1000;                                                          
+      71 +                                                               
+      72      private final ClaudeCodeApiClient apiClient;
+      73      private final ClaudeCodeStreamClient streamClient;
+      74      private final AgentSessionService sessionService;
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\framework\AgentExecutor.ja
+        va)
+  ⎿  Added 11 lines, removed 1 line
+      249              return;
+      250          }
+      251  
+      252 -        log.info("开始第 {} 轮对话, conversationId={}", curren
+          -tRound, session.getConversationId());                         
+      252 +        // 检查执行超时                                       
+      253 +        if (isExecutionTimeout(session)) {                    
+      254 +            log.warn("执行超时: conversationId={}, elapsed={}m
+          +s, maxTime={}ms",                                             
+      255 +                    session.getConversationId(), getElapsedTim
+          +e(session), MAX_EXECUTION_TIME_MS);                           
+      256 +            callback.onError(buildTimeoutError(session));     
+      257 +            sessionService.markAsError(session.getConversation
+          +Id(), "执行超时");                                            
+      258 +            return;                                           
+      259 +        }                                                     
+      260  
+      261 +        log.info("开始第 {} 轮对话, conversationId={}, elapsed
+          +={}ms",                                                       
+      262 +                currentRound, session.getConversationId(), get
+          +ElapsedTime(session));                                        
+      263 +                                                              
+      264          try {
+      265              // 新会话需要传入 skillFile 和不传 sessionId，已有
+           会话则传 sessionId 恢复
+      266              byte[] skillFileBytes = null;
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\framework\AgentExecutor.ja
+        va)
+  ⎿  Added 57 lines
+      783      }
+      784  
+      785      /**
+      786 +     * 检查是否超时                                           
+      787 +     *                                                        
+      788 +     * @param session 会话实体                                
+      789 +     * @return true 表示已超时                                
+      790 +     */                                                       
+      791 +    private boolean isTimeout(AgentSessionEntity session) {   
+      792 +        Long startTime = session.getStartTime();              
+      793 +        if (startTime == null) {                              
+      794 +            return false;                                     
+      795 +        }                                                     
+      796 +        long elapsed = System.currentTimeMillis() - startTime;
+      797 +        boolean timeout = elapsed > MAX_EXECUTION_TIME_MS;    
+      798 +        if (timeout) {                                        
+      799 +            log.warn("执行超时: elapsed={}ms, maxTime={}ms", e
+          +lapsed, MAX_EXECUTION_TIME_MS);                               
+      800 +        }                                                     
+      801 +        return timeout;                                       
+      802 +    }                                                         
+      803 +                                                              
+      804 +    /**                                                       
+      805 +     * 获取已执行时间（毫秒）                                 
+      806 +     *                                                        
+      807 +     * @param session 会话实体                                
+      808 +     * @return 已执行时间                                     
+      809 +     */                                                       
+      810 +    private long getElapsedTime(AgentSessionEntity session) { 
+      811 +        Long startTime = session.getStartTime();              
+      812 +        if (startTime == null) {                              
+      813 +            return 0;                                         
+      814 +        }                                                     
+      815 +        return System.currentTimeMillis() - startTime;        
+      816 +    }                                                         
+      817 +                                                              
+      818 +    /**                                                       
+      819 +     * 构建超时错误消息                                       
+      820 +     *                                                        
+      821 +     * @param session 会话实体                                
+      822 +     * @return 友好的错误消息                                 
+      823 +     */                                                       
+      824 +    private String buildTimeoutError(AgentSessionEntity sessio
+          +n) {                                                          
+      825 +        long elapsedSeconds = getElapsedTime(session) / 1000; 
+      826 +        int executedRounds = session.getRoundCount() != null ?
+          + session.getRoundCount() : 0;                                 
+      827 +                                                              
+      828 +        return String.format(                                 
+      829 +                "任务执行超时（已执行 %d 秒，超过 %d 秒限制） 
+          +。\n\n" +                                                     
+      830 +                "可能原因：\n" +                              
+      831 +                "1. 任务过于复杂，建议拆分为多个简单任务分别执
+          +行\n" +                                                       
+      832 +                "2. AI 正在处理大量数据，请耐心等待或简化请求\
+          +n" +                                                          
+      833 +                "3. 系统暂时繁忙，请稍后重试\n\n" +           
+      834 +                "执行统计：已执行 %d 轮对话，耗时 %d 秒",     
+      835 +                elapsedSeconds,                               
+      836 +                MAX_EXECUTION_TIME_MS / 1000,                 
+      837 +                executedRounds,                               
+      838 +                elapsedSeconds                                
+      839 +        );                                                    
+      840 +    }                                                         
+      841 +                                                              
+      842 +    /**                                                       
+      843       * 解析 AI 响应为 AgentPlan
+      844       */
+      845      private AgentPlan parseAgentPlan(String response) {
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\framework\AgentExecutor.ja
+        va)
+  ⎿  Added 17 lines, removed 1 line
+      1305                      return;
+      1306                  }
+      1307  
+      1308 -                log.info("流式处理第 {} 轮对话, conversationI
+           -d={}", currentRound, session.getConversationId());           
+      1308 +                // 检查执行超时                              
+      1309 +                if (isTimeout(session)) {                    
+      1310 +                    log.warn("执行超时: elapsed={}ms", getEla
+           +psedTime(session));                                          
+      1311 +                    callback.onError(buildTimeoutError(sessio
+           +n));                                                         
+      1312 +                    // 异步标记错误状态                      
+      1313 +                    Mono.fromRunnable(() -> {                
+      1314 +                        try {                                
+      1315 +                            sessionService.markAsError(sessio
+           +n.getConversationId(), "执行超时");                          
+      1316 +                        } catch (Exception e) {              
+      1317 +                            log.error("标记会话错误失败: {}",
+           + e.getMessage());                                            
+      1318 +                        }                                    
+      1319 +                    }).subscribeOn(Schedulers.boundedElastic(
+           +)).subscribe();                                              
+      1320 +                    return;                                  
+      1321 +                }                                            
+      1322 +                                                             
+      1323 +                log.info("流式处理第 {} 轮对话, conversationI
+           +d={}, elapsed={}ms",                                         
+      1324 +                        currentRound, session.getConversation
+           +Id(), getElapsedTime(session));                              
+      1325              }
+      1326  
+      1327              // 构建上下文（使用和同步方式相同的上下文构建）
+
+● 现在需要在 AgentSessionService 中添加设置开始时间的方法，并更新 Mapper XML。
+
+● Update(src\main\resources\mapper\agent\AgentSessionMapper.xml)
+  ⎿  Added 2 lines, removed 1 line
+      13          <result column="last_reasoning" property="lastReasoning
+          "/>
+      14          <result column="round_count" property="roundCount"/>
+      15          <result column="parse_error_count" property="parseError
+          Count"/>
+      16 +        <result column="start_time" property="startTime"/>     
+      17          <result column="created_at" property="createdAt"/>
+      18          <result column="updated_at" property="updatedAt"/>
+      19      </resultMap>
+     ...
+      21      <!-- 通用查询结果列 -->
+      22      <sql id="Base_Column_List">
+      23          id, conversation_id, workflow_id, status, query_results
+          , action_results,
+      23 -        last_reasoning, round_count, parse_error_count, created
+         -_at, updated_at                                                
+      24 +        last_reasoning, round_count, parse_error_count, start_t
+         +ime, created_at, updated_at                                    
+      25      </sql>
+      26  
+      27      <!-- 根据会话ID查询 -->
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\service\AgentSessionServic
+        e.java)
+  ⎿  Added 21 lines
+      288      }
+      289  
+      290      /**
+      291 +     * 设置执行开始时间                                       
+      292 +     *                                                        
+      293 +     * @param conversationId 会话ID                           
+      294 +     * @param startTime      开始时间（时间戳，毫秒）         
+      295 +     */                                                       
+      296 +    @Transactional                                            
+      297 +    public void setStartTime(String conversationId, Long start
+          +Time) {                                                       
+      298 +        Optional<AgentSessionEntity> sessionOpt = sessionMappe
+          +r.selectByConversationId(conversationId);                     
+      299 +        if (sessionOpt.isEmpty()) {                           
+      300 +            log.warn("会话不存在，无法设置开始时间: conversati
+          +onId={}", conversationId);                                    
+      301 +            return;                                           
+      302 +        }                                                     
+      303 +                                                              
+      304 +        AgentSessionEntity session = sessionOpt.get();        
+      305 +        session.setStartTime(startTime);                      
+      306 +        sessionMapper.updateById(session);                    
+      307 +                                                              
+      308 +        log.debug("设置开始时间: conversationId={}, startTime=
+          +{}", conversationId, startTime);                              
+      309 +    }                                                         
+      310 +                                                              
+      311 +    /**                                                       
+      312       * 删除会话（物理删除）
+      313       *
+      314       * @param conversationId 会话ID
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\service\AgentSessionServic
+        e.java)
+  ⎿  Added 4 lines
+      67                  session.setActionResults(null);
+      68                  session.setLastReasoning(null);
+      69                  session.setRoundCount(0);
+      70 +                session.setParseErrorCount(0);                 
+      71 +                session.setStartTime(System.currentTimeMillis()
+         +); // 重置开始时间                                             
+      72                  sessionMapper.updateById(session);
+      73                  log.info("重置会话状态为ACTIVE: conversationId=
+          {}", effectiveConversationId);
+      74              }
+     ...
+      81          newSession.setWorkflowId(workflowId);
+      82          newSession.setStatus("ACTIVE");
+      83          newSession.setRoundCount(0);
+      84 +        newSession.setParseErrorCount(0);                      
+      85 +        newSession.setStartTime(System.currentTimeMillis()); //
+         + 设置开始时间                                                  
+      86          sessionMapper.insert(newSession);
+      87  
+      88          log.info("创建新会话: conversationId={}, workflowId={}"
+          , effectiveConversationId, workflowId);
+
+● 现在添加数据库迁移脚本。
+
+● Write(src\main\resources\db\migration\V2026.04.07.02__add_start_time_to_agent_
+       session.sql)
+  ⎿  Wrote 21 lines to src\main\resources\db\migration\V2026.04.07.02__add_start
+     _time_to_agent_session.sql
+       1 -- 添加 start_time 字段到 agent_session 表
+       2 -- 用于记录任务执行的开始时间，实现超时检查
+       3 -- 执���日期: 2026-04-07
+       4 
+       5 -- 检查字段是否已存在，如果不存在则添加
+       6 SET @dbname = DATABASE();
+       7 SET @tablename = 'agent_session';
+       8 SET @columnname = 'start_time';
+       9 SET @preparedStatement = (SELECT IF(
+      10     (
+     … +11 lines (ctrl+o to expand)
+
+● Update(src\test\java\com\huawei\cloudopenlabs\db\MigrationTool.java)
+  ⎿  Added 23 lines
+      45              stmt.executeUpdate(alterSql);
+      46              System.out.println("Successfully added 'parse_error
+          _count' column to agent_session table!");
+      47  
+      48 +            // 检查 start_time 字段是否存在                    
+      49 +            String checkStartTimeSql = "SELECT COUNT(*) FROM IN
+         +FORMATION_SCHEMA.COLUMNS " +                                   
+      50 +                    "WHERE TABLE_SCHEMA = 'ai_test_platform' " 
+         ++                                                              
+      51 +                    "AND TABLE_NAME = 'agent_session' " +      
+      52 +                    "AND COLUMN_NAME = 'start_time'";          
+      53 +                                                               
+      54 +            rs = stmt.executeQuery(checkStartTimeSql);         
+      55 +            rs.next();                                         
+      56 +            int startTimeCount = rs.getInt(1);                 
+      57 +                                                               
+      58 +            if (startTimeCount == 0) {                         
+      59 +                // 添加 start_time 字段                        
+      60 +                String alterStartTimeSql = "ALTER TABLE agent_s
+         +ession " +                                                     
+      61 +                        "ADD COLUMN start_time BIGINT DEFAULT N
+         +ULL " +                                                        
+      62 +                        "COMMENT 'Execution start timestamp in 
+         +milliseconds' " +                                              
+      63 +                        "AFTER parse_error_count";             
+      64 +                                                               
+      65 +                stmt.executeUpdate(alterStartTimeSql);         
+      66 +                System.out.println("Successfully added 'start_t
+         +ime' column to agent_session table!");                         
+      67 +            } else {                                           
+      68 +                System.out.println("Column 'start_time' already
+         + exists in agent_session table.");                             
+      69 +            }                                                  
+      70 +                                                               
+      71          } catch (Exception e) {
+      72              System.err.println("Migration failed: " + e.getMess
+          age());
+      73              e.printStackTrace();
+
+● 编译项目验证代码。
+
+● Bash(cd "C:\Users\Administrator\Desktop\workspace\ai-application-test-backend"
+       && ./mvnw compile -q 2>&1)
+  ⎿  Error: Exit code 1
+     [ERROR] COMPILATION ERROR : 
+     [ERROR] /C:/Users/Administrator/Desktop/workspace/ai-application-test-backe
+     nd/src/main/java/com/huawei/cloudopenlabs/agent/framework/AgentExecutor.jav
+     a:[253,13] 找不到符号
+       符号:   方法 isExecutionTimeout(com.huawei.cloudopenlabs.agent.entity.Age
+     ntSessionEntity)
+       位置: 类 com.huawei.cloudopenlabs.agent.framework.AgentExecutor
+     [ERROR] Failed to execute goal 
+     org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile 
+     (default-compile) on project AIStudioService: Compilation failure
+     [ERROR] /C:/Users/Administrator/Desktop/workspace/ai-application-test-backe
+     nd/src/main/java/com/huawei/cloudopenlabs/agent/framework/AgentExecutor.jav
+     a:[253,13] 找不到符号
+     [ERROR]   符号:   方法 isExecutionTimeout(com.huawei.cloudopenlabs.agent.en
+     tity.AgentSessionEntity)
+     [ERROR]   位置: 类 com.huawei.cloudopenlabs.agent.framework.AgentExecutor
+     [ERROR] 
+     … +7 lines (ctrl+o to see all)
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● Update(src\main\java\com\huawei\cloudopenlabs\agent\framework\AgentExecutor.ja
+        va)
+  ⎿  Added 1 line, removed 1 line
+      250          }
+      251  
+      252          // 检查执行超时
+      253 -        if (isExecutionTimeout(session)) {                    
+      253 +        if (isTimeout(session)) {                             
+      254              log.warn("执行超时: conversationId={}, elapsed={}m
+           s, maxTime={}ms",
+      255                      session.getConversationId(), getElapsedTim
+           e(session), MAX_EXECUTION_TIME_MS);
+      256              callback.onError(buildTimeoutError(session));
+
+● Bash(cd "C:\Users\Administrator\Desktop\workspace\ai-application-test-backend"
+       && ./mvnw compile -q 2>&1)
+  ⎿  (No output)
+  ⎿  (timeout 2m)
+
+● 编译成功！执行数据库迁移。
+
+● Bash(cd "C:\Users\Administrator\Desktop\workspace\ai-application-test-backend"
+       && ./mvnw compile test-compile exec:java
+      -Dexec.mainClass="com.huawei.cloudopenlabs.db…)
+  ⎿  Connected to database successfully!
+     Column 'parse_error_count' already exists in agent_session table.
+  ⎿  (timeout 2m)
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(src\test\java\com\huawei\cloudopenlabs\db\MigrationTool.java)
+  ⎿  Added 10 lines, removed 11 lines
+      33  
+      34              if (count > 0) {
+      35                  System.out.println("Column 'parse_error_count' 
+          already exists in agent_session table.");
+      36 -                return;                                        
+      36 +            } else {                                           
+      37 +                // 添加字段                                    
+      38 +                String alterSql = "ALTER TABLE agent_session " 
+         ++                                                              
+      39 +                        "ADD COLUMN parse_error_count INT NOT N
+         +ULL DEFAULT 0 " +                                              
+      40 +                        "COMMENT 'Parse error count for limitin
+         +g retry attempts' " +                                          
+      41 +                        "AFTER round_count";                   
+      42 +                                                               
+      43 +                stmt.executeUpdate(alterSql);                  
+      44 +                System.out.println("Successfully added 'parse_e
+         +rror_count' column to agent_session table!");                  
+      45              }
+      46  
+      39 -            // 添加字段                                        
+      40 -            String alterSql = "ALTER TABLE agent_session " +   
+      41 -                    "ADD COLUMN parse_error_count INT NOT NULL 
+         -DEFAULT 0 " +                                                  
+      42 -                    "COMMENT 'Parse error count for limiting re
+         -try attempts' " +                                              
+      43 -                    "AFTER round_count";                       
+      44 -                                                               
+      45 -            stmt.executeUpdate(alterSql);                      
+      46 -            System.out.println("Successfully added 'parse_error
+         -_count' column to agent_session table!");                      
+      47 -                                                               
+      48 -            // 检查 start_time 字段是否存在                    
+      47 +            // 检查 start_time 字段是���存在                   
+      48              String checkStartTimeSql = "SELECT COUNT(*) FROM IN
+          FORMATION_SCHEMA.COLUMNS " +
+      49                      "WHERE TABLE_SCHEMA = 'ai_test_platform' " 
+          +
+      50                      "AND TABLE_NAME = 'agent_session' " +
+
+● Bash(cd "C:\Users\Administrator\Desktop\workspace\ai-application-test-backend"
+       && ./mvnw test-compile exec:java
+      -Dexec.mainClass="com.huawei.cloudopenlabs.db.Migrati…)
+  ⎿  Connected to database successfully!
+     Column 'parse_error_count' already exists in agent_session table.
+     Successfully added 'start_time' column to agent_session table!
+  ⎿  (timeout 2m)
+● 迁移成功！现在运行测试。
+
+● Bash(cd "C:\Users\Administrator\Desktop\workspace\ai-application-test-backend"
+       && ./mvnw test
+      -Dtest=AgentExecutorRoundLimitTest,AgentExecutorRoundLimitIntegrationTe…)
+  ⎿  SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@2c0d7
+     099] was not registered for synchronization because synchronization is
+      not active
+     … +51 lines (ctrl+o to expand)
+  ⎿  (timeout 3m)
+
+● 所有测试通过！ ✅
+
+● T1.2 任务完成总结
+
+  测试结果
+
+  Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+
+  修改的文件
+
+  ┌────────────────────────────┬────────────────────────────────────────────┐
+  │            文件            │                  修改内容                  │
+  ├────────────────────────────┼────────────────────────────────────────────┤
+  │ AgentSessionEntity.java    │ 添加 startTime 字段                        │
+  ├────────────────────────────┼────────────────────────────────────────────┤
+  │                            │ 添加 MAX_EXECUTION_TIME_MS 常量、isTimeout │
+  │ AgentExecutor.java         │ ()、getElapsedTime()、buildTimeoutError()  │
+  │                            │ 方法                                       │
+  ├────────────────────────────┼────────────────────────────────────────────┤
+  │ AgentSessionService.java   │ 添加 setStartTime()                        │
+  │                            │ 方法，在创建/重置会话时初始化 startTime    │
+  ├────────────────────────────┼────────────────────────────────────────────┤
+  │ AgentSessionMapper.xml     │ 添加 start_time 字段映射                   │
+  ├────────────────────────────┼────────────────────────────────────────────┤
+  │ MigrationTool.java         │ 添加 start_time 字段的迁移逻辑             │
+  ├────────────────────────────┼────────────────────────────────────────────┤
+  │ V2026.04.07.02__add_start_ │ 新增数据库迁移脚本                         │
+  │ time.sql                   │                                            │
+  └────────────────────────────┴────────────────────────────────────────────┘
+
+  功能说明
+
+  - 最大执行时间: 5 分钟（300,000 毫秒）
+  - 超时检查: 每轮对话前检查是否超时
+  - 友好错误提示: 包含已执行时间、可能原因和解决建议
+
+  错误消息示例
+
+  任务执行超时（已执行 300 秒，超过 300 秒限制）。
+
+  可能原因：
+  1. 任务过于复杂，建议拆分为多个简单任务分别执行
+  2. AI 正在处理大量数据，请耐心等待或简化请求
+  3. 系统暂时繁忙，请稍后重试
+
+  执行统计：已执行 15 轮对话，耗时 300 秒
+
+  ---
+  第一阶段完成进度
+
+  ┌───────────────────────┬───────────┐
+  │         任务          │   状态    │
+  ├───────────────────────┼───────────┤
+  │ T1.1 添加递归深度限制 │ ✅ 完成   │
+  ├───────────────────────┼───────────┤
+  │ T1.2 添加执行超时机制 │ ✅ 完成   │
+  ├───────────────────────┼───────────┤
+  │ T1.3 实现上下文截断   │ 📋 待执行 │
+  ├───────────────────────┼───────────┤
+  │ T1.4 添加上下文配置   │ 📋 待执行 │
+  └───────────────────────┴───────────┘
+
+  是否继续执行 T1.3: 实现上下文截断？
+
+✻ Worked for 8m 3s
+
+> 对T1.2进行单元测试和集成测试                                                  
+
+● 好的，我来为 T1.2 创建专门的单元测试和集成测试。
+
+● Write(src\test\java\com\huawei\cloudopenlabs\agent\framework\AgentExecutorTime
+       outTest.java)
+  ⎿  Wrote 256 lines to src\test\java\com\huawei\cloudopenlabs\agent\framework\A
+     gentExecutorTimeoutTest.java
+       1 package com.huawei.cloudopenlabs.agent.framework;
+       2 
+       3 import com.huawei.cloudopenlabs.agent.entity.AgentSessionEntity;
+       4 import org.junit.jupiter.api.BeforeEach;
+       5 import org.junit.jupiter.api.DisplayName;
+       6 import org.junit.jupiter.api.Test;
+       7 
+       8 import static org.junit.jupiter.api.Assertions.*;
+       9 
+      10 /**
+     … +246 lines (ctrl+o to expand)
+
+● Write(src\test\java\com\huawei\cloudopenlabs\agent\framework\AgentExecutorTime
+       outIntegrationTest.java)
+  ⎿  Wrote 250 lines to src\test\java\com\huawei\cloudopenlabs\agent\framework\A
+     gentExecutorTimeoutIntegrationTest.java
+      1 package com.huawei.cloudopenlabs.agent.framework;
+      2 
+      3 import com.huawei.cloudopenlabs.agent.entity.AgentSessionEntity;
+      4 import com.huawei.cloudopenlabs.agent.service.AgentSessionService
+        ;
+      5 import org.junit.jupiter.api.DisplayName;
+      6 import org.junit.jupiter.api.Test;
+      7 import org.springframework.beans.factory.annotation.Autowired;
+      8 import org.springframework.boot.test.context.SpringBootTest;
+      9 import org.springframework.test.context.ActiveProfiles;
+     … +240 lines (ctrl+o to expand)
+
+● 运行单元测试和集成测试。
+
+● Bash(cd "C:\Users\Administrator\Desktop\workspace\ai-application-test-backend"
+       && ./mvnw test -Dtest=AgentExecutorTimeoutTest 2>&1 | tail -30)
+  ⎿  [INFO] --- compiler:3.13.0:compile (default-compile) @ AIStudioService
+      ---
+     [INFO] Nothing to compile - all classes are up to date.
+     … +21 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+● 单元测试通过！现在运行集成测试。
+
+● Bash(cd "C:\Users\Administrator\Desktop\workspace\ai-application-test-backend"
+       && ./mvnw test -Dtest=AgentExecutorTimeoutIntegrationTest 2>&1 | tail
+      -40)
+  ⎿  Releasing transactional SqlSession [org.apache.ibatis.session.defaults
+     .DefaultSqlSession@3ecbfba1]
+     Fetched SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSessi
+     … +51 lines (ctrl+o to expand)
+  ⎿  (timeout 3m)
+
+● T1.2 测试全部通过！ ✅
+
+  测试结果汇总
+
+  单元测试
+
+  Tests run: 17, Failures: 0, Errors: 0, Skipped: 0
+
+  测试覆盖了：
+
+  ┌────────────────┬─────────────────────────────────┐
+  │    测试类别    │            测试内容             │
+  ├────────────────┼─────────────────────────────────┤
+  │ startTime 字段 │ 初始值、设置、更新              │
+  ├────────────────┼─────────────────────────────────┤
+  │ 超时检查逻辑   │ null 值、未超时、已超时、边界值 │
+  ├────────────────┼─────────────────────────────────┤
+  │ 已用时间计算   │ null 值、刚启动、1分钟后        │
+  ├────────────────┼─────────────────────────────────┤
+  │ 超时错误消息   │ 格式验证                        │
+  └────────────────┴─────────────────────────────────┘
+
+  集成测试
+
+  Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+
+  测试覆盖了：
+
+  ┌──────────────┬─────────────────────────────────┐
+  │   测试类别   │            测试内容             │
+  ├──────────────┼─────────────────────────────────┤
+  │ 数据库持久化 │ 新会话创建时 startTime 自动设置 │
+  ├──────────────┼─────────────────────────────────┤
+  │ 数据库读取   │ startTime 从数据库正确读取      │
+  ├──────────────┼─────────────────────────────────┤
+  │ 会话重置     │ 重置时 startTime 被更新         │
+  ├──────────────┼─────────────────────────────────┤
+  │ 超时场景模拟 │ 6分钟后检测到超时               │
+  ├──────────────┼─────────────────────────────────┤
+  │ 正常执行     │ 刚创建时不超时                  │
+  ├──────────────┼─────────────────────────────────┤
+  │ 错误消息生成 │ 包含正确的时间和轮次信息        │
+  └──────────────┴─────────────────────────────────┘
+
+  测试文件
+
+  - AgentExecutorTimeoutTest.java - 17 个单元测试
+  - AgentExecutorTimeoutIntegrationTest.java - 7 个集成测试
+
+  ---
+  T1.2 完成总结
+
+  ┌──────────┬───────┐
+  │   项目   │ 数值  │
+  ├──────────┼───────┤
+  │ 新增测试 │ 24 个 │
+  ├──────────┼───────┤
+  │ 通过测试 │ 24 个 │
+  ├──────────┼───────┤
+  │ 失败测试 │ 0 个  │
+  └──────────┴───────┘
+
+  是否继续执行下一个任务 T1.3: 实现上下文截断？
+
+✻ Worked for 2m 53s

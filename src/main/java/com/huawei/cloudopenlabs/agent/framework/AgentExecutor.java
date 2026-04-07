@@ -2,6 +2,7 @@ package com.huawei.cloudopenlabs.agent.framework;
 
 import com.huawei.cloudopenlabs.agent.client.ClaudeCodeApiClient;
 import com.huawei.cloudopenlabs.agent.client.ClaudeCodeStreamClient;
+import com.huawei.cloudopenlabs.agent.config.AgentContextProperties;
 import com.huawei.cloudopenlabs.agent.dto.AgentConfig;
 import com.huawei.cloudopenlabs.agent.dto.AgentRequest;
 import com.huawei.cloudopenlabs.agent.dto.AgentResponse;
@@ -62,6 +63,25 @@ public class AgentExecutor {
      */
     private static final int MAX_PARSE_ERROR_ROUNDS = 3;
 
+    /**
+     * 最大执行时间（毫秒）
+     * 防止任务执行时间过长导致资源耗尽
+     * 默认 5 分钟
+     */
+    private static final long MAX_EXECUTION_TIME_MS = 5 * 60 * 1000;
+
+    /**
+     * 默认最大上下文长度（字符数）
+     * 当配置未指定时使用
+     */
+    private static final int DEFAULT_MAX_CONTEXT_LENGTH = 50000;
+
+    /**
+     * 默认单个结果最大长度（字符数）
+     * 当配置未指定时使用
+     */
+    private static final int DEFAULT_MAX_RESULT_LENGTH = 5000;
+
     private final ClaudeCodeApiClient apiClient;
     private final ClaudeCodeStreamClient streamClient;
     private final AgentSessionService sessionService;
@@ -106,6 +126,12 @@ public class AgentExecutor {
     public void setNodeTypeService(NodeTypeService nodeTypeService) {
         this.nodeTypeService = nodeTypeService;
     }
+
+    @Autowired(required = false)
+    private ContextBuilder contextBuilder;
+
+    @Autowired
+    private AgentContextProperties contextProperties;
 
     /**
      * 执行 Agent 任务（核心接口）
@@ -242,7 +268,17 @@ public class AgentExecutor {
             return;
         }
 
-        log.info("开始第 {} 轮对话, conversationId={}", currentRound, session.getConversationId());
+        // 检查执行超时
+        if (isTimeout(session)) {
+            log.warn("执行超时: conversationId={}, elapsed={}ms, maxTime={}ms",
+                    session.getConversationId(), getElapsedTime(session), MAX_EXECUTION_TIME_MS);
+            callback.onError(buildTimeoutError(session));
+            sessionService.markAsError(session.getConversationId(), "执行超时");
+            return;
+        }
+
+        log.info("开始第 {} 轮对话, conversationId={}, elapsed={}ms",
+                currentRound, session.getConversationId(), getElapsedTime(session));
 
         try {
             // 新会话需要传入 skillFile 和不传 sessionId，已有会话则传 sessionId 恢复
@@ -621,20 +657,30 @@ public class AgentExecutor {
         sb.append("用户请求: ").append(userMessage).append("\n\n");
         sb.append("workflowId: ").append(session.getWorkflowId()).append("\n\n");
 
-        // 添加之前的查询结果
+        // 添加之前的查询结果（带截断）
         if (session.getQueryResults() != null && !session.getQueryResults().equals("{}")) {
-            sb.append("之前的查询结果:\n").append(session.getQueryResults()).append("\n\n");
+            String truncatedQueryResults = truncateContent(session.getQueryResults(), getMaxResultLength());
+            sb.append("之前的查询结果:\n").append(truncatedQueryResults).append("\n\n");
         }
 
-        // 添加之前的操作结果
+        // 添加之前的操作结果（带截断）
         if (session.getActionResults() != null && !session.getActionResults().equals("{}")) {
-            sb.append("之前的操作结果:\n").append(session.getActionResults()).append("\n\n");
+            String truncatedActionResults = truncateContent(session.getActionResults(), getMaxResultLength());
+            sb.append("之前的操作结果:\n").append(truncatedActionResults).append("\n\n");
         }
 
         // 添加当前轮次信息
-        sb.append("当前轮次: ").append(session.getRoundCount() + 1).append("\n");
+        int roundCount = session.getRoundCount() != null ? session.getRoundCount() : 0;
+        sb.append("当前轮次: ").append(roundCount + 1).append("\n");
 
-        return sb.toString();
+        // 最终长���检查和截断
+        String context = sb.toString();
+        if (context.length() > getMaxContextLength()) {
+            context = emergencyTruncate(context, getMaxContextLength());
+            log.info("上下文已截断: 原长度={}, 截断后长度={}", sb.length(), context.length());
+        }
+
+        return context;
     }
 
     /**
@@ -648,16 +694,33 @@ public class AgentExecutor {
 
         sb.append("本轮").append(resultType.equals("query") ? "查询" : "操作").append("结果:\n");
         try {
-            sb.append(objectMapper.writeValueAsString(newResults)).append("\n\n");
+            String resultsJson = objectMapper.writeValueAsString(newResults);
+            // 截断本轮结果
+            resultsJson = truncateContent(resultsJson, getMaxResultLength());
+            sb.append(resultsJson).append("\n\n");
         } catch (JsonProcessingException e) {
             sb.append("结果序列化失败\n\n");
         }
 
-        // 重新获取最新的 session 数据
-        sb.append("累计查询结果:\n").append(session.getQueryResults()).append("\n\n");
-        sb.append("累计操作结果:\n").append(session.getActionResults()).append("\n\n");
+        // 重新获取最新的 session 数据（带截断）
+        if (session.getQueryResults() != null && !session.getQueryResults().equals("{}")) {
+            String truncatedQueryResults = truncateContent(session.getQueryResults(), getMaxResultLength());
+            sb.append("累计查询结果:\n").append(truncatedQueryResults).append("\n\n");
+        }
 
-        return sb.toString();
+        if (session.getActionResults() != null && !session.getActionResults().equals("{}")) {
+            String truncatedActionResults = truncateContent(session.getActionResults(), getMaxResultLength());
+            sb.append("累计操作结果:\n").append(truncatedActionResults).append("\n\n");
+        }
+
+        // 最终长度检查和截断
+        String context = sb.toString();
+        if (context.length() > getMaxContextLength()) {
+            context = emergencyTruncate(context, getMaxContextLength());
+            log.info("带结果上下文已截断: 原长度={}, 截断后长度={}", sb.length(), context.length());
+        }
+
+        return context;
     }
 
     /**
@@ -763,6 +826,140 @@ public class AgentExecutor {
                 MAX_ROUNDS,
                 executedRounds
         );
+    }
+
+    /**
+     * 检查是否超时
+     *
+     * @param session 会话实体
+     * @return true 表示已超时
+     */
+    private boolean isTimeout(AgentSessionEntity session) {
+        Long startTime = session.getStartTime();
+        if (startTime == null) {
+            return false;
+        }
+        long elapsed = System.currentTimeMillis() - startTime;
+        boolean timeout = elapsed > MAX_EXECUTION_TIME_MS;
+        if (timeout) {
+            log.warn("执行超时: elapsed={}ms, maxTime={}ms", elapsed, MAX_EXECUTION_TIME_MS);
+        }
+        return timeout;
+    }
+
+    /**
+     * 获取已执行时间（毫秒）
+     *
+     * @param session 会话实体
+     * @return 已执行时间
+     */
+    private long getElapsedTime(AgentSessionEntity session) {
+        Long startTime = session.getStartTime();
+        if (startTime == null) {
+            return 0;
+        }
+        return System.currentTimeMillis() - startTime;
+    }
+
+    /**
+     * 构建超时错误消息
+     *
+     * @param session 会话实体
+     * @return 友好的错误消息
+     */
+    private String buildTimeoutError(AgentSessionEntity session) {
+        long elapsedSeconds = getElapsedTime(session) / 1000;
+        int executedRounds = session.getRoundCount() != null ? session.getRoundCount() : 0;
+
+        return String.format(
+                "任务执行超时（已执行 %d 秒，超过 %d 秒限制）。\n\n" +
+                "可能原因：\n" +
+                "1. 任务过于复杂，建议拆分为多个简单任务分别执行\n" +
+                "2. AI 正在处理大量数据，请耐心等待或简化请求\n" +
+                "3. 系统暂时繁忙，请稍后重试\n\n" +
+                "执行统计：已执行 %d 轮对话，耗时 %d 秒",
+                elapsedSeconds,
+                MAX_EXECUTION_TIME_MS / 1000,
+                executedRounds,
+                elapsedSeconds
+        );
+    }
+
+    /**
+     * 截断内容字符串
+     *
+     * @param content   原始内容
+     * @param maxLength 最大长度
+     * @return 截断后的内容
+     */
+    private String truncateContent(String content, int maxLength) {
+        if (content == null || content.isEmpty()) {
+            return "";
+        }
+        if (content.length() <= maxLength) {
+            return content;
+        }
+        log.debug("内容已截断: 原长度={}, 最大长度={}", content.length(), maxLength);
+        return content.substring(0, maxLength) + "...(内容已截断)";
+    }
+
+    /**
+     * 紧急截断（保留开头和结尾）
+     * 当上下文整体超过限制时使用
+     *
+     * @param context   上下文内容
+     * @param maxLength 最大长度
+     * @return 截断后的上下文
+     */
+    private String emergencyTruncate(String context, int maxLength) {
+        if (context.length() <= maxLength) {
+            return context;
+        }
+
+        // 保留开头 40% 和结尾 40%，中间用省略号代替
+        int headLength = (int) (maxLength * 0.4);
+        int tailLength = (int) (maxLength * 0.4);
+        String separator = "\n\n...(中间内容已省略以节省 Token)...\n\n";
+
+        return context.substring(0, headLength) +
+                separator +
+                context.substring(context.length() - tailLength);
+    }
+
+    /**
+     * 获取最大上下文长度（从配置）
+     *
+     * @return 最大上下文长度
+     */
+    private int getMaxContextLength() {
+        if (contextProperties != null && contextProperties.getMaxLength() > 0) {
+            return contextProperties.getMaxLength();
+        }
+        return DEFAULT_MAX_CONTEXT_LENGTH;
+    }
+
+    /**
+     * 获取最大结果长度（从配置）
+     *
+     * @return 最大结果长度
+     */
+    private int getMaxResultLength() {
+        if (contextProperties != null && contextProperties.getMaxResultLength() > 0) {
+            return contextProperties.getMaxResultLength();
+        }
+        return DEFAULT_MAX_RESULT_LENGTH;
+    }
+
+    /**
+     * 检查是否启用截断
+     *
+     * @return 是否启用截断
+     */
+    private boolean isTruncationEnabled() {
+        if (contextProperties != null) {
+            return contextProperties.isTruncationEnabled();
+        }
+        return true; // 默认启用
     }
 
     /**
@@ -1231,7 +1428,23 @@ public class AgentExecutor {
                     return;
                 }
 
-                log.info("流式处理第 {} 轮对话, conversationId={}", currentRound, session.getConversationId());
+                // 检查执行超时
+                if (isTimeout(session)) {
+                    log.warn("执行超时: elapsed={}ms", getElapsedTime(session));
+                    callback.onError(buildTimeoutError(session));
+                    // 异步标记错误状态
+                    Mono.fromRunnable(() -> {
+                        try {
+                            sessionService.markAsError(session.getConversationId(), "执行超时");
+                        } catch (Exception e) {
+                            log.error("标记会话错误失败: {}", e.getMessage());
+                        }
+                    }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                    return;
+                }
+
+                log.info("流式处理第 {} 轮对话, conversationId={}, elapsed={}ms",
+                        currentRound, session.getConversationId(), getElapsedTime(session));
             }
 
             // 构建上下文（使用和同步方式相同的上下文构建）
