@@ -4,9 +4,6 @@ import com.huawei.cloudopenlabs.workflow.dto.NodeCreateRequest;
 import com.huawei.cloudopenlabs.workflow.dto.NodeResponse;
 import com.huawei.cloudopenlabs.workflow.dto.NodeUpdateRequest;
 import com.huawei.cloudopenlabs.workflow.service.WorkflowNodeService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +23,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/workflows/{workflowId}/nodes")
 @RequiredArgsConstructor
-@Tag(name = "工作流节点管理", description = "工作流节点的增删改查接口")
 public class WorkflowNodeController {
 
     private final WorkflowNodeService nodeService;
@@ -38,9 +34,7 @@ public class WorkflowNodeController {
      * @return 节点列表
      */
     @GetMapping
-    @Operation(summary = "获取节点列表", description = "获取指定工作流的所有节点")
     public ResponseEntity<List<NodeResponse>> getNodes(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId) {
         log.info("获取工作流节点列表: workflowId={}", workflowId);
         List<NodeResponse> nodes = nodeService.getNodes(workflowId);
@@ -55,11 +49,8 @@ public class WorkflowNodeController {
      * @return 节点响应
      */
     @GetMapping("/{nodeUuid}")
-    @Operation(summary = "获取节点详情", description = "根据UUID获取节点的详细信息")
     public ResponseEntity<NodeResponse> getNode(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId,
-            @Parameter(description = "节点UUID", required = true)
             @PathVariable String nodeUuid) {
         log.info("获取节点详情: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         NodeResponse response = nodeService.getNode(workflowId, nodeUuid);
@@ -74,9 +65,7 @@ public class WorkflowNodeController {
      * @return 节点响应
      */
     @PostMapping
-    @Operation(summary = "创建节点", description = "在工作流中创建一个新节点")
     public ResponseEntity<NodeResponse> createNode(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId,
             @Valid @RequestBody NodeCreateRequest request) {
         log.info("创建节点: workflowId={}, nodeName={}", workflowId, request.getName());
@@ -92,9 +81,7 @@ public class WorkflowNodeController {
      * @return 无内容响应
      */
     @PostMapping("/batch")
-    @Operation(summary = "批量创建节点", description = "批量在工作流中创建多个节点")
     public ResponseEntity<Void> batchCreateNodes(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId,
             @Valid @RequestBody List<NodeCreateRequest> requests) {
         log.info("批量创建节点: workflowId={}, count={}", workflowId, requests.size());
@@ -111,11 +98,8 @@ public class WorkflowNodeController {
      * @return 节点响应
      */
     @PutMapping("/{nodeUuid}")
-    @Operation(summary = "更新节点", description = "更新指定节点的配置信息")
     public ResponseEntity<NodeResponse> updateNode(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId,
-            @Parameter(description = "节点UUID", required = true)
             @PathVariable String nodeUuid,
             @Valid @RequestBody NodeUpdateRequest request) {
         log.info("更新节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
@@ -131,9 +115,7 @@ public class WorkflowNodeController {
      * @return 无内容响应
      */
     @PutMapping("/batch")
-    @Operation(summary = "批量更新节点", description = "批量更新多个节点的配置信息")
     public ResponseEntity<Void> batchUpdateNodes(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId,
             @Valid @RequestBody List<NodeUpdateRequest> requests) {
         log.info("批量更新节点: workflowId={}, count={}", workflowId, requests.size());
@@ -149,11 +131,8 @@ public class WorkflowNodeController {
      * @return 无内容响应
      */
     @DeleteMapping("/{nodeUuid}")
-    @Operation(summary = "删除节点", description = "删除指定的节点及其相关连线")
     public ResponseEntity<Void> deleteNode(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId,
-            @Parameter(description = "节点UUID", required = true)
             @PathVariable String nodeUuid) {
         log.info("删除节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         nodeService.deleteNode(workflowId, nodeUuid);
@@ -168,9 +147,7 @@ public class WorkflowNodeController {
      * @return 无内容响应
      */
     @DeleteMapping("/batch")
-    @Operation(summary = "批量删除节点", description = "批量删除多个节点及其相关连线")
     public ResponseEntity<Void> batchDeleteNodes(
-            @Parameter(description = "工作流ID", required = true)
             @PathVariable Long workflowId,
             @RequestBody List<String> nodeUuids) {
         log.info("批量删除节点: workflowId={}, count={}", workflowId, nodeUuids.size());
@@ -185,9 +162,7 @@ public class WorkflowNodeController {
      * @return 节点列表
      */
     @GetMapping("/by-skill/{skillId}")
-    @Operation(summary = "根据Skill查询节点", description = "查询所有引用了指定Skill的节点")
     public ResponseEntity<List<NodeResponse>> getNodesBySkillId(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String skillId) {
         log.info("根据Skill查询节点: skillId={}", skillId);
         List<NodeResponse> nodes = nodeService.getNodesBySkillId(skillId);

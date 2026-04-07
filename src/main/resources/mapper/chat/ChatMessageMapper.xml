@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.chat.mapper.ChatMessageMapper">
+<mapper namespace="com.huawei.cloudopenlabs.chat.mapper.ChatMessageMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.demo.chat.entity.ChatMessageEntity">
+    <resultMap id="BaseResultMap" type="com.huawei.cloudopenlabs.chat.entity.ChatMessageEntity">
         <id column="id" property="id"/>
         <result column="conversation_id" property="conversationId"/>
         <result column="message_uuid" property="messageUuid"/>

@@ -1,8 +1,6 @@
 package com.huawei.cloudopenlabs.file.controller;
 
 import com.huawei.cloudopenlabs.file.service.FileUploadService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -26,7 +24,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/file")
 @RequiredArgsConstructor
-@Tag(name = "文件管理", description = "文件上传下载接口")
 public class FileUploadController {
 
     private final FileUploadService fileUploadService;
@@ -38,7 +35,6 @@ public class FileUploadController {
      * @return 文件信息（包含文件ID和访问路径）
      */
     @PostMapping("/upload")
-    @Operation(summary = "上传文件", description = "上传单个文件，返回文件ID和访问路径")
     public ResponseEntity<Map<String, Object>> uploadFile(
             @RequestParam("file") MultipartFile file) {
         log.info("上传文件: {}", file.getOriginalFilename());
@@ -66,7 +62,6 @@ public class FileUploadController {
      * @return 文件资源
      */
     @GetMapping("/download/{fileId}")
-    @Operation(summary = "下载文件", description = "根据文件ID下载文件")
     public ResponseEntity<Resource> downloadFile(
             @PathVariable String fileId) {
         log.info("下载文件: {}", fileId);
@@ -88,7 +83,6 @@ public class FileUploadController {
      * @return 文件信息
      */
     @GetMapping("/info/{fileId}")
-    @Operation(summary = "获取文件信息", description = "根据文件ID获取文件信息")
     public ResponseEntity<Map<String, Object>> getFileInfo(
             @PathVariable String fileId) {
         log.info("获取文件信息: {}", fileId);
@@ -109,7 +103,6 @@ public class FileUploadController {
      * @return 删除结果
      */
     @DeleteMapping("/{fileId}")
-    @Operation(summary = "删除文件", description = "根据文件ID删除文件")
     public ResponseEntity<Map<String, Object>> deleteFile(
             @PathVariable String fileId) {
         log.info("删除文件: {}", fileId);

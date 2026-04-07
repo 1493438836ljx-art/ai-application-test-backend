@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.skill.mapper.SkillParameterMapper">
+<mapper namespace="com.huawei.cloudopenlabs.skill.mapper.SkillParameterMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.example.demo.skill.entity.SkillParameterEntity">
+    <resultMap id="BaseResultMap" type="com.huawei.cloudopenlabs.skill.entity.SkillParameterEntity">
         <id column="id" property="id"/>
         <result column="skill_id" property="skillId"/>
         <result column="param_direction" property="paramDirection"/>

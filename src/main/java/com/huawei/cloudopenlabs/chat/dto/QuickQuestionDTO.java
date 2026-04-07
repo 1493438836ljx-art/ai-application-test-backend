@@ -1,6 +1,5 @@
 package com.huawei.cloudopenlabs.chat.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -10,18 +9,13 @@ import lombok.Data;
  * @version 27.0.1.1
  */
 @Data
-@Schema(description = "快捷问题")
 public class QuickQuestionDTO {
 
-    @Schema(description = "ID")
     private Long id;
 
-    @Schema(description = "图标")
     private String icon;
 
-    @Schema(description = "问题文本")
     private String text;
 
-    @Schema(description = "分类")
     private String category;
 }

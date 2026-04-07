@@ -1,6 +1,5 @@
 package com.huawei.cloudopenlabs.dictionary.dto.response;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,27 +18,19 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "数据字典详情")
 public class DictionaryDetailResponse {
 
-    @Schema(description = "数据字典ID")
     private Long id;
 
-    @Schema(description = "数据字典名称")
     private String name;
 
-    @Schema(description = "字典描述")
     private String description;
 
-    @Schema(description = "字段定义列表")
     private List<ColumnResponse> columns;
 
-    @Schema(description = "关联的测评集列表")
     private List<LinkedDatasetResponse> linkedDatasets;
 
-    @Schema(description = "创建时间")
     private LocalDateTime createdAt;
 
-    @Schema(description = "更新时间")
     private LocalDateTime updatedAt;
 }

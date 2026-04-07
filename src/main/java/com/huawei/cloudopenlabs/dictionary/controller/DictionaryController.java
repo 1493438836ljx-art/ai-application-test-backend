@@ -6,9 +6,6 @@ import com.huawei.cloudopenlabs.dictionary.dto.request.DictionaryRequest;
 import com.example.demo.dictionary.dto.response.*;
 import com.huawei.cloudopenlabs.dictionary.dto.response.*;
 import com.huawei.cloudopenlabs.dictionary.service.DictionaryService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +29,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/dictionaries")
 @RequiredArgsConstructor
-@Tag(name = "数据字典管理", description = "数据字典的增删改查接口")
 public class DictionaryController {
 
     private final DictionaryService dictionaryService;
@@ -46,13 +42,9 @@ public class DictionaryController {
      * @return 分页结果
      */
     @GetMapping
-    @Operation(summary = "分页查询数据字典列表", description = "支持按名称、字段key、字段label搜索")
     public ResponseEntity<ApiResponse<PageResponse<DictionaryListResponse>>> getDictionaryList(
-            @Parameter(description = "搜索关键词（匹配名称、字段key、字段label）")
             @RequestParam(required = false) String keyword,
-            @Parameter(description = "页码", example = "1")
             @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小", example = "10")
             @RequestParam(defaultValue = "10") int size) {
 
         log.info("查询数据字典列表, keyword: {}, page: {}, size: {}", keyword, page, size);
@@ -72,9 +64,7 @@ public class DictionaryController {
      * @return 详情响应
      */
     @GetMapping("/{id}")
-    @Operation(summary = "获取数据字典详情", description = "根据ID获取数据字典的详细信息，包括字段定义和关联的测评集")
     public ResponseEntity<ApiResponse<DictionaryDetailResponse>> getDictionaryDetail(
-            @Parameter(description = "数据字典ID", required = true)
             @PathVariable Long id) {
 
         log.info("获取数据字典详情: {}", id);
@@ -93,7 +83,6 @@ public class DictionaryController {
      * @return 创建结果
      */
     @PostMapping
-    @Operation(summary = "创建数据字典", description = "创建一个新的数据字典，包含字段定义")
     public ResponseEntity<ApiResponse<DictionaryDetailResponse>> createDictionary(
             @Valid @RequestBody DictionaryRequest request) {
 
@@ -115,9 +104,7 @@ public class DictionaryController {
      * @return 更新结果
      */
     @PutMapping("/{id}")
-    @Operation(summary = "更新数据字典", description = "更新数据字典的基本信息和字段定义")
     public ResponseEntity<ApiResponse<DictionaryDetailResponse>> updateDictionary(
-            @Parameter(description = "数据字典ID", required = true)
             @PathVariable Long id,
             @Valid @RequestBody DictionaryRequest request) {
 
@@ -137,9 +124,7 @@ public class DictionaryController {
      * @return 无内容响应
      */
     @DeleteMapping("/{id}")
-    @Operation(summary = "删除数据字典", description = "删除指定的数据字典（逻辑删除），需确保没有关联的测评集")
     public ResponseEntity<ApiResponse<Void>> deleteDictionary(
-            @Parameter(description = "数据字典ID", required = true)
             @PathVariable Long id) {
 
         log.info("删除数据字典: {}", id);
@@ -157,9 +142,7 @@ public class DictionaryController {
      * @return 关联状态
      */
     @GetMapping("/{id}/link-status")
-    @Operation(summary = "检查数据字典关联状态", description = "检查数据字典是否被测评集关联，用于判断是否可以删除")
     public ResponseEntity<ApiResponse<LinkStatusResponse>> getLinkStatus(
-            @Parameter(description = "数据字典ID", required = true)
             @PathVariable Long id) {
 
         log.info("检查数据字典关联状态: {}", id);
@@ -177,7 +160,6 @@ public class DictionaryController {
      * @return 简单响应列表
      */
     @GetMapping("/all")
-    @Operation(summary = "获取所有数据字典", description = "获取所有数据字典的简单信息，用于下拉选择")
     public ResponseEntity<ApiResponse<List<DictionarySimpleResponse>>> getAllDictionaries() {
 
         log.info("获取所有数据字典（下拉用）");
@@ -196,9 +178,7 @@ public class DictionaryController {
      * @return columns列表
      */
     @GetMapping("/by-name/{name}/columns")
-    @Operation(summary = "根据名称获取columns", description = "根据数据字典名称获取字段定义列表")
     public ResponseEntity<ApiResponse<List<ColumnResponse>>> getColumnsByName(
-            @Parameter(description = "数据字典名称", required = true)
             @PathVariable String name) {
 
         log.info("根据名称获取数据字典columns: {}", name);

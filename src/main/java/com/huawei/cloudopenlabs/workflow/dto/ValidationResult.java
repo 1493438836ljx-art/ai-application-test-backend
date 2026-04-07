@@ -1,6 +1,5 @@
 package com.huawei.cloudopenlabs.workflow.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -13,16 +12,12 @@ import java.util.List;
  * @version 27.0.1.1
  */
 @Data
-@Schema(description = "工作流验证结果")
 public class ValidationResult {
 
-    @Schema(description = "是否验证通过")
     private boolean valid;
 
-    @Schema(description = "错误列表")
     private List<ValidationError> errors = new ArrayList<>();
 
-    @Schema(description = "警告列表")
     private List<ValidationWarning> warnings = new ArrayList<>();
 
     /**
@@ -78,18 +73,13 @@ public class ValidationResult {
      * 验证错误
      */
     @Data
-    @Schema(description = "验证错误")
     public static class ValidationError {
-        @Schema(description = "错误代码", example = "MISSING_START_NODE")
         private String code;
 
-        @Schema(description = "错误消息", example = "工作流必须包含一个开始节点")
         private String message;
 
-        @Schema(description = "关联的节点UUID")
         private String nodeUuid;
 
-        @Schema(description = "关联的字段")
         private String field;
     }
 
@@ -97,15 +87,11 @@ public class ValidationResult {
      * 验证警告
      */
     @Data
-    @Schema(description = "验证警告")
     public static class ValidationWarning {
-        @Schema(description = "警告代码", example = "ORPHAN_NODE")
         private String code;
 
-        @Schema(description = "警告消息", example = "节点没有连接到任何其他节点")
         private String message;
 
-        @Schema(description = "关联的节点UUID")
         private String nodeUuid;
     }
 }

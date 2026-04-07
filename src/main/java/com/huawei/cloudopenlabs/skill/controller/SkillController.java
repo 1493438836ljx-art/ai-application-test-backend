@@ -6,9 +6,6 @@ import com.huawei.cloudopenlabs.skill.dto.SkillQueryRequest;
 import com.huawei.cloudopenlabs.skill.dto.SkillResponse;
 import com.huawei.cloudopenlabs.skill.dto.SkillUpdateRequest;
 import com.huawei.cloudopenlabs.skill.service.SkillService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/skill")
 @RequiredArgsConstructor
-@Tag(name = "Skill管理", description = "Skill的增删改查接口")
 public class SkillController {
 
     private final SkillService skillService;
@@ -45,7 +41,6 @@ public class SkillController {
      * @return Skill响应
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "创建Skill", description = "创建一个新的Skill，支持上传执行套件文件")
     public ResponseEntity<SkillResponse> createSkill(
             @RequestPart(value = "file", required = false) MultipartFile file,
             @Valid @RequestPart("data") SkillCreateRequest request) {
@@ -64,15 +59,10 @@ public class SkillController {
      * @return Skill分页列表
      */
     @GetMapping("/list")
-    @Operation(summary = "获取Skill列表", description = "分页获取Skill列表")
     public ResponseEntity<Page<SkillResponse>> getSkillList(
-            @Parameter(description = "页码（从1开始）", example = "1")
             @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小", example = "10")
             @RequestParam(defaultValue = "10") int size,
-            @Parameter(description = "排序字段", example = "createdAt")
             @RequestParam(defaultValue = "createdAt") String sort,
-            @Parameter(description = "排序方向", example = "DESC")
             @RequestParam(defaultValue = "DESC") String direction) {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         Pageable pageable = PageRequest.of(Math.max(0, page - 1), size, Sort.by(sortDirection, sort));
@@ -95,25 +85,15 @@ public class SkillController {
      * @return Skill分页列表
      */
     @GetMapping("/search")
-    @Operation(summary = "搜索Skill", description = "根据条件搜索Skill")
     public ResponseEntity<Page<SkillResponse>> searchSkills(
-            @Parameter(description = "名称关键字")
             @RequestParam(required = false) String name,
-            @Parameter(description = "执行方式：AUTOMATED/AI")
             @RequestParam(required = false) String executionType,
-            @Parameter(description = "分类：SYSTEM/USER")
             @RequestParam(required = false) String category,
-            @Parameter(description = "访问控制类型：PUBLIC/PRIVATE/WHITELIST/PROJECT")
             @RequestParam(required = false) String accessType,
-            @Parameter(description = "状态：PUBLISHED/DRAFT")
             @RequestParam(required = false) String status,
-            @Parameter(description = "创建人")
             @RequestParam(required = false) String createdBy,
-            @Parameter(description = "是否容器")
             @RequestParam(required = false) Boolean isContainer,
-            @Parameter(description = "页码（从1开始）", example = "1")
             @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "每页大小", example = "10")
             @RequestParam(defaultValue = "10") int size) {
 
         SkillQueryRequest query = new SkillQueryRequest();
@@ -137,9 +117,7 @@ public class SkillController {
      * @return Skill响应
      */
     @GetMapping("/{id}")
-    @Operation(summary = "获取Skill详情", description = "根据ID获取Skill的详细信息，包括入参、出参和访问控制")
     public ResponseEntity<SkillResponse> getSkill(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String id) {
         SkillResponse response = skillService.getSkillById(id);
         return ResponseEntity.ok(response);
@@ -154,9 +132,7 @@ public class SkillController {
      * @return Skill响应
      */
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "更新Skill", description = "更新Skill的基本信息，支持上传新的执行套件文件")
     public ResponseEntity<SkillResponse> updateSkill(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String id,
             @RequestPart(value = "file", required = false) MultipartFile file,
             @Valid @RequestPart("data") SkillUpdateRequest request) {
@@ -172,9 +148,7 @@ public class SkillController {
      * @return 无内容响应
      */
     @DeleteMapping("/{id}")
-    @Operation(summary = "删除Skill", description = "删除指定的Skill（逻辑删除）")
     public ResponseEntity<Void> deleteSkill(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String id) {
         log.info("删除Skill: {}", id);
         skillService.deleteSkill(id);
@@ -188,9 +162,7 @@ public class SkillController {
      * @return Skill响应
      */
     @PostMapping("/{id}/publish")
-    @Operation(summary = "发布Skill", description = "将Skill状态设置为已发布")
     public ResponseEntity<SkillResponse> publishSkill(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String id) {
         log.info("发布Skill: {}", id);
         SkillResponse response = skillService.publishSkill(id);
@@ -204,9 +176,7 @@ public class SkillController {
      * @return Skill响应
      */
     @PostMapping("/{id}/unpublish")
-    @Operation(summary = "取消发布Skill", description = "将Skill状态设置为草稿")
     public ResponseEntity<SkillResponse> unpublishSkill(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String id) {
         log.info("取消发布Skill: {}", id);
         SkillResponse response = skillService.unpublishSkill(id);
@@ -220,9 +190,7 @@ public class SkillController {
      * @return 新Skill响应
      */
     @PostMapping("/{id}/copy")
-    @Operation(summary = "复制Skill", description = "复制一个Skill及其所有参数和访问控制")
     public ResponseEntity<SkillResponse> copySkill(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String id) {
         log.info("复制Skill: {}", id);
         SkillResponse response = skillService.copySkill(id);
@@ -236,9 +204,7 @@ public class SkillController {
      * @return 执行套件文件
      */
     @GetMapping("/{id}/download")
-    @Operation(summary = "下载执行套件", description = "下载Skill的执行套件文件")
     public ResponseEntity<org.springframework.core.io.Resource> downloadSuite(
-            @Parameter(description = "Skill ID", required = true)
             @PathVariable String id) {
         log.info("下载执行套件: {}", id);
         return skillService.downloadSuite(id);

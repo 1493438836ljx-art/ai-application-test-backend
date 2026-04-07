@@ -1,6 +1,5 @@
 package com.huawei.cloudopenlabs.dictionary.dto.response;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,15 +15,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "数据字典简单信息（下拉列表用）")
 public class DictionarySimpleResponse {
 
-    @Schema(description = "数据字典ID")
     private Long id;
 
-    @Schema(description = "数据字典名称")
     private String name;
 
-    @Schema(description = "字段数量")
     private Integer columnCount;
 }
