@@ -1,0 +1,57 @@
+package com.huawei.cloudopenlabs.agent.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
+/**
+ * Claude Code 任务执行响应 DTO
+ *
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
+ */
+@Data
+public class TaskExecuteResponse {
+
+    /**
+     * 执行是否成功
+     */
+    private Boolean success;
+
+    /**
+     * Claude 的响应内容
+     */
+    private String response;
+
+    /**
+     * 错误信息（执行失败时）
+     */
+    private String error;
+
+    /**
+     * 错误码（执行失败时）
+     */
+    private Integer code;
+
+    /**
+     * 原始任务内容
+     */
+    @JsonProperty("taskContent")
+    private String taskContent;
+
+    /**
+     * 原始配置信息
+     */
+    private String config;
+
+    /**
+     * Skill 文件名
+     */
+    @JsonProperty("skillFile")
+    private String skillFile;
+
+    /**
+     * 会话ID（用于多轮对话会话持久化）
+     */
+    @JsonProperty("sessionId")
+    private String sessionId;
+}
