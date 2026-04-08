@@ -61,6 +61,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatQuickQuestionMapper quickQuestionMapper;
 
     private AgentExecutor agentExecutor;
+    private PendingActionService pendingActionService;
 
     /**
      * 内容去重器：存储每个会话已发送内容的哈希值
@@ -93,6 +94,11 @@ public class ChatServiceImpl implements ChatService {
     @Autowired(required = false)
     public void setAgentExecutor(AgentExecutor agentExecutor) {
         this.agentExecutor = agentExecutor;
+    }
+
+    @Autowired(required = false)
+    public void setPendingActionService(PendingActionService pendingActionService) {
+        this.pendingActionService = pendingActionService;
     }
 
     /**
@@ -289,6 +295,61 @@ public class ChatServiceImpl implements ChatService {
                             emitter.complete();
                         } catch (Exception e) {
                             log.error("处理 onError 失败: {}", e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onConfirmationRequired(String pendingActionId,
+                                                       java.util.List<Map<String, Object>> actions,
+                                                       Long workflowId) {
+                        try {
+                            log.info("收到操作确认请求: pendingActionId={}, actionCount={}, workflowId={}",
+                                    pendingActionId, actions.size(), workflowId);
+
+                            // 存储待确认操作（用于后续通过 /api/chat/action/confirm 执行）
+                            pendingActionService.storePendingAction(
+                                    pendingActionId,
+                                    finalSessionId[0],
+                                    workflowId,
+                                    actions,
+                                    emitter,
+                                    objectMapper
+                            );
+
+                            // 生成操作摘要
+                            java.util.List<Map<String, Object>> actionSummary = new java.util.ArrayList<>();
+                            for (Map<String, Object> action : actions) {
+                                Map<String, Object> summary = new java.util.LinkedHashMap<>();
+                                summary.put("id", action.get("id"));
+                                summary.put("method", action.get("method"));
+                                summary.put("path", action.get("path"));
+                                summary.put("description", action.get("description"));
+
+                                // 生成 body 预览
+                                Object body = action.get("body");
+                                if (body != null) {
+                                    String bodyStr = objectMapper.writeValueAsString(body);
+                                    summary.put("bodyPreview", bodyStr.length() > 200 ? bodyStr.substring(0, 200) + "..." : bodyStr);
+                                }
+
+                                actionSummary.add(summary);
+                            }
+
+                            // 发送确认请求事件
+                            Map<String, Object> confirmData = new java.util.LinkedHashMap<>();
+                            confirmData.put("type", "confirmation_required");
+                            confirmData.put("pendingActionId", pendingActionId);
+                            confirmData.put("workflowId", workflowId);
+                            confirmData.put("actionSummary", actionSummary);
+                            confirmData.put("message", "即将执行 " + actions.size() + " 个修改操作，请确认是否继续？");
+
+                            emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(confirmData)));
+                            log.info("已发送确认请求到前端: pendingActionId={}", pendingActionId);
+
+                            // 注意：不调用 emitter.complete()，保持连接打开，等待用户确认
+                            // 用户确认后，前端会调用 /api/chat/action/confirm API
+                        } catch (Exception e) {
+                            log.error("处理 onConfirmationRequired 失败: {}", e.getMessage(), e);
                         }
                     }
                 }

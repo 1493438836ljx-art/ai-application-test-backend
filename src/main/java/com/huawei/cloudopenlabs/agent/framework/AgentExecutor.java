@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1362,6 +1363,21 @@ public class AgentExecutor {
         }
 
         /**
+         * 操作确认请求回调
+         * <p>
+         * 当 AI 请求执行非查询操作时，需要用户确认。
+         * 前端应显示确认对话框，用户确认后调用 /api/chat/action/confirm
+         * </p>
+         *
+         * @param pendingActionId 待确认操作ID
+         * @param actions         待执行的操作列表
+         * @param workflowId      工作流ID
+         */
+        default void onConfirmationRequired(String pendingActionId, java.util.List<Map<String, Object>> actions, Long workflowId) {
+            log.info("操作需要确认: pendingActionId={}, actionCount={}", pendingActionId, actions.size());
+        }
+
+        /**
          * 任务完成回调
          *
          * @param sessionId 会话ID
@@ -1577,10 +1593,27 @@ public class AgentExecutor {
                     // AI 要执行操作
                     log.info("检测到 action 请求，执行操作...");
                     Map<String, Object> actionResults = executeActionsInStream(plan.getActions(), session, callback);
-                    // 构建带结果的上下文，递归调用下一轮
-                    String actionContext = buildContextWithResults(session, actionResults, "action");
-                    processMessageStreamWithMultiRound(actionContext, workflowId, session.getConversationId(),
-                            callback, false);
+
+                    // 检查是否有待确认的操作（非查询操作）
+                    // 如果有待确认操作，actionResults 为空，需要等待用户确认
+                    boolean hasMutationAction = false;
+                    for (AgentPlan.Action action : plan.getActions()) {
+                        if (action.getMethod() != null && isMutationMethod(action.getMethod())) {
+                            hasMutationAction = true;
+                            break;
+                        }
+                    }
+
+                    if (hasMutationAction) {
+                        // 有待确认操作，等待用户确认后通过 /api/chat/action/confirm 继续执行
+                        log.info("有 {} 个操作待确认，等待用户确认...", plan.getActions().size());
+                        // 不继续下一轮，等待用户确认
+                    } else {
+                        // 只有查询操作（GET），构建带结果的上下文，递归调用下一轮
+                        String actionContext = buildContextWithResults(session, actionResults, "action");
+                        processMessageStreamWithMultiRound(actionContext, workflowId, session.getConversationId(),
+                                callback, false);
+                    }
                     break;
 
                 case "complete":
@@ -1664,7 +1697,11 @@ public class AgentExecutor {
     }
 
     /**
-     * 在流式模式下执行操作
+     * 在流式模式下处理操作请求
+     * <p>
+     * 对于非查询操作（POST、PUT、PATCH、DELETE），会先发送确认请求给前端。
+     * 用户确认后，前端调用 /api/chat/action/confirm 来执行操作。
+     * </p>
      */
     private Map<String, Object> executeActionsInStream(List<AgentPlan.Action> actions, AgentSessionEntity session,
                                                         StreamCallback callback) {
@@ -1675,24 +1712,60 @@ public class AgentExecutor {
             return actionResults;
         }
 
+        // 检查是否有非查询操作
+        List<Map<String, Object>> mutationActions = new ArrayList<>();
         for (AgentPlan.Action action : actions) {
-            log.info("流式模式执行操作: id={}, method={}, path={}",
+            String method = action.getMethod();
+            if (method != null && isMutationMethod(method)) {
+                Map<String, Object> actionMap = new HashMap<>();
+                actionMap.put("id", action.getId());
+                actionMap.put("method", action.getMethod());
+                actionMap.put("path", action.getPath());
+                actionMap.put("description", action.getDescription());
+                actionMap.put("body", action.getBody());
+                mutationActions.add(actionMap);
+            }
+        }
+
+        // 如果有非查询操作，发送确认请求
+        if (!mutationActions.isEmpty()) {
+            log.info("检测到 {} 个非查询操作，需要用户确认", mutationActions.size());
+
+            // 生成待确认操作ID
+            String pendingActionId = "pending-" + java.util.UUID.randomUUID().toString();
+
+            // 调用确认回调
+            callback.onConfirmationRequired(pendingActionId, mutationActions, session.getWorkflowId());
+
+            // 返回空结果，等待用户确认后通过 /api/chat/action/confirm 执行
+            return actionResults;
+        }
+
+        // 如果只有查询操作（GET），直接执行
+        for (AgentPlan.Action action : actions) {
+            log.info("流式模式执行查询操作: id={}, method={}, path={}",
                     action.getId(), action.getMethod(), action.getPath());
 
             Object result = executeAction(action.getMethod(), action.getPath(), action.getBody());
             actionResults.put(action.getId(), result);
-
-            // 如果是更新节点配置，通过特殊回调通知前端
-            if (action.getPath() != null && action.getPath().contains("/data/json")) {
-                // 这里可以发送一个特殊的 chunk 通知前端工作流已更新
-                log.info("工作流数据已更新，通知前端");
-            }
         }
 
         // 更新 session 的操作结果
         sessionService.updateActionResults(session.getConversationId(), actionResults);
 
         return actionResults;
+    }
+
+    /**
+     * 判断 HTTP 方法是否为非查询方法（需要确认）
+     */
+    private boolean isMutationMethod(String method) {
+        if (method == null) {
+            return false;
+        }
+        String upperMethod = method.toUpperCase();
+        return "POST".equals(upperMethod) || "PUT".equals(upperMethod)
+                || "PATCH".equals(upperMethod) || "DELETE".equals(upperMethod);
     }
 
     /**
