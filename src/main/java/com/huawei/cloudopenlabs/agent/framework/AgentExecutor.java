@@ -10,6 +10,7 @@ import com.huawei.cloudopenlabs.agent.dto.StreamChunk;
 import com.huawei.cloudopenlabs.agent.dto.TaskExecuteResponse;
 import com.huawei.cloudopenlabs.agent.entity.AgentSessionEntity;
 import com.huawei.cloudopenlabs.agent.service.AgentSessionService;
+import com.huawei.cloudopenlabs.agent.service.LockService;
 import com.huawei.cloudopenlabs.workflow.dto.NodeTypeResponse;
 import com.huawei.cloudopenlabs.workflow.dto.WorkflowResponse;
 import com.huawei.cloudopenlabs.workflow.service.NodeTypeService;
@@ -132,6 +133,9 @@ public class AgentExecutor {
 
     @Autowired
     private AgentContextProperties contextProperties;
+
+    @Autowired(required = false)
+    private LockService lockService;
 
     /**
      * 执行 Agent 任务（核心接口）
@@ -1379,7 +1383,32 @@ public class AgentExecutor {
      */
     public void processMessageStream(String userMessage, Long workflowId, String conversationId,
                                       StreamCallback callback) {
-        processMessageStreamWithMultiRound(userMessage, workflowId, conversationId, callback, true);
+        // 确定会话ID
+        String sessionId = conversationId;
+        if (sessionId == null || sessionId.isEmpty()) {
+            sessionId = "new-" + java.util.UUID.randomUUID().toString();
+        }
+
+        // 如果有锁服务，先获取锁
+        if (lockService != null) {
+            if (!lockService.tryLock(sessionId)) {
+                log.warn("会话正在处理中，拒绝请求: sessionId={}", sessionId);
+                callback.onError("会话正在处理中，请稍后重试");
+                return;
+            }
+
+            try {
+                // 执行处理
+                processMessageStreamWithMultiRound(userMessage, workflowId, conversationId, callback, true);
+            } finally {
+                // 释放锁
+                lockService.unlock(sessionId);
+                log.debug("释放会话锁: sessionId={}", sessionId);
+            }
+        } else {
+            // 没有锁服务，直接执行
+            processMessageStreamWithMultiRound(userMessage, workflowId, conversationId, callback, true);
+        }
     }
 
     /**
