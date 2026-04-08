@@ -658,6 +658,11 @@ public class AgentExecutor {
         // 强调使用中文回复
         sb.append("【重要】必须按要求格式输出，请务必使用中文进行所有回复和输出，包括 reasoning、summary 等字段内容。\n\n");
 
+        // 强调必须遵循 Skill 指令
+        sb.append("【重要】你必须严格遵循添加目录中的 skill.md 文件定义的指令和输出格式。\n");
+        sb.append("禁止跳过 Skill 指令直接探索当前项目代码。禁止使用内置的 mysql-connect 等技能绕过 API。\n");
+        sb.append("所有数据查询必须通过 Skill 中定义的 HTTP API 接口进行。\n\n");
+
         sb.append("用户请求: ").append(userMessage).append("\n\n");
         sb.append("workflowId: ").append(session.getWorkflowId()).append("\n\n");
 
@@ -694,7 +699,9 @@ public class AgentExecutor {
         StringBuilder sb = new StringBuilder();
 
         // 强调使用中文回复
-        sb.append("【重要】请务必使用中文进行所有回复和输出。\n\n");
+        sb.append("【重要】请务必使用中文进行所有回复和输出。\n");
+        // 强调必须遵循 Skill 指令
+        sb.append("【重要】你必须严格遵循 skill.md 文件定义的指令和输出格式（query/action/complete）。\n\n");
 
         sb.append("本轮").append(resultType.equals("query") ? "查询" : "操作").append("结果:\n");
         try {
@@ -1510,9 +1517,10 @@ public class AgentExecutor {
 
                                 // 收集文本内容用于多轮判断
                                 if ("chunk".equals(chunk.getType()) && chunk.getContentOrMessage() != null) {
-                                    // 只收集 text 和 result 类型的内容
+                                    // 收集所有有效内容类型：text、result、assistant
                                     String contentType = chunk.getContentType();
-                                    if ("text".equals(contentType) || "result".equals(contentType) || contentType == null) {
+                                    if ("text".equals(contentType) || "result".equals(contentType)
+                                            || "assistant".equals(contentType) || contentType == null) {
                                         fullResponse.append(chunk.getContentOrMessage());
                                     }
                                 }
@@ -1693,10 +1701,22 @@ public class AgentExecutor {
      */
     private void handleStreamChunk(AgentSessionEntity session, StreamChunk chunk,
                                     StreamCallback callback, boolean isNewSession) {
-        log.info("处理流式块: type={}, sessionId={}, content={}", chunk.getType(), chunk.getSessionId(),
+        String chunkType = chunk.getType();
+        log.info("处理流式块: type={}, sessionId={}, content={}", chunkType, chunk.getSessionId(),
                 chunk.getContentOrMessage() != null ? chunk.getContentOrMessage().substring(0, Math.min(50, chunk.getContentOrMessage().length())) + "..." : "null");
 
-        switch (chunk.getType()) {
+        // 处理 type 为 null 的情况
+        if (chunkType == null) {
+            // 如果 type 为 null 但有内容，作为普通 chunk 处理
+            if (chunk.getContentOrMessage() != null && !chunk.getContentOrMessage().isEmpty()) {
+                callback.onChunk(chunk);
+            } else {
+                log.debug("忽略无内容的 null 类型块");
+            }
+            return;
+        }
+
+        switch (chunkType) {
             case "start":
                 // 会话开始，更新 sessionId
                 if (chunk.getSessionId() != null && isNewSession) {

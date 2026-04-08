@@ -24,13 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -54,6 +61,17 @@ public class ChatServiceImpl implements ChatService {
     private final ChatQuickQuestionMapper quickQuestionMapper;
 
     private AgentExecutor agentExecutor;
+
+    /**
+     * 内容去重器：存储每个会话已发送内容的哈希值
+     * Key: conversationId, Value: 已发送内容的 MD5 哈希集合
+     */
+    private final ConcurrentHashMap<String, Set<String>> contentDedupMap = new ConcurrentHashMap<>();
+
+    /**
+     * 最小去重长度：短于此长度的内容不去重
+     */
+    private static final int MIN_DEDUP_LENGTH = 20;
 
     // AI回复模板（Agent失败时的备用回复）
     private static final List<String> FALLBACK_REPLIES = List.of(
@@ -153,29 +171,76 @@ public class ChatServiceImpl implements ChatService {
                     public void onChunk(StreamChunk chunk) {
                         try {
                             String content = chunk.getContentOrMessage();
+                            String contentType = chunk.getContentType();
                             log.info("onChunk 回调被调用，内容类型: {}, 内容长度: {}",
-                                    chunk.getContentType(), content != null ? content.length() : 0);
+                                    contentType, content != null ? content.length() : 0);
 
-                            // 仅处理 contentType 为 text 的内容，过滤其他类型（thinking, tool_use, result 等）
-                            if (!"text".equals(chunk.getContentType())) {
-                                log.debug("过滤非 text 类型内容: contentType={}", chunk.getContentType());
+                            // 过滤空内容
+                            if (content == null || content.trim().isEmpty()) {
+                                log.debug("跳过空内容: contentType={}", contentType);
                                 return;
                             }
 
-                            // 处理文本内容：如果包含 JSON 且有 reasoning 和 summary 属性，则提取这两个值
-                            String processedContent = extractReasoningAndSummary(content);
+                            // 过滤内部调试信息：[思考]、[工具调用]、[工具结果] 等标记的内容
+                            if (content.startsWith("[思考]") ||
+                                content.startsWith("[工具调用]") ||
+                                content.startsWith("[工具结果]") ||
+                                content.contains("💭 思考:") ||
+                                content.contains("📤 工具结果:")) {
+                                log.debug("过滤内部调试信息: contentType={}, preview={}",
+                                        contentType, content.substring(0, Math.min(50, content.length())));
+                                return;
+                            }
+
+                            // 过滤 user 类型（工具结果）
+                            if ("user".equals(contentType)) {
+                                log.debug("过滤 user 类型内容（工具结果）");
+                                return;
+                            }
+
+                            // 只处理 assistant、text、result 类型
+                            String displayContent = null;
+                            if ("assistant".equals(contentType) || "text".equals(contentType)) {
+                                // assistant 和 text 类型：提取 reasoning 和 summary
+                                displayContent = extractReasoningAndSummary(content);
+                            } else if ("result".equals(contentType)) {
+                                // result 类型：最终结果，提取 reasoning 和 summary
+                                displayContent = extractReasoningAndSummary(content);
+                            }
+
+                            // 如果没有有效内容，跳过
+                            if (displayContent == null || displayContent.trim().isEmpty()) {
+                                log.debug("跳过无效内容: contentType={}", contentType);
+                                return;
+                            }
+
+                            // 内容去重检查（基于会话ID）
+                            String sessionId = finalSessionId[0];
+                            if (isDuplicateContent(sessionId, displayContent)) {
+                                log.debug("跳过重复内容: contentType={}, length={}, preview={}",
+                                        contentType, displayContent.length(),
+                                        displayContent.substring(0, Math.min(50, displayContent.length())));
+                                return;
+                            }
+
+                            // 过滤重复和冗余的内容片段
+                            displayContent = filterDuplicateContent(displayContent);
+                            if (displayContent == null || displayContent.trim().isEmpty()) {
+                                log.debug("过滤后内容为空，跳过: contentType={}", contentType);
+                                return;
+                            }
 
                             // 构建发送给前端的数据
                             Map<String, Object> chunkData = new HashMap<>();
                             chunkData.put("type", "chunk");
-                            chunkData.put("content", processedContent);
-                            chunkData.put("contentType", chunk.getContentType());
+                            chunkData.put("content", displayContent);
+                            chunkData.put("contentType", contentType);
 
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
-                            log.info("SSE chunk 已发送到前端，contentType={}", chunk.getContentType());
+                            log.info("SSE chunk 已发送到前端，contentType={}, contentLength={}", contentType, displayContent.length());
 
                             // 累积文本内容
-                            fullContent.append(processedContent);
+                            fullContent.append(displayContent);
                         } catch (IOException e) {
                             log.error("发送 chunk 失败: {}", e.getMessage());
                         } catch (Exception e) {
@@ -187,6 +252,9 @@ public class ChatServiceImpl implements ChatService {
                     public void onDone(String sessionId, Long duration) {
                         try {
                             log.info("流式会话完成: sessionId={}, duration={}ms", sessionId, duration);
+
+                            // 清理去重集合
+                            clearDedupSet(sessionId);
 
                             // 保存 AI 消息
                             saveAssistantMessage(conversation, fullContent.toString(),
@@ -204,6 +272,9 @@ public class ChatServiceImpl implements ChatService {
                     public void onError(String error) {
                         try {
                             log.error("流式会话错误: {}", error);
+
+                            // 清理去重集合
+                            clearDedupSet(finalSessionId[0]);
 
                             // 保存包含错误的消息
                             String errorContent = fullContent.toString() + "\n\n❌ 错误: " + error;
@@ -226,10 +297,14 @@ public class ChatServiceImpl implements ChatService {
         // 设置超时和完成回调
         emitter.onTimeout(() -> {
             log.warn("SSE 连接超时");
+            // 清理去重集合
+            clearDedupSet(finalSessionId[0]);
         });
 
         emitter.onCompletion(() -> {
             log.debug("SSE 连接完成");
+            // 清理去重集合
+            clearDedupSet(finalSessionId[0]);
         });
 
         return emitter;
@@ -1026,7 +1101,152 @@ public class ChatServiceImpl implements ChatService {
             return result.toString();
         }
 
-        return content;
+        // 情况3：纯文本内容（非 JSON 格式），提取最后的总结部分
+        // AI 常输出多个层次的内容：思考过程 → 中间状态 → 最终总结
+        // 我们只需要展示最终总结给用户
+        return extractFinalSummary(trimmedContent);
+    }
+
+    /**
+     * 从纯文本内容中提取最终的总结部分
+     * AI 输出通常遵循模式：思考过程 → 中间状态 → 最终结果
+     * 此方法只保留最终结果，过滤中间过程
+     */
+    private String extractFinalSummary(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            return content;
+        }
+
+        // 按换行或句号分割成段落/句子
+        String[] segments = content.split("(?<=[。！？\\n])\\s*");
+
+        if (segments.length <= 1) {
+            // 单段内容，直接返回
+            return content;
+        }
+
+        // 过滤掉思考过程和中间状态的句子
+        List<String> filteredSegments = new ArrayList<>();
+        Set<String> seenKeywords = new HashSet<>();
+
+        for (String segment : segments) {
+            String trimmed = segment.trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+
+            // 跳过明显的思考过程句子
+            if (isThinkingProcess(trimmed)) {
+                log.debug("过滤思考过程: {}", trimmed.substring(0, Math.min(50, trimmed.length())));
+                continue;
+            }
+
+            // 跳过重复的关键词句子
+            String keyPhrase = extractKeyPhrase(trimmed);
+            if (keyPhrase != null && seenKeywords.contains(keyPhrase)) {
+                log.debug("过滤重复关键词句子: {}", keyPhrase);
+                continue;
+            }
+            if (keyPhrase != null) {
+                seenKeywords.add(keyPhrase);
+            }
+
+            filteredSegments.add(trimmed);
+        }
+
+        // 如果过滤后只剩一句，直接返回
+        if (filteredSegments.size() <= 1) {
+            return String.join(" ", filteredSegments);
+        }
+
+        // 如果有多句，优先返回最后一句（通常是最终总结）
+        // 但也要保留上下文
+        String lastSegment = filteredSegments.get(filteredSegments.size() - 1);
+
+        // 检查最后一句是否是完整的总结
+        if (isSummaryLike(lastSegment)) {
+            return lastSegment;
+        }
+
+        // 否则返回所有过滤后的内容
+        return String.join("\n", filteredSegments);
+    }
+
+    /**
+     * 判断句子是否是思考过程
+     */
+    private boolean isThinkingProcess(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+
+        String lowerText = text.toLowerCase();
+
+        // 思考过程的典型开头
+        String[] thinkingPrefixes = {
+            "让我先", "我需要先", "现在我已", "我还需要", "现在我已理解",
+            "正在查询", "正在获取", "正在检查", "正在执行",
+            "正在将", "正在收集", "正在更新", "正在修改",
+            "用户要求", "用户请求"
+        };
+
+        for (String prefix : thinkingPrefixes) {
+            if (lowerText.startsWith(prefix.toLowerCase())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 提取句子中的关键短语用于去重
+     */
+    private String extractKeyPhrase(String text) {
+        if (text == null || text.length() < 10) {
+            return null;
+        }
+
+        // 提取包含数字或特定关键词的短语
+        // 例如："变量a的默认值从30修改为31" → "变量a默认值"
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+            "(变量\\w+|节点\\w+|工作流\\d+)[的]?(默认值|配置|详情)"
+        );
+        java.util.regex.Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+
+        return null;
+    }
+
+    /**
+     * 判断句子是否像是一个总结
+     */
+    private boolean isSummaryLike(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+
+        // 总结的典型开头
+        String[] summaryPrefixes = {
+            "修改完成", "操作成功", "任务完成", "已完成",
+            "成功", "结果", "最终"
+        };
+
+        for (String prefix : summaryPrefixes) {
+            if (text.startsWith(prefix)) {
+                return true;
+            }
+        }
+
+        // 包含完成标记
+        if (text.contains("已更新") || text.contains("已修改") ||
+            text.contains("已完成") || text.contains("已成功")) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1069,5 +1289,236 @@ public class ChatServiceImpl implements ChatService {
             log.debug("JSON 解析失败: {}", e.getMessage());
             return originalContent;
         }
+    }
+
+    /**
+     * 获取或创建会话的去重集合
+     */
+    private Set<String> getDedupSet(String sessionId) {
+        return contentDedupMap.computeIfAbsent(sessionId, k -> ConcurrentHashMap.newKeySet());
+    }
+
+    /**
+     * 清理会话的去重集合
+     */
+    private void clearDedupSet(String sessionId) {
+        contentDedupMap.remove(sessionId);
+    }
+
+    /**
+     * 计算内容的 MD5 哈希值
+     */
+    private String computeContentHash(String content) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hashBytes = md.digest(content.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            log.error("MD5 算法不可用", e);
+            return String.valueOf(content.hashCode());
+        }
+    }
+
+    /**
+     * 检查内容是否为重复内容
+     * 使用内容标准化和哈希比对来检测重复
+     *
+     * @param sessionId 会话ID
+     * @param content 待检查的内容
+     * @return true 表示是重复内容，应跳过
+     */
+    private boolean isDuplicateContent(String sessionId, String content) {
+        if (content == null || content.length() < MIN_DEDUP_LENGTH) {
+            return false;
+        }
+
+        Set<String> dedupSet = getDedupSet(sessionId);
+
+        // 标准化内容：去除多余空白、统一换行符
+        String normalizedContent = content.trim().replaceAll("\\s+", " ");
+        String contentHash = computeContentHash(normalizedContent);
+
+        if (dedupSet.contains(contentHash)) {
+            return true;
+        }
+
+        dedupSet.add(contentHash);
+        return false;
+    }
+
+    /**
+     * 过滤重复和冗余的内容片段
+     * AI 输出中常包含多个层次重复的内容：
+     * 1. reasoning 思考过程
+     * 2. 重复的用户请求说明
+     * 3. status 状态更新
+     * 此方法提取最有价值的内容（最后的 summary 部分）
+     *
+     * @param content 原始内容
+     * @return 过滤后的内容
+     */
+    private String filterDuplicateContent(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            return content;
+        }
+
+        String[] lines = content.split("\n");
+        StringBuilder filtered = new StringBuilder();
+        Set<String> seenSentences = new HashSet<>();
+
+        for (String line : lines) {
+            String trimmedLine = line.trim();
+            if (trimmedLine.isEmpty()) {
+                continue;
+            }
+
+            // 将行拆分为句子
+            String[] sentences = trimmedLine.split("(?<=[。！？.!?])\\s*");
+
+            for (String sentence : sentences) {
+                if (sentence.trim().isEmpty()) {
+                    continue;
+                }
+
+                // 标准化句子用于比较
+                String normalized = sentence.trim().replaceAll("\\s+", " ");
+
+                // 检查是否与已见过的句子高度相似
+                boolean isDuplicate = false;
+                for (String seen : seenSentences) {
+                    if (calculateSimilarity(normalized, seen) > 0.7) {
+                        isDuplicate = true;
+                        break;
+                    }
+                }
+
+                if (!isDuplicate) {
+                    if (filtered.length() > 0) {
+                        filtered.append(" ");
+                    }
+                    filtered.append(sentence.trim());
+                    seenSentences.add(normalized);
+                }
+            }
+        }
+
+        return filtered.toString();
+    }
+
+    /**
+     * 计算两个字符串的相似度（0-1之间）
+     * 使用词语级别的 Jaccard 相似度 + 关键词重叠检测
+     * 可以检测语义相似但不完全相同的句子
+     */
+    private double calculateSimilarity(String s1, String s2) {
+        if (s1.equals(s2)) {
+            return 1.0;
+        }
+
+        if (s1.isEmpty() || s2.isEmpty()) {
+            return 0.0;
+        }
+
+        // 方法1：词语级别的 Jaccard 相似度
+        // 将句子分割为词语（支持中文和英文）
+        Set<String> words1 = extractWords(s1);
+        Set<String> words2 = extractWords(s2);
+
+        if (words1.isEmpty() || words2.isEmpty()) {
+            return 0.0;
+        }
+
+        // 计算交集
+        Set<String> intersection = new HashSet<>(words1);
+        intersection.retainAll(words2);
+
+        // 计算并集
+        Set<String> union = new HashSet<>(words1);
+        union.addAll(words2);
+
+        double jaccardSimilarity = (double) intersection.size() / union.size();
+
+        // 方法2：连续词组匹配（检测"我需要先获取工作流"这类相似片段）
+        double phraseSimilarity = calculatePhraseSimilarity(s1, s2);
+
+        // 取两种方法的最大值
+        return Math.max(jaccardSimilarity, phraseSimilarity);
+    }
+
+    /**
+     * 从字符串中提取词语（支持中文分词和英文单词）
+     */
+    private Set<String> extractWords(String text) {
+        Set<String> words = new HashSet<>();
+
+        // 提取中文词语（按字符分割，每个中文字符作为独立词）
+        // 对于简单场景，我们可以按2-3个字符的滑动窗口来提取词组
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            // 中文字符
+            if (Character.toString(c).matches("[\\u4e00-\\u9fa5]")) {
+                words.add(Character.toString(c));
+                // 2字词组
+                if (i + 1 < text.length() && Character.toString(text.charAt(i + 1)).matches("[\\u4e00-\\u9fa5]")) {
+                    words.add(text.substring(i, i + 2));
+                }
+            }
+            // 英文单词
+            else if (Character.isLetter(c)) {
+                int end = i;
+                while (end < text.length() && Character.isLetter(text.charAt(end))) {
+                    end++;
+                }
+                if (end > i) {
+                    words.add(text.substring(i, end).toLowerCase());
+                    i = end - 1;
+                }
+            }
+        }
+
+        return words;
+    }
+
+    /**
+     * 计算连续词组相似度
+     * 检测是否有共同的连续词组
+     */
+    private double calculatePhraseSimilarity(String s1, String s2) {
+        // 提取3-5个字符的连续词组
+        Set<String> phrases1 = extractPhrases(s1, 3);
+        Set<String> phrases2 = extractPhrases(s2, 3);
+
+        if (phrases1.isEmpty() || phrases2.isEmpty()) {
+            return 0.0;
+        }
+
+        // 计算交集
+        Set<String> intersection = new HashSet<>(phrases1);
+        intersection.retainAll(phrases2);
+
+        // 如果有较多共同的连续词组，说明相似
+        int maxPhrases = Math.max(phrases1.size(), phrases2.size());
+        return (double) intersection.size() / maxPhrases;
+    }
+
+    /**
+     * 提取指定长度的连续词组
+     */
+    private Set<String> extractPhrases(String text, int phraseLength) {
+        Set<String> phrases = new HashSet<>();
+        for (int i = 0; i <= text.length() - phraseLength; i++) {
+            String phrase = text.substring(i, i + phraseLength);
+            // 只保留包含中文或字母的词组
+            if (phrase.matches(".*[\\u4e00-\\u9fa5a-zA-Z].*")) {
+                phrases.add(phrase);
+            }
+        }
+        return phrases;
     }
 }
