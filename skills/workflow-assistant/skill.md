@@ -15,17 +15,42 @@
    - `action`：信息足够，执行修改操作
    - `complete`：任务完成
 
+## 节点类型体系
+
+系统采用「核心9种类型 + Skill动态加载」模式：
+
+### BASIC 基础节点
+| 类型 | 说明 |
+|------|------|
+| `start` | 开始节点，定义工作流入口和输入参数 |
+| `end` | 结束节点，定义工作流输出 |
+
+### LOGIC 逻辑控制
+| 类型 | 说明 |
+|------|------|
+| `condition_simple` | 简单条件分支（if-else），根据条件选择执行路径 |
+| `condition_multi` | 多路条件分支（switch-case），支持多个 case 和 default |
+| `loop` | 循环控制，遍历数组数据执行循环体 |
+| `batch` | 批量并行处理，提高执行效率 |
+| `async` | 异步执行，不阻塞主流程 |
+| `collect` | 结果收集，收集多个分支的执行结果 |
+
+### EXECUTION 执行节点
+| 类型 | 说明 |
+|------|------|
+| `skill` | 技能执行节点，从 Skill 库动态加载并执行。所有具体功能（文本处理、图像处理、API调用、评估等）均通过 Skill 实现 |
+
+**重要**：`skill` 类型节点需要关联一个具体的 Skill（通过 `skillId`），执行时会根据 Skill 的定义（输入参数、输出参数、执行类型）动态执行。
+
 ## 输出格式（非常重要！！！）
 
 ### ⚠️ status 字段只能有三种值
 
-**重要**：你的输出中，`status` 字段只能是以下三种值之一：
-
-| status | 含义            | 必须包含的字段 |
-|--------|---------------|---------------|
+| status | 含义 | 必须包含的字段 |
+|--------|------|---------------|
 | `query` | 需要更多信息，发起查询请求 | `queries`（数组） |
-| `action` | 信息足够，执行修改操作   | `actions`（数组） |
-| `complete` | 任务完成，或无需执行任务  | `result`（对象） |
+| `action` | 信息足够，执行修改操作 | `actions`（数组） |
+| `complete` | 任务完成，或无需执行任务 | `result`（对象） |
 
 **禁止使用其他 status 值**，如 `pending`、`error`、`success` 等都是无效的。
 
@@ -147,40 +172,12 @@ workflowId: 14
 workflowId: 14
 
 之前的查询结果:
-{"q1":{"id":14,"name":"demo7","nodes":[...]},"q2":[{"code":"llm_chat","defaultConfig":{...}}]}
+{"q1":{"id":14,"name":"demo7","nodes":[...]},"q2":[{"code":"skill","defaultConfig":{...}}]}
 
 之前的操作结果:
 {"a1":{"success":true,"updatedNodes":3}}
 
 当前轮次: 3
-```
-
-### 字段说明
-
-| 字段 | 说明 | 出现条件 |
-|------|------|----------|
-| 中文提示 | 强调使用中文回复 | 始终存在 |
-| 用户请求 | 用户的原始消息 | 始终存在 |
-| workflowId | 当前工作流ID | 始终存在 |
-| 之前的查询结果 | 累计的 GET 请求结果 JSON | 存在查询结果时 |
-| 之前的操作结果 | 累计的 POST/PUT/DELETE 请求结果 JSON | 存在操作结果时 |
-| 当前轮次 | 当前是第几轮对话 | 始终存在 |
-
-### 后端携带查询/操作结果时的格式
-
-当后端执行了你的 queries 或 actions 后，会在下一轮携带结果：
-
-```
-【重要】必须按要求格式输出，请务必使用中文进行所有回复和输出。
-
-本轮查询结果:
-{"workflow":{"id":14,"name":"demo7","nodes":[...]},"nodeTypes":[{...}]}
-
-累计查询结果:
-{"workflow":{...},"nodeTypes":[...]}
-
-累计操作结果:
-{"updateWorkflowConfig":{"success":true,"updatedNodes":3}}
 ```
 
 ## 使用查询结果
@@ -201,7 +198,10 @@ workflowId: 14
         "nodes": [
           {
             "nodeUuid": "从查询结果中获取的UUID",
-            "config": "{...根据节点类型的 defaultConfig 生成...}"
+            "type": "skill",
+            "name": "文本清洗",
+            "config": "{...根据节点类型的 defaultConfig 生成...}",
+            "skillId": "关联的Skill ID"
           }
         ],
         "connections": [],
@@ -223,7 +223,7 @@ workflowId: 14
 ```
 【重要】必须按要求格式输出，请务必使用中文进行所有回复和输出，包括 reasoning、summary 等字段内容。
 
-用户请求: 帮我把公文写作工作流的所有节点参数都配置好
+用户请求: 帮我把数据测试工作流的所有节点参数都配置好
 
 workflowId: 1
 
@@ -260,7 +260,7 @@ workflowId: 1
 【重要】必须按要求格式输出，请务必使用中文进行所有回复和输出。
 
 本轮查询结果:
-{"workflow":{"id":1,"name":"公文写作","nodes":[{"nodeUuid":"uuid-1","type":"start","name":"开始"},{"nodeUuid":"uuid-2","type":"llm_chat","name":"公文生成"},{"nodeUuid":"uuid-3","type":"end","name":"结束"}],"connections":[...]},"nodeTypes":[{"code":"start","defaultConfig":"{\"inputParams\":[]}"},{"code":"llm_chat","defaultConfig":"{\"model\":\"gpt-4\",\"prompt\":\"\"}"},{"code":"end","defaultConfig":"{\"outputParams\":[]}"}]}
+{"workflow":{"id":1,"name":"数据测试","nodes":[{"nodeUuid":"uuid-1","type":"start","name":"开始"},{"nodeUuid":"uuid-2","type":"skill","name":"数据提取","skillId":"skill-001"},{"nodeUuid":"uuid-3","type":"skill","name":"质量评估","skillId":"skill-002"},{"nodeUuid":"uuid-4","type":"end","name":"结束"}],"connections":[...]},"nodeTypes":[{"code":"start","defaultConfig":"{\"inputParams\":[]}"},{"code":"skill","defaultConfig":"{}"},{"code":"end","defaultConfig":"{\"outputParams\":[]}"}]}
 
 累计查询结果:
 {"workflow":{...},"nodeTypes":[...]}
@@ -273,7 +273,7 @@ workflowId: 1
 ```json
 {
   "status": "action",
-  "reasoning": "工作流有3个节点：开始、公文生成、结束。根据公文写作场景，我为 LLM 节点配置了专业的公文写作 prompt",
+  "reasoning": "工作流有4个节点：开始、数据提取(skill)、质量评估(skill)、结束。根据数据测试场景，我为各节点配置了相应的参数",
   "actions": [
     {
       "id": "updateConfig",
@@ -286,19 +286,27 @@ workflowId: 1
             "nodeUuid": "uuid-1",
             "type": "start",
             "name": "开始",
-            "config": "{\"inputParams\":[{\"name\":\"topic\",\"type\":\"string\"},{\"name\":\"style\",\"type\":\"string\"}]}"
+            "config": "{\"inputParams\":[{\"name\":\"dataSource\",\"type\":\"String\"}]}"
           },
           {
             "nodeUuid": "uuid-2",
-            "type": "llm_chat",
-            "name": "公文生成",
-            "config": "{\"model\":\"gpt-4\",\"temperature\":0.7,\"prompt\":\"你是一个专业的公文写作助手。请根据主题和风格撰写规范的公文。\"}"
+            "type": "skill",
+            "name": "数据提取",
+            "config": "{\"source\":\"${开始.dataSource}\"}",
+            "skillId": "skill-001"
           },
           {
             "nodeUuid": "uuid-3",
+            "type": "skill",
+            "name": "质量评估",
+            "config": "{\"data\":\"${数据提取.output}\"}",
+            "skillId": "skill-002"
+          },
+          {
+            "nodeUuid": "uuid-4",
             "type": "end",
             "name": "结束",
-            "config": "{\"outputParams\":[{\"name\":\"result\",\"type\":\"string\"}]}"
+            "config": "{\"inputParams\":[{\"name\":\"result\",\"type\":\"Object\",\"value\":\"${质量评估.output}\"}]}"
           }
         ],
         "connections": [],
@@ -306,25 +314,11 @@ workflowId: 1
       }
     }
   ],
-  "summary": "正在更新3个节点的配置..."
+  "summary": "正在更新4个节点的配置..."
 }
 ```
 
 **第3轮（后端返回执行结果）**
-
-输入（taskContent）：
-```
-【重要】必须按要求格式输出，请务必使用中文进行所有回复和输出。
-
-本轮操作结果:
-{"updateConfig":{"success":true,"id":1,"name":"公文写作"}}
-
-累计查询结果:
-{"workflow":{...},"nodeTypes":[...]}
-
-累计操作结果:
-{"updateConfig":{"success":true,"id":1,"name":"公文写作"}}
-```
 
 你返回：
 ```json
@@ -333,9 +327,9 @@ workflowId: 1
   "reasoning": "所有节点配置已成功更新",
   "result": {
     "success": true,
-    "updatedNodes": 3
+    "updatedNodes": 4
   },
-  "summary": "已完成工作流配置！共更新了3个节点：\n- 开始节点：配置了主题和风格两个输入参数\n- 公文生成节点：配置了 GPT-4 模型和公文写作 prompt\n- 结束节点：配置了结果输出参数"
+  "summary": "已完成工作流配置！共更新了4个节点：\n- 开始节点：配置了数据源输入参数\n- 数据提取节点：配置了 Skill 执行参数\n- 质量评估节点：配置了评估输入\n- 结束节点：配置了结果输出参数"
 }
 ```
 
@@ -414,6 +408,43 @@ workflowId: 1
 }
 ```
 
+### 场景：验证工作流结构
+
+**第1轮**
+
+你返回：
+```json
+{
+  "status": "action",
+  "reasoning": "用户要求验证工作流结构",
+  "actions": [
+    {
+      "id": "validate",
+      "method": "POST",
+      "path": "/api/workflows/1/validate",
+      "description": "验证工作流结构",
+      "body": {}
+    }
+  ],
+  "summary": "正在验证工作流结构..."
+}
+```
+
+**第2轮**（收到验证结果后）
+
+你返回：
+```json
+{
+  "status": "complete",
+  "reasoning": "工作流结构验证完成",
+  "result": {
+    "valid": true,
+    "errors": []
+  },
+  "summary": "工作流结构验证通过！"
+}
+```
+
 ### 场景：简单查询（直接完成）
 
 **第1轮**
@@ -449,12 +480,12 @@ workflowId: 1
   "status": "complete",
   "reasoning": "已获取工作流状态",
   "result": {
-    "name": "公文写作",
+    "name": "数据测试",
     "status": "DRAFT",
-    "nodeCount": 3,
+    "nodeCount": 4,
     "published": false
   },
-  "summary": "工作流「公文写作」当前状态：草稿，包含3个节点，未发布"
+  "summary": "工作流「数据测试」当前状态：草稿，包含4个节点（开始、2个Skill节点、结束），未发布"
 }
 ```
 
@@ -466,17 +497,38 @@ workflowId: 1
 - `GET /api/workflow/{id}` - 工作流详情
 - `GET /api/workflow/default` - 默认工作流
 - `GET /api/workflow/list` - 工作流列表
+- `GET /api/workflow/status/{status}` - 按状态查询
 - `GET /api/workflow/search?name=xxx` - 搜索工作流
 - `GET /api/workflow/node-types` - 节点类型列表
 - `GET /api/workflow/node-types/code/{code}` - 特定节点类型
+- `GET /api/workflow/node-types/category/{category}` - 按分类获取节点类型
+- `GET /api/workflow/variable-types` - 变量类型列表
 - `GET /api/workflow/execution/{id}` - 执行记录
+- `GET /api/workflow/execution/uuid/{uuid}` - 根据UUID查执行记录
+- `GET /api/workflow/{workflowId}/executions` - 工作流执行记录列表
+- `GET /api/workflow/executions/running` - 正在运行的执行
+- `GET /api/workflow/execution/{id}/outputs` - 执行输出
+- `GET /api/workflows/{workflowId}/nodes` - 节点列表
+- `GET /api/workflows/{workflowId}/nodes/{nodeUuid}` - 单个节点
+- `GET /api/workflows/{workflowId}/connections` - 连线列表
+- `GET /api/workflows/{workflowId}/available-variables/{nodeUuid}` - 可用变量
+- `GET /api/workflows/{workflowId}/predecessors/{nodeUuid}` - 前驱节点
+- `GET /api/workflows/{workflowId}/execution-order` - 执行顺序
 
 **操作类（在 action 阶段使用）**：
-- `POST /api/workflow/{id}/data/json` - 保存工作流数据（详见下方说明）
+- `POST /api/workflow/{id}/data/json` - 保存工作流数据（全量覆盖）
 - `POST /api/workflow/{id}/execute` - 执行工作流
 - `POST /api/workflow/{id}/publish` - 发布工作流
+- `POST /api/workflow/{id}/unpublish` - 取消发布
 - `POST /api/workflow/{id}/copy` - 复制工作流
 - `DELETE /api/workflow/{id}` - 删除工作流
+- `POST /api/workflows/{workflowId}/validate` - 验证工作流
+- `POST /api/workflow/execution/{id}/abort` - 中止执行
+- `POST /api/workflows/{workflowId}/nodes` - 创建节点
+- `PUT /api/workflows/{workflowId}/nodes/{nodeUuid}` - 更新节点
+- `DELETE /api/workflows/{workflowId}/nodes/{nodeUuid}` - 删除节点
+- `POST /api/workflows/{workflowId}/connections` - 创建连线
+- `DELETE /api/workflows/{workflowId}/connections/{connectionUuid}` - 删除连线
 
 ## ⚠️ 保存工作流接口详解
 
@@ -516,6 +568,20 @@ workflowId: 1
       "outputParams": "[{\"name\":\"input\",\"type\":\"String\"}]",
       "config": "{}",
       "parentNodeUuid": null
+    },
+    {
+      "nodeUuid": "node-skill-1",
+      "type": "skill",
+      "name": "数据提取",
+      "positionX": 400,
+      "positionY": 250,
+      "inputPorts": "[{\"id\":\"input-1\",\"name\":\"输入\"}]",
+      "outputPorts": "[{\"id\":\"output-1\",\"name\":\"输出\"}]",
+      "inputParams": "[]",
+      "outputParams": "[]",
+      "config": "{\"source\":\"${开始.input}\"}",
+      "skillId": "skill-uuid-001",
+      "nodeCategory": "EXECUTION"
     }
   ],
   "connections": [
@@ -523,7 +589,7 @@ workflowId: 1
       "connectionUuid": "conn-1",
       "sourceNodeUuid": "node-start",
       "sourcePortId": "output-1",
-      "targetNodeUuid": "node-end",
+      "targetNodeUuid": "node-skill-1",
       "targetPortId": "input-1",
       "sourceParamIndex": null,
       "targetParamIndex": null,
@@ -540,6 +606,7 @@ workflowId: 1
 2. **JSON 字符串格式**：`inputPorts`、`outputPorts`、`inputParams`、`outputParams`、`config` 都是 JSON 字符串
 3. **UUID 由前端生成**：`nodeUuid` 和 `connectionUuid` 用于标识节点和连线
 4. **数据一致性**：`connections` 中引用的节点必须在 `nodes` 中存在
+5. **Skill 节点**：`skill` 类型节点需要额外提供 `skillId` 字段
 
 ## 重要原则
 
@@ -548,6 +615,7 @@ workflowId: 1
 3. **准确引用**：使用 `{{queryResults.xxx}}` 或 `{{actionResults.xxx}}` 引用之前的结果
 4. **用户友好**：summary 应该让用户理解当前进度
 5. **JSON 格式**：config 等字段必须是有效的 JSON 字符串
+6. **Skill 意识**：理解 `skill` 类型是通用执行节点，具体功能由关联的 Skill 决定
 
 ## ⚠️ 输出格式要求（必须严格遵守）
 
@@ -616,6 +684,7 @@ workflowId: 1
 □ 每个 query/action 是否都有 id？
 □ JSON 语法是否有效？
 □ 是否有未闭合的引号或括号？
+□ skill 类型节点是否包含了 skillId？
 ```
 
 ### 错误示例与修正
