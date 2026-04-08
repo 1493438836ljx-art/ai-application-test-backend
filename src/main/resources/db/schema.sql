@@ -107,6 +107,28 @@ CREATE TABLE IF NOT EXISTS workflow_node (
     output_params TEXT DEFAULT NULL COMMENT '输出参数定义',
     config TEXT DEFAULT NULL COMMENT '节点配置参数',
     parent_node_id BIGINT DEFAULT NULL COMMENT '父节点ID',
+    -- Skill引用
+    skill_id VARCHAR(36) DEFAULT NULL COMMENT '引用的Skill ID',
+    skill_snapshot TEXT DEFAULT NULL COMMENT 'Skill快照（JSON格式）',
+    -- 执行配置
+    execution_location VARCHAR(20) DEFAULT NULL COMMENT '执行位置：CLIENT/SERVICE',
+    error_strategy VARCHAR(20) DEFAULT 'STOP' COMMENT '错误策略：STOP/SKIP/RETRY/ERROR_BRANCH',
+    retry_count INT DEFAULT 3 COMMENT '重试次数',
+    retry_interval INT DEFAULT 1000 COMMENT '重试间隔（毫秒）',
+    error_branch_id BIGINT DEFAULT NULL COMMENT '错误处理分支节点ID',
+    -- 条件节点配置
+    condition_type VARCHAR(20) DEFAULT NULL COMMENT '条件类型：SIMPLE/MULTI',
+    conditions TEXT DEFAULT NULL COMMENT '条件配置（JSON格式）',
+    -- 循环节点配置
+    loop_type VARCHAR(20) DEFAULT NULL COMMENT '循环类型：COUNT/ARRAY/CONDITION',
+    loop_config TEXT DEFAULT NULL COMMENT '循环配置（JSON格式）',
+    -- 批处理/异步/收集配置
+    batch_config TEXT DEFAULT NULL COMMENT '批处理配置（JSON格式）',
+    async_config TEXT DEFAULT NULL COMMENT '异步处理配置（JSON格式）',
+    collect_config TEXT DEFAULT NULL COMMENT '结果收集配置（JSON格式）',
+    -- 兼容性状态
+    compatibility_status VARCHAR(20) DEFAULT 'COMPATIBLE' COMMENT '兼容性状态：COMPATIBLE/NEEDS_UPDATE/INCOMPATIBLE/INVALID',
+    node_category VARCHAR(20) DEFAULT 'BASIC' COMMENT '节点分类：BASIC/LOGIC/EXECUTION',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (id),
@@ -128,6 +150,8 @@ CREATE TABLE IF NOT EXISTS workflow_connection (
     source_param_index INT DEFAULT NULL COMMENT '源参数索引',
     target_param_index INT DEFAULT NULL COMMENT '目标参数索引',
     label VARCHAR(100) DEFAULT NULL COMMENT '连线标签',
+    branch_label VARCHAR(100) DEFAULT NULL COMMENT '分支标签',
+    branch_priority INT DEFAULT NULL COMMENT '分支优先级',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (id),
     INDEX idx_connection_workflow_id (workflow_id),
