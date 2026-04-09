@@ -72,6 +72,7 @@ GaussDB100 使用 Oracle 风格语法，与标准 PostgreSQL 的主要语法差�
 - 不支持 `TEXT` 类型，需使用 `VARCHAR(N)` 替代并限定长度
 - `VARCHAR(N)` 的 N 最大值为 8000
 - 禁止使用外键约束，数据一致性由应用层 Service 代码保证
+- 唯一标识符统一使用 36 位 UUID（VARCHAR(36)），不使用自增整数
 
 ## 依赖说明
 
