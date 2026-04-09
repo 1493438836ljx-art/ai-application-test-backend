@@ -5266,12 +5266,12 @@ claude_code_api/
 
 -- Data for table: chat_quick_question (6 rows)
 INSERT INTO "chat_quick_question" ("id", "category", "created_at", "enabled", "icon", "sort_order", "text", "updated_at") VALUES
-(1, 'evaluation', '2026-03-21 01:59:07', X'01', '💡', 1, '如何创建测评集？', '2026-03-21 01:59:07'),
-(2, 'config', '2026-03-21 01:59:07', X'01', '🔧', 2, '环境管理怎么配置？', '2026-03-21 01:59:07'),
-(3, 'report', '2026-03-21 01:59:07', X'01', '📊', 3, '如何查看测试报告？', '2026-03-21 01:59:07'),
-(4, 'guide', '2026-03-21 01:59:07', X'01', '🚀', 4, '快速入门指南', '2026-03-21 01:59:07'),
-(5, 'test', '2026-03-21 01:59:07', X'01', '❓', 5, '支持哪些测试类型？', '2026-03-21 01:59:07'),
-(6, 'config', '2026-03-21 01:59:08', X'01', '⚙️', 6, '如何配置评估指标？', '2026-03-21 01:59:08');
+(1, 'evaluation', '2026-03-21 01:59:07', 1, '💡', 1, '如何创建测评集？', '2026-03-21 01:59:07'),
+(2, 'config', '2026-03-21 01:59:07', 1, '🔧', 2, '环境管理怎么配置？', '2026-03-21 01:59:07'),
+(3, 'report', '2026-03-21 01:59:07', 1, '📊', 3, '如何查看测试报告？', '2026-03-21 01:59:07'),
+(4, 'guide', '2026-03-21 01:59:07', 1, '🚀', 4, '快速入门指南', '2026-03-21 01:59:07'),
+(5, 'test', '2026-03-21 01:59:07', 1, '❓', 5, '支持哪些测试类型？', '2026-03-21 01:59:07'),
+(6, 'config', '2026-03-21 01:59:08', 1, '⚙️', 6, '如何配置评估指标？', '2026-03-21 01:59:08');
 
 -- Data for table: client_registry (empty)
 
@@ -5345,22 +5345,22 @@ INSERT INTO "skill_parameter" ("id", "skill_id", "param_direction", "param_order
 
 -- Data for table: variable_type (16 rows)
 INSERT INTO "variable_type" ("id", "category", "code", "created_at", "description", "element_type", "enabled", "file_type", "name", "sort_order", "updated_at") VALUES
-(1, 'BASIC', 'String', '2026-03-21 02:02:42', '字符串类型', NULL, X'01', NULL, '字符串123', 1, '2026-03-21 02:02:42'),
-(2, 'BASIC', 'Boolean', '2026-03-21 02:02:42', '布尔值类型', NULL, X'01', NULL, '布尔值', 2, '2026-03-21 02:02:42'),
-(3, 'BASIC', 'Integer', '2026-03-21 02:02:43', '整数类型', NULL, X'01', NULL, '整数', 3, '2026-03-21 02:02:43'),
-(4, 'BASIC', 'Object', '2026-03-21 02:02:43', '对象类型', NULL, X'01', NULL, '对象', 4, '2026-03-21 02:02:43'),
-(5, 'BASIC', 'Times', '2026-03-21 02:02:43', '时间类型', NULL, X'01', NULL, '时间', 5, '2026-03-21 02:02:43'),
-(6, 'COMPOSITE', 'Array', '2026-03-21 02:02:43', '数组类型', NULL, X'01', NULL, '数组', 10, '2026-03-21 02:02:43'),
-(7, 'COMPOSITE', 'Array<String>', '2026-03-21 02:02:44', '字符串数组类型', 'String', X'01', NULL, '字符串数组', 11, '2026-03-21 02:02:44'),
-(8, 'COMPOSITE', 'Array<Boolean>', '2026-03-21 02:02:44', '布尔值数组类型', 'Boolean', X'01', NULL, '布尔值数组', 12, '2026-03-21 02:02:44'),
-(9, 'COMPOSITE', 'Array<Integer>', '2026-03-21 02:02:44', '整数数组类型', 'Integer', X'01', NULL, '整数数组', 13, '2026-03-21 02:02:44'),
-(10, 'COMPOSITE', 'Array<Object>', '2026-03-21 02:02:44', '对象数组类型', 'Object', X'01', NULL, '对象数组', 14, '2026-03-21 02:02:44'),
-(11, 'COMPOSITE', 'Array<Times>', '2026-03-21 02:02:44', '时间数组类型', 'Times', X'01', NULL, '时间数组', 15, '2026-03-21 02:02:44'),
-(12, 'COMPOSITE', 'File', '2026-03-21 02:02:45', '文件类型', NULL, X'01', NULL, '文件', 20, '2026-03-21 02:02:45'),
-(13, 'COMPOSITE', 'File<Zip>', '2026-03-21 02:02:45', 'ZIP压缩文件类型', NULL, X'01', 'Zip', 'ZIP文件', 21, '2026-03-21 02:02:45'),
-(14, 'COMPOSITE', 'File<Doc>', '2026-03-21 02:02:45', '文档文件类型', NULL, X'01', 'Doc', '文档文件', 22, '2026-03-21 02:02:45'),
-(15, 'COMPOSITE', 'File<Excel>', '2026-03-21 02:02:45', 'Excel表格文件类型', NULL, X'01', 'Excel', 'Excel文件', 23, '2026-03-21 02:02:45'),
-(16, 'COMPOSITE', 'File<Txt>', '2026-03-21 02:02:46', '文本文件类型', NULL, X'01', 'Txt', '文本文件', 24, '2026-03-21 02:02:46');
+(1, 'BASIC', 'String', '2026-03-21 02:02:42', '字符串类型', NULL, 1, NULL, '字符串123', 1, '2026-03-21 02:02:42'),
+(2, 'BASIC', 'Boolean', '2026-03-21 02:02:42', '布尔值类型', NULL, 1, NULL, '布尔值', 2, '2026-03-21 02:02:42'),
+(3, 'BASIC', 'Integer', '2026-03-21 02:02:43', '整数类型', NULL, 1, NULL, '整数', 3, '2026-03-21 02:02:43'),
+(4, 'BASIC', 'Object', '2026-03-21 02:02:43', '对象类型', NULL, 1, NULL, '对象', 4, '2026-03-21 02:02:43'),
+(5, 'BASIC', 'Times', '2026-03-21 02:02:43', '时间类型', NULL, 1, NULL, '时间', 5, '2026-03-21 02:02:43'),
+(6, 'COMPOSITE', 'Array', '2026-03-21 02:02:43', '数组类型', NULL, 1, NULL, '数组', 10, '2026-03-21 02:02:43'),
+(7, 'COMPOSITE', 'Array<String>', '2026-03-21 02:02:44', '字符串数组类型', 'String', 1, NULL, '字符串数组', 11, '2026-03-21 02:02:44'),
+(8, 'COMPOSITE', 'Array<Boolean>', '2026-03-21 02:02:44', '布尔值数组类型', 'Boolean', 1, NULL, '布尔值数组', 12, '2026-03-21 02:02:44'),
+(9, 'COMPOSITE', 'Array<Integer>', '2026-03-21 02:02:44', '整数数组类型', 'Integer', 1, NULL, '整数数组', 13, '2026-03-21 02:02:44'),
+(10, 'COMPOSITE', 'Array<Object>', '2026-03-21 02:02:44', '对象数组类型', 'Object', 1, NULL, '对象数组', 14, '2026-03-21 02:02:44'),
+(11, 'COMPOSITE', 'Array<Times>', '2026-03-21 02:02:44', '时间数组类型', 'Times', 1, NULL, '时间数组', 15, '2026-03-21 02:02:44'),
+(12, 'COMPOSITE', 'File', '2026-03-21 02:02:45', '文件类型', NULL, 1, NULL, '文件', 20, '2026-03-21 02:02:45'),
+(13, 'COMPOSITE', 'File<Zip>', '2026-03-21 02:02:45', 'ZIP压缩文件类型', NULL, 1, 'Zip', 'ZIP文件', 21, '2026-03-21 02:02:45'),
+(14, 'COMPOSITE', 'File<Doc>', '2026-03-21 02:02:45', '文档文件类型', NULL, 1, 'Doc', '文档文件', 22, '2026-03-21 02:02:45'),
+(15, 'COMPOSITE', 'File<Excel>', '2026-03-21 02:02:45', 'Excel表格文件类型', NULL, 1, 'Excel', 'Excel文件', 23, '2026-03-21 02:02:45'),
+(16, 'COMPOSITE', 'File<Txt>', '2026-03-21 02:02:46', '文本文件类型', NULL, 1, 'Txt', '文本文件', 24, '2026-03-21 02:02:46');
 
 -- Data for table: workflow (25 rows)
 INSERT INTO "workflow" ("id", "name", "description", "published", "has_run", "version", "status", "trigger_type", "trigger_config", "created_by", "created_at", "updated_by", "updated_at", "deleted", "published_at", "published_by") VALUES
@@ -5791,38 +5791,38 @@ INSERT INTO "workflow_node" ("id", "workflow_id", "node_uuid", "type", "type_id"
 
 -- Data for table: workflow_node_type (32 rows)
 INSERT INTO "workflow_node_type" ("id", "category", "code", "created_at", "default_config", "description", "enabled", "icon", "input_ports", "name", "output_ports", "sort_order", "updated_at") VALUES
-(1, 'BASIC', 'start', '2026-03-21 01:59:01', NULL, '工作流入口', X'01', 'VideoPlay', NULL, '开始节点', NULL, 1, '2026-03-21 01:59:01'),
-(2, 'BASIC', 'end', '2026-03-21 01:59:01', NULL, '工作流出口', X'01', 'CircleCheck', NULL, '结束节点', NULL, 2, '2026-03-21 01:59:01'),
-(3, 'BASIC', 'loopBodyCanvas', '2026-03-21 01:59:02', NULL, '循环体容器节点', X'01', 'Grid', NULL, '循环体容器', NULL, 3, '2026-03-21 01:59:02'),
-(4, 'LOGIC', 'condition_simple', '2026-03-21 01:59:02', NULL, '条件判断节点', X'01', 'Share', NULL, '条件分支', NULL, 10, '2026-03-21 01:59:02'),
-(5, 'LOGIC', 'loop', '2026-03-21 01:59:02', NULL, '循环控制节点', X'01', 'Refresh', NULL, '循环控制', NULL, 11, '2026-03-21 01:59:02'),
-(6, 'DATA_PREPARE', 'envConnect', '2026-03-21 01:59:02', NULL, '环境对接节点', X'00', 'Connection', NULL, '环境对接', NULL, 20, '2026-03-21 01:59:02'),
-(7, 'DATA_PREPARE', 'tableExtract', '2026-03-21 01:59:03', NULL, '表格提取节点', X'00', 'Document', NULL, '表格提取', NULL, 21, '2026-03-21 01:59:03'),
-(8, 'TEXT', 'textClean', '2026-03-21 01:59:03', NULL, '文本清洗', X'00', 'Scissors', NULL, '文本清洗', NULL, 30, '2026-03-21 01:59:03'),
-(9, 'TEXT', 'textDedupe', '2026-03-21 01:59:03', NULL, '文本去重', X'00', 'CopyDocument', NULL, '文本去重', NULL, 31, '2026-03-21 01:59:03'),
-(10, 'TEXT', 'textGeneralize', '2026-03-21 01:59:03', NULL, '文本泛化', X'00', 'EditPen', NULL, '文本泛化', NULL, 32, '2026-03-21 01:59:03'),
-(11, 'TEXT', 'textGenerate', '2026-03-21 01:59:04', NULL, '文本生成', X'00', 'Edit', NULL, '文本生成', NULL, 33, '2026-03-21 01:59:04'),
-(12, 'IMAGE', 'imageGenerate', '2026-03-21 01:59:04', NULL, '图像生成', X'00', 'Picture', NULL, '图像生成', NULL, 40, '2026-03-21 01:59:04'),
-(13, 'IMAGE', 'imageCutout', '2026-03-21 01:59:04', NULL, '抠图', X'00', 'Crop', NULL, '抠图', NULL, 41, '2026-03-21 01:59:04'),
-(14, 'IMAGE', 'imageEnhance', '2026-03-21 01:59:04', NULL, '画质提升', X'00', 'MagicStick', NULL, '画质提升', NULL, 42, '2026-03-21 01:59:04'),
-(15, 'AUDIO_VIDEO', 'videoExtractAudio', '2026-03-21 01:59:04', NULL, '视频提取音频', X'00', 'Headset', NULL, '视频提取音频', NULL, 50, '2026-03-21 01:59:04'),
-(16, 'AUDIO_VIDEO', 'audioToText', '2026-03-21 01:59:05', NULL, '音频转文本', X'00', 'Microphone', NULL, '音频转文本', NULL, 51, '2026-03-21 01:59:05'),
-(17, 'AUDIO_VIDEO', 'videoFrame', '2026-03-21 01:59:05', NULL, '视频抽帧', X'00', 'VideoCamera', NULL, '视频抽帧', NULL, 52, '2026-03-21 01:59:05'),
-(18, 'TEST_DESIGN', 'testPlan', '2026-03-21 01:59:05', NULL, '测试方案生成', X'00', 'List', NULL, '测试方案生成', NULL, 60, '2026-03-21 01:59:05'),
-(19, 'TEST_EXEC', 'apiAuto', '2026-03-21 01:59:05', NULL, 'HTTP(S)接口调用', X'00', 'Connection', NULL, 'HTTP(S)接口调用', NULL, 70, '2026-03-21 01:59:05'),
-(20, 'TEST_EXEC', 'aiAuto', '2026-03-21 01:59:05', NULL, 'AI自动化执行', X'00', 'Cpu', NULL, 'AI自动化执行', NULL, 71, '2026-03-21 01:59:05'),
-(21, 'EVALUATE', 'judgeModel', '2026-03-21 01:59:06', NULL, '裁判模型评估', X'00', 'DataAnalysis', NULL, '裁判模型评估', NULL, 80, '2026-03-21 01:59:06'),
-(22, 'EVALUATE', 'firstTokenLatency', '2026-03-21 01:59:06', NULL, '首Token响应时延', X'00', 'Timer', NULL, '首Token响应时延', NULL, 81, '2026-03-21 01:59:06'),
-(23, 'EVALUATE', 'tokenOutputTime', '2026-03-21 01:59:06', NULL, '每Token输出耗时', X'00', 'Stopwatch', NULL, '每Token输出耗时', NULL, 82, '2026-03-21 01:59:06'),
-(24, 'EVALUATE', 'e2eLatency', '2026-03-21 01:59:06', NULL, '端到端时延', X'00', 'Clock', NULL, '端到端时延', NULL, 83, '2026-03-21 01:59:06'),
-(25, 'REPORT', 'reportGenerate', '2026-03-21 01:59:06', NULL, '生成测试报告', X'00', 'Document', NULL, '生成测试报告', NULL, 90, '2026-03-21 01:59:06'),
-(26, 'REPORT', 'reportAnalysis', '2026-03-21 01:59:06', NULL, '报告分析', X'00', 'Search', NULL, '报告分析', NULL, 91, '2026-03-21 01:59:06'),
-(28, 'LOGIC', 'condition_multi', '2026-04-01 22:59:14', NULL, '多路条件分支，支持多个 case 和 default', X'01', 'Grid', NULL, '多路分支', NULL, 4, '2026-04-08 17:23:57'),
-(29, 'LOGIC', 'batch', '2026-04-01 22:59:19', NULL, '批量并行处理，提高执行效率', X'01', 'DataLine', NULL, '批处理', NULL, 5, '2026-04-08 17:23:57'),
-(30, 'LOGIC', 'async', '2026-04-01 22:59:24', NULL, '异步执行节点，不阻塞主流程', X'01', 'Connection', NULL, '异步处理', NULL, 6, '2026-04-08 17:23:57'),
-(31, 'LOGIC', 'collect', '2026-04-01 22:59:29', NULL, '收集多个分支的执行结果', X'01', 'FolderAdd', NULL, '结果收集', NULL, 7, '2026-04-08 17:23:57'),
-(32, 'EXECUTION', 'skill', '2026-04-01 22:59:33', NULL, '从 Skill 库加载的执行节点', X'00', 'Cpu', NULL, '技能', NULL, 10, '2026-04-02 03:26:19'),
-(1230, 'LOGIC', 'condition', '2026-04-09 01:24:01', NULL, '条件判断节点', X'01', 'Share', NULL, '条件判断', NULL, 10, '2026-04-09 01:24:01');
+(1, 'BASIC', 'start', '2026-03-21 01:59:01', NULL, '工作流入口', 1, 'VideoPlay', NULL, '开始节点', NULL, 1, '2026-03-21 01:59:01'),
+(2, 'BASIC', 'end', '2026-03-21 01:59:01', NULL, '工作流出口', 1, 'CircleCheck', NULL, '结束节点', NULL, 2, '2026-03-21 01:59:01'),
+(3, 'BASIC', 'loopBodyCanvas', '2026-03-21 01:59:02', NULL, '循环体容器节点', 1, 'Grid', NULL, '循环体容器', NULL, 3, '2026-03-21 01:59:02'),
+(4, 'LOGIC', 'condition_simple', '2026-03-21 01:59:02', NULL, '条件判断节点', 1, 'Share', NULL, '条件分支', NULL, 10, '2026-03-21 01:59:02'),
+(5, 'LOGIC', 'loop', '2026-03-21 01:59:02', NULL, '循环控制节点', 1, 'Refresh', NULL, '循环控制', NULL, 11, '2026-03-21 01:59:02'),
+(6, 'DATA_PREPARE', 'envConnect', '2026-03-21 01:59:02', NULL, '环境对接节点', 0, 'Connection', NULL, '环境对接', NULL, 20, '2026-03-21 01:59:02'),
+(7, 'DATA_PREPARE', 'tableExtract', '2026-03-21 01:59:03', NULL, '表格提取节点', 0, 'Document', NULL, '表格提取', NULL, 21, '2026-03-21 01:59:03'),
+(8, 'TEXT', 'textClean', '2026-03-21 01:59:03', NULL, '文本清洗', 0, 'Scissors', NULL, '文本清洗', NULL, 30, '2026-03-21 01:59:03'),
+(9, 'TEXT', 'textDedupe', '2026-03-21 01:59:03', NULL, '文本去重', 0, 'CopyDocument', NULL, '文本去重', NULL, 31, '2026-03-21 01:59:03'),
+(10, 'TEXT', 'textGeneralize', '2026-03-21 01:59:03', NULL, '文本泛化', 0, 'EditPen', NULL, '文本泛化', NULL, 32, '2026-03-21 01:59:03'),
+(11, 'TEXT', 'textGenerate', '2026-03-21 01:59:04', NULL, '文本生成', 0, 'Edit', NULL, '文本生成', NULL, 33, '2026-03-21 01:59:04'),
+(12, 'IMAGE', 'imageGenerate', '2026-03-21 01:59:04', NULL, '图像生成', 0, 'Picture', NULL, '图像生成', NULL, 40, '2026-03-21 01:59:04'),
+(13, 'IMAGE', 'imageCutout', '2026-03-21 01:59:04', NULL, '抠图', 0, 'Crop', NULL, '抠图', NULL, 41, '2026-03-21 01:59:04'),
+(14, 'IMAGE', 'imageEnhance', '2026-03-21 01:59:04', NULL, '画质提升', 0, 'MagicStick', NULL, '画质提升', NULL, 42, '2026-03-21 01:59:04'),
+(15, 'AUDIO_VIDEO', 'videoExtractAudio', '2026-03-21 01:59:04', NULL, '视频提取音频', 0, 'Headset', NULL, '视频提取音频', NULL, 50, '2026-03-21 01:59:04'),
+(16, 'AUDIO_VIDEO', 'audioToText', '2026-03-21 01:59:05', NULL, '音频转文本', 0, 'Microphone', NULL, '音频转文本', NULL, 51, '2026-03-21 01:59:05'),
+(17, 'AUDIO_VIDEO', 'videoFrame', '2026-03-21 01:59:05', NULL, '视频抽帧', 0, 'VideoCamera', NULL, '视频抽帧', NULL, 52, '2026-03-21 01:59:05'),
+(18, 'TEST_DESIGN', 'testPlan', '2026-03-21 01:59:05', NULL, '测试方案生成', 0, 'List', NULL, '测试方案生成', NULL, 60, '2026-03-21 01:59:05'),
+(19, 'TEST_EXEC', 'apiAuto', '2026-03-21 01:59:05', NULL, 'HTTP(S)接口调用', 0, 'Connection', NULL, 'HTTP(S)接口调用', NULL, 70, '2026-03-21 01:59:05'),
+(20, 'TEST_EXEC', 'aiAuto', '2026-03-21 01:59:05', NULL, 'AI自动化执行', 0, 'Cpu', NULL, 'AI自动化执行', NULL, 71, '2026-03-21 01:59:05'),
+(21, 'EVALUATE', 'judgeModel', '2026-03-21 01:59:06', NULL, '裁判模型评估', 0, 'DataAnalysis', NULL, '裁判模型评估', NULL, 80, '2026-03-21 01:59:06'),
+(22, 'EVALUATE', 'firstTokenLatency', '2026-03-21 01:59:06', NULL, '首Token响应时延', 0, 'Timer', NULL, '首Token响应时延', NULL, 81, '2026-03-21 01:59:06'),
+(23, 'EVALUATE', 'tokenOutputTime', '2026-03-21 01:59:06', NULL, '每Token输出耗时', 0, 'Stopwatch', NULL, '每Token输出耗时', NULL, 82, '2026-03-21 01:59:06'),
+(24, 'EVALUATE', 'e2eLatency', '2026-03-21 01:59:06', NULL, '端到端时延', 0, 'Clock', NULL, '端到端时延', NULL, 83, '2026-03-21 01:59:06'),
+(25, 'REPORT', 'reportGenerate', '2026-03-21 01:59:06', NULL, '生成测试报告', 0, 'Document', NULL, '生成测试报告', NULL, 90, '2026-03-21 01:59:06'),
+(26, 'REPORT', 'reportAnalysis', '2026-03-21 01:59:06', NULL, '报告分析', 0, 'Search', NULL, '报告分析', NULL, 91, '2026-03-21 01:59:06'),
+(28, 'LOGIC', 'condition_multi', '2026-04-01 22:59:14', NULL, '多路条件分支，支持多个 case 和 default', 1, 'Grid', NULL, '多路分支', NULL, 4, '2026-04-08 17:23:57'),
+(29, 'LOGIC', 'batch', '2026-04-01 22:59:19', NULL, '批量并行处理，提高执行效率', 1, 'DataLine', NULL, '批处理', NULL, 5, '2026-04-08 17:23:57'),
+(30, 'LOGIC', 'async', '2026-04-01 22:59:24', NULL, '异步执行节点，不阻塞主流程', 1, 'Connection', NULL, '异步处理', NULL, 6, '2026-04-08 17:23:57'),
+(31, 'LOGIC', 'collect', '2026-04-01 22:59:29', NULL, '收集多个分支的执行结果', 1, 'FolderAdd', NULL, '结果收集', NULL, 7, '2026-04-08 17:23:57'),
+(32, 'EXECUTION', 'skill', '2026-04-01 22:59:33', NULL, '从 Skill 库加载的执行节点', 0, 'Cpu', NULL, '技能', NULL, 10, '2026-04-02 03:26:19'),
+(1230, 'LOGIC', 'condition', '2026-04-09 01:24:01', NULL, '条件判断节点', 1, 'Share', NULL, '条件判断', NULL, 10, '2026-04-09 01:24:01');
 
 -- Data for table: workflow_variable_type (28 rows)
 INSERT INTO "workflow_variable_type" ("id", "code", "name", "category", "element_type", "file_type", "dictionary_type", "description", "sort_order", "enabled", "created_at", "updated_at`) VALUES
