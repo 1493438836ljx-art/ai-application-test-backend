@@ -2,21 +2,12 @@
 -- Converted from MySQL schema
 -- Generated: 2026-04-09
 
--- 自动更新 updated_at 字段的触发器函数
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 -- =============================================
 -- Table: agent_session
 -- =============================================
 DROP TABLE IF EXISTS "agent_session" CASCADE;
 CREATE TABLE "agent_session" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "conversation_id" VARCHAR(36) NOT NULL,
     "workflow_id" BIGINT DEFAULT NULL,
     "status" VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
@@ -53,7 +44,7 @@ COMMENT ON COLUMN "agent_session"."updated_at" IS 'Updated at';
 -- =============================================
 DROP TABLE IF EXISTS "async_task" CASCADE;
 CREATE TABLE "async_task" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "task_id" VARCHAR(64) NOT NULL,
     "task_content" TEXT DEFAULT NULL,
     "status" VARCHAR(20) NOT NULL DEFAULT 'PENDING',
@@ -93,7 +84,7 @@ COMMENT ON COLUMN "async_task"."updated_at" IS '更新时间';
 -- =============================================
 DROP TABLE IF EXISTS "chat_conversation" CASCADE;
 CREATE TABLE "chat_conversation" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "conversation_uuid" VARCHAR(36) NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL,
     "last_message_at" TIMESTAMP(6) DEFAULT NULL,
@@ -102,8 +93,7 @@ CREATE TABLE "chat_conversation" (
     "status" VARCHAR(20) NOT NULL CHECK ("status" IN ('ACTIVE', 'ARCHIVED', 'DELETED')),
     "title" VARCHAR(200) DEFAULT NULL,
     "updated_at" TIMESTAMP(6) NOT NULL,
-    "user_id" VARCHAR(64) DEFAULT NULL
-);
+    "user_id" VARCHAR(64));
 CREATE UNIQUE INDEX "uk_chat_conversation_uuid" ON "chat_conversation" ("conversation_uuid");
 
 -- =============================================
@@ -111,7 +101,7 @@ CREATE UNIQUE INDEX "uk_chat_conversation_uuid" ON "chat_conversation" ("convers
 -- =============================================
 DROP TABLE IF EXISTS "chat_feedback" CASCADE;
 CREATE TABLE "chat_feedback" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "comment" VARCHAR(500) DEFAULT NULL,
     "created_at" TIMESTAMP(6) NOT NULL,
     "feedback_type" VARCHAR(20) DEFAULT NULL,
@@ -126,7 +116,7 @@ CREATE INDEX "idx_chat_feedback_message_id" ON "chat_feedback" ("message_id");
 -- =============================================
 DROP TABLE IF EXISTS "chat_message" CASCADE;
 CREATE TABLE "chat_message" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "content" TEXT NOT NULL,
     "content_type" VARCHAR(20) NOT NULL CHECK ("content_type" IN ('TEXT', 'MARKDOWN')),
     "created_at" TIMESTAMP(6) NOT NULL,
@@ -146,7 +136,7 @@ CREATE INDEX "idx_chat_message_conversation_id" ON "chat_message" ("conversation
 -- =============================================
 DROP TABLE IF EXISTS "chat_quick_question" CASCADE;
 CREATE TABLE "chat_quick_question" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "category" VARCHAR(50) DEFAULT NULL,
     "created_at" TIMESTAMP(6) NOT NULL,
     "enabled" BOOLEAN NOT NULL,
@@ -161,7 +151,7 @@ CREATE TABLE "chat_quick_question" (
 -- =============================================
 DROP TABLE IF EXISTS "client_registry" CASCADE;
 CREATE TABLE "client_registry" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "client_id" VARCHAR(100) NOT NULL,
     "client_name" VARCHAR(200) DEFAULT NULL,
     "status" VARCHAR(20) DEFAULT 'IDLE',
@@ -198,7 +188,7 @@ COMMENT ON COLUMN "client_registry"."last_heartbeat" IS '最后心跳时间';
 -- =============================================
 DROP TABLE IF EXISTS "data_dictionary" CASCADE;
 CREATE TABLE "data_dictionary" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "name" VARCHAR(50) NOT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -221,7 +211,7 @@ COMMENT ON COLUMN "data_dictionary"."is_deleted" IS '逻辑删除标记';
 -- =============================================
 DROP TABLE IF EXISTS "dictionary_column" CASCADE;
 CREATE TABLE "dictionary_column" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "dictionary_id" BIGINT NOT NULL,
     "column_key" VARCHAR(50) NOT NULL,
     "column_label" VARCHAR(50) NOT NULL,
@@ -254,7 +244,7 @@ COMMENT ON COLUMN "dictionary_column"."updated_at" IS '更新时间';
 -- =============================================
 DROP TABLE IF EXISTS "execution_log" CASCADE;
 CREATE TABLE "execution_log" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "execution_id" BIGINT NOT NULL,
     "node_uuid" VARCHAR(50) DEFAULT NULL,
     "log_level" VARCHAR(20) NOT NULL,
@@ -358,7 +348,7 @@ CREATE INDEX "idx_skill_parameter_skill_id" ON "skill_parameter" ("skill_id");
 -- =============================================
 DROP TABLE IF EXISTS "variable_type" CASCADE;
 CREATE TABLE "variable_type" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "category" VARCHAR(50) NOT NULL,
     "code" VARCHAR(50) NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL,
@@ -377,7 +367,7 @@ CREATE UNIQUE INDEX "uk_variable_type_code" ON "variable_type" ("code");
 -- =============================================
 DROP TABLE IF EXISTS "workflow" CASCADE;
 CREATE TABLE "workflow" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "name" VARCHAR(100) NOT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
     "published" BOOLEAN NOT NULL DEFAULT FALSE,
@@ -392,8 +382,7 @@ CREATE TABLE "workflow" (
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deleted" BOOLEAN NOT NULL DEFAULT FALSE,
     "published_at" TIMESTAMP DEFAULT NULL,
-    "published_by" VARCHAR(100) DEFAULT NULL
-);
+    "published_by" VARCHAR(100));
 CREATE INDEX "idx_workflow_name" ON "workflow" ("name");
 CREATE INDEX "idx_workflow_status" ON "workflow" ("status");
 CREATE INDEX "idx_workflow_created_at" ON "workflow" ("created_at");
@@ -421,7 +410,7 @@ COMMENT ON COLUMN "workflow"."published_by" IS 'publisher';
 -- =============================================
 DROP TABLE IF EXISTS "workflow_association" CASCADE;
 CREATE TABLE "workflow_association" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
     "loop_node_id" BIGINT DEFAULT NULL,
     "body_node_id" BIGINT NOT NULL,
@@ -429,8 +418,7 @@ CREATE TABLE "workflow_association" (
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "container_node_id" BIGINT DEFAULT NULL,
     "container_node_uuid" VARCHAR(36) DEFAULT NULL,
-    "body_node_uuid" VARCHAR(36) DEFAULT NULL
-);
+    "body_node_uuid" VARCHAR(36));
 CREATE INDEX "idx_workflow_association_workflow_id" ON "workflow_association" ("workflow_id");
 CREATE INDEX "idx_workflow_association_loop_node" ON "workflow_association" ("loop_node_id");
 CREATE INDEX "idx_workflow_association_body_node" ON "workflow_association" ("body_node_id");
@@ -446,7 +434,7 @@ COMMENT ON COLUMN "workflow_association"."body_node_uuid" IS 'body node UUID';
 -- =============================================
 DROP TABLE IF EXISTS "workflow_connection" CASCADE;
 CREATE TABLE "workflow_connection" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
     "connection_uuid" VARCHAR(36) NOT NULL,
     "source_node_id" BIGINT NOT NULL,
@@ -484,7 +472,7 @@ COMMENT ON COLUMN "workflow_connection"."created_at" IS '创建时间';
 -- =============================================
 DROP TABLE IF EXISTS "workflow_error_log" CASCADE;
 CREATE TABLE "workflow_error_log" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "execution_id" BIGINT DEFAULT NULL,
     "workflow_id" BIGINT DEFAULT NULL,
     "node_uuid" VARCHAR(50) DEFAULT NULL,
@@ -519,7 +507,7 @@ COMMENT ON COLUMN "workflow_error_log"."timestamp" IS '发生时间';
 -- =============================================
 DROP TABLE IF EXISTS "workflow_execution" CASCADE;
 CREATE TABLE "workflow_execution" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
     "execution_uuid" VARCHAR(36) NOT NULL,
     "status" VARCHAR(20) NOT NULL DEFAULT 'PENDING',
@@ -564,7 +552,7 @@ COMMENT ON COLUMN "workflow_execution"."updated_at" IS '更新时间';
 -- =============================================
 DROP TABLE IF EXISTS "workflow_node" CASCADE;
 CREATE TABLE "workflow_node" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
     "node_uuid" VARCHAR(36) NOT NULL,
     "type" VARCHAR(50) NOT NULL,
@@ -640,7 +628,7 @@ COMMENT ON COLUMN "workflow_node"."node_category" IS 'node category: BASIC/LOGIC
 -- =============================================
 DROP TABLE IF EXISTS "workflow_node_execution" CASCADE;
 CREATE TABLE "workflow_node_execution" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "execution_id" BIGINT NOT NULL,
     "workflow_id" BIGINT NOT NULL,
     "node_uuid" VARCHAR(50) NOT NULL,
@@ -686,7 +674,7 @@ COMMENT ON COLUMN "workflow_node_execution"."client_id" IS '执行的Client ID';
 -- =============================================
 DROP TABLE IF EXISTS "workflow_node_type" CASCADE;
 CREATE TABLE "workflow_node_type" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "category" VARCHAR(50) NOT NULL,
     "code" VARCHAR(50) NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL,
@@ -707,7 +695,7 @@ CREATE UNIQUE INDEX "uk_workflow_node_type_code" ON "workflow_node_type" ("code"
 -- =============================================
 DROP TABLE IF EXISTS "workflow_variable_type" CASCADE;
 CREATE TABLE "workflow_variable_type" (
-    "id" BIGSERIAL PRIMARY KEY,
+    "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "code" VARCHAR(100) NOT NULL,
     "name" VARCHAR(100) NOT NULL,
     "category" VARCHAR(50) NOT NULL,
