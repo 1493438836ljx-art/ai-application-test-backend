@@ -1,11 +1,10 @@
--- ai_test_platform Data Backup
--- Generated: 2026-04-09T04:06:25.093Z
-
-USE `ai_test_platform`;
+-- ai_test_platform Data Backup for OpenGauss
+-- Converted from MySQL data backup
+-- Generated: 2026-04-09
 
 -- Data for table: agent_session (148 rows)
-INSERT INTO `agent_session` (`id`, `conversation_id`, `workflow_id`, `status`, `query_results`, `action_results`, `last_reasoning`, `round_count`, `parse_error_count`, `start_time`, `created_at`, `updated_at`) VALUES
-(1, '5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09', 1, 'ERROR', NULL, NULL, 'ERROR: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just `claude`\\nNo conversation found with session ID: 5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: 1\\n\\n当前轮次: 1\\n","sessionId":"5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09"}"', 0, 0, NULL, '2026-03-25 10:29:02', '2026-03-25 10:29:02'),
+INSERT INTO "agent_session" ("id", "conversation_id", "workflow_id", "status", "query_results", "action_results", "last_reasoning", "round_count", "parse_error_count", "start_time", "created_at", "updated_at") VALUES
+(1, '5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09', 1, 'ERROR', NULL, NULL, 'ERROR: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just "claude"\\nNo conversation found with session ID: 5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: 1\\n\\n当前轮次: 1\\n","sessionId":"5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09"}"', 0, 0, NULL, '2026-03-25 10:29:02', '2026-03-25 10:29:02'),
 (2, '348848a6-0bb5-44df-aa03-d2beee61a7ae', 1, 'ACTIVE', NULL, NULL, NULL, 0, 0, NULL, '2026-03-25 10:35:09', '2026-03-25 10:35:09'),
 (3, 'db27f861-bd46-4e97-937e-9008b1f9b82c', 1, 'ACTIVE', NULL, NULL, NULL, 0, 0, NULL, '2026-03-25 10:47:27', '2026-03-25 10:47:27'),
 (4, 'c9625f32-aff2-4a7a-8946-940ce555f915', 1, 'ACTIVE', NULL, NULL, NULL, 0, 0, NULL, '2026-03-25 10:52:48', '2026-03-25 10:52:48'),
@@ -36,8 +35,8 @@ INSERT INTO `agent_session` (`id`, `conversation_id`, `workflow_id`, `status`, `
 (28, 'cc63cdac-caca-41c9-8fa7-c72832f2b5db', 9, 'ERROR', '{"workflow":{"path":"/api/workflow/9","method":"GET","data":{"id":9,"name":"demo03","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T09:31:27","updatedBy":null,"updatedAt":"2026-03-26T09:31:27","nodes":[{"id":192,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":193,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":194,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[]}","parentNodeId":null},{"id":195,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":196,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":197,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":198,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":199,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"config\\":{\\"url\\":\\"\\",\\"method\\":\\"GET\\",\\"headers\\":[],\\"body\\":\\"\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":139,"connectionUuid":"6116d8aa-ba07-492a-8462-bc8b45d430be","sourceNodeId":192,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":193,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":140,"connectionUuid":"95d85f2a-9401-454b-b90f-c583204ad997","sourceNodeId":193,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":194,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":141,"connectionUuid":"2fd91681-0751-439d-8c78-e00334401c88","sourceNodeId":194,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":195,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":142,"connectionUuid":"d4b76d24-bd9f-4d5f-8765-5e18c140ded6","sourceNodeId":195,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":196,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":143,"connectionUuid":"a69da23b-4823-4f1c-9a20-7c29d71e26b7","sourceNodeId":196,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":197,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":144,"connectionUuid":"96adc1b5-55b3-4614-8acc-3a2bb760b0e8","sourceNodeId":197,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":198,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":24,"loopNodeId":195,"bodyNodeId":199,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"message":"查询成功"},"nodeTypes":{"path":"/api/workflow/node-types","method":"GET","data":[{"id":1,"code":"start","name":"开始节点","category":"BASIC","description":"工作流入口","icon":"VideoPlay","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":1,"enabled":true,"createdAt":"2026-03-21T09:59:01.719338","updatedAt":"2026-03-21T09:59:01.719338"},{"id":2,"code":"end","name":"结束节点000","category":"BASIC","description":"工作流出口","icon":"CircleCheck","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":2,"enabled":true,"createdAt":"2026-03-21T09:59:01.979959","updatedAt":"2026-03-21T09:59:01.979959"},{"id":3,"code":"loopBodyCanvas","name":"循环体容器","category":"BASIC","description":"循环体容器节点","icon":"Grid","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":3,"enabled":true,"createdAt":"2026-03-21T09:59:02.240995","updatedAt":"2026-03-21T09:59:02.240995"},{"id":4,"code":"condition","name":"条件判断","category":"LOGIC","description":"条件判断节点","icon":"Share","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":10,"enabled":true,"createdAt":"2026-03-21T09:59:02.432691","updatedAt":"2026-03-21T09:59:02.433201"},{"id":5,"code":"loop","name":"循环控制","category":"LOGIC","description":"循环控制节点","icon":"Refresh","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":11,"enabled":true,"createdAt":"2026-03-21T09:59:02.643459","updatedAt":"2026-03-21T09:59:02.643459"},{"id":6,"code":"envConnect","name":"环境对接","category":"DATA_PREPARE","description":"环境对接节点","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":20,"enabled":true,"createdAt":"2026-03-21T09:59:02.832198","updatedAt":"2026-03-21T09:59:02.832198"},{"id":7,"code":"tableExtract","name":"表格提取","category":"DATA_PREPARE","description":"表格提取节点","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":21,"enabled":true,"createdAt":"2026-03-21T09:59:03.043548","updatedAt":"2026-03-21T09:59:03.043548"},{"id":8,"code":"textClean","name":"文本清洗","category":"TEXT","description":"文本清洗","icon":"Scissors","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":30,"enabled":true,"createdAt":"2026-03-21T09:59:03.532596","updatedAt":"2026-03-21T09:59:03.532596"},{"id":9,"code":"textDedupe","name":"文本去重","category":"TEXT","description":"文本去重","icon":"CopyDocument","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":31,"enabled":true,"createdAt":"2026-03-21T09:59:03.717012","updatedAt":"2026-03-21T09:59:03.717012"},{"id":10,"code":"textGeneralize","name":"文本泛化","category":"TEXT","description":"文本泛化","icon":"EditPen","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":32,"enabled":true,"createdAt":"2026-03-21T09:59:03.911114","updatedAt":"2026-03-21T09:59:03.911114"},{"id":11,"code":"textGenerate","name":"文本生成","category":"TEXT","description":"文本生成","icon":"Edit","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":33,"enabled":true,"createdAt":"2026-03-21T09:59:04.124614","updatedAt":"2026-03-21T09:59:04.124614"},{"id":12,"code":"imageGenerate","name":"图像生成","category":"IMAGE","description":"图像生成","icon":"Picture","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":40,"enabled":true,"createdAt":"2026-03-21T09:59:04.317373","updatedAt":"2026-03-21T09:59:04.317373"},{"id":13,"code":"imageCutout","name":"抠图","category":"IMAGE","description":"抠图","icon":"Crop","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":41,"enabled":true,"createdAt":"2026-03-21T09:59:04.504563","updatedAt":"2026-03-21T09:59:04.504563"},{"id":14,"code":"imageEnhance","name":"画质提升","category":"IMAGE","description":"画质提升","icon":"MagicStick","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":42,"enabled":true,"createdAt":"2026-03-21T09:59:04.699924","updatedAt":"2026-03-21T09:59:04.699924"},{"id":15,"code":"videoExtractAudio","name":"视频提取音频","category":"AUDIO_VIDEO","description":"视频提取音频","icon":"Headset","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":50,"enabled":true,"createdAt":"2026-03-21T09:59:04.880969","updatedAt":"2026-03-21T09:59:04.880969"},{"id":16,"code":"audioToText","name":"音频转文本","category":"AUDIO_VIDEO","description":"音频转文本","icon":"Microphone","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":51,"enabled":true,"createdAt":"2026-03-21T09:59:05.071359","updatedAt":"2026-03-21T09:59:05.071359"},{"id":17,"code":"videoFrame","name":"视频抽帧","category":"AUDIO_VIDEO","description":"视频抽帧","icon":"VideoCamera","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":52,"enabled":true,"createdAt":"2026-03-21T09:59:05.255129","updatedAt":"2026-03-21T09:59:05.255129"},{"id":18,"code":"testPlan","name":"测试方案生成","category":"TEST_DESIGN","description":"测试方案生成","icon":"List","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":60,"enabled":true,"createdAt":"2026-03-21T09:59:05.464769","updatedAt":"2026-03-21T09:59:05.464769"},{"id":19,"code":"apiAuto","name":"HTTP(S)接口调用","category":"TEST_EXEC","description":"HTTP(S)接口调用","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":70,"enabled":true,"createdAt":"2026-03-21T09:59:05.651375","updatedAt":"2026-03-21T09:59:05.651375"},{"id":20,"code":"aiAuto","name":"AI自动化执行","category":"TEST_EXEC","description":"AI自动化执行","icon":"Cpu","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":71,"enabled":true,"createdAt":"2026-03-21T09:59:05.84502","updatedAt":"2026-03-21T09:59:05.84502"},{"id":21,"code":"judgeModel","name":"裁判模型评估","category":"EVALUATE","description":"裁判模型评估","icon":"DataAnalysis","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":80,"enabled":true,"createdAt":"2026-03-21T09:59:06.046874","updatedAt":"2026-03-21T09:59:06.046874"},{"id":22,"code":"firstTokenLatency","name":"首Token响应时延","category":"EVALUATE","description":"首Token响应时延","icon":"Timer","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":81,"enabled":true,"createdAt":"2026-03-21T09:59:06.241411","updatedAt":"2026-03-21T09:59:06.241411"},{"id":23,"code":"tokenOutputTime","name":"每Token输出耗时","category":"EVALUATE","description":"每Token输出耗时","icon":"Stopwatch","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":82,"enabled":true,"createdAt":"2026-03-21T09:59:06.423856","updatedAt":"2026-03-21T09:59:06.423856"},{"id":24,"code":"e2eLatency","name":"端到端时延","category":"EVALUATE","description":"端到端时延","icon":"Clock","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":83,"enabled":true,"createdAt":"2026-03-21T09:59:06.615587","updatedAt":"2026-03-21T09:59:06.615587"},{"id":25,"code":"reportGenerate","name":"生成测试报告","category":"REPORT","description":"生成测试报告","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":90,"enabled":true,"createdAt":"2026-03-21T09:59:06.800896","updatedAt":"2026-03-21T09:59:06.800896"},{"id":26,"code":"reportAnalysis","name":"报告分析","category":"REPORT","description":"报告分析","icon":"Search","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":91,"enabled":true,"createdAt":"2026-03-21T09:59:06.991207","updatedAt":"2026-03-21T09:59:06.991207"}],"success":true,"message":"查询成功"}}', NULL, 'ERROR: 504 Gateway Timeout: "{"error":"任务执行超时","sessionId":"cc63cdac-caca-41c9-8fa7-c72832f2b5db","duration":120035}"', 1, 0, NULL, '2026-03-26 01:31:59', '2026-03-26 01:31:59'),
 (29, 'c134f61d-65d5-4d99-9397-ca803f961c5a', 9, 'COMPLETED', '{"workflow":{"path":"/api/workflow/9","method":"GET","data":{"id":9,"name":"demo03","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T09:31:27","updatedBy":null,"updatedAt":"2026-03-26T09:31:27","nodes":[{"id":192,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":193,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":194,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[]}","parentNodeId":null},{"id":195,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":196,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":197,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":198,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":199,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"config\\":{\\"url\\":\\"\\",\\"method\\":\\"GET\\",\\"headers\\":[],\\"body\\":\\"\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":139,"connectionUuid":"6116d8aa-ba07-492a-8462-bc8b45d430be","sourceNodeId":192,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":193,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":140,"connectionUuid":"95d85f2a-9401-454b-b90f-c583204ad997","sourceNodeId":193,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":194,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":141,"connectionUuid":"2fd91681-0751-439d-8c78-e00334401c88","sourceNodeId":194,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":195,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":142,"connectionUuid":"d4b76d24-bd9f-4d5f-8765-5e18c140ded6","sourceNodeId":195,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":196,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":143,"connectionUuid":"a69da23b-4823-4f1c-9a20-7c29d71e26b7","sourceNodeId":196,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":197,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":144,"connectionUuid":"96adc1b5-55b3-4614-8acc-3a2bb760b0e8","sourceNodeId":197,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":198,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":24,"loopNodeId":195,"bodyNodeId":199,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"message":"查询成功"},"nodeTypes":{"path":"/api/workflow/node-types","method":"GET","data":[{"id":1,"code":"start","name":"开始节点","category":"BASIC","description":"工作流入口","icon":"VideoPlay","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":1,"enabled":true,"createdAt":"2026-03-21T09:59:01.719338","updatedAt":"2026-03-21T09:59:01.719338"},{"id":2,"code":"end","name":"结束节点000","category":"BASIC","description":"工作流出口","icon":"CircleCheck","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":2,"enabled":true,"createdAt":"2026-03-21T09:59:01.979959","updatedAt":"2026-03-21T09:59:01.979959"},{"id":3,"code":"loopBodyCanvas","name":"循环体容器","category":"BASIC","description":"循环体容器节点","icon":"Grid","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":3,"enabled":true,"createdAt":"2026-03-21T09:59:02.240995","updatedAt":"2026-03-21T09:59:02.240995"},{"id":4,"code":"condition","name":"条件判断","category":"LOGIC","description":"条件判断节点","icon":"Share","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":10,"enabled":true,"createdAt":"2026-03-21T09:59:02.432691","updatedAt":"2026-03-21T09:59:02.433201"},{"id":5,"code":"loop","name":"循环控制","category":"LOGIC","description":"循环控制节点","icon":"Refresh","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":11,"enabled":true,"createdAt":"2026-03-21T09:59:02.643459","updatedAt":"2026-03-21T09:59:02.643459"},{"id":6,"code":"envConnect","name":"环境对接","category":"DATA_PREPARE","description":"环境对接节点","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":20,"enabled":true,"createdAt":"2026-03-21T09:59:02.832198","updatedAt":"2026-03-21T09:59:02.832198"},{"id":7,"code":"tableExtract","name":"表格提取","category":"DATA_PREPARE","description":"表格提取节点","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":21,"enabled":true,"createdAt":"2026-03-21T09:59:03.043548","updatedAt":"2026-03-21T09:59:03.043548"},{"id":8,"code":"textClean","name":"文本清洗","category":"TEXT","description":"文本清洗","icon":"Scissors","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":30,"enabled":true,"createdAt":"2026-03-21T09:59:03.532596","updatedAt":"2026-03-21T09:59:03.532596"},{"id":9,"code":"textDedupe","name":"文本去重","category":"TEXT","description":"文本去重","icon":"CopyDocument","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":31,"enabled":true,"createdAt":"2026-03-21T09:59:03.717012","updatedAt":"2026-03-21T09:59:03.717012"},{"id":10,"code":"textGeneralize","name":"文本泛化","category":"TEXT","description":"文本泛化","icon":"EditPen","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":32,"enabled":true,"createdAt":"2026-03-21T09:59:03.911114","updatedAt":"2026-03-21T09:59:03.911114"},{"id":11,"code":"textGenerate","name":"文本生成","category":"TEXT","description":"文本生成","icon":"Edit","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":33,"enabled":true,"createdAt":"2026-03-21T09:59:04.124614","updatedAt":"2026-03-21T09:59:04.124614"},{"id":12,"code":"imageGenerate","name":"图像生成","category":"IMAGE","description":"图像生成","icon":"Picture","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":40,"enabled":true,"createdAt":"2026-03-21T09:59:04.317373","updatedAt":"2026-03-21T09:59:04.317373"},{"id":13,"code":"imageCutout","name":"抠图","category":"IMAGE","description":"抠图","icon":"Crop","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":41,"enabled":true,"createdAt":"2026-03-21T09:59:04.504563","updatedAt":"2026-03-21T09:59:04.504563"},{"id":14,"code":"imageEnhance","name":"画质提升","category":"IMAGE","description":"画质提升","icon":"MagicStick","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":42,"enabled":true,"createdAt":"2026-03-21T09:59:04.699924","updatedAt":"2026-03-21T09:59:04.699924"},{"id":15,"code":"videoExtractAudio","name":"视频提取音频","category":"AUDIO_VIDEO","description":"视频提取音频","icon":"Headset","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":50,"enabled":true,"createdAt":"2026-03-21T09:59:04.880969","updatedAt":"2026-03-21T09:59:04.880969"},{"id":16,"code":"audioToText","name":"音频转文本","category":"AUDIO_VIDEO","description":"音频转文本","icon":"Microphone","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":51,"enabled":true,"createdAt":"2026-03-21T09:59:05.071359","updatedAt":"2026-03-21T09:59:05.071359"},{"id":17,"code":"videoFrame","name":"视频抽帧","category":"AUDIO_VIDEO","description":"视频抽帧","icon":"VideoCamera","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":52,"enabled":true,"createdAt":"2026-03-21T09:59:05.255129","updatedAt":"2026-03-21T09:59:05.255129"},{"id":18,"code":"testPlan","name":"测试方案生成","category":"TEST_DESIGN","description":"测试方案生成","icon":"List","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":60,"enabled":true,"createdAt":"2026-03-21T09:59:05.464769","updatedAt":"2026-03-21T09:59:05.464769"},{"id":19,"code":"apiAuto","name":"HTTP(S)接口调用","category":"TEST_EXEC","description":"HTTP(S)接口调用","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":70,"enabled":true,"createdAt":"2026-03-21T09:59:05.651375","updatedAt":"2026-03-21T09:59:05.651375"},{"id":20,"code":"aiAuto","name":"AI自动化执行","category":"TEST_EXEC","description":"AI自动化执行","icon":"Cpu","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":71,"enabled":true,"createdAt":"2026-03-21T09:59:05.84502","updatedAt":"2026-03-21T09:59:05.84502"},{"id":21,"code":"judgeModel","name":"裁判模型评估","category":"EVALUATE","description":"裁判模型评估","icon":"DataAnalysis","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":80,"enabled":true,"createdAt":"2026-03-21T09:59:06.046874","updatedAt":"2026-03-21T09:59:06.046874"},{"id":22,"code":"firstTokenLatency","name":"首Token响应时延","category":"EVALUATE","description":"首Token响应时延","icon":"Timer","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":81,"enabled":true,"createdAt":"2026-03-21T09:59:06.241411","updatedAt":"2026-03-21T09:59:06.241411"},{"id":23,"code":"tokenOutputTime","name":"每Token输出耗时","category":"EVALUATE","description":"每Token输出耗时","icon":"Stopwatch","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":82,"enabled":true,"createdAt":"2026-03-21T09:59:06.423856","updatedAt":"2026-03-21T09:59:06.423856"},{"id":24,"code":"e2eLatency","name":"端到端时延","category":"EVALUATE","description":"端到端时延","icon":"Clock","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":83,"enabled":true,"createdAt":"2026-03-21T09:59:06.615587","updatedAt":"2026-03-21T09:59:06.615587"},{"id":25,"code":"reportGenerate","name":"生成测试报告","category":"REPORT","description":"生成测试报告","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":90,"enabled":true,"createdAt":"2026-03-21T09:59:06.800896","updatedAt":"2026-03-21T09:59:06.800896"},{"id":26,"code":"reportAnalysis","name":"报告分析","category":"REPORT","description":"报告分析","icon":"Search","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":91,"enabled":true,"createdAt":"2026-03-21T09:59:06.991207","updatedAt":"2026-03-21T09:59:06.991207"}],"success":true,"message":"查询成功"}}', '{"updateAllNodeConfigs":{"path":"/api/workflow/9/data/json","method":"POST","data":{"id":9,"name":"demo03","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T09:31:27","updatedBy":null,"updatedAt":"2026-03-26T09:31:27","nodes":[{"id":200,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"dict\\",\\"type\\":\\"Dictionary\\",\\"required\\":false,\\"dictionaryType\\":\\"Demo数据字典\\"}]","config":"{}","parentNodeId":null},{"id":201,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputType\\":\\"text\\",\\"textContent\\":\\"\\",\\"datasetId\\":\\"\\",\\"datasetFields\\":[],\\"removeExtraSpaces\\":true,\\"removeHtmlTags\\":true,\\"removeSpecialChars\\":true,\\"normalizeNewlines\\":true,\\"trimWhitespace\\":true,\\"standardizedNewlineChar\\":true,\\"trimFrontBack\\":true,\\"colsValue\\":\\"${开始.dict}.input\\"}","parentNodeId":null},{"id":202,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"Sheet1\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[],\\"inputFileValue\\":\\"${文本清洗.output}\\"}","parentNodeId":null},{"id":203,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"current_item\\",\\"type\\":\\"Any\\"},{\\"name\\":\\"current_index\\",\\"type\\":\\"Number\\"}]","config":"{\\"loopOutputParams\\":[{\\"id\\":\\"loop-out-001\\",\\"name\\":\\"apiResult\\",\\"elementType\\":\\"String\\",\\"value\\":\\"${HTTPS/HTTP接口调用.choices.message.content}\\"}],\\"cycle_array\\":\\"${表格提取.output}\\"}","parentNodeId":null},{"id":204,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"modelValue\\":\\"DeepSeekR1-32B\\",\\"promptValue\\":\\"你是一个专业的AI输出质量评估专家。请评估以下内容的准确性、连贯性和专业性。输出评估分数(1-10)和简要评语。\\",\\"toEvaluateValue\\":\\"${循环.apiResult}\\",\\"toEvaluateType\\":\\"Array<String>\\"}","parentNodeId":null},{"id":205,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"evaluateResult\\",\\"type\\":\\"Array\\",\\"value\\":\\"${裁判模型.output}\\",\\"elementType\\":\\"String\\"}],\\"tableGenerateInputParam_0\\":\\"${裁判模型.output}\\"}","parentNodeId":null},{"id":206,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"output\\",\\"type\\":\\"File<Excel>\\",\\"value\\":\\"${表格生成.output_excel}\\"}],\\"endInputParam_0\\":\\"${表格生成.output_excel}\\"}","parentNodeId":null},{"id":207,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"inputParams\\":[],\\"outputParams\\":[],\\"config\\":{\\"url\\":\\"https://api.deepseek.com/v1/chat/completions\\",\\"method\\":\\"POST\\",\\"headers\\":[{\\"key\\":\\"Content-Type\\",\\"value\\":\\"application/json\\"},{\\"key\\":\\"Authorization\\",\\"value\\":\\"Bearer YOUR_API_KEY\\"}],\\"body\\":\\"{\\\\\\"model\\\\\\":\\\\\\"deepseek-chat\\\\\\",\\\\\\"messages\\\\\\":[{\\\\\\"role\\\\\\":\\\\\\"user\\\\\\",\\\\\\"content\\\\\\":\\\\\\"${循环.current_item}\\\\\\"}],\\\\\\"temperature\\\\\\":0.7}\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":145,"connectionUuid":"6116d8aa-ba07-492a-8462-bc8b45d430be","sourceNodeId":200,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":201,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":146,"connectionUuid":"95d85f2a-9401-454b-b90f-c583204ad997","sourceNodeId":201,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":202,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":147,"connectionUuid":"2fd91681-0751-439d-8c78-e00334401c88","sourceNodeId":202,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":203,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":148,"connectionUuid":"d4b76d24-bd9f-4d5f-8765-5e18c140ded6","sourceNodeId":203,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":204,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":149,"connectionUuid":"a69da23b-4823-4f1c-9a20-7c29d71e26b7","sourceNodeId":204,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":205,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":150,"connectionUuid":"96adc1b5-55b3-4614-8acc-3a2bb760b0e8","sourceNodeId":205,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":206,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":25,"loopNodeId":203,"bodyNodeId":207,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"updatedNodes":8,"message":"工作流数据保存成功","workflowId":9}}', '工作流9的所有节点参数配置已成功保存', 2, 0, NULL, '2026-03-26 01:36:15', '2026-03-26 01:36:15'),
 (30, 'b17b5d0d-b1ab-4908-9ed3-b46f3bb5a94d', 9, 'ACTIVE', NULL, NULL, NULL, 0, 0, NULL, '2026-03-26 03:26:00', '2026-03-26 03:26:00'),
-(31, '9fce6d53-8f1a-45ca-a6b8-28e79b1fd009', 9, 'COMPLETED', '{"workflow":{"path":"/api/workflow/9","method":"GET","data":{"id":9,"name":"demo03","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T09:31:27","updatedBy":null,"updatedAt":"2026-03-26T09:31:27","nodes":[{"id":200,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"dict\\",\\"type\\":\\"Dictionary\\",\\"required\\":false,\\"dictionaryType\\":\\"Demo数据字典\\"}]","config":"{}","parentNodeId":null},{"id":201,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputType\\":\\"text\\",\\"textContent\\":\\"\\",\\"datasetId\\":\\"\\",\\"datasetFields\\":[],\\"removeExtraSpaces\\":true,\\"removeHtmlTags\\":true,\\"removeSpecialChars\\":true,\\"normalizeNewlines\\":true,\\"trimWhitespace\\":true,\\"standardizedNewlineChar\\":true,\\"trimFrontBack\\":true,\\"colsValue\\":\\"${开始.dict}.input\\"}","parentNodeId":null},{"id":202,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"Sheet1\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[],\\"inputFileValue\\":\\"${文本清洗.output}\\"}","parentNodeId":null},{"id":203,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"current_item\\",\\"type\\":\\"Any\\"},{\\"name\\":\\"current_index\\",\\"type\\":\\"Number\\"}]","config":"{\\"loopOutputParams\\":[{\\"id\\":\\"loop-out-001\\",\\"name\\":\\"apiResult\\",\\"elementType\\":\\"String\\",\\"value\\":\\"${HTTPS/HTTP接口调用.choices.message.content}\\"}],\\"cycle_array\\":\\"${表格提取.output}\\"}","parentNodeId":null},{"id":204,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"modelValue\\":\\"DeepSeekR1-32B\\",\\"promptValue\\":\\"你是一个专业的AI输出质量评估专家。请评估以下内容的准确性、连贯性和专业性。输出评估分数(1-10)和简要评语。\\",\\"toEvaluateValue\\":\\"${循环.apiResult}\\",\\"toEvaluateType\\":\\"Array<String>\\"}","parentNodeId":null},{"id":205,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"evaluateResult\\",\\"type\\":\\"Array\\",\\"value\\":\\"${裁判模型.output}\\",\\"elementType\\":\\"String\\"}],\\"tableGenerateInputParam_0\\":\\"${裁判模型.output}\\"}","parentNodeId":null},{"id":206,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"output\\",\\"type\\":\\"File<Excel>\\",\\"value\\":\\"${表格生成.output_excel}\\"}],\\"endInputParam_0\\":\\"${表格生成.output_excel}\\"}","parentNodeId":null},{"id":207,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"inputParams\\":[],\\"outputParams\\":[],\\"config\\":{\\"url\\":\\"https://api.deepseek.com/v1/chat/completions\\",\\"method\\":\\"POST\\",\\"headers\\":[{\\"key\\":\\"Content-Type\\",\\"value\\":\\"application/json\\"},{\\"key\\":\\"Authorization\\",\\"value\\":\\"Bearer YOUR_API_KEY\\"}],\\"body\\":\\"{\\\\\\"model\\\\\\":\\\\\\"deepseek-chat\\\\\\",\\\\\\"messages\\\\\\":[{\\\\\\"role\\\\\\":\\\\\\"user\\\\\\",\\\\\\"content\\\\\\":\\\\\\"${循环.current_item}\\\\\\"}],\\\\\\"temperature\\\\\\":0.7}\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":145,"connectionUuid":"6116d8aa-ba07-492a-8462-bc8b45d430be","sourceNodeId":200,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":201,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":146,"connectionUuid":"95d85f2a-9401-454b-b90f-c583204ad997","sourceNodeId":201,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":202,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":147,"connectionUuid":"2fd91681-0751-439d-8c78-e00334401c88","sourceNodeId":202,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":203,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":148,"connectionUuid":"d4b76d24-bd9f-4d5f-8765-5e18c140ded6","sourceNodeId":203,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":204,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":149,"connectionUuid":"a69da23b-4823-4f1c-9a20-7c29d71e26b7","sourceNodeId":204,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":205,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":150,"connectionUuid":"96adc1b5-55b3-4614-8acc-3a2bb760b0e8","sourceNodeId":205,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":206,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":25,"loopNodeId":203,"bodyNodeId":207,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"message":"查询成功"},"nodeTypes":{"success":false,"error":"未知的查询路径: /api/workflow/node-types/code/judgeModel"}}', '{"update-judge-prompt":{"path":"/api/workflow/9/data/json","method":"POST","data":{"id":9,"name":"demo03","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T09:31:27","updatedBy":null,"updatedAt":"2026-03-26T09:31:27","nodes":[{"id":208,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"dict\\",\\"type\\":\\"Dictionary\\",\\"required\\":false,\\"dictionaryType\\":\\"Demo数据字典\\"}]","config":"{}","parentNodeId":null},{"id":209,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputType\\":\\"text\\",\\"textContent\\":\\"\\",\\"datasetId\\":\\"\\",\\"datasetFields\\":[],\\"removeExtraSpaces\\":true,\\"removeHtmlTags\\":true,\\"removeSpecialChars\\":true,\\"normalizeNewlines\\":true,\\"trimWhitespace\\":true,\\"standardizedNewlineChar\\":true,\\"trimFrontBack\\":true,\\"colsValue\\":\\"${开始.dict}.input\\"}","parentNodeId":null},{"id":210,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"Sheet1\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[],\\"inputFileValue\\":\\"${文本清洗.output}\\"}","parentNodeId":null},{"id":211,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"current_item\\",\\"type\\":\\"Any\\"},{\\"name\\":\\"current_index\\",\\"type\\":\\"Number\\"}]","config":"{\\"loopOutputParams\\":[{\\"id\\":\\"loop-out-001\\",\\"name\\":\\"apiResult\\",\\"elementType\\":\\"String\\",\\"value\\":\\"${HTTPS/HTTP接口调用.choices.message.content}\\"}],\\"cycle_array\\":\\"${表格提取.output}\\"}","parentNodeId":null},{"id":212,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"modelValue\\":\\"DeepSeekR1-32B\\",\\"promptValue\\":\\"# 角色\\\\n你是一位专业的AI输出质量评估专家。\\\\n\\\\n# 任务\\\\n对AI生成的内容进行多维度质量评估。\\\\n\\\\n# 评估维度\\\\n1. **准确性** (1-10分): 内容是否准确无误，是否包含错误信息\\\\n2. **相关性** (1-10分): 回答是否与问题相关，是否切题\\\\n3. **完整性** (1-10分): 回答是否完整，是否遗漏重要信息\\\\n4. **逻辑性** (1-10分): 论述是否有条理，逻辑是否清晰\\\\n5. **可读性** (1-10分): 语言是否流畅，表达是否清晰\\\\n\\\\n# 输出要求\\\\n请严格按照以下JSON格式输出评估结果：\\\\n```json\\\\n{\\\\\\"accuracy_score\\": X, \\\\\\"accuracy_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"relevance_score\\\\\\": X, \\\\\\"relevance_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"completeness_score\\\\\\": X, \\\\\\"completeness_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"logic_score\\\\\\": X, \\\\\\"logic_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"readability_score\\\\\\": X, \\\\\\"readability_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"overall_score\\\\\\": X, \\\\\\"summary\\\\\\": \\\\\\"综合评价\\\\\\"}\\\\n```\\",\\"toEvaluateValue\\":\\"${循环.apiResult}\\",\\"toEvaluateType\\":\\"Array<String>\\"}","parentNodeId":null},{"id":213,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"evaluateResult\\",\\"type\\":\\"Array\\",\\"value\\":\\"${裁判模型.output}\\",\\"elementType\\":\\"String\\"}],\\"tableGenerateInputParam_0\\":\\"${裁判模型.output}\\"}","parentNodeId":null},{"id":214,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"output\\",\\"type\\":\\"File<Excel>\\",\\"value\\":\\"${表格生成.output_excel}\\"}],\\"endInputParam_0\\":\\"${表格生成.output_excel}\\"}","parentNodeId":null},{"id":215,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"inputParams\\":[],\\"outputParams\\":[],\\"config\\":{\\"url\\":\\"https://api.deepseek.com/v1/chat/completions\\",\\"method\\":\\"POST\\",\\"headers\\":[{\\"key\\":\\"Content-Type\\",\\"value\\":\\"application/json\\"},{\\"key\\":\\"Authorization\\",\\"value\\":\\"Bearer YOUR_API_KEY\\"}],\\"body\\":\\"{\\\\\\"model\\\\\\":\\\\\\"deepseek-chat\\\\\\",\\\\\\"messages\\\\\\":[{\\\\\\"role\\\\\\":\\\\\\"user\\\\\\",\\\\\\"content\\\\\\":\\\\\\"${循环.current_item}\\\\\\"}],\\\\\\"temperature\\\\\\":0.7}\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":151,"connectionUuid":"6116d8aa-ba07-492a-8462-bc8b45d430be","sourceNodeId":208,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":209,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":152,"connectionUuid":"95d85f2a-9401-454b-b90f-c583204ad997","sourceNodeId":209,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":210,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":153,"connectionUuid":"2fd91681-0751-439d-8c78-e00334401c88","sourceNodeId":210,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":211,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":154,"connectionUuid":"d4b76d24-bd9f-4d5f-8765-5e18c140ded6","sourceNodeId":211,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":212,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":155,"connectionUuid":"a69da23b-4823-4f1c-9a20-7c29d71e26b7","sourceNodeId":212,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":213,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":156,"connectionUuid":"96adc1b5-55b3-4614-8acc-3a2bb760b0e8","sourceNodeId":213,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":214,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":26,"loopNodeId":211,"bodyNodeId":215,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"updatedNodes":8,"message":"工作流数据保存成功","workflowId":9}}', '裁判模型节点的Prompt已成功优化并保存到工作流9中。', 2, 0, NULL, '2026-03-26 03:45:44', '2026-03-26 03:45:44'),
-(32, '803e399a-d0e0-4f89-aab9-801478eb58af', NULL, 'ERROR', NULL, NULL, 'ERROR: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just `claude`\\nNo conversation found with session ID: 803e399a-d0e0-4f89-aab9-801478eb58af\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: null\\n\\n当前轮次: 1\\n","sessionId":"803e399a-d0e0-4f89-aab9-801478eb58af","duration":2182}"', 0, 0, NULL, '2026-03-26 05:55:52', '2026-03-26 05:55:52'),
+(31, '9fce6d53-8f1a-45ca-a6b8-28e79b1fd009', 9, 'COMPLETED', '{"workflow":{"path":"/api/workflow/9","method":"GET","data":{"id":9,"name":"demo03","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T09:31:27","updatedBy":null,"updatedAt":"2026-03-26T09:31:27","nodes":[{"id":200,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"dict\\",\\"type\\":\\"Dictionary\\",\\"required\\":false,\\"dictionaryType\\":\\"Demo数据字典\\"}]","config":"{}","parentNodeId":null},{"id":201,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputType\\":\\"text\\",\\"textContent\\":\\"\\",\\"datasetId\\":\\"\\",\\"datasetFields\\":[],\\"removeExtraSpaces\\":true,\\"removeHtmlTags\\":true,\\"removeSpecialChars\\":true,\\"normalizeNewlines\\":true,\\"trimWhitespace\\":true,\\"standardizedNewlineChar\\":true,\\"trimFrontBack\\":true,\\"colsValue\\":\\"${开始.dict}.input\\"}","parentNodeId":null},{"id":202,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"Sheet1\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[],\\"inputFileValue\\":\\"${文本清洗.output}\\"}","parentNodeId":null},{"id":203,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"current_item\\",\\"type\\":\\"Any\\"},{\\"name\\":\\"current_index\\",\\"type\\":\\"Number\\"}]","config":"{\\"loopOutputParams\\":[{\\"id\\":\\"loop-out-001\\",\\"name\\":\\"apiResult\\",\\"elementType\\":\\"String\\",\\"value\\":\\"${HTTPS/HTTP接口调用.choices.message.content}\\"}],\\"cycle_array\\":\\"${表格提取.output}\\"}","parentNodeId":null},{"id":204,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"modelValue\\":\\"DeepSeekR1-32B\\",\\"promptValue\\":\\"你是一个专业的AI输出质量评估专家。请评估以下内容的准确性、连贯性和专业性。输出评估分数(1-10)和简要评语。\\",\\"toEvaluateValue\\":\\"${循环.apiResult}\\",\\"toEvaluateType\\":\\"Array<String>\\"}","parentNodeId":null},{"id":205,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"evaluateResult\\",\\"type\\":\\"Array\\",\\"value\\":\\"${裁判模型.output}\\",\\"elementType\\":\\"String\\"}],\\"tableGenerateInputParam_0\\":\\"${裁判模型.output}\\"}","parentNodeId":null},{"id":206,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"output\\",\\"type\\":\\"File<Excel>\\",\\"value\\":\\"${表格生成.output_excel}\\"}],\\"endInputParam_0\\":\\"${表格生成.output_excel}\\"}","parentNodeId":null},{"id":207,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"inputParams\\":[],\\"outputParams\\":[],\\"config\\":{\\"url\\":\\"https://api.deepseek.com/v1/chat/completions\\",\\"method\\":\\"POST\\",\\"headers\\":[{\\"key\\":\\"Content-Type\\",\\"value\\":\\"application/json\\"},{\\"key\\":\\"Authorization\\",\\"value\\":\\"Bearer YOUR_API_KEY\\"}],\\"body\\":\\"{\\\\\\"model\\\\\\":\\\\\\"deepseek-chat\\\\\\",\\\\\\"messages\\\\\\":[{\\\\\\"role\\\\\\":\\\\\\"user\\\\\\",\\\\\\"content\\\\\\":\\\\\\"${循环.current_item}\\\\\\"}],\\\\\\"temperature\\\\\\":0.7}\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":145,"connectionUuid":"6116d8aa-ba07-492a-8462-bc8b45d430be","sourceNodeId":200,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":201,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":146,"connectionUuid":"95d85f2a-9401-454b-b90f-c583204ad997","sourceNodeId":201,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":202,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":147,"connectionUuid":"2fd91681-0751-439d-8c78-e00334401c88","sourceNodeId":202,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":203,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":148,"connectionUuid":"d4b76d24-bd9f-4d5f-8765-5e18c140ded6","sourceNodeId":203,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":204,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":149,"connectionUuid":"a69da23b-4823-4f1c-9a20-7c29d71e26b7","sourceNodeId":204,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":205,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":150,"connectionUuid":"96adc1b5-55b3-4614-8acc-3a2bb760b0e8","sourceNodeId":205,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":206,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":25,"loopNodeId":203,"bodyNodeId":207,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"message":"查询成功"},"nodeTypes":{"success":false,"error":"未知的查询路径: /api/workflow/node-types/code/judgeModel"}}', '{"update-judge-prompt":{"path":"/api/workflow/9/data/json","method":"POST","data":{"id":9,"name":"demo03","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T09:31:27","updatedBy":null,"updatedAt":"2026-03-26T09:31:27","nodes":[{"id":208,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"dict\\",\\"type\\":\\"Dictionary\\",\\"required\\":false,\\"dictionaryType\\":\\"Demo数据字典\\"}]","config":"{}","parentNodeId":null},{"id":209,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputType\\":\\"text\\",\\"textContent\\":\\"\\",\\"datasetId\\":\\"\\",\\"datasetFields\\":[],\\"removeExtraSpaces\\":true,\\"removeHtmlTags\\":true,\\"removeSpecialChars\\":true,\\"normalizeNewlines\\":true,\\"trimWhitespace\\":true,\\"standardizedNewlineChar\\":true,\\"trimFrontBack\\":true,\\"colsValue\\":\\"${开始.dict}.input\\"}","parentNodeId":null},{"id":210,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"Sheet1\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[],\\"inputFileValue\\":\\"${文本清洗.output}\\"}","parentNodeId":null},{"id":211,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"current_item\\",\\"type\\":\\"Any\\"},{\\"name\\":\\"current_index\\",\\"type\\":\\"Number\\"}]","config":"{\\"loopOutputParams\\":[{\\"id\\":\\"loop-out-001\\",\\"name\\":\\"apiResult\\",\\"elementType\\":\\"String\\",\\"value\\":\\"${HTTPS/HTTP接口调用.choices.message.content}\\"}],\\"cycle_array\\":\\"${表格提取.output}\\"}","parentNodeId":null},{"id":212,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"modelValue\\":\\"DeepSeekR1-32B\\",\\"promptValue\\":\\"# 角色\\\\n你是一位专业的AI输出质量评估专家。\\\\n\\\\n# 任务\\\\n对AI生成的内容进行多维度质量评估。\\\\n\\\\n# 评估维度\\\\n1. **准确性** (1-10分): 内容是否准确无误，是否包含错误信息\\\\n2. **相关性** (1-10分): 回答是否与问题相关，是否切题\\\\n3. **完整性** (1-10分): 回答是否完整，是否遗漏重要信息\\\\n4. **逻辑性** (1-10分): 论述是否有条理，逻辑是否清晰\\\\n5. **可读性** (1-10分): 语言是否流畅，表达是否清晰\\\\n\\\\n# 输出要求\\\\n请严格按照以下JSON格式输出评估结果：\\\\n``"json\\\\n{\\\\\\"accuracy_score\\": X, \\\\\\"accuracy_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"relevance_score\\\\\\": X, \\\\\\"relevance_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"completeness_score\\\\\\": X, \\\\\\"completeness_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"logic_score\\\\\\": X, \\\\\\"logic_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"readability_score\\\\\\": X, \\\\\\"readability_reason\\\\\\": \\\\\\"简要说明\\\\\\", \\\\\\"overall_score\\\\\\": X, \\\\\\"summary\\\\\\": \\\\\\"综合评价\\\\\\"}\\\\n"`"\\",\\"toEvaluateValue\\":\\"${循环.apiResult}\\",\\"toEvaluateType\\":\\"Array<String>\\"}","parentNodeId":null},{"id":213,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"evaluateResult\\",\\"type\\":\\"Array\\",\\"value\\":\\"${裁判模型.output}\\",\\"elementType\\":\\"String\\"}],\\"tableGenerateInputParam_0\\":\\"${裁判模型.output}\\"}","parentNodeId":null},{"id":214,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"output\\",\\"type\\":\\"File<Excel>\\",\\"value\\":\\"${表格生成.output_excel}\\"}],\\"endInputParam_0\\":\\"${表格生成.output_excel}\\"}","parentNodeId":null},{"id":215,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"inputParams\\":[],\\"outputParams\\":[],\\"config\\":{\\"url\\":\\"https://api.deepseek.com/v1/chat/completions\\",\\"method\\":\\"POST\\",\\"headers\\":[{\\"key\\":\\"Content-Type\\",\\"value\\":\\"application/json\\"},{\\"key\\":\\"Authorization\\",\\"value\\":\\"Bearer YOUR_API_KEY\\"}],\\"body\\":\\"{\\\\\\"model\\\\\\":\\\\\\"deepseek-chat\\\\\\",\\\\\\"messages\\\\\\":[{\\\\\\"role\\\\\\":\\\\\\"user\\\\\\",\\\\\\"content\\\\\\":\\\\\\"${循环.current_item}\\\\\\"}],\\\\\\"temperature\\\\\\":0.7}\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":151,"connectionUuid":"6116d8aa-ba07-492a-8462-bc8b45d430be","sourceNodeId":208,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":209,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":152,"connectionUuid":"95d85f2a-9401-454b-b90f-c583204ad997","sourceNodeId":209,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":210,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":153,"connectionUuid":"2fd91681-0751-439d-8c78-e00334401c88","sourceNodeId":210,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":211,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":154,"connectionUuid":"d4b76d24-bd9f-4d5f-8765-5e18c140ded6","sourceNodeId":211,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":212,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":155,"connectionUuid":"a69da23b-4823-4f1c-9a20-7c29d71e26b7","sourceNodeId":212,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":213,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":156,"connectionUuid":"96adc1b5-55b3-4614-8acc-3a2bb760b0e8","sourceNodeId":213,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":214,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":26,"loopNodeId":211,"bodyNodeId":215,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"updatedNodes":8,"message":"工作流数据保存成功","workflowId":9}}', '裁判模型节点的Prompt已成功优化并保存到工作流9中。', 2, 0, NULL, '2026-03-26 03:45:44', '2026-03-26 03:45:44'),
+(32, '803e399a-d0e0-4f89-aab9-801478eb58af', NULL, 'ERROR', NULL, NULL, 'ERROR: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just "claude"\\nNo conversation found with session ID: 803e399a-d0e0-4f89-aab9-801478eb58af\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: null\\n\\n当前轮次: 1\\n","sessionId":"803e399a-d0e0-4f89-aab9-801478eb58af","duration":2182}"', 0, 0, NULL, '2026-03-26 05:55:52', '2026-03-26 05:55:52'),
 (33, '1cda5b56-602d-4625-bcc8-1e1a0b68781a', 10, 'ACTIVE', '{"workflow":{"path":"/api/workflow/10","method":"GET","data":{"id":10,"name":"demo04","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T13:55:17","updatedBy":null,"updatedAt":"2026-03-26T13:55:17","nodes":[{"id":234,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":235,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":236,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[]}","parentNodeId":null},{"id":237,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":238,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":239,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":240,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":241,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"config\\":{\\"url\\":\\"\\",\\"method\\":\\"GET\\",\\"headers\\":[],\\"body\\":\\"\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":157,"connectionUuid":"29090b55-07f1-4afc-b8a1-9bc657509fe1","sourceNodeId":234,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":235,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":158,"connectionUuid":"af7eafb2-c486-48fb-b7ba-3be8997f873e","sourceNodeId":235,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":236,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":159,"connectionUuid":"1a940013-7fcd-484f-a8bc-91d6b21c6b45","sourceNodeId":236,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":237,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":160,"connectionUuid":"d7bb8157-693a-4a9a-abd5-9f3052880522","sourceNodeId":237,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":238,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":161,"connectionUuid":"79dba2a5-0c1e-4fd3-930d-5b6af34c2489","sourceNodeId":238,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":239,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":162,"connectionUuid":"1474eb05-0fad-478c-aa06-b41dbbb2aabd","sourceNodeId":239,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":240,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":27,"loopNodeId":237,"bodyNodeId":241,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"message":"查询成功"},"nodeTypes":{"path":"/api/workflow/node-types","method":"GET","data":[{"id":1,"code":"start","name":"开始节点","category":"BASIC","description":"工作流入口","icon":"VideoPlay","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":1,"enabled":true,"createdAt":"2026-03-21T09:59:01.719338","updatedAt":"2026-03-21T09:59:01.719338"},{"id":2,"code":"end","name":"结束节点000","category":"BASIC","description":"工作流出口","icon":"CircleCheck","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":2,"enabled":true,"createdAt":"2026-03-21T09:59:01.979959","updatedAt":"2026-03-21T09:59:01.979959"},{"id":3,"code":"loopBodyCanvas","name":"循环体容器","category":"BASIC","description":"循环体容器节点","icon":"Grid","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":3,"enabled":true,"createdAt":"2026-03-21T09:59:02.240995","updatedAt":"2026-03-21T09:59:02.240995"},{"id":4,"code":"condition","name":"条件判断","category":"LOGIC","description":"条件判断节点","icon":"Share","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":10,"enabled":true,"createdAt":"2026-03-21T09:59:02.432691","updatedAt":"2026-03-21T09:59:02.433201"},{"id":5,"code":"loop","name":"循环控制","category":"LOGIC","description":"循环控制节点","icon":"Refresh","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":11,"enabled":true,"createdAt":"2026-03-21T09:59:02.643459","updatedAt":"2026-03-21T09:59:02.643459"},{"id":6,"code":"envConnect","name":"环境对接","category":"DATA_PREPARE","description":"环境对接节点","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":20,"enabled":true,"createdAt":"2026-03-21T09:59:02.832198","updatedAt":"2026-03-21T09:59:02.832198"},{"id":7,"code":"tableExtract","name":"表格提取","category":"DATA_PREPARE","description":"表格提取节点","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":21,"enabled":true,"createdAt":"2026-03-21T09:59:03.043548","updatedAt":"2026-03-21T09:59:03.043548"},{"id":8,"code":"textClean","name":"文本清洗","category":"TEXT","description":"文本清洗","icon":"Scissors","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":30,"enabled":true,"createdAt":"2026-03-21T09:59:03.532596","updatedAt":"2026-03-21T09:59:03.532596"},{"id":9,"code":"textDedupe","name":"文本去重","category":"TEXT","description":"文本去重","icon":"CopyDocument","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":31,"enabled":true,"createdAt":"2026-03-21T09:59:03.717012","updatedAt":"2026-03-21T09:59:03.717012"},{"id":10,"code":"textGeneralize","name":"文本泛化","category":"TEXT","description":"文本泛化","icon":"EditPen","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":32,"enabled":true,"createdAt":"2026-03-21T09:59:03.911114","updatedAt":"2026-03-21T09:59:03.911114"},{"id":11,"code":"textGenerate","name":"文本生成","category":"TEXT","description":"文本生成","icon":"Edit","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":33,"enabled":true,"createdAt":"2026-03-21T09:59:04.124614","updatedAt":"2026-03-21T09:59:04.124614"},{"id":12,"code":"imageGenerate","name":"图像生成","category":"IMAGE","description":"图像生成","icon":"Picture","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":40,"enabled":true,"createdAt":"2026-03-21T09:59:04.317373","updatedAt":"2026-03-21T09:59:04.317373"},{"id":13,"code":"imageCutout","name":"抠图","category":"IMAGE","description":"抠图","icon":"Crop","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":41,"enabled":true,"createdAt":"2026-03-21T09:59:04.504563","updatedAt":"2026-03-21T09:59:04.504563"},{"id":14,"code":"imageEnhance","name":"画质提升","category":"IMAGE","description":"画质提升","icon":"MagicStick","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":42,"enabled":true,"createdAt":"2026-03-21T09:59:04.699924","updatedAt":"2026-03-21T09:59:04.699924"},{"id":15,"code":"videoExtractAudio","name":"视频提取音频","category":"AUDIO_VIDEO","description":"视频提取音频","icon":"Headset","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":50,"enabled":true,"createdAt":"2026-03-21T09:59:04.880969","updatedAt":"2026-03-21T09:59:04.880969"},{"id":16,"code":"audioToText","name":"音频转文本","category":"AUDIO_VIDEO","description":"音频转文本","icon":"Microphone","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":51,"enabled":true,"createdAt":"2026-03-21T09:59:05.071359","updatedAt":"2026-03-21T09:59:05.071359"},{"id":17,"code":"videoFrame","name":"视频抽帧","category":"AUDIO_VIDEO","description":"视频抽帧","icon":"VideoCamera","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":52,"enabled":true,"createdAt":"2026-03-21T09:59:05.255129","updatedAt":"2026-03-21T09:59:05.255129"},{"id":18,"code":"testPlan","name":"测试方案生成","category":"TEST_DESIGN","description":"测试方案生成","icon":"List","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":60,"enabled":true,"createdAt":"2026-03-21T09:59:05.464769","updatedAt":"2026-03-21T09:59:05.464769"},{"id":19,"code":"apiAuto","name":"HTTP(S)接口调用","category":"TEST_EXEC","description":"HTTP(S)接口调用","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":70,"enabled":true,"createdAt":"2026-03-21T09:59:05.651375","updatedAt":"2026-03-21T09:59:05.651375"},{"id":20,"code":"aiAuto","name":"AI自动化执行","category":"TEST_EXEC","description":"AI自动化执行","icon":"Cpu","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":71,"enabled":true,"createdAt":"2026-03-21T09:59:05.84502","updatedAt":"2026-03-21T09:59:05.84502"},{"id":21,"code":"judgeModel","name":"裁判模型评估","category":"EVALUATE","description":"裁判模型评估","icon":"DataAnalysis","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":80,"enabled":true,"createdAt":"2026-03-21T09:59:06.046874","updatedAt":"2026-03-21T09:59:06.046874"},{"id":22,"code":"firstTokenLatency","name":"首Token响应时延","category":"EVALUATE","description":"首Token响应时延","icon":"Timer","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":81,"enabled":true,"createdAt":"2026-03-21T09:59:06.241411","updatedAt":"2026-03-21T09:59:06.241411"},{"id":23,"code":"tokenOutputTime","name":"每Token输出耗时","category":"EVALUATE","description":"每Token输出耗时","icon":"Stopwatch","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":82,"enabled":true,"createdAt":"2026-03-21T09:59:06.423856","updatedAt":"2026-03-21T09:59:06.423856"},{"id":24,"code":"e2eLatency","name":"端到端时延","category":"EVALUATE","description":"端到端时延","icon":"Clock","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":83,"enabled":true,"createdAt":"2026-03-21T09:59:06.615587","updatedAt":"2026-03-21T09:59:06.615587"},{"id":25,"code":"reportGenerate","name":"生成测试报告","category":"REPORT","description":"生成测试报告","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":90,"enabled":true,"createdAt":"2026-03-21T09:59:06.800896","updatedAt":"2026-03-21T09:59:06.800896"},{"id":26,"code":"reportAnalysis","name":"报告分析","category":"REPORT","description":"报告分析","icon":"Search","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":91,"enabled":true,"createdAt":"2026-03-21T09:59:06.991207","updatedAt":"2026-03-21T09:59:06.991207"}],"success":true,"message":"查询成功"}}', '{}', '尝试重新连接并保存配置', 4, 0, NULL, '2026-03-26 06:02:10', '2026-03-26 06:02:10'),
 (34, '241a4b2c-23e2-43dd-b2cc-b8123b140c56', 11, 'COMPLETED', '{"workflow":{"path":"/api/workflow/11","method":"GET","data":{"id":11,"name":"demo05","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T14:11:55","updatedBy":null,"updatedAt":"2026-03-26T14:11:55","nodes":[{"id":266,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":267,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":268,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[]}","parentNodeId":null},{"id":269,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":270,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":271,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":272,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{}","parentNodeId":null},{"id":273,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"config\\":{\\"url\\":\\"\\",\\"method\\":\\"GET\\",\\"headers\\":[],\\"body\\":\\"\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":181,"connectionUuid":"51069787-0bcf-46a4-b1f6-7dd578e0a6e1","sourceNodeId":266,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":267,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":182,"connectionUuid":"042ce6e5-fa9a-4945-828b-1b9742126f2b","sourceNodeId":267,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":268,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":183,"connectionUuid":"ff66e78b-58e2-4623-9fb1-8b8ed1f6a08c","sourceNodeId":268,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":269,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":184,"connectionUuid":"9ebf6549-37ae-4fc4-98bf-1028a697e2b1","sourceNodeId":269,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":270,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":185,"connectionUuid":"d23773f4-963a-4d50-bb08-8b656bf8abee","sourceNodeId":270,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":271,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":186,"connectionUuid":"d8265502-7d9d-48ac-82b2-3b86506859c6","sourceNodeId":271,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":272,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":31,"loopNodeId":269,"bodyNodeId":273,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"message":"查询成功"},"nodeTypes":{"path":"/api/workflow/node-types","method":"GET","data":[{"id":1,"code":"start","name":"开始节点","category":"BASIC","description":"工作流入口","icon":"VideoPlay","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":1,"enabled":true,"createdAt":"2026-03-21T09:59:01.719338","updatedAt":"2026-03-21T09:59:01.719338"},{"id":2,"code":"end","name":"结束节点000","category":"BASIC","description":"工作流出口","icon":"CircleCheck","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":2,"enabled":true,"createdAt":"2026-03-21T09:59:01.979959","updatedAt":"2026-03-21T09:59:01.979959"},{"id":3,"code":"loopBodyCanvas","name":"循环体容器","category":"BASIC","description":"循环体容器节点","icon":"Grid","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":3,"enabled":true,"createdAt":"2026-03-21T09:59:02.240995","updatedAt":"2026-03-21T09:59:02.240995"},{"id":4,"code":"condition","name":"条件判断","category":"LOGIC","description":"条件判断节点","icon":"Share","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":10,"enabled":true,"createdAt":"2026-03-21T09:59:02.432691","updatedAt":"2026-03-21T09:59:02.433201"},{"id":5,"code":"loop","name":"循环控制","category":"LOGIC","description":"循环控制节点","icon":"Refresh","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":11,"enabled":true,"createdAt":"2026-03-21T09:59:02.643459","updatedAt":"2026-03-21T09:59:02.643459"},{"id":6,"code":"envConnect","name":"环境对接","category":"DATA_PREPARE","description":"环境对接节点","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":20,"enabled":true,"createdAt":"2026-03-21T09:59:02.832198","updatedAt":"2026-03-21T09:59:02.832198"},{"id":7,"code":"tableExtract","name":"表格提取","category":"DATA_PREPARE","description":"表格提取节点","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":21,"enabled":true,"createdAt":"2026-03-21T09:59:03.043548","updatedAt":"2026-03-21T09:59:03.043548"},{"id":8,"code":"textClean","name":"文本清洗","category":"TEXT","description":"文本清洗","icon":"Scissors","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":30,"enabled":true,"createdAt":"2026-03-21T09:59:03.532596","updatedAt":"2026-03-21T09:59:03.532596"},{"id":9,"code":"textDedupe","name":"文本去重","category":"TEXT","description":"文本去重","icon":"CopyDocument","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":31,"enabled":true,"createdAt":"2026-03-21T09:59:03.717012","updatedAt":"2026-03-21T09:59:03.717012"},{"id":10,"code":"textGeneralize","name":"文本泛化","category":"TEXT","description":"文本泛化","icon":"EditPen","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":32,"enabled":true,"createdAt":"2026-03-21T09:59:03.911114","updatedAt":"2026-03-21T09:59:03.911114"},{"id":11,"code":"textGenerate","name":"文本生成","category":"TEXT","description":"文本生成","icon":"Edit","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":33,"enabled":true,"createdAt":"2026-03-21T09:59:04.124614","updatedAt":"2026-03-21T09:59:04.124614"},{"id":12,"code":"imageGenerate","name":"图像生成","category":"IMAGE","description":"图像生成","icon":"Picture","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":40,"enabled":true,"createdAt":"2026-03-21T09:59:04.317373","updatedAt":"2026-03-21T09:59:04.317373"},{"id":13,"code":"imageCutout","name":"抠图","category":"IMAGE","description":"抠图","icon":"Crop","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":41,"enabled":true,"createdAt":"2026-03-21T09:59:04.504563","updatedAt":"2026-03-21T09:59:04.504563"},{"id":14,"code":"imageEnhance","name":"画质提升","category":"IMAGE","description":"画质提升","icon":"MagicStick","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":42,"enabled":true,"createdAt":"2026-03-21T09:59:04.699924","updatedAt":"2026-03-21T09:59:04.699924"},{"id":15,"code":"videoExtractAudio","name":"视频提取音频","category":"AUDIO_VIDEO","description":"视频提取音频","icon":"Headset","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":50,"enabled":true,"createdAt":"2026-03-21T09:59:04.880969","updatedAt":"2026-03-21T09:59:04.880969"},{"id":16,"code":"audioToText","name":"音频转文本","category":"AUDIO_VIDEO","description":"音频转文本","icon":"Microphone","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":51,"enabled":true,"createdAt":"2026-03-21T09:59:05.071359","updatedAt":"2026-03-21T09:59:05.071359"},{"id":17,"code":"videoFrame","name":"视频抽帧","category":"AUDIO_VIDEO","description":"视频抽帧","icon":"VideoCamera","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":52,"enabled":true,"createdAt":"2026-03-21T09:59:05.255129","updatedAt":"2026-03-21T09:59:05.255129"},{"id":18,"code":"testPlan","name":"测试方案生成","category":"TEST_DESIGN","description":"测试方案生成","icon":"List","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":60,"enabled":true,"createdAt":"2026-03-21T09:59:05.464769","updatedAt":"2026-03-21T09:59:05.464769"},{"id":19,"code":"apiAuto","name":"HTTP(S)接口调用","category":"TEST_EXEC","description":"HTTP(S)接口调用","icon":"Connection","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":70,"enabled":true,"createdAt":"2026-03-21T09:59:05.651375","updatedAt":"2026-03-21T09:59:05.651375"},{"id":20,"code":"aiAuto","name":"AI自动化执行","category":"TEST_EXEC","description":"AI自动化执行","icon":"Cpu","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":71,"enabled":true,"createdAt":"2026-03-21T09:59:05.84502","updatedAt":"2026-03-21T09:59:05.84502"},{"id":21,"code":"judgeModel","name":"裁判模型评估","category":"EVALUATE","description":"裁判模型评估","icon":"DataAnalysis","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":80,"enabled":true,"createdAt":"2026-03-21T09:59:06.046874","updatedAt":"2026-03-21T09:59:06.046874"},{"id":22,"code":"firstTokenLatency","name":"首Token响应时延","category":"EVALUATE","description":"首Token响应时延","icon":"Timer","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":81,"enabled":true,"createdAt":"2026-03-21T09:59:06.241411","updatedAt":"2026-03-21T09:59:06.241411"},{"id":23,"code":"tokenOutputTime","name":"每Token输出耗时","category":"EVALUATE","description":"每Token输出耗时","icon":"Stopwatch","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":82,"enabled":true,"createdAt":"2026-03-21T09:59:06.423856","updatedAt":"2026-03-21T09:59:06.423856"},{"id":24,"code":"e2eLatency","name":"端到端时延","category":"EVALUATE","description":"端到端时延","icon":"Clock","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":83,"enabled":true,"createdAt":"2026-03-21T09:59:06.615587","updatedAt":"2026-03-21T09:59:06.615587"},{"id":25,"code":"reportGenerate","name":"生成测试报告","category":"REPORT","description":"生成测试报告","icon":"Document","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":90,"enabled":true,"createdAt":"2026-03-21T09:59:06.800896","updatedAt":"2026-03-21T09:59:06.800896"},{"id":26,"code":"reportAnalysis","name":"报告分析","category":"REPORT","description":"报告分析","icon":"Search","color":null,"defaultConfig":null,"inputPorts":null,"outputPorts":null,"sortOrder":91,"enabled":true,"createdAt":"2026-03-21T09:59:06.991207","updatedAt":"2026-03-21T09:59:06.991207"}],"success":true,"message":"查询成功"}}', '{"saveConfig":{"path":"/api/workflow/11/data/json","method":"POST","data":{"id":11,"name":"demo05","description":"","published":false,"hasRun":false,"version":1,"status":"DRAFT","createdBy":null,"createdAt":"2026-03-26T14:11:55","updatedBy":null,"updatedAt":"2026-03-26T14:11:55","nodes":[{"id":274,"nodeUuid":"node-start","type":"start","name":"开始","positionX":150,"positionY":250,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"dict\\",\\"type\\":\\"Dictionary\\",\\"required\\":false,\\"dictionaryType\\":\\"Demo数据字典\\"}]","config":"{}","parentNodeId":null},{"id":275,"nodeUuid":"node-text-clean","type":"textClean","name":"文本清洗","positionX":400,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputType\\":\\"text\\",\\"textContent\\":\\"\\",\\"datasetId\\":\\"\\",\\"datasetFields\\":[],\\"removeExtraSpaces\\":true,\\"removeHtmlTags\\":true,\\"removeSpecialChars\\":true,\\"normalizeNewlines\\":true,\\"trimWhitespace\\":true,\\"standardizedNewlineChar\\":true,\\"trimFrontBack\\":true,\\"colsValue\\":\\"${开始.dict}.input\\"}","parentNodeId":null},{"id":276,"nodeUuid":"node-table-extract","type":"tableExtract","name":"表格提取","positionX":525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"file\\",\\"type\\":\\"File\\",\\"fileType\\":\\"Excel\\",\\"required\\":true,\\"description\\":\\"需要提取数据的Excel文件\\"}]","outputParams":"[{\\"name\\":\\"output\\",\\"type\\":\\"Array\\",\\"elementType\\":\\"Object\\",\\"description\\":\\"提取的表格数据数组\\"}]","config":"{\\"file\\":null,\\"sheetName\\":\\"Sheet1\\",\\"headerRow\\":1,\\"startRow\\":2,\\"endRow\\":null,\\"columns\\":[],\\"inputFileValue\\":\\"${文本清洗.output}\\"}","parentNodeId":null},{"id":277,"nodeUuid":"node-loop","type":"loop","name":"循环","positionX":775,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"current_item\\",\\"type\\":\\"Any\\"},{\\"name\\":\\"current_index\\",\\"type\\":\\"Number\\"}]","config":"{\\"loopOutputParams\\":[{\\"id\\":\\"loop-out-001\\",\\"name\\":\\"content\\",\\"elementType\\":\\"String\\",\\"value\\":\\"${HTTPS/HTTP接口调用.choices.message.content}\\"}],\\"cycle_array\\":\\"${表格提取.output}\\"}","parentNodeId":null},{"id":278,"nodeUuid":"node-judge-model","type":"judgeModel","name":"裁判模型","positionX":1025,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"modelValue\\":\\"DeepSeekR1-32B\\",\\"promptValue\\":\\"你是一个专业的AI输出质量评估专家。请对以下内容进行质量评估，给出评分（1-10分）和改进建议。\\",\\"toEvaluateValue\\":\\"${循环.content}\\",\\"toEvaluateType\\":\\"Array<String>\\"}","parentNodeId":null},{"id":279,"nodeUuid":"node-table-generate","type":"tableGenerate","name":"表格生成","positionX":1275,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"input\\",\\"type\\":\\"Array\\",\\"value\\":\\"${裁判模型.output}\\",\\"elementType\\":\\"String\\"}],\\"tableGenerateInputParam_0\\":\\"${裁判模型.output}\\"}","parentNodeId":null},{"id":280,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1525,"positionY":250,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"output\\",\\"type\\":\\"File<Excel>\\",\\"value\\":\\"${表格生成.output_excel}\\"}],\\"endInputParam_0\\":\\"${表格生成.output_excel}\\"}","parentNodeId":null},{"id":281,"nodeUuid":"node-loop-body","type":"loopBodyCanvas","name":"循环体","positionX":775,"positionY":470,"inputPorts":"[]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"width\\":500,\\"height\\":400,\\"belongsTo\\":\\"node-loop\\",\\"loopBody\\":{\\"canvas\\":{\\"scale\\":1,\\"offsetX\\":0,\\"offsetY\\":0},\\"nodes\\":[{\\"id\\":\\"node-api-auto-1\\",\\"type\\":\\"apiAuto\\",\\"name\\":\\"HTTPS/HTTP接口调用\\",\\"x\\":200,\\"y\\":150,\\"inputs\\":[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}],\\"outputs\\":[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}],\\"inputParams\\":[],\\"outputParams\\":[],\\"config\\":{\\"url\\":\\"https://api.openai.com/v1/chat/completions\\",\\"method\\":\\"POST\\",\\"headers\\":[{\\"key\\":\\"Content-Type\\",\\"value\\":\\"application/json\\"},{\\"key\\":\\"Authorization\\",\\"value\\":\\"Bearer YOUR_API_KEY\\"}],\\"body\\":\\"{\\\\\\"model\\\\\\":\\\\\\"gpt-4\\\\\\",\\\\\\"messages\\\\\\":[{\\\\\\"role\\\\\\":\\\\\\"user\\\\\\",\\\\\\"content\\\\\\":\\\\\\"${循环.current_item}\\\\\\"}]}\\",\\"timeout\\":30000}}],\\"connections\\":[{\\"id\\":\\"conn-left-to-api\\",\\"sourceId\\":\\"port-left\\",\\"sourcePort\\":\\"out\\",\\"targetId\\":\\"node-api-auto-1\\",\\"targetPort\\":\\"input-1\\"},{\\"id\\":\\"conn-api-to-right\\",\\"sourceId\\":\\"node-api-auto-1\\",\\"sourcePort\\":\\"output-1\\",\\"targetId\\":\\"port-right\\",\\"targetPort\\":\\"in\\"}],\\"leftPort\\":{\\"id\\":\\"port-left\\",\\"name\\":\\"输入\\",\\"type\\":\\"input\\",\\"y\\":200,\\"params\\":[]},\\"rightPort\\":{\\"id\\":\\"port-right\\",\\"name\\":\\"输出\\",\\"type\\":\\"output\\",\\"y\\":200,\\"params\\":[]}}}","parentNodeId":null}],"connections":[{"id":187,"connectionUuid":"51069787-0bcf-46a4-b1f6-7dd578e0a6e1","sourceNodeId":274,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":275,"targetNodeUuid":"node-text-clean","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":188,"connectionUuid":"042ce6e5-fa9a-4945-828b-1b9742126f2b","sourceNodeId":275,"sourceNodeUuid":"node-text-clean","sourcePortId":"output-1","targetNodeId":276,"targetNodeUuid":"node-table-extract","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":189,"connectionUuid":"ff66e78b-58e2-4623-9fb1-8b8ed1f6a08c","sourceNodeId":276,"sourceNodeUuid":"node-table-extract","sourcePortId":"output-1","targetNodeId":277,"targetNodeUuid":"node-loop","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":190,"connectionUuid":"9ebf6549-37ae-4fc4-98bf-1028a697e2b1","sourceNodeId":277,"sourceNodeUuid":"node-loop","sourcePortId":"output-1","targetNodeId":278,"targetNodeUuid":"node-judge-model","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":191,"connectionUuid":"d23773f4-963a-4d50-bb08-8b656bf8abee","sourceNodeId":278,"sourceNodeUuid":"node-judge-model","sourcePortId":"output-1","targetNodeId":279,"targetNodeUuid":"node-table-generate","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null},{"id":192,"connectionUuid":"d8265502-7d9d-48ac-82b2-3b86506859c6","sourceNodeId":279,"sourceNodeUuid":"node-table-generate","sourcePortId":"output-1","targetNodeId":280,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null}],"associations":[{"id":32,"loopNodeId":277,"bodyNodeId":281,"loopNodeUuid":"node-loop","bodyNodeUuid":"node-loop-body","associationType":"loop-body"}]},"success":true,"updatedNodes":8,"message":"工作流数据保存成功","workflowId":11}}', '根据工作流11的结构分析，数据流向为：开始→文本清洗→表格提取→循环→裁判模型→表格生成→结束。我将为每个节点配置合理的参数，确保数据流正确传递。', 2, 0, NULL, '2026-03-26 06:12:17', '2026-03-26 06:12:17'),
 (35, '56301bcd-898d-4e93-bfb4-c8199d9168f8', 11, 'ACTIVE', NULL, NULL, NULL, 0, 0, NULL, '2026-03-26 07:24:28', '2026-03-26 07:24:28'),
@@ -107,7 +106,7 @@ INSERT INTO `agent_session` (`id`, `conversation_id`, `workflow_id`, `status`, `
 (362, 'f05f3643-08fd-45e6-89a5-a09b9284de2d', 30, 'ERROR', NULL, NULL, 'ERROR: 超过最大解析错误次数限制', 3, 4, 1775618856374, '2026-04-08 03:27:36', '2026-04-08 03:27:36'),
 (363, 'c58a0e2f-a6d0-434e-8907-c3a7a5303dad', 30, 'ERROR', NULL, NULL, 'ERROR: 超过最大解析错误次数限制', 3, 4, 1775619043014, '2026-04-08 03:30:43', '2026-04-08 03:30:43');
 
-INSERT INTO `agent_session` (`id`, `conversation_id`, `workflow_id`, `status`, `query_results`, `action_results`, `last_reasoning`, `round_count`, `parse_error_count`, `start_time`, `created_at`, `updated_at`) VALUES
+INSERT INTO "agent_session" ("id", "conversation_id", "workflow_id", "status", "query_results", "action_results", "last_reasoning", "round_count", "parse_error_count", "start_time", "created_at", "updated_at") VALUES
 (364, '27a71f7e-ca4b-4f73-a0d1-88a089b4016f', 30, 'ERROR', NULL, NULL, 'ERROR: 超过最大解析错误次数限制', 3, 4, 1775619242821, '2026-04-08 03:34:03', '2026-04-08 03:34:03'),
 (365, '0fa12d0f-3cde-4802-b211-995e405fe18c', 30, 'ERROR', NULL, NULL, 'ERROR: 超过最大解析错误次数限制', 3, 4, 1775619752705, '2026-04-08 03:42:33', '2026-04-08 03:42:33'),
 (366, '070263a5-83b5-477a-9676-d5b0d6d4d8bc', 30, 'ACTIVE', NULL, NULL, NULL, 2, 2, 1775620013754, '2026-04-08 03:46:54', '2026-04-08 03:46:54'),
@@ -158,11 +157,11 @@ INSERT INTO `agent_session` (`id`, `conversation_id`, `workflow_id`, `status`, `
 (411, '67764c67-c128-43f4-99c3-a10115e0380f', 30, 'COMPLETED', '{"q1":{"path":"/api/workflow/30","method":"GET","data":{"id":30,"name":"求两数之和（阻塞15s）","description":"","published":true,"hasRun":true,"version":1,"status":"PUBLISHED","triggerType":null,"triggerConfig":null,"publishedAt":null,"publishedBy":null,"createdBy":null,"createdAt":"2026-04-06T18:11:00","updatedBy":null,"updatedAt":"2026-04-06T18:11:00","nodes":[{"id":1082,"nodeUuid":"node-start","type":"start","name":"开始","positionX":100,"positionY":100,"inputPorts":"[]","outputPorts":"[{\\"id\\":\\"output-1\\",\\"name\\":\\"输出\\"}]","inputParams":"[]","outputParams":"[{\\"name\\":\\"a\\",\\"type\\":\\"Integer\\",\\"required\\":true,\\"defaultValue\\":35},{\\"name\\":\\"b\\",\\"type\\":\\"Integer\\",\\"required\\":true,\\"defaultValue\\":3}]","config":"{}","parentNodeId":null,"parentNodeUuid":null,"skillId":null,"skillSnapshot":null,"executionLocation":null,"errorStrategy":null,"retryCount":null,"retryInterval":null,"errorBranchId":null,"conditionType":null,"conditions":null,"loopType":null,"loopConfig":null,"batchConfig":null,"asyncConfig":null,"collectConfig":null,"compatibilityStatus":null,"nodeCategory":"BASIC"},{"id":1083,"nodeUuid":"node-end","type":"end","name":"结束","positionX":1060,"positionY":100,"inputPorts":"[{\\"id\\":\\"input-1\\",\\"name\\":\\"输入\\"}]","outputPorts":"[]","inputParams":"[]","outputParams":"[]","config":"{\\"inputParams\\":[{\\"name\\":\\"sum_resulet\\",\\"type\\":\\"String\\",\\"value\\":\\"${加法计算器---阻塞30s.sum}\\"}],\\"endInputParam_0\\":\\"${加法计算器---阻塞30s.sum}\\"}","parentNodeId":null,"parentNodeUuid":null,"skillId":null,"skillSnapshot":null,"executionLocation":null,"errorStrategy":null,"retryCount":null,"retryInterval":null,"errorBranchId":null,"conditionType":null,"conditions":null,"loopType":null,"loopConfig":null,"batchConfig":null,"asyncConfig":null,"collectConfig":null,"compatibilityStatus":null,"nodeCategory":"BASIC"},{"id":1084,"nodeUuid":"skill-1775698700273","type":"skill","name":"加法计算器---阻塞15s","positionX":421,"positionY":100,"inputPorts":"[{\\"id\\":\\"in-1775698700273\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"out-1775698700273\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"a\\",\\"type\\":\\"Integer\\",\\"required\\":true,\\"description\\":\\"加数\\",\\"defaultValue\\":\\"\\",\\"valueSourceType\\":\\"literal\\",\\"value\\":\\"${开始.a}\\"},{\\"name\\":\\"b\\",\\"type\\":\\"Integer\\",\\"required\\":true,\\"description\\":\\"被加数\\",\\"defaultValue\\":\\"\\",\\"valueSourceType\\":\\"literal\\",\\"value\\":\\"${开始.b}\\"}]","outputParams":"[{\\"name\\":\\"sum\\",\\"type\\":\\"Integer\\",\\"description\\":\\"两数之和\\"}]","config":"{\\"skill-input-0\\":\\"${开始.a}\\",\\"skill-input-1\\":\\"${开始.b}\\"}","parentNodeId":null,"parentNodeUuid":null,"skillId":"3f6841b922839d67b943ec2878ade433","skillSnapshot":"{\\"id\\": \\"3f6841b922839d67b943ec2878ade433\\", \\"name\\": \\"加法计算器---阻塞15s\\", \\"description\\": \\"这是一个两数加法的计算器,会在执行之前先阻塞15秒.\\", \\"inputParameters\\": [{\\"id\\": \\"a7da61032dda772a1054b235f9e56360\\", \\"required\\": true, \\"paramName\\": \\"a\\", \\"paramType\\": \\"Integer\\", \\"paramOrder\\": 1, \\"description\\": \\"加数\\", \\"defaultValue\\": \\"\\"}, {\\"id\\": \\"3f03c202b536ea5627b1539f16de93a6\\", \\"required\\": true, \\"paramName\\": \\"b\\", \\"paramType\\": \\"Integer\\", \\"paramOrder\\": 2, \\"description\\": \\"被加数\\", \\"defaultValue\\": \\"\\"}], \\"outputParameters\\": [{\\"id\\": \\"b8bced836a4a16a17c406bfb5c2b0d0a\\", \\"required\\": true, \\"paramName\\": \\"sum\\", \\"paramType\\": \\"Integer\\", \\"paramOrder\\": 1, \\"description\\": \\"两数之和\\"}]}","executionLocation":null,"errorStrategy":null,"retryCount":null,"retryInterval":null,"errorBranchId":null,"conditionType":null,"conditions":null,"loopType":null,"loopConfig":null,"batchConfig":null,"asyncConfig":null,"collectConfig":null,"compatibilityStatus":null,"nodeCategory":"EXECUTION"},{"id":1085,"nodeUuid":"skill-1775698703238","type":"skill","name":"加法计算器---阻塞15s","positionX":740,"positionY":100,"inputPorts":"[{\\"id\\":\\"in-1775698703238\\",\\"name\\":\\"输入\\"}]","outputPorts":"[{\\"id\\":\\"out-1775698703238\\",\\"name\\":\\"输出\\"}]","inputParams":"[{\\"name\\":\\"a\\",\\"type\\":\\"Integer\\",\\"required\\":true,\\"description\\":\\"加数\\",\\"defaultValue\\":\\"\\",\\"valueSourceType\\":\\"literal\\",\\"value\\":\\"${加法计算器---阻塞15s.sum}\\"},{\\"name\\":\\"b\\",\\"type\\":\\"Integer\\",\\"required\\":true,\\"description\\":\\"被加数\\",\\"defaultValue\\":\\"\\",\\"valueSourceType\\":\\"literal\\",\\"value\\":\\"${开始.a}\\"}]","outputParams":"[{\\"name\\":\\"sum\\",\\"type\\":\\"Integer\\",\\"description\\":\\"两数之和\\"}]","config":"{\\"skill-input-0\\":\\"${加法计算器---阻塞15s.sum}\\",\\"skill-input-1\\":\\"${开始.a}\\"}","parentNodeId":null,"parentNodeUuid":null,"skillId":"3f6841b922839d67b943ec2878ade433","skillSnapshot":"{\\"id\\": \\"3f6841b922839d67b943ec2878ade433\\", \\"name\\": \\"加法计算器---阻塞15s\\", \\"description\\": \\"这是一个两数加法的计算器,会在执行之前先阻塞15秒.\\", \\"inputParameters\\": [{\\"id\\": \\"a7da61032dda772a1054b235f9e56360\\", \\"required\\": true, \\"paramName\\": \\"a\\", \\"paramType\\": \\"Integer\\", \\"paramOrder\\": 1, \\"description\\": \\"加数\\", \\"defaultValue\\": \\"\\"}, {\\"id\\": \\"3f03c202b536ea5627b1539f16de93a6\\", \\"required\\": true, \\"paramName\\": \\"b\\", \\"paramType\\": \\"Integer\\", \\"paramOrder\\": 2, \\"description\\": \\"被加数\\", \\"defaultValue\\": \\"\\"}], \\"outputParameters\\": [{\\"id\\": \\"b8bced836a4a16a17c406bfb5c2b0d0a\\", \\"required\\": true, \\"paramName\\": \\"sum\\", \\"paramType\\": \\"Integer\\", \\"paramOrder\\": 1, \\"description\\": \\"两数之和\\"}]}","executionLocation":null,"errorStrategy":null,"retryCount":null,"retryInterval":null,"errorBranchId":null,"conditionType":null,"conditions":null,"loopType":null,"loopConfig":null,"batchConfig":null,"asyncConfig":null,"collectConfig":null,"compatibilityStatus":null,"nodeCategory":"EXECUTION"}],"connections":[{"id":741,"connectionUuid":"conn-1775698700273","sourceNodeId":1082,"sourceNodeUuid":"node-start","sourcePortId":"output-1","targetNodeId":1084,"targetNodeUuid":"skill-1775698700273","targetPortId":"in-1775698700273","sourceParamIndex":null,"targetParamIndex":null,"label":null,"branchLabel":null,"branchPriority":null},{"id":742,"connectionUuid":"conn-1775698703238","sourceNodeId":1084,"sourceNodeUuid":"skill-1775698700273","sourcePortId":"out-1775698700273","targetNodeId":1085,"targetNodeUuid":"skill-1775698703238","targetPortId":"in-1775698703238","sourceParamIndex":null,"targetParamIndex":null,"label":null,"branchLabel":null,"branchPriority":null},{"id":743,"connectionUuid":"conn-1775698707485","sourceNodeId":1085,"sourceNodeUuid":"skill-1775698703238","sourcePortId":"out-1775698703238","targetNodeId":1083,"targetNodeUuid":"node-end","targetPortId":"input-1","sourceParamIndex":null,"targetParamIndex":null,"label":null,"branchLabel":null,"branchPriority":null}],"associations":[]},"success":true,"message":"查询成功"}}', NULL, NULL, 3, 1, 1775699018232, '2026-04-09 01:43:38', '2026-04-09 01:43:38');
 
 -- Data for table: async_task (1 rows)
-INSERT INTO `async_task` (`id`, `task_id`, `task_content`, `status`, `progress`, `result`, `error_message`, `workflow_id`, `session_id`, `start_time`, `end_time`, `created_at`, `updated_at`) VALUES
-(1, '89312d117f014110', '帮我把当前工作流的所有节点参数都配置好', 'FAILED', 0, NULL, 'API调用失败: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just `claude`\\nNo conversation found with session ID: 803e399a-d0e0-4f89-aab9-801478eb58af\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: null\\n\\n当前轮次: 1\\n","sessionId":"803e399a-d0e0-4f89-aab9-801478eb58af","duration":2182}"', 10, '803e399a-d0e0-4f89-aab9-801478eb58af', '2026-03-26 05:55:52', '2026-03-26 05:55:55', '2026-03-26 05:55:52', '2026-03-26 05:55:55');
+INSERT INTO "async_task" ("id", "task_id", "task_content", "status", "progress", "result", "error_message", "workflow_id", "session_id", "start_time", "end_time", "created_at", "updated_at") VALUES
+(1, '89312d117f014110', '帮我把当前工作流的所有节点参数都配置好', 'FAILED', 0, NULL, 'API调用失败: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just "claude"\\nNo conversation found with session ID: 803e399a-d0e0-4f89-aab9-801478eb58af\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: null\\n\\n当前轮次: 1\\n","sessionId":"803e399a-d0e0-4f89-aab9-801478eb58af","duration":2182}"', 10, '803e399a-d0e0-4f89-aab9-801478eb58af', '2026-03-26 05:55:52', '2026-03-26 05:55:55', '2026-03-26 05:55:52', '2026-03-26 05:55:55');
 
 -- Data for table: chat_conversation (155 rows)
-INSERT INTO `chat_conversation` (`id`, `conversation_uuid`, `created_at`, `last_message_at`, `message_count`, `metadata`, `status`, `title`, `updated_at`, `user_id`) VALUES
+INSERT INTO "chat_conversation" ("id", "conversation_uuid", "created_at", "last_message_at", "message_count", "metadata", "status", "title", "updated_at", "user_id") VALUES
 (1, 'cca0125b-6b9b-4ca0-997b-8fc7ddd36483', '2026-03-22 01:45:34', '2026-03-22 01:45:34', 2, NULL, 'ACTIVE', 'test', '2026-03-22 01:45:34', NULL),
 (2, '88bbb743-c44d-41c4-9577-f7029d41b579', '2026-03-22 14:07:25', '2026-03-22 14:07:26', 2, NULL, 'ACTIVE', '在吗', '2026-03-22 14:07:25', NULL),
 (3, 'c5189a1e-f33e-4efc-a850-63b9d153d7c0', '2026-03-22 23:44:19', '2026-03-22 23:44:20', 2, NULL, 'ACTIVE', '你是什么模型', '2026-03-22 23:44:19', NULL),
@@ -264,7 +263,7 @@ INSERT INTO `chat_conversation` (`id`, `conversation_uuid`, `created_at`, `last_
 (99, 'cf697f0b-1f82-4283-88e5-6cd70365b0d3', '2026-04-07 11:49:59', NULL, 0, NULL, 'ACTIVE', '帮我把开始节点中参数a的默认值设置为15', '2026-04-07 11:49:59', NULL),
 (100, '8ddbe160-daf9-41af-a8d7-22fa93eec21b', '2026-04-07 11:58:41', NULL, 0, NULL, 'ACTIVE', '帮我把开始节点中参数a的默认值设置为15', '2026-04-07 11:58:41', NULL);
 
-INSERT INTO `chat_conversation` (`id`, `conversation_uuid`, `created_at`, `last_message_at`, `message_count`, `metadata`, `status`, `title`, `updated_at`, `user_id`) VALUES
+INSERT INTO "chat_conversation" ("id", "conversation_uuid", "created_at", "last_message_at", "message_count", "metadata", "status", "title", "updated_at", "user_id") VALUES
 (101, '80308cc5-dfbb-4b4a-bc53-4ab4fc7d70fa', '2026-04-08 02:55:47', '2026-04-08 02:55:48', 2, NULL, 'ACTIVE', '当前工作流有几个节点？', '2026-04-08 02:55:47', NULL),
 (102, 'fa4a0bf2-559a-4c72-9e49-54f6aa283524', '2026-04-08 02:57:29', '2026-04-08 02:57:30', 2, NULL, 'ACTIVE', '当前工作流有几个节点？', '2026-04-08 02:57:29', NULL),
 (103, '07ff6691-5aae-437f-8601-56973431d2ea', '2026-04-08 03:00:26', '2026-04-08 03:00:27', 2, NULL, 'ACTIVE', '当前工作流有几个节点？', '2026-04-08 03:00:26', NULL),
@@ -324,7 +323,7 @@ INSERT INTO `chat_conversation` (`id`, `conversation_uuid`, `created_at`, `last_
 -- Data for table: chat_feedback (empty)
 
 -- Data for table: chat_message (290 rows)
-INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `latency_ms`, `message_uuid`, `metadata`, `model`, `role`, `tokens`, `conversation_id`) VALUES
+INSERT INTO "chat_message" ("id", "content", "content_type", "created_at", "latency_ms", "message_uuid", "metadata", "model", "role", "tokens", "conversation_id") VALUES
 (1, 'test', 'TEXT', '2026-03-22 01:45:34', NULL, '062baa87-d2a1-4c6a-868e-84c727713f69', NULL, NULL, 'USER', NULL, 1),
 (2, '这个问题很有趣！从技术角度来看...', 'MARKDOWN', '2026-03-22 01:45:34', 0, '862ffcd7-b2e2-4a1a-9cc3-362350dae530', NULL, NULL, 'ASSISTANT', NULL, 1),
 (3, '在吗', 'TEXT', '2026-03-22 14:07:25', NULL, '708ee210-3955-48c9-bb80-30fe117672b1', NULL, NULL, 'USER', NULL, 2),
@@ -446,7 +445,7 @@ Spring Boot 是 Spring 的快速开发框架，特点：
 
 ## 常用注解
 
-```java
+"`"java
 @Component    // 通用组件
 @Service      // 业务层
 @Repository   // 数据访问层
@@ -454,7 +453,7 @@ Spring Boot 是 Spring 的快速开发框架，特点：
 @Autowired    // 自动注入
 @Configuration // 配置类
 @Bean         // Bean 定义
-```
+"`"
 
 Spring 已成为 Java 企业级开发的事实标准，是构建后端服务的首选框架之一。
 ', 'MARKDOWN', '2026-03-23 00:33:49', 12266, '9cc35137-795d-49c9-9fa1-4c691e166d17', NULL, NULL, 'ASSISTANT', NULL, 11),
@@ -480,7 +479,7 @@ Redis（Remote Dictionary Server）是一个开源的**内存数据结构存储�
 
 ## 常用数据类型
 
-```bash
+"`"bash
 # String - 字符串
 SET user:1 "John"
 GET user:1
@@ -500,12 +499,12 @@ SMEMBERS tags
 # Sorted Set - 有序集合
 ZADD leaderboard 100 "player1"
 ZREVRANGE leaderboard 0 9
-```
+"`"
 
 ## 典型应用场景
 
 1. **缓存** - 热点数据缓存，减轻数据库压力
-2. **分布式锁** - 利用 `SETNX` 实现分布式锁
+2. **分布式锁** - 利用 "SETNX" 实现分布式锁
 3. **排行榜** - 使用 Sorted Set 实现
 4. **消息队列** - 使用 List 或 Stream
 5. **会话存储** - 分布式 Session 管理
@@ -513,7 +512,7 @@ ZREVRANGE leaderboard 0 9
 
 ## 基本命令示例
 
-```bash
+"`"bash
 # 连接 Redis
 redis-cli -h 127.0.0.1 -p 6379
 
@@ -528,7 +527,7 @@ DEL key
 
 # 查看服务器信息
 INFO
-```
+"`"
 
 ## 为什么选择 Redis？
 
@@ -555,7 +554,7 @@ Spring 是一个开源的 Java 企业级开发框架，由 Rod Johnson 于 2002 
 - 通过代理模式实现声明式服务
 
 **3. 模块化架构**
-```
+"`"
 spring-core      - 核心容器
 spring-context   - 应用上下文
 spring-aop       - AOP 支持
@@ -563,7 +562,7 @@ spring-jdbc      - JDBC 封装
 spring-web       - Web 支持
 spring-webmvc    - MVC 框架
 spring-security  - 安全框架
-```
+"`"
 
 ## Spring Boot
 
@@ -592,7 +591,7 @@ spring-security  - 安全框架
 
 ## 基本示例
 
-```java
+"`"java
 @Service
 public class UserService {
     @Autowired
@@ -614,12 +613,12 @@ public class UserController {
         return userService.findById(id);
     }
 }
-```
+"`"
 
 Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate 等持久层框架配合广泛使用。
 ', 'MARKDOWN', '2026-03-23 01:39:41', 18201, 'cc078195-3160-45b7-bb49-4ec1f293bccd', NULL, NULL, 'ASSISTANT', NULL, 12),
 (29, '创建一个hell.txt文件', 'TEXT', '2026-03-23 01:49:04', NULL, 'ed1407be-8ef7-4926-851b-dabf7cd5951a', NULL, NULL, 'USER', NULL, 12),
-(30, '已创建空的 `hell.txt` 文件。
+(30, '已创建空的 "hell.txt" 文件。
 ', 'MARKDOWN', '2026-03-23 01:49:11', 6374, '60603072-3516-4161-9174-6e0566207abe', NULL, NULL, 'ASSISTANT', NULL, 12),
 (31, '创建一个helloword。txt文本，写入hello world', 'TEXT', '2026-03-23 02:19:20', NULL, 'b6431ccd-60b2-402d-ae3f-e6324d2b7b3e', NULL, NULL, 'USER', NULL, 12),
 (32, '已创建 helloword.txt 文件，内容为 "hello world"。
@@ -662,7 +661,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 ', 'MARKDOWN', '2026-03-25 10:26:36', 221, '59b355b0-5dd5-40fb-903f-afaca2856763', NULL, NULL, 'ASSISTANT', NULL, 16),
 (41, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 10:29:02', NULL, '4eb5ae72-3ea7-4754-91d9-c9deda998334', NULL, NULL, 'USER', NULL, 17),
 (42, '
-❌ API调用失败: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just `claude`\\nNo conversation found with session ID: 5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: 1\\n\\n当前轮次: 1\\n","sessionId":"5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09"}"
+❌ API调用失败: 500 Internal Server Error: "{"success":false,"error":"Tip: You can launch Claude Code with just "claude"\\nNo conversation found with session ID: 5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09\\n","code":1,"taskContent":"用户请求: 帮我把当前工作流的所有节点参数都配置好\\n\\nworkflowId: 1\\n\\n当前轮次: 1\\n","sessionId":"5edd6b0c-a826-4be2-9a88-bbcc8dcfdc09"}"
 
 ', 'MARKDOWN', '2026-03-25 10:29:04', 2110, '96de8fc2-6af5-401b-b3c0-cf1f5dbac761', NULL, NULL, 'ASSISTANT', NULL, 17),
 (43, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 10:35:08', NULL, 'f6968d2a-57a9-43a6-8811-ed41c5efdefb', NULL, NULL, 'USER', NULL, 18),
@@ -670,7 +669,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 根据 Skill 定义的工作流助手模式，我需要按照多轮交互的格式来处理这个请求。这是第1轮，我需要先查询必要信息。
 
-```json
+"`"json
 {
   "status": "query",
   "reasoning": "我需要先了解工作流的结构（包含哪些节点）和节点类型定义（每个类型需要什么配置参数），才能为所有节点生成合适的配置",
@@ -690,11 +689,11 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   ],
   "summary": "正在获取工作流信息和节点类型定义..."
 }
-```
+"`"
 
 ---
 
-**说明**：根据 Skill 的多轮交互机制，后端需要执行以上两个 GET 请求，将查询结果作为 `queryResults` 返回给我，我将在第2轮根据工作流节点和节点类型定义为每个节点生成合适的配置参数。', 'MARKDOWN', '2026-03-25 10:37:06', 118111, '7277964a-c61c-40b4-9362-b8a6f18ef7ff', NULL, NULL, 'ASSISTANT', NULL, 18),
+**说明**：根据 Skill 的多轮交互机制，后端需要执行以上两个 GET 请求，将查询结果作为 "queryResults" 返回给我，我将在第2轮根据工作流节点和节点类型定义为每个节点生成合适的配置参数。', 'MARKDOWN', '2026-03-25 10:37:06', 118111, '7277964a-c61c-40b4-9362-b8a6f18ef7ff', NULL, NULL, 'ASSISTANT', NULL, 18),
 (45, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 10:47:26', NULL, '710bc729-cbe9-4cc2-b9d4-dce2f398db3a', NULL, NULL, 'USER', NULL, 19),
 (46, '💭 null
 
@@ -739,7 +738,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 **第1轮**：我需要先获取工作流详情和节点类型定义。
 
-```json
+"`"json
 {
   "status": "query",
   "reasoning": "我需要先了解工作流ID为1的结构和所有节点类型定义，才能为每个节点生成合适的配置参数",
@@ -759,15 +758,15 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   ],
   "summary": "正在获取工作流信息和节点类型定义..."
 }
-```
+"`"
 
-请在后端执行上述查询请求后，将 `queryResults` 返回给我，我将根据工作流结构和节点类型为每个节点生成智能配置。', 'MARKDOWN', '2026-03-25 11:35:51', 44079, '66131c92-ff2d-448c-9847-de701e8db674', NULL, NULL, 'ASSISTANT', NULL, 24),
+请在后端执行上述查询请求后，将 "queryResults" 返回给我，我将根据工作流结构和节点类型为每个节点生成智能配置。', 'MARKDOWN', '2026-03-25 11:35:51', 44079, '66131c92-ff2d-448c-9847-de701e8db674', NULL, NULL, 'ASSISTANT', NULL, 24),
 (56, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 11:46:18', NULL, 'af2c46ac-4546-4545-81a6-dd58de6ec80e', NULL, NULL, 'USER', NULL, 25),
 (57, '💭 null
 
 我已了解工作流助手的交互机制。现在开始为你配置工作流（ID: 1）的所有节点参数。
 
-```json
+"`"json
 {
   "status": "query",
   "reasoning": "我需要先了解工作流结构和节点类型定义，才能为每个节点生成合适的配置",
@@ -787,11 +786,11 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   ],
   "summary": "正在获取工作流信息和节点类型定义..."
 }
-```', 'MARKDOWN', '2026-03-25 11:46:42', 24500, '32170d4a-f18c-4c11-a388-e38b02e213bf', NULL, NULL, 'ASSISTANT', NULL, 25),
+"`"', 'MARKDOWN', '2026-03-25 11:46:42', 24500, '32170d4a-f18c-4c11-a388-e38b02e213bf', NULL, NULL, 'ASSISTANT', NULL, 25),
 (58, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 11:52:58', NULL, 'e2a51e40-250a-442f-ad6f-5b3f91930718', NULL, NULL, 'USER', NULL, 26),
 (59, '💭 null
 
-```json
+"`"json
 {
   "status": "query",
   "reasoning": "我需要先了解工作流的结构（包含哪些节点）以及各节点类型的参数定义，才能为每个节点生成合适的配置参数",
@@ -811,7 +810,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   ],
   "summary": "正在获取工作流结构和节点类型定义..."
 }
-```', 'MARKDOWN', '2026-03-25 11:53:43', 45437, '8e25c449-83dd-4f41-9d5a-b0d9ca74c135', NULL, NULL, 'ASSISTANT', NULL, 26),
+"`"', 'MARKDOWN', '2026-03-25 11:53:43', 45437, '8e25c449-83dd-4f41-9d5a-b0d9ca74c135', NULL, NULL, 'ASSISTANT', NULL, 26),
 (60, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 11:57:27', NULL, 'd18484da-c0c1-4189-90d7-94f4e305b715', NULL, NULL, 'USER', NULL, 27),
 (61, '💭 我需要先了解工作流结构和各节点类型的参数定义，才能为每个节点生成合适的配置
 
@@ -833,20 +832,20 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 后端API持续返回"结果序列化失败"错误。这表明后端服务可能存在以下问题之一：
 
-1. **后端服务未启动** - 服务端点 `http://localhost:8080` 可能没有运行
+1. **后端服务未启动** - 服务端点 "http://localhost:8080" 可能没有运行
 2. **数据库没有测试数据** - workflowId=1 的工作流可能不存在
 3. **API返回格式问题** - 响应数据无法正确序列化
 
 **建议的解决方案：**
 
 请确认：
-- 后端服务是否正常运行在 `http://localhost:8080`
+- 后端服务是否正常运行在 "http://localhost:8080"
 - 数据库中是否存在 id=1 的工作流记录
 - 检查后端日志查看具体错误信息
 
 如果后端服务正常后，我可以重新执行配置任务，流程如下：
 
-```
+"`"
 第1轮: GET /api/workflow/1 → 获取工作流节点结构
        GET /api/workflow/node-types → 获取节点类型定义
 
@@ -854,7 +853,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
        POST /api/workflow/1/data/json → 保存配置
 
 第3轮: 确认更新成功
-```
+"`"
 
 请先检查后端服务状态，确认正常后我可以继续执行配置任务。', 'MARKDOWN', '2026-03-25 11:59:11', 103207, '348d60b6-cc82-4cd6-aaf3-2c3747fef638', NULL, NULL, 'ASSISTANT', NULL, 27),
 (62, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 12:04:29', NULL, '90729ad2-eea4-4c41-87da-c36d4b44f46b', NULL, NULL, 'USER', NULL, 28),
@@ -886,11 +885,11 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 | node-loop-body | loopBodyCanvas | ✅ 完整 | 已配置 |
 
 **需要用户输入：**
-`tableExtract`节点的`file`参数（Excel文件）需要您指定，这是必填参数。
+"tableExtract"节点的"file"参数（Excel文件）需要您指定，这是必填参数。
 
-我先更新`judgeModel`的`promptTemplate`使其更完善：
+我先更新"judgeModel"的"promptTemplate"使其更完善：
 
-```json
+"`"json
 {
   "status": "update",
   "reasoning": "大多数节点配置已完整。tableExtract的file参数需要用户上传文件（必填），judgeModel的promptTemplate需要优化以提供更好的评估效果",
@@ -932,7 +931,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   ],
   "summary": "judgeModel节点的promptTemplate已优化。请注意：tableExtract节点需要您上传Excel文件后才能正常执行工作流。"
 }
-```', 'MARKDOWN', '2026-03-25 12:09:42', 90377, '680b7f98-ab32-4bb9-9dba-d839fbd4e96a', NULL, NULL, 'ASSISTANT', NULL, 29),
+"`"', 'MARKDOWN', '2026-03-25 12:09:42', 90377, '680b7f98-ab32-4bb9-9dba-d839fbd4e96a', NULL, NULL, 'ASSISTANT', NULL, 29),
 (65, '继续执行', 'TEXT', '2026-03-25 12:11:28', NULL, '58c40231-1a46-42c0-bce4-b50d0bb1fa06', NULL, NULL, 'USER', NULL, 29),
 (66, '💭 需要确认之前judgeModel的更新是否已生效，同时需要用户提供Excel文件信息来完成tableExtract节点的配置
 
@@ -942,7 +941,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 工作流状态显示judgeModel的promptTemplate尚未更新。我现在执行配置更新：
 
-```json
+"`"json
 {
   "status": "update",
   "reasoning": "重新提交judgeModel节点的promptTemplate优化配置，同时保持其他节点的现有配置",
@@ -1085,13 +1084,13 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   },
   "summary": "已优化裁判模型(judgeModel)的promptTemplate配置。⚠️ 仍需上传Excel文件到tableExtract节点才能执行工作流。"
 }
-```', 'MARKDOWN', '2026-03-25 12:13:09', 100839, 'cf60ef78-5be4-491b-bff7-d72d534561ee', NULL, NULL, 'ASSISTANT', NULL, 29),
+"`"', 'MARKDOWN', '2026-03-25 12:13:09', 100839, 'cf60ef78-5be4-491b-bff7-d72d534561ee', NULL, NULL, 'ASSISTANT', NULL, 29),
 (67, '将表格提取节点的需要输入的File，关联文本清洗节点的输出变量', 'TEXT', '2026-03-25 12:18:03', NULL, 'e63f169c-7901-4217-8979-84f0b919269e', NULL, NULL, 'USER', NULL, 29),
 (68, '💭 将tableExtract节点的file参数关联到textClean节点的输出变量，实现节点间的数据流转
 
-明白了，您希望将`tableExtract`节点的`file`参数关联到`textClean`节点的输出。我来更新配置：
+明白了，您希望将"tableExtract"节点的"file"参数关联到"textClean"节点的输出。我来更新配置：
 
-```json
+"`"json
 {
   "status": "update",
   "reasoning": "将tableExtract节点的file参数关联到textClean节点的输出变量，实现节点间的数据流转",
@@ -1224,7 +1223,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   },
   "summary": "已将tableExtract节点的file参数关联到textClean节点的输出变量 {{node-text-clean.output}}。工作流所有节点参数现已配置完成。"
 }
-```', 'MARKDOWN', '2026-03-25 12:19:24', 81180, 'f4d6c001-3705-4d8a-a8f3-f4e05ae79d4b', NULL, NULL, 'ASSISTANT', NULL, 29),
+"`"', 'MARKDOWN', '2026-03-25 12:19:24', 81180, 'f4d6c001-3705-4d8a-a8f3-f4e05ae79d4b', NULL, NULL, 'ASSISTANT', NULL, 29),
 (69, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 12:25:39', NULL, 'e00963a4-abb0-44b4-8d3d-f7317dbe5f8a', NULL, NULL, 'USER', NULL, 30),
 (70, '
 ❌ API调用失败: I/O error on POST request for "http://localhost:3000/api/task": Connection refused: connect
@@ -1326,11 +1325,11 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 1. **开始节点** - 输出参数：Demo数据字典
 
-2. **文本清洗** - 配置了空格清理、HTML标签移除、多余换行处理，输入引用 `${开始.dict}`
+2. **文本清洗** - 配置了空格清理、HTML标签移除、多余换行处理，输入引用 "${开始.dict}"
 
-3. **表格提取** - Excel列映射：A列→id, B列→content, C列→expected，输入引用 `${文本清洗.output}`
+3. **表格提取** - Excel列映射：A列→id, B列→content, C列→expected，输入引用 "${文本清洗.output}"
 
-4. **循环** - 迭代变量名`item`，最大迭代1000次，输出参数`evaluation_results`收集结果
+4. **循环** - 迭代变量名"item"，最大迭代1000次，输出参数"evaluation_results"收集结果
 
 5. **循环体** - 内部包含两个节点：
    - AI回答节点(textGenerate)：使用Claude模型回答问题
@@ -1487,7 +1486,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 裁判模型的Prompt已成功配置。
 
-```json
+"`"json
 {
   "status": "done",
   "reasoning": "工作流更新成功，裁判模型节点的Prompt已完成配置",
@@ -1502,7 +1501,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   },
   "summary": "✅ 裁判模型Prompt配置完成！\\n\\n已配置的评估维度：\\n- 准确性：输出内容是否准确、无事实错误\\n- 相关性：输出是否与用户请求紧密相关\\n- 完整性：回答是否完整、无遗漏\\n- 流畅性：语言表达是否通顺、逻辑清晰\\n- 安全性：是否包含有害或违规内容\\n\\n评估结果将以JSON格式输出，包含综合评分和各维度评分。"
 }
-```', 'MARKDOWN', '2026-03-25 14:59:42', 154637, '931e15dc-9b7e-42bd-8801-e79341b8ce99', NULL, NULL, 'ASSISTANT', NULL, 41),
+"`"', 'MARKDOWN', '2026-03-25 14:59:42', 154637, '931e15dc-9b7e-42bd-8801-e79341b8ce99', NULL, NULL, 'ASSISTANT', NULL, 41),
 (95, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 15:01:20', NULL, '744f8a17-4084-4769-a1b5-650fd90f6341', NULL, NULL, 'USER', NULL, 42),
 (96, '💭 要配置工作流的所有节点参数，我需要先了解工作流8的结构（包含哪些节点、节点名称、类型等）以及各节点类型的参数定义（defaultConfig），才能生成合适的配置
 
@@ -1514,7 +1513,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 分析完成。工作流8 (demo02) 包含8个节点，大部分节点config为空，需要配置。我将根据节点间的连线关系生成完整的参数配置。
 
-```json
+"`"json
 {
   "status": "execute",
   "reasoning": "已获取工作流结构和节点类型定义。分析发现8个节点中大部分config为空。根据数据流向（开始→文本清洗→表格提取→循环→裁判模型→表格生成→结束），生成各节点的参数配置，建立变量引用关系。",
@@ -1705,7 +1704,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
   ],
   "summary": "配置说明：\\n1. **开始节点** - 定义输出参数dict(字典类型)\\n2. **文本清洗** - 启用所有清洗选项，输入引用${开始.dict}.input\\n3. **表格提取** - 配置Sheet1，输入引用${文本清洗.output}\\n4. **循环** - 遍历${表格提取.output}，输出apiResult\\n5. **循环体** - 配置API调用节点(POST请求)\\n6. **裁判模型** - 使用DeepSeekR1-32B评估${循环.apiResult}\\n7. **表格生成** - 输入${裁判模型.output}\\n8. **结束节点** - 输出${表格生成.output_excel}"
 }
-```', 'MARKDOWN', '2026-03-25 15:03:33', 132485, '5aefe22e-1970-45e4-8744-a051f1fb2a01', NULL, NULL, 'ASSISTANT', NULL, 42),
+"`"', 'MARKDOWN', '2026-03-25 15:03:33', 132485, '5aefe22e-1970-45e4-8744-a051f1fb2a01', NULL, NULL, 'ASSISTANT', NULL, 42),
 (97, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-25 15:18:34', NULL, '5dd0f08b-c54b-4c82-afd8-81f156acf029', NULL, NULL, 'USER', NULL, 43),
 (98, '💭 我需要先了解工作流ID为8的结构和节点类型定义，才能为所有节点生成合适的配置参数
 
@@ -1749,7 +1748,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 ', 'MARKDOWN', '2026-03-26 01:34:42', 163185, '49f8e46e-b69c-43a8-8753-26831b0231a7', NULL, NULL, 'ASSISTANT', NULL, 44);
 
-INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `latency_ms`, `message_uuid`, `metadata`, `model`, `role`, `tokens`, `conversation_id`) VALUES
+INSERT INTO "chat_message" ("id", "content", "content_type", "created_at", "latency_ms", "message_uuid", "metadata", "model", "role", "tokens", "conversation_id") VALUES
 (101, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-26 01:36:14', NULL, '68669837-2082-4b1c-bae7-c6956c2ce845', NULL, NULL, 'USER', NULL, 45),
 (102, '💭 我需要先了解工作流9的结构和所有节点类型定义，才能为每个节点生成合适的配置参数
 
@@ -1767,13 +1766,13 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 
 共配置了8个节点：
 
-1. **开始节点** - 定义输出字典参数 `dict`
-2. **文本清洗** - 配置清洗规则（移除空格、HTML标签、特殊字符等），引用 `${开始.dict}.input`
-3. **表格提取** - 配置Excel提取参数（Sheet1，表头行1，起始行2），引用 `${文本清洗.output}`
-4. **循环** - 配置循环数组 `${表格提取.output}`，输出参数 `apiResult`
-5. **裁判模型** - 配置DeepSeekR1-32B模型和评估prompt，评估 `${循环.apiResult}`
+1. **开始节点** - 定义输出字典参数 "dict"
+2. **文本清洗** - 配置清洗规则（移除空格、HTML标签、特殊字符等），引用 "${开始.dict}.input"
+3. **表格提取** - 配置Excel提取参数（Sheet1，表头行1，起始行2），引用 "${文本清洗.output}"
+4. **循环** - 配置循环数组 "${表格提取.output}"，输出参数 "apiResult"
+5. **裁判模型** - 配置DeepSeekR1-32B模型和评估prompt，评估 "${循环.apiResult}"
 6. **表格生成** - 配置输入输出映射，生成Excel文件
-7. **结束节点** - 配置最终输出 `${表格生成.output_excel}`
+7. **结束节点** - 配置最终输出 "${表格生成.output_excel}"
 8. **循环体** - 配置DeepSeek API调用（POST请求，JSON body）
 
 数据流：开始 → 文本清洗 → 表格提取 → 循环(API调用) → 裁判模型 → 表格生成 → 结束', 'MARKDOWN', '2026-03-26 01:38:58', 163015, '225b6398-c230-41ce-b975-6781323fff60', NULL, NULL, 'ASSISTANT', NULL, 45),
@@ -1874,37 +1873,37 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 ✅ 工作流配置完成！共更新了8个节点的参数：
 
 **1. 开始节点** - 配置了2个输出参数：
-   - `input_text`: 输入文本内容
-   - `input_file`: 输入Excel文件
+   - "input_text": 输入文本内容
+   - "input_file": 输入Excel文件
 
 **2. 文本清洗节点** - 配置清洗选项：
-   - 输入引用：`${开始.input_text}`
+   - 输入引用："${开始.input_text}"
    - 移除多余空格、HTML标签、规范化换行符
 
 **3. 表格提取节点** - 配置Excel读取：
    - Sheet名称：Sheet1
    - 表头行：第1行，数据从第2行开始
    - 提取列：test_case, input, expected_output
-   - 输入文件引用：`${开始.input_file}`
+   - 输入文件引用："${开始.input_file}"
 
 **4. 循环节点** - 配置循环参数：
-   - 循环数组：`${表格提取.output}`
+   - 循环数组："${表格提取.output}"
    - 输出参数：api_response, content
 
 **5. 裁判模型节点** - 配置AI评估：
    - 模型：DeepSeekR1-32B
    - 评估标准：准确性、完整性、相关性、专业性
-   - 待评估内容：`${循环.content}`
+   - 待评估内容："${循环.content}"
 
 **6. 表格生成节点** - 配置结果输出：
-   - 输入引用：`${裁判模型.output}`
+   - 输入引用："${裁判模型.output}"
 
 **7. 结束节点** - 配置最终输出：
-   - 输出Excel文件：`${表格生成.output_excel}`
+   - 输出Excel文件："${表格生成.output_excel}"
 
 **8. 循环体画布** - 配置内部API调用：
    - URL: OpenAI Chat Completions API
-   - 请求体动态引用：`${循环.current_item.input}`', 'MARKDOWN', '2026-03-26 08:59:45', 281428, '5d1eaedb-3369-4a10-a9d9-627635356105', NULL, NULL, 'ASSISTANT', NULL, 63),
+   - 请求体动态引用："${循环.current_item.input}"', 'MARKDOWN', '2026-03-26 08:59:45', 281428, '5d1eaedb-3369-4a10-a9d9-627635356105', NULL, NULL, 'ASSISTANT', NULL, 63),
 (134, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-26 09:43:09', NULL, '9b615375-6531-4ed6-a00d-f2d99a8cd0e3', NULL, NULL, 'USER', NULL, 64),
 (135, '💭 为了配置工作流14的所有节点参数，我需要先了解工作流的结构（包含哪些节点、连线）以及各节点类型的参数定义，才能生成合适的配置
 
@@ -1987,7 +1986,7 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 - 执行工作流
 - 查看执行结果
 
-请告诉我你需要什么帮助？```json
+请告诉我你需要什么帮助？"`"json
 {
   "status": "query",
   "reasoning": "用户发送了问候语'你好'，这是一个简单的问候。我已经查看了自定义 Skill 配置（workflow-assistant 工作流智能助手），需要询问用户具体需要什么帮助。",
@@ -2003,7 +2002,7 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
     }
   ]
 }
-``````json
+"````"json
 {
   "status": "query",
   "reasoning": "用户发送了问候语'你好'，这是一个简单的问候。我已经查看了自定义 Skill 配置（workflow-assistant 工作流智能助手），需要询问用户具体需要什么帮助。",
@@ -2019,7 +2018,7 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
     }
   ]
 }
-``````json
+"````"json
 {
   "status": "query",
   "reasoning": "用户发送问候语，需要询问用户具体需求",
@@ -2035,7 +2034,7 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
     }
   ]
 }
-``````json
+"````"json
 {
   "status": "query",
   "reasoning": "用户发送问候语，需要询问用户具体需求",
@@ -2051,7 +2050,7 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
     }
   ]
 }
-```{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}让我查看项目代码，了解系统期望的响应格式。使用工具: Read', 'MARKDOWN', '2026-03-27 06:13:11', 158151, 'ead7a828-1f8f-4013-a5f6-499adfcf9128', NULL, NULL, 'ASSISTANT', NULL, 82),
+"`"{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}{"status":"query","reasoning":"用户发送问候语，需要询问用户具体需求","queries":[{"question":"您好！我是工作流智能助手。请告诉我您需要进行什么操作？","options":["查看工作流结构","生成节点配置","执行工作流","查看执行结果"]}]}让我查看项目代码，了解系统期望的响应格式。使用工具: Read', 'MARKDOWN', '2026-03-27 06:13:11', 158151, 'ead7a828-1f8f-4013-a5f6-499adfcf9128', NULL, NULL, 'ASSISTANT', NULL, 82),
 (161, '你好', 'TEXT', '2026-03-27 06:14:30', NULL, 'f851f970-8bde-45de-990a-5881177f948b', NULL, NULL, 'USER', NULL, 83),
 (162, '你好！有什么我可以帮助你的吗？
 
@@ -2059,7 +2058,7 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 
 我注意到你提到了一个工作流 ID (14) 和一个自定义 Skill 路径。如果你需要我执行特定的任务或使用某个 Skill，请告诉我具体需求。让我先查看自定义 Skill 的清单文件，了解响应格式要求。使用工具: Read让我查看该 Skill 目录下的其他文件，了解完整的响应格式要求。使用工具: Bash使用工具: Read明白了！根据 Skill 的要求，我需要返回标准的 JSON 格式响应。以下是修正后的响应：
 
-```json
+"`"json
 {
   "status": "complete",
   "reasoning": "用户发送了问候语'你好'，这是一个简单的问候，没有具体的工作流任务请求。我已准备好协助用户进行工作流相关操作。",
@@ -2069,9 +2068,9 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   },
   "summary": "你好！我是工作流智能助手，可以帮助您：\\n- 查看和管理工作流\\n- 配置节点参数\\n- 执行工作流\\n- 查看执行结果\\n\\n请告诉我您需要什么帮助？例如：\\n- 「查看工作流 14 的详情」\\n- 「帮我配置工作流节点」\\n- 「执行工作流」"
 }
-```明白了！根据 Skill 的要求，我需要返回标准的 JSON 格式响应。以下是修正后的响应：
+"`"明白了！根据 Skill 的要求，我需要返回标准的 JSON 格式响应。以下是修正后的响应：
 
-```json
+"`"json
 {
   "status": "complete",
   "reasoning": "用户发送了问候语'你好'，这是一个简单的问候，没有具体的工作流任务请求。我已准备好协助用户进行工作流相关操作。",
@@ -2081,12 +2080,12 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   },
   "summary": "你好！我是工作流智能助手，可以帮助您：\\n- 查看和管理工作流\\n- 配置节点参数\\n- 执行工作流\\n- 查看执行结果\\n\\n请告诉我您需要什么帮助？例如：\\n- 「查看工作流 14 的详情」\\n- 「帮我配置工作流节点」\\n- 「执行工作流」"
 }
-```', 'MARKDOWN', '2026-03-27 06:15:35', 65057, '58deb5dd-fa2e-4a8f-a551-d9d92c06089f', NULL, NULL, 'ASSISTANT', NULL, 83),
+"`"', 'MARKDOWN', '2026-03-27 06:15:35', 65057, '58deb5dd-fa2e-4a8f-a551-d9d92c06089f', NULL, NULL, 'ASSISTANT', NULL, 83),
 (163, '帮我配置这个工作流的所有节点参数', 'TEXT', '2026-03-27 06:22:36', NULL, '13dd74f1-7323-42d0-a923-df32205ff054', NULL, NULL, 'USER', NULL, 84),
 (164, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-27 06:26:44', NULL, 'ad011b5b-c8e8-4c40-be26-21e405ece7f8', NULL, NULL, 'USER', NULL, 85),
 (165, 'Let me first read the skill manifest to understand the custom skill.根据工作流助手技能的要求，我需要先获取工作流信息和节点类型定义，才能生成合适的配置。
 
-```json
+"`"json
 {
   "status": "query",
   "reasoning": "我需要先了解工作流14的结构和节点类型定义，才能为每个节点生成合适的配置参数",
@@ -2106,9 +2105,9 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   ],
   "summary": "正在获取工作流14的信息和节点类型定义..."
 }
-```根据工作流信息分析，该工作流（demo7）已有基本配置，但我发现一些可以优化的地方。让我分析并生成完整的配置更新。
+"`"根据工作流信息分析，该工作流（demo7）已有基本配置，但我发现一些可以优化的地方。让我分析并生成完整的配置更新。
 
-```json
+"`"json
 {
   "status": "update",
   "reasoning": "工作流已有基本配置，但存在以下问题需要修复：1) 循环体内的API调用节点使用了占位符API密钥；2) 部分节点的变量引用可以优化；3) 循环节点的输出参数配置需要完善",
@@ -2377,9 +2376,9 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   ],
   "summary": "已完成工作流所有节点参数配置优化，共修改7个节点的配置。请注意替换API密钥后才能正常执行。"
 }
-```我理解了，status 字段必须是 'query'、'action' 或 'complete'。让我修正响应格式。
+"`"我理解了，status 字段必须是 'query'、'action' 或 'complete'。让我修正响应格式。
 
-```json
+"`"json
 {
   "status": "action",
   "reasoning": "工作流已有基本配置，现在执行保存操作来优化所有节点参数。主要优化：1) 文本清洗节点设置inputType为variable；2) 循环节点增加response_data输出参数；3) 裁判模型优化提示词；4) 表格生成增加原始内容输入；5) 循环体内API调用增加system角色消息并延长超时时间",
@@ -2626,9 +2625,9 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   ],
   "summary": "正在保存工作流配置，共优化7个节点的参数。"
 }
-```工作流配置已成功保存。让我返回任务完成状态。
+"`"工作流配置已成功保存。让我返回任务完成状态。
 
-```json
+"`"json
 {
   "status": "complete",
   "reasoning": "工作流14的所有节点参数已成功配置并保存",
@@ -2703,11 +2702,11 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   },
   "finalMessage": "工作流demo7(ID: 14)的所有节点参数已配置完成，共优化9个节点。请记得在执行前配置有效的API密钥。"
 }
-```', 'MARKDOWN', '2026-03-27 06:31:54', 309488, '12444473-6576-41ac-bb39-9dc434080fb2', NULL, NULL, 'ASSISTANT', NULL, 85),
+"`"', 'MARKDOWN', '2026-03-27 06:31:54', 309488, '12444473-6576-41ac-bb39-9dc434080fb2', NULL, NULL, 'ASSISTANT', NULL, 85),
 (166, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-27 06:35:40', NULL, 'cf919602-c024-4d3d-be86-347d68210675', NULL, NULL, 'USER', NULL, 86),
 (167, 'I'll invoke the custom skill you've provided to understand how to help configure the workflow nodes.Let me read the skill manifest to understand the available skills.我理解了工作流助手技能。根据指令，我需要先获取工作流详情和节点类型定义，然后才能配置节点参数。
 
-```json
+"`"json
 {
   "status": "query",
   "reasoning": "我需要先了解工作流14的结构和所有节点类型定义，才能为每个节点生成合适的配置参数",
@@ -2727,15 +2726,15 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   ],
   "summary": "正在获取工作流信息和节点类型定义..."
 }
-```根据工作流信息分析，我发现工作流 **demo7** 已有基本配置，但存在以下需要完善的问题：
+"`"根据工作流信息分析，我发现工作流 **demo7** 已有基本配置，但存在以下需要完善的问题：
 
 **发现的问题:**
-1. 循环体内的 HTTP(S)接口调用 节点使用了占位符 `YOUR_API_KEY_HERE`，需要配置真实的 API Key
-2. 循环节点的输出参数引用了 `${HTTPS/HTTP接口调用.choices[0].message.content}`，这符合预期
+1. 循环体内的 HTTP(S)接口调用 节点使用了占位符 "YOUR_API_KEY_HERE"，需要配置真实的 API Key
+2. 循环节点的输出参数引用了 "${HTTPS/HTTP接口调用.choices[0].message.content}"，这符合预期
 
 现在我将执行配置更新操作，为循环体内的API调用节点配置合适的参数：
 
-```json
+"`"json
 {
   "status": "action",
   "reasoning": "工作流大部分节点已配置完整，主要需要优化循环体内的HTTP(S)接口调用节点配置，将API Key占位符替换为可配置的环境变量引用方式，并确保请求体正确引用循环变量",
@@ -2945,9 +2944,9 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   },
   "summary": "已完善所有节点配置，主要优化了循环体内API调用节点的配置：将API Key改为环境变量引用 ${ENV_OPENAI_API_KEY}，优化了system prompt，添加了temperature参数和重试配置"
 }
-```操作序列化失败了，这可能是由于嵌套JSON转义问题。让我重新构建请求，使用正确的格式：
+"`"操作序列化失败了，这可能是由于嵌套JSON转义问题。让我重新构建请求，使用正确的格式：
 
-```json
+"`"json
 {
   "status": "action",
   "reasoning": "由于之前的请求体序列化失败，我将使用更简洁的方式重新提交配置更新。主要需要更新循环体内的API调用节点配置。",
@@ -3136,9 +3135,9 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   },
   "summary": "重新提交工作流配置更新，优化了循环体内API调用节点的API Key配置（使用环境变量）和请求参数"
 }
-```让我重新阅读 skill 的详细说明以确保使用正确的格式。我明白了格式问题。关键是需要使用 `actions` 数组格式。让我重新构建正确格式的请求：
+"`"让我重新阅读 skill 的详细说明以确保使用正确的格式。我明白了格式问题。关键是需要使用 "actions" 数组格式。让我重新构建正确格式的请求：
 
-```json
+"`"json
 {
   "status": "action",
   "reasoning": "已获取工作流14的完整信息，现在可以更新节点配置。主要需要优化循环体内的API调用节点配置",
@@ -3352,9 +3351,9 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   ],
   "summary": "正在更新工作流配置，优化了循环体内API调用的API Key设置（使用环境变量引用）和请求参数"
 }
-```工作流配置更新成功！让我返回完成状态。
+"`"工作流配置更新成功！让我返回完成状态。
 
-```json
+"`"json
 {
   "status": "complete",
   "reasoning": "工作流14（demo7）的所有节点配置已成功更新保存",
@@ -3413,7 +3412,7 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
   },
   "summary": "工作流「demo7」配置完成！共更新了9个节点的配置：\\n\\n1. **开始节点**：输出Demo数据字典\\n2. **文本清洗**：移除多余空格和HTML标签\\n3. **文本清洗2**：移除多余空格和特殊字符\\n4. **表格提取**：从Excel提取A-E列数据\\n5. **循环控制**：遍历提取的数据调用API\\n6. **裁判模型**：使用DeepSeekR1-32B评估AI输出质量\\n7. **表格生成**：生成评估结果Excel\\n8. **结束节点**：输出评估报告\\n9. **循环体**：API调用配置（已将API Key改为环境变量 ${ENV_OPENAI_API_KEY}）"
 }
-```', 'MARKDOWN', '2026-03-27 06:42:05', 385227, '158158e3-9600-4fc5-accd-4c0795882ce2', NULL, NULL, 'ASSISTANT', NULL, 86),
+"`"', 'MARKDOWN', '2026-03-27 06:42:05', 385227, '158158e3-9600-4fc5-accd-4c0795882ce2', NULL, NULL, 'ASSISTANT', NULL, 86),
 (168, '帮我把当前工作流的所有节点参数都配置好', 'TEXT', '2026-03-27 06:45:16', NULL, '7aefdaa4-bac8-4e62-b261-8ec7ae696e1a', NULL, NULL, 'USER', NULL, 87),
 (169, '让我先查看skill清单文件和项目结构。根据skill的指引，我需要先获取工作流详情和节点类型定义，才能为节点生成合适的配置。
 
@@ -3478,13 +3477,13 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 | 节点 | 类型 | 配置状态 | 说明 |
 |------|------|----------|------|
 | 开始 | start | ✅ 已配置 | 输出参数 dict 已定义 |
-| 文本清洗 | textClean | ✅ 已配置 | 输入: `${开始.dict}.input` |
-| 文本清洗2 | textClean | ✅ 已配置 | 输入: `${文本清洗.output}` |
-| 表格提取 | tableExtract | ✅ 已配置 | 输入: `${文本清洗2.output}` |
-| 循环 | loop | ✅ 已配置 | 循环数组: `${表格提取.output}` |
+| 文本清洗 | textClean | ✅ 已配置 | 输入: "${开始.dict}.input" |
+| 文本清洗2 | textClean | ✅ 已配置 | 输入: "${文本清洗.output}" |
+| 表格提取 | tableExtract | ✅ 已配置 | 输入: "${文本清洗2.output}" |
+| 循环 | loop | ✅ 已配置 | 循环数组: "${表格提取.output}" |
 | 裁判模型 | judgeModel | ✅ 已配置 | 模型: DeepSeekR1-32B |
 | 表格生成 | tableGenerate | ✅ 已配置 | 两个输入参数已映射 |
-| 结束 | end | ✅ 已配置 | 输出: `${表格生成.output_excel}` |
+| 结束 | end | ✅ 已配置 | 输出: "${表格生成.output_excel}" |
 | 循环体 | loopBodyCanvas | ✅ 已配置 | HTTP接口调用已配置 |
 
 **结论：工作流14的所有节点参数已完整配置！**
@@ -3594,8 +3593,8 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 您的请求不完整，请告诉我您想对开始节点的参数做什么操作？
 
 📋 **当前开始节点的参数：**
-- `a` (Integer) - 默认值: 2
-- `b` (Integer) - 默认值: 3
+- "a" (Integer) - 默认值: 2
+- "b" (Integer) - 默认值: 3
 
 💡 **您可以这样操作：**
 - 修改参数的默认值
@@ -3625,8 +3624,8 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 - 新值：**15**
 
 📋 **当前开始节点参数：**
-- `a` (Integer) - 默认值: 15
-- `b` (Integer) - 默认值: 3', 'MARKDOWN', '2026-04-07 11:27:55', 73665, 'c3286ae3-c346-41f1-b842-5ee4ff306843', NULL, NULL, 'ASSISTANT', NULL, 97),
+- "a" (Integer) - 默认值: 15
+- "b" (Integer) - 默认值: 3', 'MARKDOWN', '2026-04-07 11:27:55', 73665, 'c3286ae3-c346-41f1-b842-5ee4ff306843', NULL, NULL, 'ASSISTANT', NULL, 97),
 (198, '帮我把开始节点中参数a的默认值设置为15', 'TEXT', '2026-04-07 11:38:52', NULL, 'd81de762-8063-425c-a0d4-5dbeb97987b7', NULL, NULL, 'USER', NULL, 98),
 (199, '我来先查看自定义Skill的清单文件，了解如何处理这个工作流修改请求。根据工作流助手的技能说明，我需要先获取工作流30的详细信息，才能修改开始节点的参数配置。
 
@@ -3634,21 +3633,21 @@ INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `late
 正在获取工作流30的信息...根据查询结果，我已经获取到工作流30的详细信息。分析开始节点的配置：
 
 **开始节点（node-start）的outputParams：**
-```json
+"`"json
 [
   {"name":"a","type":"Integer","required":true,"defaultValue":15},
   {"name":"b","type":"Integer","required":true,"defaultValue":3}
 ]
-```
+"`"
 
-我发现参数a的`defaultValue`**已经是15**，与用户要求设置的值相同，无需修改。
+我发现参数a的"defaultValue"**已经是15**，与用户要求设置的值相同，无需修改。
 
 查询工作流30后发现，开始节点参数a的默认值已经是15，与用户要求设置的值相同，无需进行任何修改操作
 已完成！开始节点参数a的默认值已经是15，无需修改。查询工作流30后发现，开始节点参数a的默认值已经是15，与用户要求设置的值相同，无需进行任何修改操作
 已完成！开始节点参数a的默认值已经是15，无需修改。', 'MARKDOWN', '2026-04-07 11:39:56', 63593, '7a2ebd0b-0eb7-4ed0-ac47-3078a0ddd837', NULL, NULL, 'ASSISTANT', NULL, 98),
 (200, '帮我把开始节点中参数a的默认值设置为1', 'TEXT', '2026-04-07 11:40:01', NULL, 'bab67d42-a60d-43b1-b5b4-70fdeb7cc438', NULL, NULL, 'USER', NULL, 98);
 
-INSERT INTO `chat_message` (`id`, `content`, `content_type`, `created_at`, `latency_ms`, `message_uuid`, `metadata`, `model`, `role`, `tokens`, `conversation_id`) VALUES
+INSERT INTO "chat_message" ("id", "content", "content_type", "created_at", "latency_ms", "message_uuid", "metadata", "model", "role", "tokens", "conversation_id") VALUES
 (201, '我需要先获取工作流30的详细信息，找到开始节点及其参数a的当前配置，才能进行修改
 正在获取工作流30的信息...根据查询结果，我已获取到工作流30的完整信息。开始节点参数a的当前默认值是15，需要修改为1。现在执行修改操作：
 
@@ -4001,8 +4000,8 @@ node_modules\\setprototypeof\\test\\index.js
 86	        type: eventType,
 87	        ...data
 88	    };
-89	    res.write(`event: ${eventType}\\n`);
-90	    res.write(`data: ${JSON.stringify(dataWithType)}\\n\\n`);
+89	    res.write("event: ${eventType}\\n");
+90	    res.write("data: ${JSON.stringify(dataWithType)}\\n\\n");
 91	}
 92	
 93	/**
@@ -4022,9 +4021,9 @@ node_modules\\setprototypeof\\test\\index.js
 107	                    if (item.type === 'text' && item.text) {
 108	                        allContent.push(item.text);
 109	                    } else if (item.type === 'thinking' && item.thinking) {
-110	                        allContent.push(`[思考] ${item.thinking}`);
+110	                        allContent.push("[思考] ${item.thinking}");
 111	                    } else if (item.type === 'tool_use') {
-112	                        allContent.push(`[工具调用] ${item.name}: ${JSON.stringify(item.input || {})}`);
+112	                        allContent.push("[工具调用] ${item.name}: ${JSON.stringify(item.input || {})}");
 113	                    }
 114	                }
 115	                if (allContent.length > 0) {
@@ -4045,9 +4044,9 @@ node_modules\\setprototypeof\\test\\index.js
 130	                    if (item.type === 'text' && item.text) {
 131	                        allContent.push(item.text);
 132	                    } else if (item.type === 'thinking' && item.thinking) {
-133	                        allContent.push(`[思考] ${item.thinking}`);
+133	                        allContent.push("[思考] ${item.thinking}");
 134	                    } else if (item.type === 'tool_use') {
-135	                        allContent.push(`[工具调用] ${item.name}: ${JSON.stringify(item.input || {})}`);
+135	                        allContent.push("[工具调用] ${item.name}: ${JSON.stringify(item.input || {})}");
 136	                    }
 137	                }
 138	                return { content: allContent.join('\\n'), contentType: 'assistant' };
@@ -4063,21 +4062,21 @@ node_modules\\setprototypeof\\test\\index.js
 148	    // user 类型 - 用户消息（通常是工具结果）
 149	    if (parsed.type === 'user') {
 150	        // 调试：打印实际结构
-151	        console.log(`[DEBUG] user type detected`);
-152	        console.log(`[DEBUG] user parsed keys: ${Object.keys(parsed).join(', ')}`);
-153	        console.log(`[DEBUG] user parsed.content exists: ${!!parsed.content}`);
-154	        console.log(`[DEBUG] user parsed.message exists: ${!!parsed.message}`);
+151	        console.log("[DEBUG] user type detected");
+152	        console.log("[DEBUG] user parsed keys: ${Object.keys(parsed).join(', ')}");
+153	        console.log("[DEBUG] user parsed.content exists: ${!!parsed.content}");
+154	        console.log("[DEBUG] user parsed.message exists: ${!!parsed.message}");
 155	
 156	        // 检查是否内容在 message 对象中（与 assistant 类型类似）
 157	        if (parsed.message && typeof parsed.message === 'object') {
 158	            const msg = parsed.message;
-159	            console.log(`[DEBUG] user message keys: ${Object.keys(msg).join(', ')}`);
+159	            console.log("[DEBUG] user message keys: ${Object.keys(msg).join(', ')}");
 160	            if (msg.content) {
 161	                if (Array.isArray(msg.content)) {
 162	                    const allContent = [];
 163	                    for (const item of msg.content) {
 164	                        if (item.type === 'tool_result' && item.content) {
-165	                            allContent.push(`[工具结果] ${item.content}`);
+165	                            allContent.push("[工具结果] ${item.content}");
 166	                        } else if (typeof item === 'string') {
 167	                            allContent.push(item);
 168	                        } else if (item.text) {
@@ -4095,16 +4094,16 @@ node_modules\\setprototypeof\\test\\index.js
 180	
 181	        // 兼容旧格式：直接在 parsed.content 中
 182	        if (parsed.content) {
-183	            console.log(`[DEBUG] user content type: ${typeof parsed.content}, isArray: ${Array.isArray(parsed.content)}`);
+183	            console.log("[DEBUG] user content type: ${typeof parsed.content}, isArray: ${Array.isArray(parsed.content)}");
 184	            if (typeof parsed.content === 'object') {
-185	                console.log(`[DEBUG] user content keys: ${Object.keys(parsed.content).slice(0, 10).join(', ')}`);
+185	                console.log("[DEBUG] user content keys: ${Object.keys(parsed.content).slice(0, 10).join(', ')}");
 186	            }
 187	
 188	            if (Array.isArray(parsed.content)) {
 189	                const allContent = [];
 190	                for (const item of parsed.content) {
 191	                    if (item.type === 'tool_result' && item.content) {
-192	                        allContent.push(`[工具结果] ${item.content}`);
+192	                        allContent.push("[工具结果] ${item.content}");
 193	                    } else if (typeof item === 'string') {
 194	                        allContent.push(item);
 195	                    } else if (typeof item === 'object' && item !== null) {
@@ -4136,14 +4135,14 @@ node_modules\\setprototypeof\\test\\index.js
 221	                    const allContent = [];
 222	                    for (const item of contentObj.content) {
 223	                        if (item.type === 'tool_result' && item.content) {
-224	                            allContent.push(`[工具结果] ${item.content}`);
+224	                            allContent.push("[工具结果] ${item.content}");
 225	                        } else if (typeof item === 'string') {
 226	                            allContent.push(item);
 227	                        }
 228	                    }
 229	                    return { content: allContent.join('\\n'), contentType: 'user' };
 230	                }
-231	                console.log(`[DEBUG] user - falling back to JSON string`);
+231	                console.log("[DEBUG] user - falling back to JSON string");
 232	                return { content: JSON.stringify(contentObj), contentType: 'user' };
 233	            }
 234	        }
@@ -4159,9 +4158,9 @@ node_modules\\setprototypeof\\test\\index.js
 244	            if (item.type === 'text' && item.text) {
 245	                allContent.push(item.text);
 246	            } else if (item.type === 'thinking' && item.thinking) {
-247	                allContent.push(`[思考] ${item.thinking}`);
+247	                allContent.push("[思考] ${item.thinking}");
 248	            } else if (item.type === 'tool_use') {
-249	                allContent.push(`[工具调用] ${item.name}: ${JSON.stringify(item.input || {})}`);
+249	                allContent.push("[工具调用] ${item.name}: ${JSON.stringify(item.input || {})}");
 250	            }
 251	        }
 252	        return {
@@ -4249,13 +4248,13 @@ node_modules\\setprototypeof\\test\\index.js
 334	
 335	    // 验证必填参数
 336	    if (!taskContent) {
-337	        console.log(`[${requestTimestamp}] [REQUEST] 任务执行失败: 缺少 taskContent 参数`);
+337	        console.log("[${requestTimestamp}] [REQUEST] 任务执行失败: 缺少 taskContent 参数");
 338	        return res.status(400).json({ error: 'taskContent参数是必需的' });
 339	    }
 340	
 341	    // 验证 sessionId 格式（如果提供了）
 342	    if (inputSessionId && !isValidSessionId(inputSessionId)) {
-343	        console.log(`[${requestTimestamp}] [REQUEST] 无效的 sessionId 格式: ${inputSessionId}`);
+343	        console.log("[${requestTimestamp}] [REQUEST] 无效的 sessionId 格式: ${inputSessionId}");
 344	        return res.status(400).json({
 345	            error: '无效的sessionId格式，只接受UUID格式',
 346	            code: 'INVALID_SESSION_ID'
@@ -4264,11 +4263,11 @@ node_modules\\setprototypeof\\test\\index.js
 349	
 350	    // 记录请求开始日志
 351	    console.log('─'.repeat(60));
-352	    console.log(`[${requestTimestamp}] [REQUEST] 收到任务执行请求`);
-353	    console.log(`  - 任务内容摘要: ${taskContent.substring(0, 100)}${taskContent.length > 100 ? '...' : ''}`);
-354	    console.log(`  - 传入会话ID: ${inputSessionId || '(无，将创建新会话)'}`);
-355	    console.log(`  - 配置信息: ${config ? '有' : '无'}`);
-356	    console.log(`  - Skill文件: ${skillFile ? skillFile.originalname : '无'}`);
+352	    console.log("[${requestTimestamp}] [REQUEST] 收到任务执行请求");
+353	    console.log("  - 任务内容摘要: ${taskContent.substring(0, 100)}${taskContent.length > 100 ? '...' : ''}");
+354	    console.log("  - 传入会话ID: ${inputSessionId || '(无，将创建新会话)'}");
+355	    console.log("  - 配置信息: ${config ? '有' : '无'}");
+356	    console.log("  - Skill文件: ${skillFile ? skillFile.originalname : '无'}");
 357	
 358	    try {
 359	        // 准备会话ID
@@ -4277,9 +4276,9 @@ node_modules\\setprototypeof\\test\\index.js
 362	
 363	        if (isNewSession) {
 364	            effectiveSessionId = generateUUID();
-365	            console.log(`[${formatTimestamp()}] [SESSION] 创建新会话ID: ${effectiveSessionId}`);
+365	            console.log("[${formatTimestamp()}] [SESSION] 创建新会话ID: ${effectiveSessionId}");
 366	        } else {
-367	            console.log(`[${formatTimestamp()}] [SESSION] 恢复会话ID: ${effectiveSessionId}`);
+367	            console.log("[${formatTimestamp()}] [SESSION] 恢复会话ID: ${effectiveSessionId}");
 368	        }
 369	
 370	        // 设置 SSE
@@ -4293,11 +4292,11 @@ node_modules\\setprototypeof\\test\\index.js
 378	            try {
 379	                const configObj = typeof config === 'string' ? JSON.parse(config) : config;
 380	                Object.keys(configObj).forEach(key => {
-381	                    taskContent += `\\n\\n配置 ${key}: ${JSON.stringify(configObj[key])}`;
+381	                    taskContent += "\\n\\n配置 ${key}: ${JSON.stringify(configObj[key])}";
 382	                });
-383	                console.log(`[${formatTimestamp()}] [CONFIG] 配置信息已解析，共 ${Object.keys(configObj).length} 项`);
+383	                console.log("[${formatTimestamp()}] [CONFIG] 配置信息已解析，共 ${Object.keys(configObj).length} 项");
 384	            } catch (e) {
-385	                console.error(`[${formatTimestamp()}] [ERROR] 配置解析失败: ${e.message}`);
+385	                console.error("[${formatTimestamp()}] [ERROR] 配置解析失败: ${e.message}");
 386	            }
 387	        }
 388	
@@ -4310,11 +4309,11 @@ node_modules\\setprototypeof\\test\\index.js
 395	
 396	                const result = extractor.extract(skillFile.path);
 397	                skillDir = result.targetDir;
-398	                console.log(`[${formatTimestamp()}] [SKILL] Skill文件安全解压至: ${extractDir}`);
-399	                console.log(`[${formatTimestamp()}] [SKILL] 解压文件: ${result.files.join(', ')}`);
+398	                console.log("[${formatTimestamp()}] [SKILL] Skill文件安全解压至: ${extractDir}");
+399	                console.log("[${formatTimestamp()}] [SKILL] 解压文件: ${result.files.join(', ')}");
 400	
 401	            } catch (extractError) {
-402	                console.error(`[${formatTimestamp()}] [SKILL ERROR] 解压失败: ${extractError.message}`);
+402	                console.error("[${formatTimestamp()}] [SKILL ERROR] 解压失败: ${extractError.message}");
 403	                sendEvent(res, 'error', {
 404	                    message: 'Skill文件安全验证失败: ' + extractError.message,
 405	                    code: 'SKILL_SECURITY_ERROR'
@@ -4341,7 +4340,7 @@ node_modules\\setprototypeof\\test\\index.js
 426	                dangerouslySkipPermissions: true  // 注意：生产环境应移除此选项
 427	            });
 428	        } catch (argError) {
-429	            console.error(`[${formatTimestamp()}] [ERROR] 参数构建失败: ${argError.message}`);
+429	            console.error("[${formatTimestamp()}] [ERROR] 参数构建失败: ${argError.message}");
 430	            sendEvent(res, 'error', {
 431	                message: argError.message,
 432	                code: 'ARGUMENT_ERROR'
@@ -4350,7 +4349,7 @@ node_modules\\setprototypeof\\test\\index.js
 435	            return;
 436	        }
 437	
-438	        console.log(`[${formatTimestamp()}] [EXECUTE] 执行命令: ${claudeArgs[0]} ${claudeArgs.slice(1, 5).join(' ')}...`);
+438	        console.log("[${formatTimestamp()}] [EXECUTE] 执行命令: ${claudeArgs[0]} ${claudeArgs.slice(1, 5).join(' ')}...");
 439	
 440	        // 在 Windows 上需要使用 shell 来执行 .cmd 文件
 441	        // 使用 shell: true 是安全的，因为参数已经通过数组传递（不是字符串拼接）
@@ -4364,7 +4363,7 @@ node_modules\\setprototypeof\\test\\index.js
 449	        let closed = false;
 450	        const timeoutId = setTimeout(() => {
 451	            if (!closed) {
-452	                console.log(`[${formatTimestamp()}] [TIMEOUT] 任务执行超时`);
+452	                console.log("[${formatTimestamp()}] [TIMEOUT] 任务执行超时");
 453	                claudeProcess.kill();
 454	            }
 455	        }, 600000); // 10分钟超时
@@ -4372,14 +4371,14 @@ node_modules\\setprototypeof\\test\\index.js
 457	        // 处理 stdout
 458	        claudeProcess.stdout.on('data', (data) => {
 459	            const chunk = data.toString();
-460	            console.log(`[${formatTimestamp()}] [STDOUT] 收到数据长度: ${chunk.length}`);
+460	            console.log("[${formatTimestamp()}] [STDOUT] 收到数据长度: ${chunk.length}");
 461	            const lines = chunk.split('\\n').filter(line => line.trim());
-462	            console.log(`[${formatTimestamp()}] [STDOUT] 解析出 ${lines.length} 行`);
+462	            console.log("[${formatTimestamp()}] [STDOUT] 解析出 ${lines.length} 行");
 463	
 464	            for (const line of lines) {
 465	                try {
 466	                    const parsed = JSON.parse(line);
-467	                    console.log(`[${formatTimestamp()}] [STDOUT] 解析类型: ${parsed.type}`);
+467	                    console.log("[${formatTimestamp()}] [STDOUT] 解析类型: ${parsed.type}");
 468	
 469	                    // 跳过 system 类型的消息
 470	                    if (parsed.type === 'system') {
@@ -4387,7 +4386,7 @@ node_modules\\setprototypeof\\test\\index.js
 472	                    }
 473	
 474	                    const extracted = extractContent(parsed);
-475	                    console.log(`[${formatTimestamp()}] [STDOUT] 提取内容类型: ${extracted?.contentType}, 内容长度: ${extracted?.content?.length || 0}`);
+475	                    console.log("[${formatTimestamp()}] [STDOUT] 提取内容类型: ${extracted?.contentType}, 内容长度: ${extracted?.content?.length || 0}");
 476	                    if (extracted && extracted.content) {
 477	                        sendEvent(res, 'chunk', {
 478	                            content: extracted.content,
@@ -4407,7 +4406,7 @@ node_modules\\setprototypeof\\test\\index.js
 492	        // 处理 stderr
 493	        claudeProcess.stderr.on('data', (data) => {
 494	            const chunk = data.toString();
-495	            console.error(`[${formatTimestamp()}] [STDERR] ${chunk}`);
+495	            console.error("[${formatTimestamp()}] [STDERR] ${chunk}");
 496	        });
 497	
 498	        // 进程结束
@@ -4417,7 +4416,7 @@ node_modules\\setprototypeof\\test\\index.js
 502	            clearTimeout(timeoutId);
 503	
 504	            const duration = Date.now() - requestStartTime;
-505	            console.log(`[${formatTimestamp()}] [DONE] 任务执行完成, 耗时: ${duration}ms, 退出码: ${code}`);
+505	            console.log("[${formatTimestamp()}] [DONE] 任务执行完成, 耗时: ${duration}ms, 退出码: ${code}");
 506	
 507	            if (code === 0) {
 508	                sendEvent(res, 'done', {
@@ -4426,7 +4425,7 @@ node_modules\\setprototypeof\\test\\index.js
 511	                });
 512	            } else {
 513	                sendEvent(res, 'error', {
-514	                    message: `任务执行失败，退出码: ${code}`,
+514	                    message: "任务执行失败，退出码: ${code}",
 515	                    sessionId: effectiveSessionId
 516	                });
 517	            }
@@ -4440,7 +4439,7 @@ node_modules\\setprototypeof\\test\\index.js
 525	            if (closed) return;
 526	            closed = true;
 527	            clearTimeout(timeoutId);
-528	            console.error(`[${formatTimestamp()}] [ERROR] 进程错误: ${err.message}`);
+528	            console.error("[${formatTimestamp()}] [ERROR] 进程错误: ${err.message}");
 529	            sendEvent(res, 'error', { message: err.message });
 530	            res.end();
 531	        });
@@ -4452,7 +4451,7 @@ node_modules\\setprototypeof\\test\\index.js
 537	        // 处理客户端断开连接
 538	        res.on('close', () => {
 539	            if (!closed) {
-540	                console.log(`[${formatTimestamp()}] [CLIENT] 客户端断开连接`);
+540	                console.log("[${formatTimestamp()}] [CLIENT] 客户端断开连接");
 541	                closed = true;
 542	                clearTimeout(timeoutId);
 543	                claudeProcess.kill();
@@ -4460,7 +4459,7 @@ node_modules\\setprototypeof\\test\\index.js
 545	        });
 546	
 547	    } catch (error) {
-548	        console.error(`[${formatTimestamp()}] [ERROR] ${error.message}`);
+548	        console.error("[${formatTimestamp()}] [ERROR] ${error.message}");
 549	        if (!res.headersSent) {
 550	            res.status(500).json({ error: error.message });
 551	        }
@@ -4473,16 +4472,16 @@ node_modules\\setprototypeof\\test\\index.js
 558	    console.log('='.repeat(60));
 559	    console.log('Claude Code API Server - 安全模式');
 560	    console.log('='.repeat(60));
-561	    console.log(`服务地址: http://localhost:${PORT}`);
-562	    console.log(`安全特性:`);
+561	    console.log("服务地址: http://localhost:${PORT}");
+562	    console.log("安全特性:");
 563	    console.log('  - sessionId 格式验证 (只允许 UUID)');
 564	    console.log('  - 命令参数安全构建 (防止命令注入)');
 565	    console.log('  - Skill 文件安全解压 (防止路径遍历)');
 566	    console.log('  - 临时文件定期清理');
 567	    console.log('');
 568	    console.log('可用端点:');
-569	    console.log(`  GET  http://localhost:${PORT}/health                 - 健康检查`);
-570	    console.log(`  POST http://localhost:${PORT}/api/task/stream         - 流式任务执行接口 (SSE)`);
+569	    console.log("  GET  http://localhost:${PORT}/health                 - 健康检查");
+570	    console.log("  POST http://localhost:${PORT}/api/task/stream         - 流式任务执行接口 (SSE)");
 571	    console.log('');
 572	    console.log('流式接口返回 SSE 事件:');
 573	    console.log('  - start: { type: "start", sessionId: "..." }');
@@ -4646,17 +4645,17 @@ node_modules\\setprototypeof\\test\\index.js
 38	
 39	    // 检查是否以 .. 开头
 40	    if (normalized.startsWith('..') || normalized.includes(path.sep + '..')) {
-41	        throw new Error(`Path traversal detected: ${inputPath}`);
+41	        throw new Error("Path traversal detected: ${inputPath}");
 42	    }
 43	
 44	    // 检查是否为绝对路径
 45	    if (path.isAbsolute(normalized)) {
-46	        throw new Error(`Absolute path not allowed: ${inputPath}`);
+46	        throw new Error("Absolute path not allowed: ${inputPath}");
 47	    }
 48	
 49	    // 检查最终路径是否在基础目录内
 50	    if (!resolved.startsWith(absoluteBaseDir)) {
-51	        throw new Error(`Path traversal attempt: ${inputPath}`);
+51	        throw new Error("Path traversal attempt: ${inputPath}");
 52	    }
 53	
 54	    return resolved;
@@ -4696,24 +4695,24 @@ node_modules\\setprototypeof\\test\\index.js
 88	        for (const entry of entries) {
 89	            // 1. 检查路径遍历
 90	            if (this.isPathTraversal(entry.entryName)) {
-91	                throw new Error(`Unsafe path detected: ${entry.entryName}`);
+91	                throw new Error("Unsafe path detected: ${entry.entryName}");
 92	            }
 93	
 94	            // 2. 检查文件大小
 95	            if (entry.header.size > this.maxFileSize) {
-96	                throw new Error(`File too large: ${entry.entryName} (${entry.header.size} bytes)`);
+96	                throw new Error("File too large: ${entry.entryName} (${entry.header.size} bytes)");
 97	            }
 98	
 99	            totalSize += entry.header.size;
 100	
 101	            // 3. 检查总大小
 102	            if (totalSize > this.maxTotalSize) {
-103	                throw new Error(`Total extracted size exceeds limit (${totalSize} bytes)`);
+103	                throw new Error("Total extracted size exceeds limit (${totalSize} bytes)");
 104	            }
 105	
 106	            // 4. 检查文件扩展名
 107	            if (!entry.isDirectory && !this.isAllowedExtension(entry.entryName)) {
-108	                console.warn(`[SafeZipExtractor] Skipping file with disallowed extension: ${entry.entryName}`);
+108	                console.warn("[SafeZipExtractor] Skipping file with disallowed extension: ${entry.entryName}");
 109	                continue;
 110	            }
 111	
@@ -4741,7 +4740,7 @@ node_modules\\setprototypeof\\test\\index.js
 133	
 134	            // 解压文件
 135	            fs.writeFileSync(targetPath, entry.getData());
-136	            console.log(`[SafeZipExtractor] Extracted: ${entry.entryName}`);
+136	            console.log("[SafeZipExtractor] Extracted: ${entry.entryName}");
 137	        }
 138	
 139	        return {
@@ -4791,7 +4790,7 @@ node_modules\\setprototypeof\\test\\index.js
 183	
 184	        // 再次验证
 185	        if (!resolved.startsWith(this.targetDir)) {
-186	            throw new Error(`Path traversal attempt: ${entryName}`);
+186	            throw new Error("Path traversal attempt: ${entryName}");
 187	        }
 188	
 189	        return resolved;
@@ -4831,10 +4830,10 @@ node_modules\\setprototypeof\\test\\index.js
 223	        if (now - stat.mtimeMs > maxAgeMs) {
 224	            if (entry.isDirectory()) {
 225	                fs.rmSync(fullPath, { recursive: true });
-226	                console.log(`[Cleanup] Cleaned up directory: ${fullPath}`);
+226	                console.log("[Cleanup] Cleaned up directory: ${fullPath}");
 227	            } else {
 228	                fs.unlinkSync(fullPath);
-229	                console.log(`[Cleanup] Cleaned up file: ${fullPath}`);
+229	                console.log("[Cleanup] Cleaned up file: ${fullPath}");
 230	            }
 231	        }
 232	    }
@@ -4873,7 +4872,7 @@ node_modules\\setprototypeof\\test\\index.js
 265	        for (const p of possiblePaths) {
 266	            if (p && fs.existsSync(p)) {
 267	                claudeCommand = p;
-268	                console.log(`[buildClaudeArgs] 自动检测到 Claude CLI: ${p}`);
+268	                console.log("[buildClaudeArgs] 自动检测到 Claude CLI: ${p}");
 269	                break;
 270	            }
 271	        }
@@ -4904,7 +4903,7 @@ node_modules\\setprototypeof\\test\\index.js
 296	    if (options.sessionId && !options.resume) {
 297	        // 验证 sessionId 格式
 298	        if (!isValidSessionId(options.sessionId)) {
-299	            throw new Error(`Invalid session ID format: ${options.sessionId}`);
+299	            throw new Error("Invalid session ID format: ${options.sessionId}");
 300	        }
 301	        args.push('--session-id', options.sessionId);
 302	    }
@@ -4912,7 +4911,7 @@ node_modules\\setprototypeof\\test\\index.js
 304	    // 恢复会话
 305	    if (options.resume && options.sessionId) {
 306	        if (!isValidSessionId(options.sessionId)) {
-307	            throw new Error(`Invalid session ID format: ${options.sessionId}`);
+307	            throw new Error("Invalid session ID format: ${options.sessionId}");
 308	        }
 309	        args.push('--resume', options.sessionId);
 310	    }
@@ -4925,7 +4924,7 @@ node_modules\\setprototypeof\\test\\index.js
 317	        if (fs.existsSync(options.skillDir)) {
 318	            args.push('--add-dir', options.skillDir);
 319	        } else {
-320	            throw new Error(`Skill directory does not exist: ${options.skillDir}`);
+320	            throw new Error("Skill directory does not exist: ${options.skillDir}");
 321	        }
 322	    }
 323	
@@ -4959,7 +4958,7 @@ drwxr-xr-x 1 Administrator 197121     0 Mar 31 09:50 node_modules/
 -rw-r--r-- 1 Administrator 197121   499 Mar 20 14:15 package.json
 -rw-r--r-- 1 Administrator 197121   388 Mar 20 14:18 skill-manifest.yaml
 drwxr-xr-x 1 Administrator 197121     0 Apr  8 13:49 uploads/
-drwxr-xr-x 1 Administrator 197121     0 Apr  8 11:30 utils/[思考] 根据我的分析，当前项目 `claude_code_api` 是一个简单的 REST API 服务，只提供了一个流式任务执行接口。这个项目中没有任何与"工作流节点"相关的代码或数据。
+drwxr-xr-x 1 Administrator 197121     0 Apr  8 11:30 utils/[思考] 根据我的分析，当前项目 "claude_code_api" 是一个简单的 REST API 服务，只提供了一个流式任务执行接口。这个项目中没有任何与"工作流节点"相关的代码或数据。
 
 用户询问 "当前工作流有几个节点？workflowId: 30"，这看起来像是在询问某个外部系统中的工作流配置，而不是这个项目本身的代码。
 
@@ -4967,20 +4966,20 @@ drwxr-xr-x 1 Administrator 197121     0 Apr  8 11:30 utils/[思考] 根据我的
 1. 这个项目本身没有工作流引擎或节点管理功能
 2. 如果用户指的是其他系统的工作流，我需要更多信息才能帮助查询
 
-让我回复用户，说明当前项目的情况。根据我对当前项目 `claude_code_api` 的分析，**这个项目本身没有工作流或节点管理功能**。
+让我回复用户，说明当前项目的情况。根据我对当前项目 "claude_code_api" 的分析，**这个项目本身没有工作流或节点管理功能**。
 
 当前项目是一个 Claude Code API 服务，只包含以下功能：
-- `GET /health` - 健康检查
-- `POST /api/task/stream` - 流式任务执行接口 (SSE)
+- "GET /health" - 健康检查
+- "POST /api/task/stream" - 流式任务执行接口 (SSE)
 
 项目结构：
-```
+"`"
 claude_code_api/
 ├── index.js          # 主服务文件
 ├── utils/
 │   └── security.js   # 安全工具模块
 └── README.md
-```
+"`"
 
 ---
 
@@ -4989,20 +4988,20 @@ claude_code_api/
 1. 您是指哪个平台/系统的工作流？（例如：Dify、n8n、Flowise、飞书流程等）
 2. 是否需要我连接到某个数据库或 API 来查询工作流节点信息？
 
-请提供更多上下文，我可以帮您进一步查询。根据我对当前项目 `claude_code_api` 的分析，**这个项目本身没有工作流或节点管理功能**。
+请提供更多上下文，我可以帮您进一步查询。根据我对当前项目 "claude_code_api" 的分析，**这个项目本身没有工作流或节点管理功能**。
 
 当前项目是一个 Claude Code API 服务，只包含以下功能：
-- `GET /health` - 健康检查
-- `POST /api/task/stream` - 流式任务执行接口 (SSE)
+- "GET /health" - 健康检查
+- "POST /api/task/stream" - 流式任务执行接口 (SSE)
 
 项目结构：
-```
+"`"
 claude_code_api/
 ├── index.js          # 主服务文件
 ├── utils/
 │   └── security.js   # 安全工具模块
 └── README.md
-```
+"`"
 
 ---
 
@@ -5042,13 +5041,13 @@ claude_code_api/
 (235, '我需要先了解项目结构，查找与工作流相关的代码或配置。根据我对当前项目的分析，这个项目是一个 **Claude Code API 服务**，主要提供流式任务执行接口。该项目中 **没有与"工作流"(workflow) 或"节点"(node) 相关的功能**。
 
 **当前项目的主要功能：**
-- 健康检查接口 (`/health`)
-- 流式任务执行接口 (`/api/task/stream`) - 使用 SSE 实时返回 Claude 的响应
+- 健康检查接口 ("/health")
+- 流式任务执行接口 ("/api/task/stream") - 使用 SSE 实时返回 Claude 的响应
 
 **项目结构：**
-- `index.js` - 主服务入口
-- `utils/security.js` - 安全工具
-- `utils/safeExtract.js` - 安全解压工具
+- "index.js" - 主服务入口
+- "utils/security.js" - 安全工具
+- "utils/safeExtract.js" - 安全解压工具
 
 ---
 
@@ -5061,13 +5060,13 @@ claude_code_api/
 请提供更多上下文，我可以更好地帮助您。根据我对当前项目的分析，这个项目是一个 **Claude Code API 服务**，主要提供流式任务执行接口。该项目中 **没有与"工作流"(workflow) 或"节点"(node) 相关的功能**。
 
 **当前项目的主要功能：**
-- 健康检查接口 (`/health`)
-- 流式任务执行接口 (`/api/task/stream`) - 使用 SSE 实时返回 Claude 的响应
+- 健康检查接口 ("/health")
+- 流式任务执行接口 ("/api/task/stream") - 使用 SSE 实时返回 Claude 的响应
 
 **项目结构：**
-- `index.js` - 主服务入口
-- `utils/security.js` - 安全工具
-- `utils/safeExtract.js` - 安全解压工具
+- "index.js" - 主服务入口
+- "utils/security.js" - 安全工具
+- "utils/safeExtract.js" - 安全解压工具
 
 ---
 
@@ -5084,9 +5083,9 @@ claude_code_api/
 (237, '让我先了解一下当前项目的结构，看看工作流相关的代码。根据我对当前项目的分析，这个项目是一个 **Claude Code API 服务器**，提供 REST API 来执行 Claude 任务。项目代码中没有包含任何工作流（workflow）或节点相关的定义和数据存储。
 
 **当前项目结构：**
-- `index.js` - 主服务文件，提供 `/api/task/stream` 流式任务执行接口
-- `utils/` - 安全工具模块
-- `uploads/` - 上传文件临时目录
+- "index.js" - 主服务文件，提供 "/api/task/stream" 流式任务执行接口
+- "utils/" - 安全工具模块
+- "uploads/" - 上传文件临时目录
 
 **未找到：**
 - 工作流定义
@@ -5110,7 +5109,7 @@ claude_code_api/
 (238, '当前工作流有几个节点？', 'TEXT', '2026-04-08 06:27:46', NULL, 'd8425de1-3b33-4d39-9abc-ef16165d9d75', NULL, NULL, 'USER', NULL, 118),
 (239, '让我先了解一下当前项目的结构，看看是否有工作流相关的代码。根据我对当前项目的检查，这个 **claude_code_api** 项目是一个 Claude Code 的 RESTful API 服务，主要提供流式任务执行功能。**项目代码中并没有任何与"工作流节点"相关的数据或功能**。
 
-您提供的 `workflowId: 30` 在当前项目中找不到对应的工作流定义。
+您提供的 "workflowId: 30" 在当前项目中找不到对应的工作流定义。
 
 请问您是在询问以下哪个系统中的工作流？
 
@@ -5120,7 +5119,7 @@ claude_code_api/
 
 请提供更多上下文，我才能帮助您查询工作流节点信息。我理解了，您需要特定格式的JSON响应。由于当前项目代码中没有工作流节点相关的数据，我需要更多信息才能回答您的问题。
 
-```json
+"`"json
 {
   "status": "query",
   "queries": [
@@ -5140,9 +5139,9 @@ claude_code_api/
     }
   ]
 }
-```我看到有 MySQL 连接技能可用。让我尝试连接数据库查询工作流节点信息。我找到了数据库连接信息。让我查询工作流节点数据。查询成功！现在返回符合格式要求的响应：
+"`"我看到有 MySQL 连接技能可用。让我尝试连接数据库查询工作流节点信息。我找到了数据库连接信息。让我查询工作流节点数据。查询成功！现在返回符合格式要求的响应：
 
-```json
+"`"json
 {
   "status": "complete",
   "result": {
@@ -5151,7 +5150,7 @@ claude_code_api/
     "summary": "当前工作流（ID: 30）共有 4 个节点"
   }
 }
-``````json
+"````"json
 {
   "status": "complete",
   "result": {
@@ -5160,21 +5159,21 @@ claude_code_api/
     "message": "当前工作流（ID: 30）共有 4 个节点"
   }
 }
-```
+"`"
 
 ❌ 错误: AI 响应格式持续异常，已尝试 3 次仍无法解析。请尝试简化您的请求或稍后重试。', 'MARKDOWN', '2026-04-08 06:31:50', 243648, 'd1c447b7-c542-4016-91c8-b3403a182a38', NULL, NULL, 'ASSISTANT', NULL, 118),
 (240, '当前工作流有几个节点？', 'TEXT', '2026-04-08 06:41:26', NULL, '12be1153-bc16-44b8-9ca8-381f444565d3', NULL, NULL, 'USER', NULL, 119),
 (241, '我需要先了解当前项目的结构和内容，看看是否有与工作流相关的代码或配置。让我进一步查看项目中是否有与工作流相关的配置或数据文件。根据我对当前项目的分析，这是一个 **Claude Code API 服务器**项目，主要功能是提供流式任务执行接口（SSE）。**该项目本身不包含工作流系统或节点管理的功能。**
 
 ### 当前项目结构：
-- **主要文件**：`index.js` - Express 服务器
+- **主要文件**："index.js" - Express 服务器
 - **功能端点**：
-  - `GET /health` - 健康检查
-  - `POST /api/task/stream` - 流式任务执行接口（SSE）
+  - "GET /health" - 健康检查
+  - "POST /api/task/stream" - 流式任务执行接口（SSE）
 
 ### 关于工作流节点查询
 
-您提到的 `workflowId: 30` 和"工作流节点"的概念在此项目中不存在。可能的情况：
+您提到的 "workflowId: 30" 和"工作流节点"的概念在此项目中不存在。可能的情况：
 
 1. **外部系统**：您可能需要连接到其他数据库或服务来查询工作流信息
 2. **其他项目**：工作流数据可能存储在另一个项目中
@@ -5214,17 +5213,17 @@ claude_code_api/
 (247, '我需要先获取工作流详情，了解当前节点的配置情况，然后再进行修改。
 
 用户要求修改开始节点中变量a的默认值为30，我需要先获取工作流30的完整节点和连线数据，以便准确构造更新请求
-正在获取工作流30的节点信息，以便修改变量a的默认值...已获取到工作流详情。开始节点的变量 `a` 当前默认值为 `1`，需要改为 `30`。由于保存接口是全量覆盖，我需要提交所有节点和连线数据。
+正在获取工作流30的节点信息，以便修改变量a的默认值...已获取到工作流详情。开始节点的变量 "a" 当前默认值为 "1"，需要改为 "30"。由于保存接口是全量覆盖，我需要提交所有节点和连线数据。
 
 已获取到工作流30的完整数据，开始节点的outputParams中变量a的defaultValue当前为1，需要改为30。保存接口是全量覆盖，所以需要提交所有4个节点和3条连线的完整数据
-正在将开始节点变量a的默认值从1修改为30...操作已成功执行，从返回结果可以确认开始节点的变量 `a` 默认值已更新为 30。
+正在将开始节点变量a的默认值从1修改为30...操作已成功执行，从返回结果可以确认开始节点的变量 "a" 默认值已更新为 30。
 
 操作结果确认开始节点的变量a默认值已成功从1修改为30，工作流其他节点和连线保持不变
 修改完成！开始节点变量 **a** 的默认值已从 **1** 更新为 **30**，变量 **b** 的默认值保持 **3** 不变，工作流其他配置未受影响。', 'MARKDOWN', '2026-04-08 07:29:46', 107126, 'ae83396b-47ed-4201-9b73-dffaa046f7bd', NULL, NULL, 'ASSISTANT', NULL, 121),
 (248, '帮我把开始节点中名称为a的变量默认值改为31', 'TEXT', '2026-04-08 07:55:27', NULL, 'c94eaf9d-cf48-448a-88ab-b8bec5f4cf21', NULL, NULL, 'USER', NULL, 122),
-(249, '让我先阅读 skill. md 文件以了解所需的说明。现在我还需要检查 `api-spec. yaml` 来查看可用的 API 详情。现在我已理解 skill. md 的指令。 用户要求将工作流 30 的开始节点中名为 "a" 的变量默认值改为 31。 我需要先查询工作流详情来获取开始节点的当前配置。 我需要先获取工作流30的详情，找到开始节点中名称为a的变量及其当前配置，才能进行修改 正在查询工作流30的详情，以定位开始节点中变量a的配置. .已获取到工作流30的完整信息。 开始节点（nodeUuid: `node-start`）的 `outputParams` 中变量 `a` 的 `defaultValue` 当前为 30，需要改为 31。 我现在执行修改操作。 已获取工作流30的详情，开始节点的outputParams中变量a的defaultValue为30，需要改为31。 由于保存接口是全量覆盖，需要传入所有节点和连线的完整数据，仅修改开始节点的outputParams中变量a的defaultValue。 正在将工作流30开始节点中变量a的默认值从30修改为31. .操作已成功执行。 从返回结果可以确认，开始节点的 `outputParams` 中变量 `a` 的 `defaultValue` 已从 30 更新为 31。 操作结果确认：工作流30的开始节点（nodeUuid: node-start）中变量a的defaultValue已成功从30修改为31，其他节点和连线数据保持不变 修改完成！ 工作流30的开始节点中变量a的默认值已从30更新为31。', 'MARKDOWN', '2026-04-08 07:58:08', 160774, '07d8ffdf-55cd-41bb-aad3-d40c6e9f8555', NULL, NULL, 'ASSISTANT', NULL, 122),
+(249, '让我先阅读 skill. md 文件以了解所需的说明。现在我还需要检查 "api-spec. yaml" 来查看可用的 API 详情。现在我已理解 skill. md 的指令。 用户要求将工作流 30 的开始节点中名为 "a" 的变量默认值改为 31。 我需要先查询工作流详情来获取开始节点的当前配置。 我需要先获取工作流30的详情，找到开始节点中名称为a的变量及其当前配置，才能进行修改 正在查询工作流30的详情，以定位开始节点中变量a的配置. .已获取到工作流30的完整信息。 开始节点（nodeUuid: "node-start"）的 "outputParams" 中变量 "a" 的 "defaultValue" 当前为 30，需要改为 31。 我现在执行修改操作。 已获取工作流30的详情，开始节点的outputParams中变量a的defaultValue为30，需要改为31。 由于保存接口是全量覆盖，需要传入所有节点和连线的完整数据，仅修改开始节点的outputParams中变量a的defaultValue。 正在将工作流30开始节点中变量a的默认值从30修改为31. .操作已成功执行。 从返回结果可以确认，开始节点的 "outputParams" 中变量 "a" 的 "defaultValue" 已从 30 更新为 31。 操作结果确认：工作流30的开始节点（nodeUuid: node-start）中变量a的defaultValue已成功从30修改为31，其他节点和连线数据保持不变 修改完成！ 工作流30的开始节点中变量a的默认值已从30更新为31。', 'MARKDOWN', '2026-04-08 07:58:08', 160774, '07d8ffdf-55cd-41bb-aad3-d40c6e9f8555', NULL, NULL, 'ASSISTANT', NULL, 122),
 (250, '帮我把开始节点中名称为a的变量默认值改为32', 'TEXT', '2026-04-08 08:10:59', NULL, 'd9ccdf57-1433-422a-a9a0-f8d59e695f66', NULL, NULL, 'USER', NULL, 123),
-(251, '让我先查看 skill. md 文件了解 API 接口和输出格式要求。我已了解 skill. md 的要求。 现在需要先查询工作流 30 的详情，获取开始节点的信息，然后修改变量 a 的默认值。 我需要先获取工作流30的详情，找到开始节点中名称为a的变量，了解其当前配置，才能修改默认值为32 正在获取工作流30的详情，查找开始节点中的变量a. .已获取到工作流30的详情。 开始节点（node-start）的变量 `a` 当前默认值为 31，需要改为 32。 现在执行修改操作： 已获取工作流30的完整数据，开始节点中变量a的defaultValue当前为31，需要修改为32。 使用全量覆盖接口，保持其他所有节点和连线不变，仅修改开始节点的outputParams中变量a的defaultValue 正在将开始节点中变量a的默认值从31修改为32. .操作已成功执行。 从返回结果中可以确认，开始节点的变量 `a` 的 `defaultValue` 已从 31 修改为 32。 操作结果确认：开始节点（node-start）的 outputParams 中变量 a 的 defaultValue 已成功从 31 更新为 32，其余所有节点和连线保持不变 修改完成！ 已将工作流「求两数之和（阻塞30s）」开始节点中变量 a 的默认值从 31 更新为 32，其他配置保持不变。', 'MARKDOWN', '2026-04-08 08:13:47', 167902, '450bc27b-75cb-4115-94d5-0bdbe6385d71', NULL, NULL, 'ASSISTANT', NULL, 123),
+(251, '让我先查看 skill. md 文件了解 API 接口和输出格式要求。我已了解 skill. md 的要求。 现在需要先查询工作流 30 的详情，获取开始节点的信息，然后修改变量 a 的默认值。 我需要先获取工作流30的详情，找到开始节点中名称为a的变量，了解其当前配置，才能修改默认值为32 正在获取工作流30的详情，查找开始节点中的变量a. .已获取到工作流30的详情。 开始节点（node-start）的变量 "a" 当前默认值为 31，需要改为 32。 现在执行修改操作： 已获取工作流30的完整数据，开始节点中变量a的defaultValue当前为31，需要修改为32。 使用全量覆盖接口，保持其他所有节点和连线不变，仅修改开始节点的outputParams中变量a的defaultValue 正在将开始节点中变量a的默认值从31修改为32. .操作已成功执行。 从返回结果中可以确认，开始节点的变量 "a" 的 "defaultValue" 已从 31 修改为 32。 操作结果确认：开始节点（node-start）的 outputParams 中变量 a 的 defaultValue 已成功从 31 更新为 32，其余所有节点和连线保持不变 修改完成！ 已将工作流「求两数之和（阻塞30s）」开始节点中变量 a 的默认值从 31 更新为 32，其他配置保持不变。', 'MARKDOWN', '2026-04-08 08:13:47', 167902, '450bc27b-75cb-4115-94d5-0bdbe6385d71', NULL, NULL, 'ASSISTANT', NULL, 123),
 (252, '帮我把开始节点中名称为a的变量默认值改为33', 'TEXT', '2026-04-08 08:20:25', NULL, '8dc0394d-f88d-4b58-9c1b-524076e0d571', NULL, NULL, 'USER', NULL, 124),
 (253, '让我先查看当前目录和 skill. md 文件的内容。需要先获取工作流30的详情，找到开始节点中变量a的当前配置 正在查询工作流30的详情. .已获取工作流30的详情，开始节点中变量a的defaultValue当前为32，需要改为33。 使用全量覆盖接口更新。 正在将开始节点变量a的默认值从32修改为33. .操作已成功执行，开始节点中变量a的defaultValue已从32更新为33 已完成修改：开始节点变量a的默认值已从32更新为33', 'MARKDOWN', '2026-04-08 08:22:18', 113421, 'f1d94d55-5728-4239-84a0-31d886aac62d', NULL, NULL, 'ASSISTANT', NULL, 124),
 (254, '帮我把开始节点中名称为a的变量默认值改为35', 'TEXT', '2026-04-08 08:57:54', NULL, '64f4d8e7-cdbc-4eeb-ad33-ec67f00af5a2', NULL, NULL, 'USER', NULL, 125),
@@ -5266,7 +5265,7 @@ claude_code_api/
 (290, '运行当前工作流', 'TEXT', '2026-04-09 01:43:38', NULL, 'c9d0b715-3ace-43fe-a1b0-4dbc6cf13eb7', NULL, NULL, 'USER', NULL, 155);
 
 -- Data for table: chat_quick_question (6 rows)
-INSERT INTO `chat_quick_question` (`id`, `category`, `created_at`, `enabled`, `icon`, `sort_order`, `text`, `updated_at`) VALUES
+INSERT INTO "chat_quick_question" ("id", "category", "created_at", "enabled", "icon", "sort_order", "text", "updated_at") VALUES
 (1, 'evaluation', '2026-03-21 01:59:07', X'01', '💡', 1, '如何创建测评集？', '2026-03-21 01:59:07'),
 (2, 'config', '2026-03-21 01:59:07', X'01', '🔧', 2, '环境管理怎么配置？', '2026-03-21 01:59:07'),
 (3, 'report', '2026-03-21 01:59:07', X'01', '📊', 3, '如何查看测试报告？', '2026-03-21 01:59:07'),
@@ -5277,14 +5276,14 @@ INSERT INTO `chat_quick_question` (`id`, `category`, `created_at`, `enabled`, `i
 -- Data for table: client_registry (empty)
 
 -- Data for table: data_dictionary (4 rows)
-INSERT INTO `data_dictionary` (`id`, `name`, `description`, `created_at`, `updated_at`, `is_deleted`) VALUES
+INSERT INTO "data_dictionary" ("id", "name", "description", "created_at", "updated_at", "is_deleted") VALUES
 (1, 'TestDictionaryUpdated', 'Updated test dictionary', '2026-03-23 11:55:40', '2026-03-23 03:55:58', 1),
 (2, 'Demo数据字典', 'Demo数据字典', '2026-03-23 12:01:57', '2026-03-23 12:01:57', 0),
 (3, '测试数据字典', '测试数据字典', '2026-03-23 12:02:37', '2026-03-23 12:02:37', 0),
 (4, '11111', '11111', '2026-03-23 12:04:11', '2026-03-23 04:12:16', 1);
 
 -- Data for table: dictionary_column (6 rows)
-INSERT INTO `dictionary_column` (`id`, `dictionary_id`, `column_key`, `column_label`, `column_type`, `enum_options`, `min_value`, `max_value`, `sort_order`, `created_at`, `updated_at`) VALUES
+INSERT INTO "dictionary_column" ("id", "dictionary_id", "column_key", "column_label", "column_type", "enum_options", "min_value", "max_value", "sort_order", "created_at", "updated_at") VALUES
 (7, 2, 'id', 'ID', 'string', NULL, NULL, NULL, 0, '2026-03-23 12:01:57', '2026-03-23 12:01:57'),
 (8, 2, 'input', '输入', 'string', NULL, NULL, NULL, 1, '2026-03-23 12:01:57', '2026-03-23 12:01:57'),
 (9, 2, 'output', '输出', 'string', NULL, NULL, NULL, 2, '2026-03-23 12:01:57', '2026-03-23 12:01:57'),
@@ -5295,7 +5294,7 @@ INSERT INTO `dictionary_column` (`id`, `dictionary_id`, `column_key`, `column_la
 -- Data for table: execution_log (empty)
 
 -- Data for table: skill (12 rows)
-INSERT INTO `skill` (`id`, `name`, `description`, `suite_path`, `suite_filename`, `execution_type`, `category`, `access_type`, `is_container`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted`, `deleted_at`, `allow_add_input_params`, `allow_add_output_params`) VALUES
+INSERT INTO "skill" ("id", "name", "description", "suite_path", "suite_filename", "execution_type", "category", "access_type", "is_container", "status", "created_by", "updated_by", "created_at", "updated_at", "deleted", "deleted_at", "allow_add_input_params", "allow_add_output_params") VALUES
 ('1596901b349f706a236fb1ac26628a46', '加法计算器', '这是一个两数加法的计算器', '.\\uploads\\suites\\86c55295-31e1-4769-8595-2f36991bd4e4.zip', 'caculate.zip', 'AUTOMATED', 'USER', 'PRIVATE', 0, 'PUBLISHED', 'system', 'system', '2026-04-06 02:50:38', '2026-04-06 02:50:38', 0, NULL, 0, 0),
 ('2c71025fe5dfe2cfbb4c8128a37fc3b0', 'sndka', 'xxxxxxxxxxxxxxxxxxxxxxxxxx', '.\\uploads\\suites\\fe1269ad-d7e0-4ba1-8687-aada6124355a.zip', 'workflow-assistant (5).zip', 'AI', 'USER', 'PRIVATE', 0, 'PUBLISHED', 'system', 'system', '2026-04-03 02:24:00', '2026-04-03 02:24:00', 0, NULL, 0, 1),
 ('3ba8967641044ef83048a8f6eff1941c', '加法计算器---阻塞30s', '这是一个两数加法的计算器,会在执行之前先阻塞30秒.', '.\\uploads\\suites\\89997279-7968-4347-893a-7311b3ba7651.zip', 'caculate.zip', 'AUTOMATED', 'USER', 'PRIVATE', 0, 'PUBLISHED', 'system', 'system', '2026-04-06 10:01:53', '2026-04-06 10:01:53', 0, NULL, 0, 0),
@@ -5312,7 +5311,7 @@ INSERT INTO `skill` (`id`, `name`, `description`, `suite_path`, `suite_filename`
 -- Data for table: skill_access_control (empty)
 
 -- Data for table: skill_parameter (30 rows)
-INSERT INTO `skill_parameter` (`id`, `skill_id`, `param_direction`, `param_order`, `param_type`, `param_name`, `default_value`, `description`, `required`) VALUES
+INSERT INTO "skill_parameter" ("id", "skill_id", "param_direction", "param_order", "param_type", "param_name", "default_value", "description", "required") VALUES
 ('0dcc9bde9e87888715c419e74cf949ae', '1596901b349f706a236fb1ac26628a46', 'INPUT', 2, 'Integer', 'b', '', '被加数', 1),
 ('1bf1b5134a47974e9e374c232dadbc2c', '1596901b349f706a236fb1ac26628a46', 'OUTPUT', 1, 'Integer', 'sum', NULL, '两数之和', 1),
 ('1d3127cf7db0f43b93567c9e1be87313', '676cc312700615f69fc20d52ad779bb5', 'INPUT', 1, 'Array<Time>', 'in_1', '213', 'dnsansk', 1),
@@ -5345,7 +5344,7 @@ INSERT INTO `skill_parameter` (`id`, `skill_id`, `param_direction`, `param_order
 ('f995710982dd5abe2a0bb9399dd0d071', '75f790a6502665ee059e1652472ed056', 'OUTPUT', 2, 'String', 'bbb', NULL, 'bbb1', 0);
 
 -- Data for table: variable_type (16 rows)
-INSERT INTO `variable_type` (`id`, `category`, `code`, `created_at`, `description`, `element_type`, `enabled`, `file_type`, `name`, `sort_order`, `updated_at`) VALUES
+INSERT INTO "variable_type" ("id", "category", "code", "created_at", "description", "element_type", "enabled", "file_type", "name", "sort_order", "updated_at") VALUES
 (1, 'BASIC', 'String', '2026-03-21 02:02:42', '字符串类型', NULL, X'01', NULL, '字符串123', 1, '2026-03-21 02:02:42'),
 (2, 'BASIC', 'Boolean', '2026-03-21 02:02:42', '布尔值类型', NULL, X'01', NULL, '布尔值', 2, '2026-03-21 02:02:42'),
 (3, 'BASIC', 'Integer', '2026-03-21 02:02:43', '整数类型', NULL, X'01', NULL, '整数', 3, '2026-03-21 02:02:43'),
@@ -5364,7 +5363,7 @@ INSERT INTO `variable_type` (`id`, `category`, `code`, `created_at`, `descriptio
 (16, 'COMPOSITE', 'File<Txt>', '2026-03-21 02:02:46', '文本文件类型', NULL, X'01', 'Txt', '文本文件', 24, '2026-03-21 02:02:46');
 
 -- Data for table: workflow (25 rows)
-INSERT INTO `workflow` (`id`, `name`, `description`, `published`, `has_run`, `version`, `status`, `trigger_type`, `trigger_config`, `created_by`, `created_at`, `updated_by`, `updated_at`, `deleted`, `published_at`, `published_by`) VALUES
+INSERT INTO "workflow" ("id", "name", "description", "published", "has_run", "version", "status", "trigger_type", "trigger_config", "created_by", "created_at", "updated_by", "updated_at", "deleted", "published_at", "published_by") VALUES
 (1, 'test_project', '', 0, 0, 1, 'DRAFT', 'MANUAL', NULL, 'admin', '2026-03-24 11:14:38', NULL, '2026-03-31 23:04:40', 1, NULL, NULL),
 (2, '123', '', 0, 0, 1, 'DRAFT', 'MANUAL', NULL, NULL, '2026-03-25 11:25:18', NULL, '2026-03-31 23:04:37', 1, NULL, NULL),
 (3, '11111', '', 0, 0, 1, 'DRAFT', 'MANUAL', NULL, NULL, '2026-03-25 13:12:48', NULL, '2026-03-31 23:04:33', 1, NULL, NULL),
@@ -5392,7 +5391,7 @@ INSERT INTO `workflow` (`id`, `name`, `description`, `published`, `has_run`, `ve
 (30, '求两数之和（阻塞15s）', '', 1, 1, 1, 'PUBLISHED', 'MANUAL', NULL, NULL, '2026-04-06 10:11:00', NULL, '2026-04-06 10:11:00', 0, NULL, NULL);
 
 -- Data for table: workflow_association (14 rows)
-INSERT INTO `workflow_association` (`id`, `workflow_id`, `loop_node_id`, `body_node_id`, `association_type`, `created_at`, `container_node_id`, `container_node_uuid`, `body_node_uuid`) VALUES
+INSERT INTO "workflow_association" ("id", "workflow_id", "loop_node_id", "body_node_id", "association_type", "created_at", "container_node_id", "container_node_uuid", "body_node_uuid") VALUES
 (15, 4, 120, 124, 'loop-body', '2026-03-25 14:05:33', NULL, NULL, NULL),
 (19, 6, 155, 159, 'loop-body', '2026-03-25 14:34:33', NULL, NULL, NULL),
 (21, 7, 171, 175, 'loop-body', '2026-03-25 14:59:29', NULL, NULL, NULL),
@@ -5409,7 +5408,7 @@ INSERT INTO `workflow_association` (`id`, `workflow_id`, `loop_node_id`, `body_n
 (98, 27, NULL, 870, 'LOOP_BODY', '2026-04-05 15:59:05', 869, NULL, NULL);
 
 -- Data for table: workflow_connection (99 rows)
-INSERT INTO `workflow_connection` (`id`, `workflow_id`, `connection_uuid`, `source_node_id`, `source_port_id`, `target_node_id`, `target_port_id`, `branch_label`, `branch_priority`, `source_param_index`, `target_param_index`, `label`, `created_at`) VALUES
+INSERT INTO "workflow_connection" ("id", "workflow_id", "connection_uuid", "source_node_id", "source_port_id", "target_node_id", "target_port_id", "branch_label", "branch_priority", "source_param_index", "target_param_index", "label", "created_at") VALUES
 (85, 4, 'd6c812f6-847b-43c8-aab1-34b3bb03f7e1', 117, 'output-1', 118, 'input-1', NULL, NULL, NULL, NULL, NULL, '2026-03-25 14:05:33'),
 (86, 4, '2362f888-222c-4896-81b0-d6f6237d53d2', 118, 'output-1', 119, 'input-1', NULL, NULL, NULL, NULL, NULL, '2026-03-25 14:05:33'),
 (87, 4, '9f024f5b-4b89-4d0c-b0ea-a10dec538dc8', 119, 'output-1', 120, 'input-1', NULL, NULL, NULL, NULL, NULL, '2026-03-25 14:05:33'),
@@ -5513,7 +5512,7 @@ INSERT INTO `workflow_connection` (`id`, `workflow_id`, `connection_uuid`, `sour
 -- Data for table: workflow_error_log (empty)
 
 -- Data for table: workflow_execution (127 rows)
-INSERT INTO `workflow_execution` (`id`, `workflow_id`, `execution_uuid`, `status`, `trigger_type`, `triggered_by`, `input_data`, `output_data`, `error_message`, `node_executions`, `progress`, `start_time`, `end_time`, `duration_ms`, `created_at`, `updated_at`) VALUES
+INSERT INTO "workflow_execution" ("id", "workflow_id", "execution_uuid", "status", "trigger_type", "triggered_by", "input_data", "output_data", "error_message", "node_executions", "progress", "start_time", "end_time", "duration_ms", "created_at", "updated_at") VALUES
 (1, 28, '8a2c3c88-c6e0-420c-91e7-caa159a3107e', 'PARTIAL_SUCCESS', 'MANUAL', 'test', '{}', '{}', NULL, '{"node-end":{"status":"PENDING","updatedAt":"2026-04-05T22:55:37.586426900"},"node-start":{"startTime":"2026-04-05T22:55:37.963704700","status":"FAILED","updatedAt":"2026-04-05T22:55:38.723993500","endTime":"2026-04-05T22:55:38.723993500","durationMs":760,"outputs":{},"errorMessage":"必填参数缺失: input1"}}', 100, NULL, '2026-04-05 14:55:39', NULL, '2026-04-05 14:55:37', '2026-04-05 14:55:37'),
 (2, 28, '9a5e2a12-b1b1-4f4e-aaec-236fb84e1168', 'PARTIAL_SUCCESS', 'MANUAL', 'test', '{"input1":"Hello World"}', '{}', NULL, '{"node-end":{"status":"PENDING","updatedAt":"2026-04-05T22:56:02.464196100"},"node-start":{"startTime":"2026-04-05T22:56:02.833904500","status":"FAILED","updatedAt":"2026-04-05T22:56:03.582343600","endTime":"2026-04-05T22:56:03.582343600","durationMs":748,"outputs":{},"errorMessage":"必填参数缺失: input1"}}', 100, NULL, '2026-04-05 14:56:04', NULL, '2026-04-05 14:56:02', '2026-04-05 14:56:02'),
 (3, 28, '88e2e778-a326-46d5-8e1c-f1cf5e33cb89', 'SUCCESS', 'MANUAL', 'test', '{"input1":"Hello World"}', '{}', NULL, '{"node-end":{"status":"SUCCESS","updatedAt":"2026-04-05T22:58:05.829469400","startTime":"2026-04-05T22:58:05.469052800","endTime":"2026-04-05T22:58:05.829469400","durationMs":1,"outputs":{}},"node-start":{"startTime":"2026-04-05T22:58:04.743392700","status":"SUCCESS","updatedAt":"2026-04-05T22:58:05.106330","endTime":"2026-04-05T22:58:05.106330","durationMs":3,"outputs":{"input1":"Hello World"}}}', 100, NULL, '2026-04-05 14:58:06', NULL, '2026-04-05 14:58:04', '2026-04-05 14:58:04'),
@@ -5615,7 +5614,7 @@ INSERT INTO `workflow_execution` (`id`, `workflow_id`, `execution_uuid`, `status
 (99, 30, 'a3a323e6-ef50-4915-b3d1-51d14913b505', 'SUCCESS', 'MANUAL', NULL, '{}', '{"sum":73.0}', NULL, '{"skill-1775655381162":{"status":"SUCCESS","updatedAt":"2026-04-08T21:51:34.474702400","startTime":"2026-04-08T21:51:18.452799100","endTime":"2026-04-08T21:51:34.474702400","durationMs":15657,"outputs":{"sum":38.0}},"skill-1775656186406":{"status":"SUCCESS","updatedAt":"2026-04-08T21:51:50.831290900","startTime":"2026-04-08T21:51:34.839494100","endTime":"2026-04-08T21:51:50.831745400","durationMs":15577,"outputs":{"sum":73.0}},"node-start":{"status":"SUCCESS","updatedAt":"2026-04-08T21:51:18.086789400","startTime":"2026-04-08T21:51:17.722829900","endTime":"2026-04-08T21:51:18.086789400","durationMs":1,"outputs":{"a":35,"b":3}},"node-end":{"status":"SUCCESS","updatedAt":"2026-04-08T21:51:51.559690","startTime":"2026-04-08T21:51:51.196162400","endTime":"2026-04-08T21:51:51.559690","durationMs":0,"outputs":{"sum":73.0}}}', 100, NULL, '2026-04-08 13:51:52', NULL, '2026-04-08 13:51:16', '2026-04-08 13:51:16'),
 (100, 30, 'faf7ddb5-b2cd-4908-a873-ec6ea58f42f0', 'SUCCESS', 'MANUAL', NULL, '{"a":35,"b":3}', '{"sum":38.0}', NULL, '{"skill-1775655381162":{"status":"SUCCESS","updatedAt":"2026-04-08T21:56:22.448288500","startTime":"2026-04-08T21:56:06.445472800","endTime":"2026-04-08T21:56:22.448288500","durationMs":15599,"outputs":{"sum":38.0}},"node-start":{"status":"SUCCESS","updatedAt":"2026-04-08T21:56:06.078358400","startTime":"2026-04-08T21:56:05.715504400","endTime":"2026-04-08T21:56:06.078358400","durationMs":1,"outputs":{"a":35,"b":3}},"node-end":{"status":"SUCCESS","updatedAt":"2026-04-08T21:56:23.180065700","startTime":"2026-04-08T21:56:22.813926200","endTime":"2026-04-08T21:56:23.180065700","durationMs":0,"outputs":{"sum":38.0}}}', 100, NULL, '2026-04-08 13:56:24', NULL, '2026-04-08 13:56:04', '2026-04-08 13:56:04');
 
-INSERT INTO `workflow_execution` (`id`, `workflow_id`, `execution_uuid`, `status`, `trigger_type`, `triggered_by`, `input_data`, `output_data`, `error_message`, `node_executions`, `progress`, `start_time`, `end_time`, `duration_ms`, `created_at`, `updated_at`) VALUES
+INSERT INTO "workflow_execution" ("id", "workflow_id", "execution_uuid", "status", "trigger_type", "triggered_by", "input_data", "output_data", "error_message", "node_executions", "progress", "start_time", "end_time", "duration_ms", "created_at", "updated_at") VALUES
 (101, 30, '585420d1-9e6a-410c-8a9f-444f66634075', 'SUCCESS', 'MANUAL', NULL, '{}', '{"sum":73.0}', NULL, '{"skill-1775656625837":{"status":"SUCCESS","updatedAt":"2026-04-08T22:01:08.712248700","startTime":"2026-04-08T22:00:52.691677300","endTime":"2026-04-08T22:01:08.712248700","durationMs":15606,"outputs":{"sum":73.0}},"node-start":{"status":"SUCCESS","updatedAt":"2026-04-08T22:00:35.864615500","startTime":"2026-04-08T22:00:35.478611700","endTime":"2026-04-08T22:00:35.864615500","durationMs":4,"outputs":{"a":35,"b":3}},"node-end":{"status":"SUCCESS","updatedAt":"2026-04-08T22:01:09.452327200","startTime":"2026-04-08T22:01:09.082294200","endTime":"2026-04-08T22:01:09.452327200","durationMs":1,"outputs":{"sum":73.0}},"skill-1775655381162":{"startTime":"2026-04-08T22:00:36.252257800","status":"SUCCESS","updatedAt":"2026-04-08T22:00:52.313805800","endTime":"2026-04-08T22:00:52.313805800","durationMs":15647,"outputs":{"sum":38.0}}}', 100, NULL, '2026-04-08 14:01:10', NULL, '2026-04-08 14:00:34', '2026-04-08 14:00:34'),
 (102, 30, 'd502acf1-cbd2-4695-b2b7-010bb31409e7', 'SUCCESS', 'MANUAL', 'manual', '{"a":35,"b":3}', '{"sum":73.0}', NULL, '{"skill-1775656625837":{"status":"SUCCESS","updatedAt":"2026-04-08T22:02:02.047659900","startTime":"2026-04-08T22:01:46.087556800","endTime":"2026-04-08T22:02:02.047659900","durationMs":15589,"outputs":{"sum":73.0}},"node-start":{"status":"SUCCESS","updatedAt":"2026-04-08T22:01:29.389198500","startTime":"2026-04-08T22:01:29.035084600","endTime":"2026-04-08T22:01:29.389198500","durationMs":2,"outputs":{"a":35,"b":3}},"node-end":{"status":"SUCCESS","updatedAt":"2026-04-08T22:02:02.786648800","startTime":"2026-04-08T22:02:02.417669800","endTime":"2026-04-08T22:02:02.786648800","durationMs":1,"outputs":{"sum":73.0}},"skill-1775655381162":{"startTime":"2026-04-08T22:01:29.741433800","status":"SUCCESS","updatedAt":"2026-04-08T22:01:45.718963100","endTime":"2026-04-08T22:01:45.718963100","durationMs":15586,"outputs":{"sum":38.0}}}', 100, NULL, '2026-04-08 14:02:03', NULL, '2026-04-08 14:01:27', '2026-04-08 14:01:27'),
 (103, 30, 'b93c9ad6-fb40-4c70-9cb7-6b77a1082dc6', 'SUCCESS', 'MANUAL', 'manual', '{"a":35,"b":3}', '{"sum":73.0}', NULL, '{"skill-1775655381162":{"status":"SUCCESS","updatedAt":"2026-04-08T22:03:15.814811800","startTime":"2026-04-08T22:02:59.799645700","endTime":"2026-04-08T22:03:15.814811800","durationMs":15605,"outputs":{"sum":38.0}},"skill-1775656625837":{"status":"SUCCESS","updatedAt":"2026-04-08T22:03:32.200634400","startTime":"2026-04-08T22:03:16.186941100","endTime":"2026-04-08T22:03:32.201067500","durationMs":15602,"outputs":{"sum":73.0}},"node-start":{"status":"SUCCESS","updatedAt":"2026-04-08T22:02:59.428812300","startTime":"2026-04-08T22:02:59.060734500","endTime":"2026-04-08T22:02:59.428812300","durationMs":1,"outputs":{"a":35,"b":3}},"node-end":{"status":"SUCCESS","updatedAt":"2026-04-08T22:03:32.942186","startTime":"2026-04-08T22:03:32.571324400","endTime":"2026-04-08T22:03:32.942186","durationMs":0,"outputs":{"sum":73.0}}}', 100, NULL, '2026-04-08 14:03:33', NULL, '2026-04-08 14:02:57', '2026-04-08 14:02:57'),
@@ -5645,7 +5644,7 @@ INSERT INTO `workflow_execution` (`id`, `workflow_id`, `execution_uuid`, `status
 (127, 30, 'e55af56f-abf2-456e-8537-818b5cd75237', 'SUCCESS', 'MANUAL', 'manual', '{"a":35,"b":3}', '{"sum":73.0}', NULL, '{"skill-1775698700273":{"status":"SUCCESS","updatedAt":"2026-04-09T10:08:59.403808900","startTime":"2026-04-09T10:08:43.472982400","endTime":"2026-04-09T10:08:59.403808900","durationMs":15535,"outputs":{"sum":38.0}},"node-start":{"status":"SUCCESS","updatedAt":"2026-04-09T10:08:43.112857300","startTime":"2026-04-09T10:08:42.752965800","endTime":"2026-04-09T10:08:43.112857300","durationMs":1,"outputs":{"a":35,"b":3}},"node-end":{"status":"SUCCESS","updatedAt":"2026-04-09T10:09:16.444100900","startTime":"2026-04-09T10:09:16.085059800","endTime":"2026-04-09T10:09:16.444100900","durationMs":0,"outputs":{"sum":73.0}},"skill-1775698703238":{"startTime":"2026-04-09T10:08:59.764455200","status":"SUCCESS","updatedAt":"2026-04-09T10:09:15.726521","endTime":"2026-04-09T10:09:15.727024800","durationMs":15563,"outputs":{"sum":73.0}}}', 100, NULL, '2026-04-09 02:09:17', NULL, '2026-04-09 02:08:41', '2026-04-09 02:08:41');
 
 -- Data for table: workflow_node (139 rows)
-INSERT INTO `workflow_node` (`id`, `workflow_id`, `node_uuid`, `type`, `type_id`, `name`, `skill_id`, `skill_snapshot`, `position_x`, `position_y`, `input_ports`, `output_ports`, `input_params`, `output_params`, `config`, `execution_location`, `error_strategy`, `retry_count`, `retry_interval`, `error_branch_id`, `condition_type`, `conditions`, `loop_type`, `loop_config`, `batch_config`, `async_config`, `collect_config`, `compatibility_status`, `parent_node_id`, `created_at`, `updated_at`, `node_category`) VALUES
+INSERT INTO "workflow_node" ("id", "workflow_id", "node_uuid", "type", "type_id", "name", "skill_id", "skill_snapshot", "position_x", "position_y", "input_ports", "output_ports", "input_params", "output_params", "config", "execution_location", "error_strategy", "retry_count", "retry_interval", "error_branch_id", "condition_type", "conditions", "loop_type", "loop_config", "batch_config", "async_config", "collect_config", "compatibility_status", "parent_node_id", "created_at", "updated_at", "node_category") VALUES
 (115, 1, 'start-node-001', 'start', NULL, '开始', NULL, NULL, 100, 200, NULL, NULL, NULL, NULL, '{}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-25 13:51:57', '2026-03-25 13:51:57', 'BASIC'),
 (116, 1, 'node-loop-body', 'loopBodyCanvas', NULL, '循环体', NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, '{"width":500,"height":400,"belongsTo":"node-loop","loopBody":{"canvas":{"scale":1,"offsetX":0,"offsetY":0},"nodes":[{"nodeUuid":"http-api-call-001","type":"apiAuto","name":"HTTP接口调用","positionX":250,"positionY":200,"inputPorts":[{"id":"input-1","name":"请求参数","type":"object"}],"outputPorts":[{"id":"output-1","name":"响应数据","type":"object"},{"id":"output-2","name":"状态码","type":"number"}],"config":"{\\"method\\":\\"GET\\",\\"url\\":\\"\\",\\"headers\\":{},\\"queryParams\\":{},\\"body\\":{},\\"timeout\\":30000,\\"retryCount\\":0,\\"useLoopItem\\":true}"}],"connections":[],"leftPort":{"id":"port-left","name":"输入","type":"input","y":200,"params":[{"name":"item","type":"Object"},{"name":"index","type":"Number"}]},"rightPort":{"id":"port-right","name":"输出","type":"output","y":200,"params":[]}}}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-25 13:51:57', '2026-03-25 13:51:57', 'BASIC'),
 (117, 4, 'node-start', 'start', NULL, '开始', NULL, NULL, 150, 250, '[]', '[{"id":"output-1","name":"输出"}]', '[]', '[]', '{}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-25 14:05:32', '2026-03-25 14:05:32', 'BASIC'),
@@ -5685,7 +5684,7 @@ INSERT INTO `workflow_node` (`id`, `workflow_id`, `node_uuid`, `type`, `type_id`
 (209, 9, 'node-text-clean', 'textClean', NULL, '文本清洗', NULL, NULL, 400, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[]', '[]', '{"inputType":"text","textContent":"","datasetId":"","datasetFields":[],"removeExtraSpaces":true,"removeHtmlTags":true,"removeSpecialChars":true,"normalizeNewlines":true,"trimWhitespace":true,"standardizedNewlineChar":true,"trimFrontBack":true,"colsValue":"${开始.dict}.input"}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:54', '2026-03-26 03:48:54', 'BASIC'),
 (210, 9, 'node-table-extract', 'tableExtract', NULL, '表格提取', NULL, NULL, 525, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[{"name":"file","type":"File","fileType":"Excel","required":true,"description":"需要提取数据的Excel文件"}]', '[{"name":"output","type":"Array","elementType":"Object","description":"提取的表格数据数组"}]', '{"file":null,"sheetName":"Sheet1","headerRow":1,"startRow":2,"endRow":null,"columns":[],"inputFileValue":"${文本清洗.output}"}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:54', '2026-03-26 03:48:54', 'BASIC'),
 (211, 9, 'node-loop', 'loop', NULL, '循环', NULL, NULL, 775, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[]', '[{"name":"current_item","type":"Any"},{"name":"current_index","type":"Number"}]', '{"loopOutputParams":[{"id":"loop-out-001","name":"apiResult","elementType":"String","value":"${HTTPS/HTTP接口调用.choices.message.content}"}],"cycle_array":"${表格提取.output}"}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:54', '2026-03-26 03:48:54', 'BASIC'),
-(212, 9, 'node-judge-model', 'judgeModel', NULL, '裁判模型', NULL, NULL, 1025, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[]', '[]', '{"modelValue":"DeepSeekR1-32B","promptValue":"# 角色\\n你是一位专业的AI输出质量评估专家。\\n\\n# 任务\\n对AI生成的内容进行多维度质量评估。\\n\\n# 评估维度\\n1. **准确性** (1-10分): 内容是否准确无误，是否包含错误信息\\n2. **相关性** (1-10分): 回答是否与问题相关，是否切题\\n3. **完整性** (1-10分): 回答是否完整，是否遗漏重要信息\\n4. **逻辑性** (1-10分): 论述是否有条理，逻辑是否清晰\\n5. **可读性** (1-10分): 语言是否流畅，表达是否清晰\\n\\n# 输出要求\\n请严格按照以下JSON格式输出评估结果：\\n```json\\n{\\"accuracy_score": X, \\"accuracy_reason\\": \\"简要说明\\", \\"relevance_score\\": X, \\"relevance_reason\\": \\"简要说明\\", \\"completeness_score\\": X, \\"completeness_reason\\": \\"简要说明\\", \\"logic_score\\": X, \\"logic_reason\\": \\"简要说明\\", \\"readability_score\\": X, \\"readability_reason\\": \\"简要说明\\", \\"overall_score\\": X, \\"summary\\": \\"综合评价\\"}\\n```","toEvaluateValue":"${循环.apiResult}","toEvaluateType":"Array<String>"}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:54', '2026-03-26 03:48:54', 'BASIC'),
+(212, 9, 'node-judge-model', 'judgeModel', NULL, '裁判模型', NULL, NULL, 1025, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[]', '[]', '{"modelValue":"DeepSeekR1-32B","promptValue":"# 角色\\n你是一位专业的AI输出质量评估专家。\\n\\n# 任务\\n对AI生成的内容进行多维度质量评估。\\n\\n# 评估维度\\n1. **准确性** (1-10分): 内容是否准确无误，是否包含错误信息\\n2. **相关性** (1-10分): 回答是否与问题相关，是否切题\\n3. **完整性** (1-10分): 回答是否完整，是否遗漏重要信息\\n4. **逻辑性** (1-10分): 论述是否有条理，逻辑是否清晰\\n5. **可读性** (1-10分): 语言是否流畅，表达是否清晰\\n\\n# 输出要求\\n请严格按照以下JSON格式输出评估结果：\\n"`"json\\n{\\"accuracy_score": X, \\"accuracy_reason\\": \\"简要说明\\", \\"relevance_score\\": X, \\"relevance_reason\\": \\"简要说明\\", \\"completeness_score\\": X, \\"completeness_reason\\": \\"简要说明\\", \\"logic_score\\": X, \\"logic_reason\\": \\"简要说明\\", \\"readability_score\\": X, \\"readability_reason\\": \\"简要说明\\", \\"overall_score\\": X, \\"summary\\": \\"综合评价\\"}\\n"`"","toEvaluateValue":"${循环.apiResult}","toEvaluateType":"Array<String>"}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:54', '2026-03-26 03:48:54', 'BASIC'),
 (213, 9, 'node-table-generate', 'tableGenerate', NULL, '表格生成', NULL, NULL, 1275, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[]', '[]', '{"inputParams":[{"name":"evaluateResult","type":"Array","value":"${裁判模型.output}","elementType":"String"}],"tableGenerateInputParam_0":"${裁判模型.output}"}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:55', '2026-03-26 03:48:55', 'BASIC'),
 (214, 9, 'node-end', 'end', NULL, '结束', NULL, NULL, 1525, 250, '[{"id":"input-1","name":"输入"}]', '[]', '[]', '[]', '{"inputParams":[{"name":"output","type":"File<Excel>","value":"${表格生成.output_excel}"}],"endInputParam_0":"${表格生成.output_excel}"}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:55', '2026-03-26 03:48:55', 'BASIC'),
 (215, 9, 'node-loop-body', 'loopBodyCanvas', NULL, '循环体', NULL, NULL, 775, 470, '[]', '[]', '[]', '[]', '{"width":500,"height":400,"belongsTo":"node-loop","loopBody":{"canvas":{"scale":1,"offsetX":0,"offsetY":0},"nodes":[{"id":"node-api-auto-1","type":"apiAuto","name":"HTTPS/HTTP接口调用","x":200,"y":150,"inputs":[{"id":"input-1","name":"输入"}],"outputs":[{"id":"output-1","name":"输出"}],"inputParams":[],"outputParams":[],"config":{"url":"https://api.deepseek.com/v1/chat/completions","method":"POST","headers":[{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer YOUR_API_KEY"}],"body":"{\\"model\\":\\"deepseek-chat\\",\\"messages\\":[{\\"role\\":\\"user\\",\\"content\\":\\"${循环.current_item}\\"}],\\"temperature\\":0.7}","timeout":30000}}],"connections":[{"id":"conn-left-to-api","sourceId":"port-left","sourcePort":"out","targetId":"node-api-auto-1","targetPort":"input-1"},{"id":"conn-api-to-right","sourceId":"node-api-auto-1","sourcePort":"output-1","targetId":"port-right","targetPort":"in"}],"leftPort":{"id":"port-left","name":"输入","type":"input","y":200,"params":[]},"rightPort":{"id":"port-right","name":"输出","type":"output","y":200,"params":[]}}}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-03-26 03:48:55', '2026-03-26 03:48:55', 'BASIC'),
@@ -5747,7 +5746,7 @@ INSERT INTO `workflow_node` (`id`, `workflow_id`, `node_uuid`, `type`, `type_id`
 (527, 22, 'node-end', 'end', NULL, '结束', NULL, NULL, 1525, 250, '[{"id":"input-1","name":"输入"}]', '[]', '[]', '[]', '{}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-04-01 07:08:56', '2026-04-01 07:08:56', 'BASIC'),
 (528, 22, 'node-loop-body', 'loopBodyCanvas', NULL, '循环体', NULL, NULL, 775, 470, '[]', '[]', '[]', '[]', '{"width":500,"height":400,"belongsTo":"node-loop","loopBody":{"canvas":{"scale":1,"offsetX":0,"offsetY":0},"nodes":[{"id":"node-api-auto-1","type":"apiAuto","name":"HTTPS/HTTP接口调用","x":200,"y":150,"inputs":[{"id":"input-1","name":"输入"}],"outputs":[{"id":"output-1","name":"输出"}],"config":{"url":"","method":"GET","headers":[],"body":"","timeout":30000}}],"connections":[{"id":"conn-left-to-api","sourceId":"port-left","sourcePort":"out","targetId":"node-api-auto-1","targetPort":"input-1"},{"id":"conn-api-to-right","sourceId":"node-api-auto-1","sourcePort":"output-1","targetId":"port-right","targetPort":"in"}],"leftPort":{"id":"port-left","name":"输入","type":"input","y":200,"params":[]},"rightPort":{"id":"port-right","name":"输出","type":"output","y":200,"params":[]}}}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-04-01 07:08:56', '2026-04-01 07:08:56', 'BASIC');
 
-INSERT INTO `workflow_node` (`id`, `workflow_id`, `node_uuid`, `type`, `type_id`, `name`, `skill_id`, `skill_snapshot`, `position_x`, `position_y`, `input_ports`, `output_ports`, `input_params`, `output_params`, `config`, `execution_location`, `error_strategy`, `retry_count`, `retry_interval`, `error_branch_id`, `condition_type`, `conditions`, `loop_type`, `loop_config`, `batch_config`, `async_config`, `collect_config`, `compatibility_status`, `parent_node_id`, `created_at`, `updated_at`, `node_category`) VALUES
+INSERT INTO "workflow_node" ("id", "workflow_id", "node_uuid", "type", "type_id", "name", "skill_id", "skill_snapshot", "position_x", "position_y", "input_ports", "output_ports", "input_params", "output_params", "config", "execution_location", "error_strategy", "retry_count", "retry_interval", "error_branch_id", "condition_type", "conditions", "loop_type", "loop_config", "batch_config", "async_config", "collect_config", "compatibility_status", "parent_node_id", "created_at", "updated_at", "node_category") VALUES
 (529, 23, 'node-start', 'start', NULL, '开始', NULL, NULL, 150, 250, '[]', '[{"id":"output-1","name":"输出"}]', '[]', '[{"name":"input","type":"String","description":"输入文本"}]', '{}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-04-01 07:31:29', '2026-04-01 07:31:29', 'BASIC'),
 (530, 23, 'node-text-clean', 'textClean', NULL, '文本清洗', NULL, NULL, 400, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[{"name":"input_text","type":"String","required":true,"description":"需要清洗的文本"}]', '[{"name":"cleaned_text","type":"String","description":"清洗后的文本"}]', '{"removeExtraSpaces":true,"removeEmptyLines":true,"trimWhitespace":true}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-04-01 07:31:29', '2026-04-01 07:31:29', 'BASIC'),
 (531, 23, 'node-table-extract', 'tableExtract', NULL, '表格提取', NULL, NULL, 525, 250, '[{"id":"input-1","name":"输入"}]', '[{"id":"output-1","name":"输出"}]', '[{"name":"file","type":"File","fileType":"Excel","required":true,"description":"需要提取数据的Excel文件"}]', '[{"name":"output","type":"Array","elementType":"Object","description":"提取的表格数据数组"}]', '{"file":null,"sheetName":"","headerRow":1,"startRow":2,"endRow":null,"columns":[]}', NULL, 'STOP', 3, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'COMPATIBLE', NULL, '2026-04-01 07:31:29', '2026-04-01 07:31:29', 'BASIC'),
@@ -5791,7 +5790,7 @@ INSERT INTO `workflow_node` (`id`, `workflow_id`, `node_uuid`, `type`, `type_id`
 -- Data for table: workflow_node_execution (empty)
 
 -- Data for table: workflow_node_type (32 rows)
-INSERT INTO `workflow_node_type` (`id`, `category`, `code`, `created_at`, `default_config`, `description`, `enabled`, `icon`, `input_ports`, `name`, `output_ports`, `sort_order`, `updated_at`) VALUES
+INSERT INTO "workflow_node_type" ("id", "category", "code", "created_at", "default_config", "description", "enabled", "icon", "input_ports", "name", "output_ports", "sort_order", "updated_at") VALUES
 (1, 'BASIC', 'start', '2026-03-21 01:59:01', NULL, '工作流入口', X'01', 'VideoPlay', NULL, '开始节点', NULL, 1, '2026-03-21 01:59:01'),
 (2, 'BASIC', 'end', '2026-03-21 01:59:01', NULL, '工作流出口', X'01', 'CircleCheck', NULL, '结束节点', NULL, 2, '2026-03-21 01:59:01'),
 (3, 'BASIC', 'loopBodyCanvas', '2026-03-21 01:59:02', NULL, '循环体容器节点', X'01', 'Grid', NULL, '循环体容器', NULL, 3, '2026-03-21 01:59:02'),
@@ -5826,7 +5825,7 @@ INSERT INTO `workflow_node_type` (`id`, `category`, `code`, `created_at`, `defau
 (1230, 'LOGIC', 'condition', '2026-04-09 01:24:01', NULL, '条件判断节点', X'01', 'Share', NULL, '条件判断', NULL, 10, '2026-04-09 01:24:01');
 
 -- Data for table: workflow_variable_type (28 rows)
-INSERT INTO `workflow_variable_type` (`id`, `code`, `name`, `category`, `element_type`, `file_type`, `dictionary_type`, `description`, `sort_order`, `enabled`, `created_at`, `updated_at`) VALUES
+INSERT INTO "workflow_variable_type" ("id", "code", "name", "category", "element_type", "file_type", "dictionary_type", "description", "sort_order", "enabled", "created_at", "updated_at`) VALUES
 (1, 'String', '字符串', 'BASIC', NULL, NULL, NULL, '字符串类型', 1, 1, '2026-03-23 12:34:38', '2026-03-23 12:34:38'),
 (2, 'Boolean', '布尔值', 'BASIC', NULL, NULL, NULL, '布尔值类型', 2, 1, '2026-03-23 12:34:38', '2026-03-23 12:34:38'),
 (3, 'Integer', '整数', 'BASIC', NULL, NULL, NULL, '整数类型', 3, 1, '2026-03-23 12:34:39', '2026-03-23 12:34:39'),
