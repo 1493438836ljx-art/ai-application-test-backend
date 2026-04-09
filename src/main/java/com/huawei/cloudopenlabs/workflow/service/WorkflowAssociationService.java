@@ -21,7 +21,7 @@ public interface WorkflowAssociationService {
      * @param workflowId 工作流ID
      * @return 关联列表
      */
-    List<AssociationResponse> getAssociations(Long workflowId);
+    List<AssociationResponse> getAssociations(String workflowId);
 
     /**
      * 获取单个关联
@@ -30,7 +30,7 @@ public interface WorkflowAssociationService {
      * @param associationId 关联ID
      * @return 关联响应
      */
-    AssociationResponse getAssociation(Long workflowId, Long associationId);
+    AssociationResponse getAssociation(String workflowId, String associationId);
 
     /**
      * 创建关联
@@ -39,7 +39,7 @@ public interface WorkflowAssociationService {
      * @param request    创建请求
      * @return 关联响应
      */
-    AssociationResponse createAssociation(Long workflowId, AssociationCreateRequest request);
+    AssociationResponse createAssociation(String workflowId, AssociationCreateRequest request);
 
     /**
      * 删除关联
@@ -47,7 +47,7 @@ public interface WorkflowAssociationService {
      * @param workflowId     工作流ID
      * @param associationId 关联ID
      */
-    void deleteAssociation(Long workflowId, Long associationId);
+    void deleteAssociation(String workflowId, String associationId);
 
     // ========== 批量操作 ==========
 
@@ -57,7 +57,7 @@ public interface WorkflowAssociationService {
      * @param workflowId 工作流ID
      * @param requests   创建请求列表
      */
-    void batchCreateAssociations(Long workflowId, List<AssociationCreateRequest> requests);
+    void batchCreateAssociations(String workflowId, List<AssociationCreateRequest> requests);
 
     /**
      * 批量删除关联
@@ -65,7 +65,7 @@ public interface WorkflowAssociationService {
      * @param workflowId      工作流ID
      * @param associationIds 关联ID列表
      */
-    void batchDeleteAssociations(Long workflowId, List<Long> associationIds);
+    void batchDeleteAssociations(String workflowId, List<String> associationIds);
 
     // ========== 查询 ==========
 
@@ -76,7 +76,7 @@ public interface WorkflowAssociationService {
      * @param containerNodeUuid 容器节点UUID
      * @return 关联列表
      */
-    List<AssociationResponse> getByContainerNode(Long workflowId, String containerNodeUuid);
+    List<AssociationResponse> getByContainerNode(String workflowId, String containerNodeUuid);
 
     /**
      * 根据子节点查询关联
@@ -85,5 +85,5 @@ public interface WorkflowAssociationService {
      * @param bodyNodeUuid 子节点UUID
      * @return 关联列表
      */
-    List<AssociationResponse> getByBodyNode(Long workflowId, String bodyNodeUuid);
+    List<AssociationResponse> getByBodyNode(String workflowId, String bodyNodeUuid);
 }

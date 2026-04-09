@@ -62,10 +62,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         workflow.setDeleted(false);
 
         workflowMapper.insert(workflow);
-        Long workflowId = workflow.getId();
+        String workflowId = workflow.getId();
 
         // 2. 保存节点数据
-        Map<String, Long> nodeUuidToIdMap = new HashMap<>();
+        Map<String, String> nodeUuidToIdMap = new HashMap<>();
         if (request.getNodes() != null && !request.getNodes().isEmpty()) {
             for (WorkflowCreateRequest.NodeData nodeData : request.getNodes()) {
                 WorkflowNodeEntity node = new WorkflowNodeEntity();
@@ -89,8 +89,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             // 处理父节点关系（循环体内节点）
             for (WorkflowCreateRequest.NodeData nodeData : request.getNodes()) {
                 if (nodeData.getParentNodeUuid() != null && nodeData.getNodeUuid() != null) {
-                    Long nodeId = nodeUuidToIdMap.get(nodeData.getNodeUuid());
-                    Long parentNodeId = nodeUuidToIdMap.get(nodeData.getParentNodeUuid());
+                    String nodeId = nodeUuidToIdMap.get(nodeData.getNodeUuid());
+                    String parentNodeId = nodeUuidToIdMap.get(nodeData.getParentNodeUuid());
                     if (nodeId != null && parentNodeId != null) {
                         WorkflowNodeEntity node = nodeMapper.selectById(nodeId);
                         if (node != null) {
@@ -105,8 +105,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 3. 保存连线数据
         if (request.getConnections() != null && !request.getConnections().isEmpty()) {
             for (WorkflowCreateRequest.ConnectionData connData : request.getConnections()) {
-                Long sourceNodeId = nodeUuidToIdMap.get(connData.getSourceNodeUuid());
-                Long targetNodeId = nodeUuidToIdMap.get(connData.getTargetNodeUuid());
+                String sourceNodeId = nodeUuidToIdMap.get(connData.getSourceNodeUuid());
+                String targetNodeId = nodeUuidToIdMap.get(connData.getTargetNodeUuid());
 
                 if (sourceNodeId == null || targetNodeId == null) {
                     log.warn("连线节点ID映射失败: sourceUuid={}, targetUuid={}",
@@ -133,8 +133,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 4. 保存关联数据（循环与循环体关系）
         if (request.getAssociations() != null && !request.getAssociations().isEmpty()) {
             for (WorkflowCreateRequest.AssociationData assocData : request.getAssociations()) {
-                Long containerNodeId = nodeUuidToIdMap.get(assocData.getContainerNodeUuid());
-                Long bodyNodeId = nodeUuidToIdMap.get(assocData.getBodyNodeUuid());
+                String containerNodeId = nodeUuidToIdMap.get(assocData.getContainerNodeUuid());
+                String bodyNodeId = nodeUuidToIdMap.get(assocData.getBodyNodeUuid());
 
                 if (containerNodeId == null || bodyNodeId == null) {
                     log.warn("关联节点ID映射失败: containerNodeUuid={}, bodyNodeUuid={}",
@@ -159,7 +159,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional(readOnly = true)
-    public WorkflowResponse getWorkflowById(Long id) {
+    public WorkflowResponse getWorkflowById(String id) {
         WorkflowEntity workflow = workflowMapper.selectById(id);
         if (workflow == null) {
             throw BusinessException.notFound("工作流", id);
@@ -193,7 +193,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional
-    public WorkflowResponse updateWorkflow(Long id, WorkflowUpdateRequest request) {
+    public WorkflowResponse updateWorkflow(String id, WorkflowUpdateRequest request) {
         log.info("更新工作流: {}", id);
 
         WorkflowEntity workflow = workflowMapper.selectById(id);
@@ -217,14 +217,14 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional
-    public void deleteWorkflow(Long id) {
+    public void deleteWorkflow(String id) {
         log.info("删除工作流: {}", id);
         workflowMapper.deleteById(id);
     }
 
     @Override
     @Transactional
-    public WorkflowResponse publishWorkflow(Long id) {
+    public WorkflowResponse publishWorkflow(String id) {
         log.info("发布工作流: {}", id);
 
         WorkflowEntity workflow = workflowMapper.selectById(id);
@@ -241,7 +241,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional
-    public WorkflowResponse unpublishWorkflow(Long id) {
+    public WorkflowResponse unpublishWorkflow(String id) {
         log.info("取消发布工作流: {}", id);
 
         WorkflowEntity workflow = workflowMapper.selectById(id);
@@ -261,7 +261,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional
-    public WorkflowResponse copyWorkflow(Long id) {
+    public WorkflowResponse copyWorkflow(String id) {
         log.info("复制工作流: {}", id);
 
         WorkflowEntity original = workflowMapper.selectById(id);
@@ -283,7 +283,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         // 获取原工作流的节点
         List<WorkflowNodeEntity> originalNodes = nodeMapper.selectByWorkflowId(id);
-        Map<Long, Long> oldToNewNodeIdMap = new HashMap<>();
+        Map<String, String> oldToNewNodeIdMap = new HashMap<>();
 
         // 复制节点
         for (WorkflowNodeEntity originalNode : originalNodes) {
@@ -307,8 +307,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 复制连线
         List<WorkflowConnectionEntity> originalConnections = connectionMapper.selectByWorkflowId(id);
         for (WorkflowConnectionEntity originalConn : originalConnections) {
-            Long newSourceNodeId = oldToNewNodeIdMap.get(originalConn.getSourceNodeId());
-            Long newTargetNodeId = oldToNewNodeIdMap.get(originalConn.getTargetNodeId());
+            String newSourceNodeId = oldToNewNodeIdMap.get(originalConn.getSourceNodeId());
+            String newTargetNodeId = oldToNewNodeIdMap.get(originalConn.getTargetNodeId());
 
             if (newSourceNodeId != null && newTargetNodeId != null) {
                 WorkflowConnectionEntity newConn = new WorkflowConnectionEntity();
@@ -330,7 +330,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     @Transactional
-    public WorkflowResponse saveWorkflowData(Long id,
+    public WorkflowResponse saveWorkflowData(String id,
                                               List<WorkflowResponse.NodeDTO> nodes,
                                               List<WorkflowResponse.ConnectionDTO> connections,
                                               List<WorkflowResponse.AssociationDTO> associations) {
@@ -348,8 +348,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         associationMapper.deleteByWorkflowId(id);
 
         // 保存新节点
-        // uuidToIdMap: key 是前端 nodeUuid（字符串），value 是数据库 ID（Long）
-        Map<String, Long> uuidToIdMap = new HashMap<>();
+        // uuidToIdMap: key 是前端 nodeUuid（字符串），value 是数据库 ID（String）
+        Map<String, String> uuidToIdMap = new HashMap<>();
         for (WorkflowResponse.NodeDTO nodeDTO : nodes) {
             WorkflowNodeEntity node = new WorkflowNodeEntity();
             node.setWorkflowId(id);
@@ -376,8 +376,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 保存连线
         for (WorkflowResponse.ConnectionDTO connDTO : connections) {
             // 使用 nodeUuid 映射到数据库 ID
-            Long sourceNodeId = uuidToIdMap.get(connDTO.getSourceNodeUuid());
-            Long targetNodeId = uuidToIdMap.get(connDTO.getTargetNodeUuid());
+            String sourceNodeId = uuidToIdMap.get(connDTO.getSourceNodeUuid());
+            String targetNodeId = uuidToIdMap.get(connDTO.getTargetNodeUuid());
 
             // 如果没有找到，尝试使用 sourceNodeId/targetNodeId（兼容旧格式）
             if (sourceNodeId == null && connDTO.getSourceNodeId() != null) {
@@ -409,8 +409,8 @@ public class WorkflowServiceImpl implements WorkflowService {
         // 保存关联（使用 UUID 到 ID 的映射）
         for (WorkflowResponse.AssociationDTO assocDTO : associations) {
             // 使用 containerNodeUuid/bodyNodeUuid 映射到数据库 ID
-            Long containerNodeDbId = uuidToIdMap.get(assocDTO.getContainerNodeUuid());
-            Long bodyNodeDbId = uuidToIdMap.get(assocDTO.getBodyNodeUuid());
+            String containerNodeDbId = uuidToIdMap.get(assocDTO.getContainerNodeUuid());
+            String bodyNodeDbId = uuidToIdMap.get(assocDTO.getBodyNodeUuid());
 
             if (containerNodeDbId == null || bodyNodeDbId == null) {
                 log.warn("关联节点ID映射失败: containerNodeUuid={}, bodyNodeUuid={}",
@@ -434,7 +434,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         log.info("获取默认工作流详情");
 
         WorkflowResponse response = new WorkflowResponse();
-        response.setId(0L);
+        response.setId("0");
         response.setName("默认工作流");
         response.setDescription("系统默认工作流模板");
         response.setPublished(false);
@@ -464,7 +464,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         // 1. start (开始) - 位置(150, 250)
         WorkflowResponse.NodeDTO startNode = new WorkflowResponse.NodeDTO();
-        startNode.setId(1L);
+        startNode.setId("1");
         startNode.setNodeUuid("node-start");
         startNode.setType("start");
         startNode.setName("开始");
@@ -480,7 +480,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
         // 2. end (结束) - 位置(400, 250)
         WorkflowResponse.NodeDTO endNode = new WorkflowResponse.NodeDTO();
-        endNode.setId(2L);
+        endNode.setId("2");
         endNode.setNodeUuid("node-end");
         endNode.setType("end");
         endNode.setName("结束");
@@ -501,20 +501,20 @@ public class WorkflowServiceImpl implements WorkflowService {
         List<WorkflowResponse.ConnectionDTO> connections = new java.util.ArrayList<>();
 
         // 节点ID到UUID的映射
-        Map<Long, String> nodeIdToUuidMap = new java.util.HashMap<>();
+        Map<String, String> nodeIdToUuidMap = new java.util.HashMap<>();
         for (WorkflowResponse.NodeDTO node : nodes) {
             nodeIdToUuidMap.put(node.getId(), node.getNodeUuid());
         }
 
         // start(1) -> end(2)
         WorkflowResponse.ConnectionDTO conn = new WorkflowResponse.ConnectionDTO();
-        conn.setId(1L);
+        conn.setId("1");
         conn.setConnectionUuid("conn-start-end");
-        conn.setSourceNodeId(1L);
-        conn.setSourceNodeUuid(nodeIdToUuidMap.get(1L));
+        conn.setSourceNodeId("1");
+        conn.setSourceNodeUuid(nodeIdToUuidMap.get("1"));
         conn.setSourcePortId("output-1");
-        conn.setTargetNodeId(2L);
-        conn.setTargetNodeUuid(nodeIdToUuidMap.get(2L));
+        conn.setTargetNodeId("2");
+        conn.setTargetNodeUuid(nodeIdToUuidMap.get("2"));
         conn.setTargetPortId("input-1");
         conn.setSourceParamIndex(null);
         conn.setTargetParamIndex(null);
@@ -552,7 +552,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         response.setNodes(nodes.stream().map(this::convertToNodeDTO).collect(Collectors.toList()));
 
         // 构建 ID -> UUID 映射
-        Map<Long, String> nodeIdToUuidMap = nodes.stream()
+        Map<String, String> nodeIdToUuidMap = nodes.stream()
                 .collect(Collectors.toMap(WorkflowNodeEntity::getId, WorkflowNodeEntity::getNodeUuid));
 
         // 获取连线
@@ -591,7 +591,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         return dto;
     }
 
-    private WorkflowResponse.ConnectionDTO convertToConnectionDTO(WorkflowConnectionEntity conn, Map<Long, String> nodeIdToUuidMap) {
+    private WorkflowResponse.ConnectionDTO convertToConnectionDTO(WorkflowConnectionEntity conn, Map<String, String> nodeIdToUuidMap) {
         WorkflowResponse.ConnectionDTO dto = new WorkflowResponse.ConnectionDTO();
         dto.setId(conn.getId());
         dto.setConnectionUuid(conn.getConnectionUuid());
@@ -607,7 +607,7 @@ public class WorkflowServiceImpl implements WorkflowService {
         return dto;
     }
 
-    private WorkflowResponse.AssociationDTO convertToAssociationDTO(WorkflowAssociationEntity assoc, Map<Long, String> nodeIdToUuidMap) {
+    private WorkflowResponse.AssociationDTO convertToAssociationDTO(WorkflowAssociationEntity assoc, Map<String, String> nodeIdToUuidMap) {
         WorkflowResponse.AssociationDTO dto = new WorkflowResponse.AssociationDTO();
         dto.setId(assoc.getId());
         dto.setContainerNodeId(assoc.getContainerNodeId());

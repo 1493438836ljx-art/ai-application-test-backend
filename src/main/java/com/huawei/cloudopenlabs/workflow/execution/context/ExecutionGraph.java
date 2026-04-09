@@ -127,7 +127,7 @@ public class ExecutionGraph {
     /**
      * 根据节点ID获取节点UUID
      */
-    private String getNodeUuid(Long nodeId) {
+    private String getNodeUuid(String nodeId) {
         return nodes.values().stream()
                 .filter(n -> nodeId.equals(n.getId()))
                 .map(WorkflowNodeEntity::getNodeUuid)

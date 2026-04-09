@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class DictionaryListResponse {
 
-    private Long id;
+    private String id;
 
     private String name;
 

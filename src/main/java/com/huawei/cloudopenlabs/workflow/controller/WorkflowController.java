@@ -87,7 +87,7 @@ public class WorkflowController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<WorkflowResponse> getWorkflow(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         WorkflowResponse response = workflowService.getWorkflowById(id);
         return ResponseEntity.ok(response);
     }
@@ -137,7 +137,7 @@ public class WorkflowController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<WorkflowResponse> updateWorkflow(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody WorkflowUpdateRequest request) {
         log.info("更新工作流: {}", id);
         WorkflowResponse response = workflowService.updateWorkflow(id, request);
@@ -152,7 +152,7 @@ public class WorkflowController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkflow(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("删除工作流: {}", id);
         workflowService.deleteWorkflow(id);
         return ResponseEntity.noContent().build();
@@ -166,7 +166,7 @@ public class WorkflowController {
      */
     @PostMapping("/{id}/publish")
     public ResponseEntity<WorkflowResponse> publishWorkflow(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("发布工作流: {}", id);
         WorkflowResponse response = workflowService.publishWorkflow(id);
         return ResponseEntity.ok(response);
@@ -180,7 +180,7 @@ public class WorkflowController {
      */
     @PostMapping("/{id}/unpublish")
     public ResponseEntity<WorkflowResponse> unpublishWorkflow(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("取消发布工作流: {}", id);
         WorkflowResponse response = workflowService.unpublishWorkflow(id);
         return ResponseEntity.ok(response);
@@ -194,7 +194,7 @@ public class WorkflowController {
      */
     @PostMapping("/{id}/copy")
     public ResponseEntity<WorkflowResponse> copyWorkflow(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("复制工作流: {}", id);
         WorkflowResponse response = workflowService.copyWorkflow(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -211,7 +211,7 @@ public class WorkflowController {
      */
     @PostMapping("/{id}/data")
     public ResponseEntity<WorkflowResponse> saveWorkflowData(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(required = false) List<WorkflowResponse.NodeDTO> nodes,
             @RequestParam(required = false) List<WorkflowResponse.ConnectionDTO> connections,
             @RequestParam(required = false) List<WorkflowResponse.AssociationDTO> associations) {
@@ -232,7 +232,7 @@ public class WorkflowController {
      */
     @PostMapping("/{id}/data/json")
     public ResponseEntity<WorkflowResponse> saveWorkflowDataJson(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody WorkflowDataRequest request) {
         log.info("保存工作流数据(JSON): {}", id);
         WorkflowResponse response = workflowService.saveWorkflowData(

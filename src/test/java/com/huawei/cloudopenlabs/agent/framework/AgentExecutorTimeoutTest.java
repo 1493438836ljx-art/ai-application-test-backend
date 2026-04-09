@@ -19,7 +19,7 @@ class AgentExecutorTimeoutTest {
     void setUp() {
         session = new AgentSessionEntity();
         session.setConversationId("test-conversation-123");
-        session.setWorkflowId(1L);
+        session.setWorkflowId("test-workflow-1");
         session.setRoundCount(0);
         session.setParseErrorCount(0);
     }

@@ -65,7 +65,7 @@ public class DictionaryController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<DictionaryDetailResponse>> getDictionaryDetail(
-            @PathVariable Long id) {
+            @PathVariable String id) {
 
         log.info("获取数据字典详情: {}", id);
         DictionaryDetailResponse response = dictionaryService.getDictionaryDetail(id);
@@ -105,7 +105,7 @@ public class DictionaryController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<DictionaryDetailResponse>> updateDictionary(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody DictionaryRequest request) {
 
         log.info("更新数据字典: {}", id);
@@ -125,7 +125,7 @@ public class DictionaryController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteDictionary(
-            @PathVariable Long id) {
+            @PathVariable String id) {
 
         log.info("删除数据字典: {}", id);
         dictionaryService.deleteDictionary(id);
@@ -143,7 +143,7 @@ public class DictionaryController {
      */
     @GetMapping("/{id}/link-status")
     public ResponseEntity<ApiResponse<LinkStatusResponse>> getLinkStatus(
-            @PathVariable Long id) {
+            @PathVariable String id) {
 
         log.info("检查数据字典关联状态: {}", id);
         LinkStatusResponse response = dictionaryService.getLinkStatus(id);

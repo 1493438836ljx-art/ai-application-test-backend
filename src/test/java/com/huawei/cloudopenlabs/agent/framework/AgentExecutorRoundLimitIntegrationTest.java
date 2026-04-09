@@ -37,7 +37,7 @@ class AgentExecutorRoundLimitIntegrationTest {
     @DisplayName("集成测试: 解析错误次数限制 (MAX_PARSE_ERROR_ROUNDS=3)")
     void testMaxParseErrorRoundsLimit() throws InterruptedException {
         // 创建一个会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
         System.out.println("Created session: " + conversationId);
 
@@ -72,7 +72,7 @@ class AgentExecutorRoundLimitIntegrationTest {
         AtomicReference<String> sessionId = new AtomicReference<>();
 
         // 创建一个会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         sessionId.set(session.getConversationId());
 
         // 模拟设置轮次为 15（达到限制）
@@ -94,7 +94,7 @@ class AgentExecutorRoundLimitIntegrationTest {
     @DisplayName("集成测试: 正常轮次计数递增")
     void testNormalRoundCountIncrement() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 验证初始轮次为 0
@@ -117,7 +117,7 @@ class AgentExecutorRoundLimitIntegrationTest {
     @DisplayName("集成测试: 解析错误计数递增")
     void testParseErrorCountIncrement() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 验证初始解析错误计数为 0 或 null
@@ -150,7 +150,7 @@ class AgentExecutorRoundLimitIntegrationTest {
     @DisplayName("集成测试: 标记会话为错误状态")
     void testMarkSessionAsError() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 标记为错误
@@ -174,7 +174,7 @@ class AgentExecutorRoundLimitIntegrationTest {
     @DisplayName("集成测试: 已完成会话重置")
     void testSessionReset() {
         // 创建会话并标记为完成
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 设置一些数据
@@ -188,7 +188,7 @@ class AgentExecutorRoundLimitIntegrationTest {
         assertEquals("COMPLETED", completedSession.getStatus());
 
         // 再次获取会话（应该重置）
-        AgentSessionEntity resetSession = sessionService.getOrCreateSession(1L, conversationId);
+        AgentSessionEntity resetSession = sessionService.getOrCreateSession("test-workflow-1", conversationId);
 
         // 验证重置后的状态
         assertEquals("ACTIVE", resetSession.getStatus(), "会话状态应该重置为 ACTIVE");

@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class ConversationDTO {
 
-    private Long id;
+    private String id;
 
     private String conversationUuid;
 
@@ -39,7 +39,7 @@ public class ConversationDTO {
      */
     @Data
     public static class MessageDTO {
-        private Long id;
+        private String id;
 
         private String messageUuid;
 

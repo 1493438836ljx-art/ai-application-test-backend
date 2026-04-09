@@ -49,7 +49,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional
-    public Long executeWorkflow(Long workflowId, String triggeredBy, String inputData) {
+    public String executeWorkflow(String workflowId, String triggeredBy, String inputData) {
         log.info("开始执行工作流: workflowId={}, triggeredBy={}", workflowId, triggeredBy);
 
         // 1. 查询工作流定义
@@ -98,7 +98,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional(readOnly = true)
-    public ExecutionResponse getExecution(Long id) {
+    public ExecutionResponse getExecution(String id) {
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
             throw BusinessException.notFound("执行记录", id);
@@ -116,7 +116,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional(readOnly = true)
-    public org.springframework.data.domain.Page<ExecutionResponse> getExecutionsByWorkflowId(Long workflowId, Pageable pageable) {
+    public org.springframework.data.domain.Page<ExecutionResponse> getExecutionsByWorkflowId(String workflowId, Pageable pageable) {
         Page<WorkflowExecutionEntity> page = new Page<>(pageable.getPageNumber() + 1, pageable.getPageSize());
         IPage<WorkflowExecutionEntity> result = executionMapper.selectByWorkflowId(page, workflowId);
 
@@ -137,7 +137,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional
-    public void abortExecution(Long id) {
+    public void abortExecution(String id) {
         log.info("中止执行: {}", id);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
@@ -155,7 +155,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional
-    public void updateProgress(Long id, int progress) {
+    public void updateProgress(String id, int progress) {
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
             throw BusinessException.notFound("执行记录", id);
@@ -174,7 +174,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional
-    public void completeExecution(Long id, String outputData, String nodeExecutions) {
+    public void completeExecution(String id, String outputData, String nodeExecutions) {
         log.info("完成执行: {}", id);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
@@ -194,7 +194,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional
-    public void failExecution(Long id, String errorMessage) {
+    public void failExecution(String id, String errorMessage) {
         log.error("执行失败: {}, 错误: {}", id, errorMessage);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
@@ -212,7 +212,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
 
     @Override
     @Transactional(readOnly = true)
-    public ExecutionOutputResponse getExecutionOutputs(Long id) {
+    public ExecutionOutputResponse getExecutionOutputs(String id) {
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
             throw BusinessException.notFound("执行记录", id);

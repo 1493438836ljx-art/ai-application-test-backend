@@ -14,19 +14,19 @@ import lombok.Data;
 public class ConnectionCreateRequest {
 
     @NotNull(message = "工作流ID不能为空")
-    private Long workflowId;
+    private String workflowId;
 
     @NotBlank(message = "连线UUID不能为空")
     private String connectionUuid;
 
     @NotNull(message = "源节点ID不能为空")
-    private Long sourceNodeId;
+    private String sourceNodeId;
 
     @NotBlank(message = "源端口ID不能为空")
     private String sourcePortId;
 
     @NotNull(message = "目标节点ID不能为空")
-    private Long targetNodeId;
+    private String targetNodeId;
 
     @NotBlank(message = "目标端口ID不能为空")
     private String targetPortId;

@@ -36,7 +36,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
     // ========== CRUD ==========
 
     @Override
-    public List<NodeResponse> getNodes(Long workflowId) {
+    public List<NodeResponse> getNodes(String workflowId) {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectByWorkflowId(workflowId);
         return nodes.stream()
                 .map(this::convertToResponse)
@@ -44,7 +44,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
     }
 
     @Override
-    public NodeResponse getNode(Long workflowId, String nodeUuid) {
+    public NodeResponse getNode(String workflowId, String nodeUuid) {
         WorkflowNodeEntity node = nodeMapper.selectByWorkflowIdAndNodeUuid(workflowId, nodeUuid)
                 .orElseThrow(() -> new IllegalArgumentException("节点不存在: " + nodeUuid));
         return convertToResponse(node);
@@ -52,7 +52,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public NodeResponse createNode(Long workflowId, NodeCreateRequest request) {
+    public NodeResponse createNode(String workflowId, NodeCreateRequest request) {
         // 校验工作流状态（通过 WorkflowService 进行）
 
         // 创建节点实体
@@ -99,7 +99,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public NodeResponse updateNode(Long workflowId, String nodeUuid, NodeUpdateRequest request) {
+    public NodeResponse updateNode(String workflowId, String nodeUuid, NodeUpdateRequest request) {
         WorkflowNodeEntity node = nodeMapper.selectByWorkflowIdAndNodeUuid(workflowId, nodeUuid)
                 .orElseThrow(() -> new IllegalArgumentException("节点不存在: " + nodeUuid));
 
@@ -179,7 +179,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteNode(Long workflowId, String nodeUuid) {
+    public void deleteNode(String workflowId, String nodeUuid) {
         WorkflowNodeEntity node = nodeMapper.selectByWorkflowIdAndNodeUuid(workflowId, nodeUuid)
                 .orElseThrow(() -> new IllegalArgumentException("节点不存在: " + nodeUuid));
 
@@ -204,7 +204,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchCreateNodes(Long workflowId, List<NodeCreateRequest> requests) {
+    public void batchCreateNodes(String workflowId, List<NodeCreateRequest> requests) {
         if (requests == null || requests.isEmpty()) {
             return;
         }
@@ -216,7 +216,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchUpdateNodes(Long workflowId, List<NodeUpdateRequest> requests) {
+    public void batchUpdateNodes(String workflowId, List<NodeUpdateRequest> requests) {
         if (requests == null || requests.isEmpty()) {
             return;
         }
@@ -228,7 +228,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchDeleteNodes(Long workflowId, List<String> nodeUuids) {
+    public void batchDeleteNodes(String workflowId, List<String> nodeUuids) {
         if (nodeUuids == null || nodeUuids.isEmpty()) {
             return;
         }
@@ -250,7 +250,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchUpdateCompatibilityStatus(List<Long> nodeIds, String status) {
+    public void batchUpdateCompatibilityStatus(List<String> nodeIds, String status) {
         if (nodeIds == null || nodeIds.isEmpty()) {
             return;
         }

@@ -56,7 +56,7 @@ public class ClaudeExecutionRequest {
     /**
      * 工作流ID（用于上下文）
      */
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 创建新会话请求

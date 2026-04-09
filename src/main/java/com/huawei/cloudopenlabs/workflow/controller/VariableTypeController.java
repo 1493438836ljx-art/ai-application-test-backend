@@ -66,7 +66,7 @@ public class VariableTypeController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<VariableTypeEntity> getVariableTypeById(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         VariableTypeEntity variableType = variableTypeMapper.selectById(id);
         if (variableType == null) {
             return ResponseEntity.notFound().build();

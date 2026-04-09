@@ -50,13 +50,13 @@ class QueryExecutorTest {
         void testResolveWorkflowId() {
             // Given
             String path = "/api/workflow/{workflowId}/nodes";
-            Long workflowId = 123L;
+            String workflowId = "test-workflow-123";
 
             // When
             String result = queryExecutor.resolvePath(path, workflowId);
 
             // Then
-            assertEquals("/api/workflow/123/nodes", result);
+            assertEquals("/api/workflow/test-workflow-123/nodes", result);
         }
 
         @Test
@@ -64,13 +64,13 @@ class QueryExecutorTest {
         void testResolveWorkflowIdWithDollar() {
             // Given
             String path = "/api/workflow/${workflowId}/nodes";
-            Long workflowId = 456L;
+            String workflowId = "test-workflow-456";
 
             // When
             String result = queryExecutor.resolvePath(path, workflowId);
 
             // Then
-            assertEquals("/api/workflow/456/nodes", result);
+            assertEquals("/api/workflow/test-workflow-456/nodes", result);
         }
 
         @Test
@@ -78,13 +78,13 @@ class QueryExecutorTest {
         void testResolveId() {
             // Given
             String path = "/api/workflow/{id}";
-            Long workflowId = 789L;
+            String workflowId = "test-workflow-789";
 
             // When
             String result = queryExecutor.resolvePath(path, workflowId);
 
             // Then
-            assertEquals("/api/workflow/789", result);
+            assertEquals("/api/workflow/test-workflow-789", result);
         }
 
         @Test
@@ -104,7 +104,7 @@ class QueryExecutorTest {
         @DisplayName("空路径处理")
         void testEmptyPath() {
             // When
-            String result = queryExecutor.resolvePath("", 1L);
+            String result = queryExecutor.resolvePath("", "test-workflow-1");
 
             // Then
             assertEquals("", result);
@@ -114,7 +114,7 @@ class QueryExecutorTest {
         @DisplayName("null路径处理")
         void testNullPath() {
             // When
-            String result = queryExecutor.resolvePath(null, 1L);
+            String result = queryExecutor.resolvePath(null, "test-workflow-1");
 
             // Then
             assertNull(result);
@@ -297,7 +297,7 @@ class QueryExecutorTest {
         @DisplayName("null 查询列表返回空结果")
         void testNullQueries() {
             // When
-            Map<String, Object> results = queryExecutor.executeQueries(null, 1L);
+            Map<String, Object> results = queryExecutor.executeQueries(null, "test-workflow-1");
 
             // Then
             assertNotNull(results);
@@ -308,7 +308,7 @@ class QueryExecutorTest {
         @DisplayName("空查询列表返回空结果")
         void testEmptyQueries() {
             // When
-            Map<String, Object> results = queryExecutor.executeQueries(new ArrayList<>(), 1L);
+            Map<String, Object> results = queryExecutor.executeQueries(new ArrayList<>(), "test-workflow-1");
 
             // Then
             assertNotNull(results);

@@ -108,7 +108,7 @@ public class AgentOrchestrator {
      */
     public void processMessageStream(
             String userMessage,
-            Long workflowId,
+            String workflowId,
             String conversationId,
             StreamCallback callback) {
 

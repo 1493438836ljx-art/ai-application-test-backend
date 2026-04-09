@@ -27,7 +27,7 @@ class AgentExecutorTimeoutIntegrationTest {
     @DisplayName("集成测试: 新会话创建时 startTime 被自动设置")
     void testStartTimeSetOnNewSessionCreation() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 验证 startTime 被设置
@@ -46,7 +46,7 @@ class AgentExecutorTimeoutIntegrationTest {
     @DisplayName("集成测试: startTime 从数据库正确读取")
     void testStartTimeReadFromDatabase() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
         Long expectedStartTime = session.getStartTime();
 
@@ -68,7 +68,7 @@ class AgentExecutorTimeoutIntegrationTest {
     @DisplayName("集成测试: setStartTime 方法正确更新数据库")
     void testSetStartTimeUpdatesDatabase() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 设置新的 startTime
@@ -92,7 +92,7 @@ class AgentExecutorTimeoutIntegrationTest {
     @DisplayName("集成测试: 会话重置时 startTime 被更新")
     void testStartTimeResetOnSessionReset() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
         Long originalStartTime = session.getStartTime();
 
@@ -107,7 +107,7 @@ class AgentExecutorTimeoutIntegrationTest {
         sessionService.markAsCompleted(conversationId);
 
         // 再次获取会话（应该重置）
-        AgentSessionEntity resetSession = sessionService.getOrCreateSession(1L, conversationId);
+        AgentSessionEntity resetSession = sessionService.getOrCreateSession("test-workflow-1", conversationId);
 
         // 验证会话状态被重置
         assertEquals("ACTIVE", resetSession.getStatus(), "会话状态应该重置为 ACTIVE");
@@ -127,7 +127,7 @@ class AgentExecutorTimeoutIntegrationTest {
     @DisplayName("集成测试: 模拟超时场景")
     void testSimulatedTimeoutScenario() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 模拟设置 6 分钟前的 startTime（超过 5 分钟限制）
@@ -154,7 +154,7 @@ class AgentExecutorTimeoutIntegrationTest {
     @DisplayName("集成测试: 正常执行不超时")
     void testNormalExecutionNoTimeout() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 等待一小段时间
@@ -182,7 +182,7 @@ class AgentExecutorTimeoutIntegrationTest {
     @DisplayName("集成测试: 超时错误消息包含正确信息")
     void testTimeoutErrorMessageContainsCorrectInfo() {
         // 创建新会话
-        AgentSessionEntity session = sessionService.getOrCreateSession(1L, null);
+        AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
 
         // 设置一些数据

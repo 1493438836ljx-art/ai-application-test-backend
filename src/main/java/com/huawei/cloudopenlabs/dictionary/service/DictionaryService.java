@@ -31,7 +31,7 @@ public interface DictionaryService {
      * @param id 数据字典ID
      * @return 详情响应
      */
-    DictionaryDetailResponse getDictionaryDetail(Long id);
+        DictionaryDetailResponse getDictionaryDetail(String id);
 
     /**
      * 创建数据字典
@@ -48,14 +48,14 @@ public interface DictionaryService {
      * @param request 更新请求
      * @return 更新结果
      */
-    DictionaryDetailResponse updateDictionary(Long id, DictionaryRequest request);
+        DictionaryDetailResponse updateDictionary(String id, DictionaryRequest request);
 
     /**
      * 删除数据字典
      *
      * @param id 数据字典ID
      */
-    void deleteDictionary(Long id);
+        void deleteDictionary(String id);
 
     /**
      * 检查数据字典关联状态
@@ -63,7 +63,7 @@ public interface DictionaryService {
      * @param id 数据字典ID
      * @return 关联状态
      */
-    LinkStatusResponse getLinkStatus(Long id);
+        LinkStatusResponse getLinkStatus(String id);
 
     /**
      * 获取所有数据字典（下拉选择用）

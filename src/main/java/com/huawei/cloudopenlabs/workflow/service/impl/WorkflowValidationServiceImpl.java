@@ -48,7 +48,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     private static final Pattern PARAM_REFERENCE_PATTERN = Pattern.compile("\\$\\{([^}.]+)\\.([^}]+)}");
 
     @Override
-    public ValidationResult validate(Long workflowId) {
+    public ValidationResult validate(String workflowId) {
         log.info("开始验证工作流: workflowId={}", workflowId);
 
         ValidationResult result = new ValidationResult();
@@ -83,7 +83,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     /**
      * 快速验证（仅结构和循环）
      */
-    public ValidationResult quickValidate(Long workflowId) {
+    public ValidationResult quickValidate(String workflowId) {
         log.info("快速验证工作流: workflowId={}", workflowId);
 
         ValidationResult result = new ValidationResult();
@@ -98,7 +98,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     /**
      * 参数引用验证
      */
-    private ValidationResult validateParameterReferences(Long workflowId) {
+    private ValidationResult validateParameterReferences(String workflowId) {
         ValidationResult result = new ValidationResult();
         result.setValid(true);
 
@@ -110,7 +110,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
                 .collect(Collectors.toMap(WorkflowNodeEntity::getName, n -> n, (a, b) -> a));
 
         // 构建前置节点映射
-        Map<Long, Set<Long>> predecessorsMap = buildPredecessorsMap(nodes, connections);
+        Map<String, Set<String>> predecessorsMap = buildPredecessorsMap(nodes, connections);
 
         // 遍历每个节点的输入参数
         for (WorkflowNodeEntity node : nodes) {
@@ -119,7 +119,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
                 continue;
             }
 
-            Set<Long> predecessors = predecessorsMap.getOrDefault(node.getId(), Collections.emptySet());
+            Set<String> predecessors = predecessorsMap.getOrDefault(node.getId(), Collections.emptySet());
             Set<String> predecessorNames = predecessors.stream()
                     .map(id -> nodes.stream()
                             .filter(n -> n.getId().equals(id))
@@ -169,7 +169,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     }
 
     @Override
-    public List<NodeResponse> getPredecessors(Long workflowId, String nodeUuid) {
+    public List<NodeResponse> getPredecessors(String workflowId, String nodeUuid) {
         log.info("获取前置节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
 
         List<WorkflowNodeEntity> allNodes = nodeMapper.selectByWorkflowId(workflowId);
@@ -186,8 +186,8 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
         }
 
         // 构建邻接表（反向）
-        Map<Long, List<Long>> reverseAdjList = new HashMap<>();
-        Map<Long, WorkflowNodeEntity> idToNodeMap = new HashMap<>();
+        Map<String, List<String>> reverseAdjList = new HashMap<>();
+        Map<String, WorkflowNodeEntity> idToNodeMap = new HashMap<>();
 
         for (WorkflowNodeEntity node : allNodes) {
             idToNodeMap.put(node.getId(), node);
@@ -200,15 +200,15 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
         }
 
         // BFS查找所有前置节点
-        Set<Long> visited = new HashSet<>();
-        Queue<Long> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
         queue.add(targetNode.getId());
         visited.add(targetNode.getId());
 
         List<NodeResponse> predecessors = new ArrayList<>();
         while (!queue.isEmpty()) {
-            Long currentId = queue.poll();
-            for (Long sourceId : reverseAdjList.getOrDefault(currentId, List.of())) {
+            String currentId = queue.poll();
+            for (String sourceId : reverseAdjList.getOrDefault(currentId, List.of())) {
                 if (!visited.contains(sourceId)) {
                     visited.add(sourceId);
                     queue.add(sourceId);
@@ -224,7 +224,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     }
 
     @Override
-    public List<AvailableVariable> getAvailableVariables(Long workflowId, String nodeUuid) {
+    public List<AvailableVariable> getAvailableVariables(String workflowId, String nodeUuid) {
         log.info("获取可用变量: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
 
         List<NodeResponse> predecessors = getPredecessors(workflowId, nodeUuid);
@@ -255,7 +255,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     }
 
     @Override
-    public ReferenceCheckResult checkReference(Long workflowId, String nodeUuid, String reference) {
+    public ReferenceCheckResult checkReference(String workflowId, String nodeUuid, String reference) {
         log.info("检查参数引用: workflowId={}, nodeUuid={}, reference={}", workflowId, nodeUuid, reference);
 
         ReferenceCheckResult result = new ReferenceCheckResult();
@@ -292,14 +292,14 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     }
 
     @Override
-    public List<NodeResponse> getExecutionOrder(Long workflowId) {
+    public List<NodeResponse> getExecutionOrder(String workflowId) {
         log.info("获取执行顺序: workflowId={}", workflowId);
 
         try {
-            List<Long> orderIds = cyclicDependencyValidator.getTopologicalOrderByIds(workflowId);
+            List<String> orderIds = cyclicDependencyValidator.getTopologicalOrderByIds(workflowId);
             List<WorkflowNodeEntity> nodes = nodeMapper.selectByWorkflowId(workflowId);
 
-            Map<Long, WorkflowNodeEntity> idToNodeMap = nodes.stream()
+            Map<String, WorkflowNodeEntity> idToNodeMap = nodes.stream()
                     .collect(Collectors.toMap(WorkflowNodeEntity::getId, n -> n));
 
             return orderIds.stream()
@@ -318,14 +318,14 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
     /**
      * 构建前置节点映射（BFS）
      */
-    private Map<Long, Set<Long>> buildPredecessorsMap(
+    private Map<String, Set<String>> buildPredecessorsMap(
             List<WorkflowNodeEntity> nodes,
             List<WorkflowConnectionEntity> connections) {
 
-        Map<Long, Set<Long>> predecessorsMap = new HashMap<>();
+        Map<String, Set<String>> predecessorsMap = new HashMap<>();
 
         // 构建邻接表（反向）
-        Map<Long, List<Long>> reverseAdj = new HashMap<>();
+        Map<String, List<String>> reverseAdj = new HashMap<>();
         for (WorkflowConnectionEntity conn : connections) {
             reverseAdj.computeIfAbsent(conn.getTargetNodeId(), k -> new ArrayList<>())
                     .add(conn.getSourceNodeId());
@@ -333,15 +333,15 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
 
         // BFS 计算每个节点的所有前置节点
         for (WorkflowNodeEntity node : nodes) {
-            Set<Long> predecessors = new HashSet<>();
-            Queue<Long> queue = new LinkedList<>();
+            Set<String> predecessors = new HashSet<>();
+            Queue<String> queue = new LinkedList<>();
             queue.add(node.getId());
 
             while (!queue.isEmpty()) {
-                Long current = queue.poll();
-                List<Long> sources = reverseAdj.get(current);
+                String current = queue.poll();
+                List<String> sources = reverseAdj.get(current);
                 if (sources != null) {
-                    for (Long source : sources) {
+                    for (String source : sources) {
                         if (predecessors.add(source)) {
                             queue.add(source);
                         }

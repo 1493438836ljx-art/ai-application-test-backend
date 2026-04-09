@@ -44,7 +44,7 @@ public class PendingActionService {
      * @param emitter          SSE 发射器
      * @param objectMapper     JSON 对象映射器
      */
-    public void storePendingAction(String pendingActionId, String conversationId, Long workflowId,
+    public void storePendingAction(String pendingActionId, String conversationId, String workflowId,
                                    List<Map<String, Object>> actions, SseEmitter emitter,
                                    com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
         PendingAction pending = new PendingAction();
@@ -236,7 +236,7 @@ public class PendingActionService {
     public static class PendingAction {
         private String pendingActionId;
         private String conversationId;
-        private Long workflowId;
+        private String workflowId;
         private List<Map<String, Object>> actions;
         private SseEmitter emitter;
         private com.fasterxml.jackson.databind.ObjectMapper objectMapper;

@@ -121,7 +121,7 @@
     <update id="batchUpdateCompatibilityStatus">
         UPDATE workflow_node
         SET compatibility_status = #{status},
-            updated_at = NOW()
+            updated_at = CURRENT_TIMESTAMP
         WHERE id IN
         <foreach collection="nodeIds" item="nodeId" open="(" separator="," close=")">
             #{nodeId}

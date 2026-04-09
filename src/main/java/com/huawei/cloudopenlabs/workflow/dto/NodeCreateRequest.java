@@ -14,7 +14,7 @@ import lombok.Data;
 public class NodeCreateRequest {
 
     @NotNull(message = "工作流ID不能为空")
-    private Long workflowId;
+    private String workflowId;
 
     @NotBlank(message = "节点UUID不能为空")
     private String nodeUuid;
@@ -39,7 +39,7 @@ public class NodeCreateRequest {
 
     private String config;
 
-    private Long parentNodeId;
+    private String parentNodeId;
 
     private String nodeCategory;
 

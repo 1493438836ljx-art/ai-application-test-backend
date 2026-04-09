@@ -19,8 +19,8 @@ public class AgentSessionEntity {
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "id", type = IdType.ASSIGN_UUID)
+    private String id;
 
     /**
      * 会话ID（对应 chat_conversation.conversation_uuid）
@@ -33,7 +33,7 @@ public class AgentSessionEntity {
      * 关联的工作流ID
      */
     @TableField("workflow_id")
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 会话状态

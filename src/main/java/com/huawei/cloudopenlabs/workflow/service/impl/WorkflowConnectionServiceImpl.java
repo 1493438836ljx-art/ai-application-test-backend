@@ -34,7 +34,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
     // ========== CRUD ==========
 
     @Override
-    public List<ConnectionResponse> getConnections(Long workflowId) {
+    public List<ConnectionResponse> getConnections(String workflowId) {
         List<WorkflowConnectionEntity> connections = connectionMapper.selectByWorkflowId(workflowId);
         return connections.stream()
                 .map(this::convertToResponse)
@@ -42,7 +42,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
     }
 
     @Override
-    public ConnectionResponse getConnection(Long workflowId, String connectionUuid) {
+    public ConnectionResponse getConnection(String workflowId, String connectionUuid) {
         // TODO: 需要添加按UUID查询的方法
         List<WorkflowConnectionEntity> connections = connectionMapper.selectByWorkflowId(workflowId);
         WorkflowConnectionEntity connection = connections.stream()
@@ -54,12 +54,12 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ConnectionResponse createConnection(Long workflowId, WorkflowResponse.ConnectionDTO request) {
+    public ConnectionResponse createConnection(String workflowId, WorkflowResponse.ConnectionDTO request) {
         // 获取源节点和目标节点的数据库ID
-        Map<String, Long> uuidToIdMap = getUuidToIdMap(workflowId);
+        Map<String, String> uuidToIdMap = getUuidToIdMap(workflowId);
 
-        Long sourceNodeId = uuidToIdMap.get(request.getSourceNodeUuid());
-        Long targetNodeId = uuidToIdMap.get(request.getTargetNodeUuid());
+        String sourceNodeId = uuidToIdMap.get(request.getSourceNodeUuid());
+        String targetNodeId = uuidToIdMap.get(request.getTargetNodeUuid());
 
         if (sourceNodeId == null) {
             throw new IllegalArgumentException("源节点不存在: " + request.getSourceNodeUuid());
@@ -96,7 +96,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteConnection(Long workflowId, String connectionUuid) {
+    public void deleteConnection(String workflowId, String connectionUuid) {
         List<WorkflowConnectionEntity> connections = connectionMapper.selectByWorkflowId(workflowId);
         WorkflowConnectionEntity connection = connections.stream()
                 .filter(c -> connectionUuid.equals(c.getConnectionUuid()))
@@ -111,7 +111,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchCreateConnections(Long workflowId, List<WorkflowResponse.ConnectionDTO> requests) {
+    public void batchCreateConnections(String workflowId, List<WorkflowResponse.ConnectionDTO> requests) {
         if (requests == null || requests.isEmpty()) {
             return;
         }
@@ -123,7 +123,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchDeleteConnections(Long workflowId, List<String> connectionUuids) {
+    public void batchDeleteConnections(String workflowId, List<String> connectionUuids) {
         if (connectionUuids == null || connectionUuids.isEmpty()) {
             return;
         }
@@ -136,7 +136,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
     // ========== 查询 ==========
 
     @Override
-    public List<ConnectionResponse> getConnectionsBySourceNode(Long nodeId) {
+    public List<ConnectionResponse> getConnectionsBySourceNode(String nodeId) {
         List<WorkflowConnectionEntity> connections = connectionMapper.selectBySourceNodeId(nodeId);
         return connections.stream()
                 .map(this::convertToResponse)
@@ -144,7 +144,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
     }
 
     @Override
-    public List<ConnectionResponse> getConnectionsByTargetNode(Long nodeId) {
+    public List<ConnectionResponse> getConnectionsByTargetNode(String nodeId) {
         List<WorkflowConnectionEntity> connections = connectionMapper.selectByTargetNodeId(nodeId);
         return connections.stream()
                 .map(this::convertToResponse)
@@ -156,7 +156,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
     /**
      * 获取节点UUID到数据库ID的映射
      */
-    private Map<String, Long> getUuidToIdMap(Long workflowId) {
+    private Map<String, String> getUuidToIdMap(String workflowId) {
         return nodeMapper.selectByWorkflowId(workflowId).stream()
                 .collect(Collectors.toMap(
                         WorkflowNodeEntity::getNodeUuid,
@@ -168,7 +168,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
     /**
      * 获取节点ID到UUID的映射
      */
-    private Map<Long, String> getIdToUuidMap(Long workflowId) {
+    private Map<String, String> getIdToUuidMap(String workflowId) {
         return nodeMapper.selectByWorkflowId(workflowId).stream()
                 .collect(Collectors.toMap(
                         WorkflowNodeEntity::getId,
@@ -198,7 +198,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
     /**
      * 转换为响应DTO（带UUID映射）
      */
-    public ConnectionResponse convertToResponse(WorkflowConnectionEntity entity, Map<Long, String> idToUuidMap) {
+    public ConnectionResponse convertToResponse(WorkflowConnectionEntity entity, Map<String, String> idToUuidMap) {
         ConnectionResponse response = convertToResponse(entity);
         response.setSourceNodeUuid(idToUuidMap.get(entity.getSourceNodeId()));
         response.setTargetNodeUuid(idToUuidMap.get(entity.getTargetNodeId()));

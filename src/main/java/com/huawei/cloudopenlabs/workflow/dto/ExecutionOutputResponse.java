@@ -23,7 +23,7 @@ public class ExecutionOutputResponse {
     /**
      * 执行记录ID
      */
-    private Long executionId;
+    private String executionId;
 
     /**
      * 执行记录UUID

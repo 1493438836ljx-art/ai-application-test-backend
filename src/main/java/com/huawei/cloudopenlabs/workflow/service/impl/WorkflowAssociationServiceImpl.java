@@ -34,16 +34,16 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
     // ========== CRUD ==========
 
     @Override
-    public List<AssociationResponse> getAssociations(Long workflowId) {
+    public List<AssociationResponse> getAssociations(String workflowId) {
         List<WorkflowAssociationEntity> associations = associationMapper.selectByWorkflowId(workflowId);
-        Map<Long, String> idToUuidMap = getIdToUuidMap(workflowId);
+        Map<String, String> idToUuidMap = getIdToUuidMap(workflowId);
         return associations.stream()
                 .map(assoc -> convertToResponse(assoc, idToUuidMap))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public AssociationResponse getAssociation(Long workflowId, Long associationId) {
+    public AssociationResponse getAssociation(String workflowId, String associationId) {
         // TODO: 需要添加按ID查询的方法
         List<WorkflowAssociationEntity> associations = associationMapper.selectByWorkflowId(workflowId);
         WorkflowAssociationEntity association = associations.stream()
@@ -51,18 +51,18 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("关联不存在: " + associationId));
 
-        Map<Long, String> idToUuidMap = getIdToUuidMap(workflowId);
+        Map<String, String> idToUuidMap = getIdToUuidMap(workflowId);
         return convertToResponse(association, idToUuidMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AssociationResponse createAssociation(Long workflowId, AssociationCreateRequest request) {
+    public AssociationResponse createAssociation(String workflowId, AssociationCreateRequest request) {
         // 获取节点UUID到ID的映射
-        Map<String, Long> uuidToIdMap = getUuidToIdMap(workflowId);
+        Map<String, String> uuidToIdMap = getUuidToIdMap(workflowId);
 
-        Long containerNodeId = uuidToIdMap.get(request.getContainerNodeUuid());
-        Long bodyNodeId = uuidToIdMap.get(request.getBodyNodeUuid());
+        String containerNodeId = uuidToIdMap.get(request.getContainerNodeUuid());
+        String bodyNodeId = uuidToIdMap.get(request.getBodyNodeUuid());
 
         if (containerNodeId == null) {
             throw new IllegalArgumentException("容器节点不存在: " + request.getContainerNodeUuid());
@@ -91,13 +91,13 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
         log.info("创建关联成功: workflowId={}, containerNodeUuid={}, bodyNodeUuid={}",
                 workflowId, request.getContainerNodeUuid(), request.getBodyNodeUuid());
 
-        Map<Long, String> idToUuidMap = getIdToUuidMap(workflowId);
+        Map<String, String> idToUuidMap = getIdToUuidMap(workflowId);
         return convertToResponse(association, idToUuidMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAssociation(Long workflowId, Long associationId) {
+    public void deleteAssociation(String workflowId, String associationId) {
         // 验证关联存在
         List<WorkflowAssociationEntity> associations = associationMapper.selectByWorkflowId(workflowId);
         WorkflowAssociationEntity association = associations.stream()
@@ -113,7 +113,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchCreateAssociations(Long workflowId, List<AssociationCreateRequest> requests) {
+    public void batchCreateAssociations(String workflowId, List<AssociationCreateRequest> requests) {
         if (requests == null || requests.isEmpty()) {
             return;
         }
@@ -125,11 +125,11 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void batchDeleteAssociations(Long workflowId, List<Long> associationIds) {
+    public void batchDeleteAssociations(String workflowId, List<String> associationIds) {
         if (associationIds == null || associationIds.isEmpty()) {
             return;
         }
-        for (Long associationId : associationIds) {
+        for (String associationId : associationIds) {
             deleteAssociation(workflowId, associationId);
         }
         log.info("批量删除关联成功: workflowId={}, count={}", workflowId, associationIds.size());
@@ -138,9 +138,9 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
     // ========== 查询 ==========
 
     @Override
-    public List<AssociationResponse> getByContainerNode(Long workflowId, String containerNodeUuid) {
-        Map<String, Long> uuidToIdMap = getUuidToIdMap(workflowId);
-        Long containerNodeId = uuidToIdMap.get(containerNodeUuid);
+    public List<AssociationResponse> getByContainerNode(String workflowId, String containerNodeUuid) {
+        Map<String, String> uuidToIdMap = getUuidToIdMap(workflowId);
+        String containerNodeId = uuidToIdMap.get(containerNodeUuid);
 
         if (containerNodeId == null) {
             throw new IllegalArgumentException("容器节点不存在: " + containerNodeUuid);
@@ -152,16 +152,16 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
                 .filter(a -> containerNodeId.equals(a.getContainerNodeId()))
                 .collect(Collectors.toList());
 
-        Map<Long, String> idToUuidMap = getIdToUuidMap(workflowId);
+        Map<String, String> idToUuidMap = getIdToUuidMap(workflowId);
         return filtered.stream()
                 .map(assoc -> convertToResponse(assoc, idToUuidMap))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<AssociationResponse> getByBodyNode(Long workflowId, String bodyNodeUuid) {
-        Map<String, Long> uuidToIdMap = getUuidToIdMap(workflowId);
-        Long bodyNodeId = uuidToIdMap.get(bodyNodeUuid);
+    public List<AssociationResponse> getByBodyNode(String workflowId, String bodyNodeUuid) {
+        Map<String, String> uuidToIdMap = getUuidToIdMap(workflowId);
+        String bodyNodeId = uuidToIdMap.get(bodyNodeUuid);
 
         if (bodyNodeId == null) {
             throw new IllegalArgumentException("子节点不存在: " + bodyNodeUuid);
@@ -173,7 +173,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
                 .filter(a -> bodyNodeId.equals(a.getBodyNodeId()))
                 .collect(Collectors.toList());
 
-        Map<Long, String> idToUuidMap = getIdToUuidMap(workflowId);
+        Map<String, String> idToUuidMap = getIdToUuidMap(workflowId);
         return filtered.stream()
                 .map(assoc -> convertToResponse(assoc, idToUuidMap))
                 .collect(Collectors.toList());
@@ -184,7 +184,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
     /**
      * 获取节点UUID到数据库ID的映射
      */
-    private Map<String, Long> getUuidToIdMap(Long workflowId) {
+    private Map<String, String> getUuidToIdMap(String workflowId) {
         return nodeMapper.selectByWorkflowId(workflowId).stream()
                 .collect(Collectors.toMap(
                         WorkflowNodeEntity::getNodeUuid,
@@ -196,7 +196,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
     /**
      * 获取节点ID到UUID的映射
      */
-    private Map<Long, String> getIdToUuidMap(Long workflowId) {
+    private Map<String, String> getIdToUuidMap(String workflowId) {
         return nodeMapper.selectByWorkflowId(workflowId).stream()
                 .collect(Collectors.toMap(
                         WorkflowNodeEntity::getId,
@@ -219,7 +219,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
     /**
      * 转换为响应DTO
      */
-    private AssociationResponse convertToResponse(WorkflowAssociationEntity entity, Map<Long, String> idToUuidMap) {
+    private AssociationResponse convertToResponse(WorkflowAssociationEntity entity, Map<String, String> idToUuidMap) {
         AssociationResponse response = new AssociationResponse();
         response.setId(entity.getId());
         response.setContainerNodeUuid(entity.getContainerNodeUuid() != null ?

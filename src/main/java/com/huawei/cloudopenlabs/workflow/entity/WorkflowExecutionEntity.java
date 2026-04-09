@@ -22,7 +22,7 @@ public class WorkflowExecutionEntity extends BaseEntity {
      * 工作流ID
      */
     @TableField("workflow_id")
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 执行UUID

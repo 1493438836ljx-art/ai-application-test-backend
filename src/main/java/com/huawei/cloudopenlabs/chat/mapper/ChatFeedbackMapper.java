@@ -22,7 +22,7 @@ public interface ChatFeedbackMapper extends BaseMapper<ChatFeedbackEntity> {
      * @param messageId 消息ID
      * @return 反馈
      */
-    Optional<ChatFeedbackEntity> selectByMessageId(@Param("messageId") Long messageId);
+    Optional<ChatFeedbackEntity> selectByMessageId(@Param("messageId") String messageId);
 
     /**
      * 根据用户ID查询反馈列表

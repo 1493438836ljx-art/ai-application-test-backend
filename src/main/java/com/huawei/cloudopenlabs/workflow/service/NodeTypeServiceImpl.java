@@ -59,7 +59,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
 
     @Override
     @Transactional(readOnly = true)
-    public NodeTypeResponse getNodeTypeById(Long id) {
+    public NodeTypeResponse getNodeTypeById(String id) {
         WorkflowNodeTypeEntity entity = nodeTypeMapper.selectById(id);
         if (entity == null) {
             throw BusinessException.notFound("节点类型", id);
@@ -109,7 +109,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
 
     @Override
     @Transactional
-    public NodeTypeResponse updateNodeType(Long id, NodeTypeUpdateRequest request) {
+    public NodeTypeResponse updateNodeType(String id, NodeTypeUpdateRequest request) {
         log.info("更新节点类型: {}", id);
 
         WorkflowNodeTypeEntity entity = nodeTypeMapper.selectById(id);
@@ -152,7 +152,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
 
     @Override
     @Transactional
-    public void deleteNodeType(Long id) {
+    public void deleteNodeType(String id) {
         log.info("删除节点类型: {}", id);
 
         WorkflowNodeTypeEntity entity = nodeTypeMapper.selectById(id);
@@ -165,7 +165,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
 
     @Override
     @Transactional
-    public NodeTypeResponse toggleNodeType(Long id, boolean enabled) {
+    public NodeTypeResponse toggleNodeType(String id, boolean enabled) {
         log.info("{}节点类型: {}", enabled ? "启用" : "禁用", id);
 
         WorkflowNodeTypeEntity entity = nodeTypeMapper.selectById(id);

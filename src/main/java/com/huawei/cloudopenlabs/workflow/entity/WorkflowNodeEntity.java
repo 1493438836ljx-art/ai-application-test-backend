@@ -20,14 +20,14 @@ public class WorkflowNodeEntity implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "id", type = IdType.ASSIGN_UUID)
+    private String id;
 
     /**
      * 所属工作流ID
      */
     @TableField("workflow_id")
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 节点UUID
@@ -45,7 +45,7 @@ public class WorkflowNodeEntity implements Serializable {
      * 节点类型ID
      */
     @TableField("type_id")
-    private Long typeId;
+    private String typeId;
 
     /**
      * 节点名称
@@ -99,7 +99,7 @@ public class WorkflowNodeEntity implements Serializable {
      * 父节点ID
      */
     @TableField("parent_node_id")
-    private Long parentNodeId;
+    private String parentNodeId;
 
     // ========== Skill引用 ==========
 
@@ -145,7 +145,7 @@ public class WorkflowNodeEntity implements Serializable {
      * 错误处理分支节点ID
      */
     @TableField("error_branch_id")
-    private Long errorBranchId;
+    private String errorBranchId;
 
     // ========== 条件节点配置 ==========
 

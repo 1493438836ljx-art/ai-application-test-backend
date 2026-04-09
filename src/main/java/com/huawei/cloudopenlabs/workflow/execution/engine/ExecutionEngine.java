@@ -62,7 +62,7 @@ public class ExecutionEngine {
      * @param context 执行上下文
      */
     public void execute(ExecutionContext context) {
-        Long executionId = context.getExecutionId();
+        String executionId = context.getExecutionId();
         String executionUuid = context.getExecutionUuid();
 
         log.info("开始执行工作流: executionId={}, workflowId={}", executionId, context.getWorkflowId());

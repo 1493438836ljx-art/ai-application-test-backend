@@ -32,7 +32,7 @@ public interface WorkflowService {
      * @param id 工作流ID
      * @return 工作流响应
      */
-    WorkflowResponse getWorkflowById(Long id);
+    WorkflowResponse getWorkflowById(String id);
 
     /**
      * 获取工作流列表
@@ -67,14 +67,14 @@ public interface WorkflowService {
      * @param request 更新请求
      * @return 工作流响应
      */
-    WorkflowResponse updateWorkflow(Long id, WorkflowUpdateRequest request);
+    WorkflowResponse updateWorkflow(String id, WorkflowUpdateRequest request);
 
     /**
      * 删除工作流
      *
      * @param id 工作流ID
      */
-    void deleteWorkflow(Long id);
+    void deleteWorkflow(String id);
 
     /**
      * 发布工作流
@@ -82,7 +82,7 @@ public interface WorkflowService {
      * @param id 工作流ID
      * @return 工作流响应
      */
-    WorkflowResponse publishWorkflow(Long id);
+    WorkflowResponse publishWorkflow(String id);
 
     /**
      * 取消发布工作流
@@ -90,7 +90,7 @@ public interface WorkflowService {
      * @param id 工作流ID
      * @return 工作流响应
      */
-    WorkflowResponse unpublishWorkflow(Long id);
+    WorkflowResponse unpublishWorkflow(String id);
 
     /**
      * 复制工作流
@@ -98,7 +98,7 @@ public interface WorkflowService {
      * @param id 工作流ID
      * @return 新工作流响应
      */
-    WorkflowResponse copyWorkflow(Long id);
+    WorkflowResponse copyWorkflow(String id);
 
     /**
      * 保存工作流完整数据（包括节点、连线、关联）
@@ -109,7 +109,7 @@ public interface WorkflowService {
      * @param associations 关联列表
      * @return 工作流响应
      */
-    WorkflowResponse saveWorkflowData(Long id,
+    WorkflowResponse saveWorkflowData(String id,
                                        List<WorkflowResponse.NodeDTO> nodes,
                                        List<WorkflowResponse.ConnectionDTO> connections,
                                        List<WorkflowResponse.AssociationDTO> associations);

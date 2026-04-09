@@ -20,7 +20,7 @@ public class WorkflowDefinition {
     /**
      * 工作流ID
      */
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 工作流UUID
@@ -91,7 +91,7 @@ public class WorkflowDefinition {
     /**
      * 根据ID获取节点
      */
-    public WorkflowNodeEntity getNodeById(Long nodeId) {
+    public WorkflowNodeEntity getNodeById(String nodeId) {
         if (nodes == null || nodeId == null) {
             return null;
         }

@@ -70,7 +70,7 @@ public class QueryExecutor {
      * @param workflowId 工作流ID（用于路径变量替换）
      * @return 查询结果 Map，key 为查询ID，value 为查询结果
      */
-    public Map<String, Object> executeQueries(List<AgentPlan.Query> queries, Long workflowId) {
+    public Map<String, Object> executeQueries(List<AgentPlan.Query> queries, String workflowId) {
         if (queries == null || queries.isEmpty()) {
             log.debug("查询列表为空，返回空结果");
             return Collections.emptyMap();
@@ -114,7 +114,7 @@ public class QueryExecutor {
     /**
      * 异步执行单个查询
      */
-    private Mono<Object> executeQueryAsync(AgentPlan.Query query, Long workflowId) {
+    private Mono<Object> executeQueryAsync(AgentPlan.Query query, String workflowId) {
         return Mono.fromCallable(() -> executeQuery(query, workflowId))
                 .subscribeOn(Schedulers.boundedElastic());
     }
@@ -126,7 +126,7 @@ public class QueryExecutor {
      * @param workflowId 工作流ID
      * @return 查询结果
      */
-    public Object executeQuery(AgentPlan.Query query, Long workflowId) {
+    public Object executeQuery(AgentPlan.Query query, String workflowId) {
         String queryId = query.getId();
         String path = resolvePath(query.getPath(), workflowId);
         String method = query.getMethod() != null ? query.getMethod().toUpperCase() : "GET";
@@ -193,7 +193,7 @@ public class QueryExecutor {
      * @return 解析后的路径
      */
     // 包可见，便于测试
-    String resolvePath(String path, Long workflowId) {
+    String resolvePath(String path, String workflowId) {
         if (path == null || path.isEmpty()) {
             return path;
         }
@@ -264,7 +264,7 @@ public class QueryExecutor {
      */
     public Map<String, Object> executeQueriesWithRetry(
             List<AgentPlan.Query> queries,
-            Long workflowId,
+            String workflowId,
             int maxRetries) {
 
         Map<String, Object> results = new HashMap<>();

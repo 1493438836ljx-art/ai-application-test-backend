@@ -69,7 +69,7 @@ public class ActionExecutor {
      * @return 操作结果 Map，key 为操作ID，value 为执行结果
      */
     @Transactional
-    public Map<String, Object> executeActions(List<AgentPlan.Action> actions, Long workflowId) {
+    public Map<String, Object> executeActions(List<AgentPlan.Action> actions, String workflowId) {
         if (actions == null || actions.isEmpty()) {
             log.debug("操作列表为空，返回空结果");
             return Collections.emptyMap();
@@ -115,7 +115,7 @@ public class ActionExecutor {
      * @param workflowId 工作流ID
      * @return 执行结果
      */
-    public Object executeAction(AgentPlan.Action action, Long workflowId) {
+    public Object executeAction(AgentPlan.Action action, String workflowId) {
         String actionId = action.getId();
         String path = resolvePath(action.getPath(), workflowId);
         String method = validateAndNormalizeMethod(action.getMethod());
@@ -214,7 +214,7 @@ public class ActionExecutor {
      * @return 解析后的路径
      */
     // 包可见，便于测试
-    String resolvePath(String path, Long workflowId) {
+    String resolvePath(String path, String workflowId) {
         if (path == null || path.isEmpty()) {
             return path;
         }
@@ -270,7 +270,7 @@ public class ActionExecutor {
      * @param workflowId 工作流ID
      * @return 操作结果（包含成功的和失败的）
      */
-    public Map<String, Object> executeActionsWithoutTransaction(List<AgentPlan.Action> actions, Long workflowId) {
+    public Map<String, Object> executeActionsWithoutTransaction(List<AgentPlan.Action> actions, String workflowId) {
         if (actions == null || actions.isEmpty()) {
             return Collections.emptyMap();
         }

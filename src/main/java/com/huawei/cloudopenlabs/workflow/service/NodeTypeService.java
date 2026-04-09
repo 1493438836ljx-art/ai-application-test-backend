@@ -30,7 +30,7 @@ public interface NodeTypeService {
      * @param id 节点类型ID
      * @return 节点类型响应
      */
-    NodeTypeResponse getNodeTypeById(Long id);
+    NodeTypeResponse getNodeTypeById(String id);
 
     /**
      * 根据编码获取节点类型
@@ -70,14 +70,14 @@ public interface NodeTypeService {
      * @param request 更新请求
      * @return 节点类型响应
      */
-    NodeTypeResponse updateNodeType(Long id, NodeTypeUpdateRequest request);
+    NodeTypeResponse updateNodeType(String id, NodeTypeUpdateRequest request);
 
     /**
      * 删除节点类型
      *
      * @param id 节点类型ID
      */
-    void deleteNodeType(Long id);
+    void deleteNodeType(String id);
 
     /**
      * 启用/禁用节点类型
@@ -86,5 +86,5 @@ public interface NodeTypeService {
      * @param enabled 是否启用
      * @return 节点类型响应
      */
-    NodeTypeResponse toggleNodeType(Long id, boolean enabled);
+    NodeTypeResponse toggleNodeType(String id, boolean enabled);
 }

@@ -47,7 +47,7 @@ public class AgentSessionService {
      * @return Agent会话实体
      */
     @Transactional
-    public AgentSessionEntity getOrCreateSession(Long workflowId, String conversationId) {
+    public AgentSessionEntity getOrCreateSession(String workflowId, String conversationId) {
         // 如果 conversationId 为空，生成一个临时 UUID
         // 后续会在 Claude CLI 返回 sessionId 后更新
         String effectiveConversationId = conversationId;
@@ -105,7 +105,7 @@ public class AgentSessionService {
      * @param workflowId 工作流ID
      * @return Agent会话实体
      */
-    public Optional<AgentSessionEntity> getActiveByWorkflowId(Long workflowId) {
+    public Optional<AgentSessionEntity> getActiveByWorkflowId(String workflowId) {
         return sessionMapper.selectActiveByWorkflowId(workflowId);
     }
 

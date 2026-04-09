@@ -114,7 +114,7 @@ public class ChatServiceImpl implements ChatService {
         ObjectMapper objectMapper = new ObjectMapper();
 
         // 从 context 中提取 workflowId
-        Long workflowId = extractWorkflowId(request.getContext());
+        String workflowId = extractWorkflowId(request.getContext());
         boolean isNewConversation = request.getConversationId() == null || request.getConversationId().isEmpty();
 
         // 创建或获取对话
@@ -301,7 +301,7 @@ public class ChatServiceImpl implements ChatService {
                     @Override
                     public void onConfirmationRequired(String pendingActionId,
                                                        java.util.List<Map<String, Object>> actions,
-                                                       Long workflowId) {
+                                                       String workflowId) {
                         try {
                             log.info("收到操作确认请求: pendingActionId={}, actionCount={}, workflowId={}",
                                     pendingActionId, actions.size(), workflowId);
@@ -443,7 +443,7 @@ public class ChatServiceImpl implements ChatService {
                 boolean isNewConversation = request.getConversationId() == null || request.getConversationId().isEmpty();
 
                 // 获取 workflowId（从 context 中）
-                Long workflowId = extractWorkflowId(request.getContext());
+                String workflowId = extractWorkflowId(request.getContext());
 
                 // 多轮会话模式：新对话时不立即创建，等获取 sessionId 后再创建
                 if (isNewConversation && agentExecutor != null && workflowId != null) {
@@ -554,7 +554,7 @@ public class ChatServiceImpl implements ChatService {
      * 处理新对话的多轮会话消息
      * 等待 Claude CLI 返回 sessionId 后，用它作为 conversationId
      */
-    private void processMultiRoundMessageWithNewSession(String userMessage, Long workflowId,
+    private void processMultiRoundMessageWithNewSession(String userMessage, String workflowId,
                                                          ChatConversationEntity tempConversation,
                                                          SseEmitter emitter, ObjectMapper objectMapper,
                                                          String userId) {
@@ -700,7 +700,7 @@ public class ChatServiceImpl implements ChatService {
     /**
      * 处理多轮会话消息（已有会话）
      */
-    private void processMultiRoundMessage(String userMessage, Long workflowId,
+    private void processMultiRoundMessage(String userMessage, String workflowId,
                                            ChatConversationEntity conversation,
                                            SseEmitter emitter, ObjectMapper objectMapper) {
         StringBuilder fullContent = new StringBuilder();
@@ -822,7 +822,7 @@ public class ChatServiceImpl implements ChatService {
     /**
      * 从 context 中提取 workflowId
      */
-    private Long extractWorkflowId(Object context) {
+    private String extractWorkflowId(Object context) {
         if (context == null) {
             return null;
         }
@@ -830,7 +830,7 @@ public class ChatServiceImpl implements ChatService {
             if (context instanceof Map) {
                 Object workflowId = ((Map<?, ?>) context).get("workflowId");
                 if (workflowId != null) {
-                    return Long.valueOf(workflowId.toString());
+                    return workflowId.toString();
                 }
             }
         } catch (Exception e) {

@@ -21,14 +21,14 @@ public class WorkflowConnectionEntity implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "id", type = IdType.ASSIGN_UUID)
+    private String id;
 
     /**
      * 所属工作流ID
      */
     @TableField("workflow_id")
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 连线UUID
@@ -40,7 +40,7 @@ public class WorkflowConnectionEntity implements Serializable {
      * 源节点ID
      */
     @TableField("source_node_id")
-    private Long sourceNodeId;
+    private String sourceNodeId;
 
     /**
      * 源端口ID
@@ -52,7 +52,7 @@ public class WorkflowConnectionEntity implements Serializable {
      * 目标节点ID
      */
     @TableField("target_node_id")
-    private Long targetNodeId;
+    private String targetNodeId;
 
     /**
      * 目标端口ID

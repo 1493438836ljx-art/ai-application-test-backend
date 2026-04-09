@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 public class ColumnRequest {
 
-    private Long id;
+    private String id;
 
     @NotBlank(message = "字段Key不能为空")
     @Size(min = 1, max = 50, message = "字段Key长度1-50个字符")

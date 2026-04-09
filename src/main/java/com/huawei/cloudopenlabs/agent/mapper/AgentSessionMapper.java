@@ -30,5 +30,5 @@ public interface AgentSessionMapper extends BaseMapper<AgentSessionEntity> {
      * @param workflowId 工作流ID
      * @return Agent会话
      */
-    Optional<AgentSessionEntity> selectActiveByWorkflowId(@Param("workflowId") Long workflowId);
+    Optional<AgentSessionEntity> selectActiveByWorkflowId(@Param("workflowId") String workflowId);
 }

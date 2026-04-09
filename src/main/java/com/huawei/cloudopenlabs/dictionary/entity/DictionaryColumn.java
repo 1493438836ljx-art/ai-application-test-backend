@@ -22,7 +22,7 @@ public class DictionaryColumn extends BaseEntity {
      * 关联的数据字典ID
      */
     @TableField("dictionary_id")
-    private Long dictionaryId;
+    private String dictionaryId;
 
     /**
      * 字段Key（英文标识）

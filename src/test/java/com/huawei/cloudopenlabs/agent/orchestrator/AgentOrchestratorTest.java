@@ -86,7 +86,7 @@ class AgentOrchestratorTest {
         void testLockAcquiredSuccessfully() {
             // Given
             String sessionId = "test-session-1";
-            Long workflowId = 1L;
+            String workflowId = "test-workflow-1";
             String userMessage = "测试消息";
 
             AgentSessionEntity session = createMockSession(sessionId, workflowId);
@@ -145,7 +145,7 @@ class AgentOrchestratorTest {
             };
 
             // When
-            orchestrator.processMessageStream("test", 1L, sessionId, callback);
+            orchestrator.processMessageStream("test", "test-workflow-1", sessionId, callback);
 
             // Then
             assertNotNull(errorMessage.get());
@@ -157,7 +157,7 @@ class AgentOrchestratorTest {
         @DisplayName("空会话ID时生成新ID并获取锁")
         void testNullSessionIdGeneratesNewId() {
             // Given
-            Long workflowId = 1L;
+            String workflowId = "test-workflow-1";
 
             when(lockService.tryLock(anyString())).thenReturn(false);
 
@@ -189,7 +189,7 @@ class AgentOrchestratorTest {
         void testGetExistingSessionSummary() throws Exception {
             // Given
             String sessionId = "test-session-summary";
-            AgentSessionEntity session = createMockSession(sessionId, 1L);
+            AgentSessionEntity session = createMockSession(sessionId, "test-workflow-1");
             session.setRoundCount(5);
             session.setQueryResults("{\"q1\":{},\"q2\":{}}");
             session.setActionResults("{\"a1\":{}}");
@@ -251,7 +251,7 @@ class AgentOrchestratorTest {
         void testEmptyResultsCount() throws Exception {
             // Given
             String sessionId = "empty-session";
-            AgentSessionEntity session = createMockSession(sessionId, 1L);
+            AgentSessionEntity session = createMockSession(sessionId, "test-workflow-1");
             session.setQueryResults(null);
             session.setActionResults(null);
 
@@ -275,7 +275,7 @@ class AgentOrchestratorTest {
         void testFirstSessionSkillPreparation() {
             // Given
             String sessionId = "new-session";
-            Long workflowId = 1L;
+            String workflowId = "test-workflow-1";
             AgentSessionEntity session = createMockSession(sessionId, workflowId);
             session.setRoundCount(0);
 
@@ -296,7 +296,7 @@ class AgentOrchestratorTest {
         void testNonFirstSessionNoSkillPreparation() {
             // Given
             String sessionId = "existing-session";
-            Long workflowId = 1L;
+            String workflowId = "test-workflow-1";
             AgentSessionEntity session = createMockSession(sessionId, workflowId);
             session.setRoundCount(2);
 
@@ -316,7 +316,7 @@ class AgentOrchestratorTest {
         void testLockReleasedOnException() {
             // Given
             String sessionId = "exception-session";
-            Long workflowId = 1L;
+            String workflowId = "test-workflow-1";
 
             when(lockService.tryLock(sessionId)).thenReturn(true);
             when(sessionService.getOrCreateSession(workflowId, sessionId))
@@ -374,7 +374,7 @@ class AgentOrchestratorTest {
         void testContextBuilderCalled() {
             // Given
             String sessionId = "ctx-session";
-            Long workflowId = 1L;
+            String workflowId = "test-workflow-1";
             String userMessage = "用户消息";
             AgentSessionEntity session = createMockSession(sessionId, workflowId);
 
@@ -392,7 +392,7 @@ class AgentOrchestratorTest {
 
     // ==================== 辅助方法 ====================
 
-    private AgentSessionEntity createMockSession(String sessionId, Long workflowId) {
+    private AgentSessionEntity createMockSession(String sessionId, String workflowId) {
         AgentSessionEntity session = new AgentSessionEntity();
         session.setConversationId(sessionId);
         session.setWorkflowId(workflowId);

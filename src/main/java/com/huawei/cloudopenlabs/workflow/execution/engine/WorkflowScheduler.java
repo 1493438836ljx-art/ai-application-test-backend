@@ -58,7 +58,7 @@ public class WorkflowScheduler {
      * @return 执行UUID
      */
     @Transactional
-    public String submitExecution(Long workflowId,
+    public String submitExecution(String workflowId,
                                    Map<String, Object> inputData,
                                    String triggeredBy,
                                    String triggerType) {
@@ -132,7 +132,7 @@ public class WorkflowScheduler {
      */
     private void executeWorkflowAsync(ExecutionContext context, WorkflowEntity workflow) {
         String executionUuid = context.getExecutionUuid();
-        Long executionId = context.getExecutionId();
+        String executionId = context.getExecutionId();
 
         try {
             // 1. 更新状态为 RUNNING
@@ -160,14 +160,14 @@ public class WorkflowScheduler {
     /**
      * 更新执行状态
      */
-    private void updateExecutionStatus(Long executionId, ExecutionStatus status) {
+    private void updateExecutionStatus(String executionId, ExecutionStatus status) {
         updateExecutionStatus(executionId, status, null);
     }
 
     /**
      * 更新执行状态（带错误信息）
      */
-    private void updateExecutionStatus(Long executionId, ExecutionStatus status, String errorMessage) {
+    private void updateExecutionStatus(String executionId, ExecutionStatus status, String errorMessage) {
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);
         if (execution == null) {
             log.warn("执行记录不存在: executionId={}", executionId);
@@ -204,7 +204,7 @@ public class WorkflowScheduler {
      * @param executionId 执行记录ID
      */
     @Transactional
-    public void abortExecution(Long executionId) {
+    public void abortExecution(String executionId) {
         log.info("中止执行: executionId={}", executionId);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);

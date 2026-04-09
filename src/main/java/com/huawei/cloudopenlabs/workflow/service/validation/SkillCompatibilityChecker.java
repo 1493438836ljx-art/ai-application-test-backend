@@ -41,7 +41,7 @@ public class SkillCompatibilityChecker {
      * @param workflowId 工作流ID
      * @return 验证结果
      */
-    public ValidationResult check(Long workflowId) {
+    public ValidationResult check(String workflowId) {
         log.debug("开始 Skill 兼容性检查: workflowId={}", workflowId);
         ValidationResult result = new ValidationResult();
         result.setValid(true);
@@ -204,7 +204,7 @@ public class SkillCompatibilityChecker {
      * @param nodeIds 节点ID列表
      * @param status  兼容性状态
      */
-    public void batchUpdateCompatibilityStatus(List<Long> nodeIds, String status) {
+    public void batchUpdateCompatibilityStatus(List<String> nodeIds, String status) {
         if (nodeIds == null || nodeIds.isEmpty()) {
             return;
         }
@@ -219,7 +219,7 @@ public class SkillCompatibilityChecker {
      * @param status     兼容性状态
      * @return 节点列表
      */
-    public List<WorkflowNodeEntity> getNodesByCompatibilityStatus(Long workflowId, String status) {
+    public List<WorkflowNodeEntity> getNodesByCompatibilityStatus(String workflowId, String status) {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectByWorkflowId(workflowId);
         return nodes.stream()
                 .filter(n -> status.equals(n.getCompatibilityStatus()))

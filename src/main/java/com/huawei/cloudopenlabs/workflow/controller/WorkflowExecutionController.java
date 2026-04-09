@@ -37,12 +37,12 @@ public class WorkflowExecutionController {
      * @return 执行记录ID
      */
     @PostMapping("/{id}/execute")
-    public ResponseEntity<Long> executeWorkflow(
-            @PathVariable Long id,
+    public ResponseEntity<String> executeWorkflow(
+            @PathVariable String id,
             @RequestParam(required = false) String triggeredBy,
             @RequestBody(required = false) String inputData) {
         log.info("执行工作流: {}", id);
-        Long executionId = executionService.executeWorkflow(id, triggeredBy, inputData);
+        String executionId = executionService.executeWorkflow(id, triggeredBy, inputData);
         return ResponseEntity.ok(executionId);
     }
 
@@ -54,7 +54,7 @@ public class WorkflowExecutionController {
      */
     @GetMapping("/execution/{id}")
     public ResponseEntity<ExecutionResponse> getExecution(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         ExecutionResponse response = executionService.getExecution(id);
         return ResponseEntity.ok(response);
     }
@@ -82,7 +82,7 @@ public class WorkflowExecutionController {
      */
     @GetMapping("/{workflowId}/executions")
     public ResponseEntity<Page<ExecutionResponse>> getWorkflowExecutions(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
@@ -109,7 +109,7 @@ public class WorkflowExecutionController {
      */
     @PostMapping("/execution/{id}/abort")
     public ResponseEntity<Void> abortExecution(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("中止执行: {}", id);
         executionService.abortExecution(id);
         return ResponseEntity.noContent().build();
@@ -123,7 +123,7 @@ public class WorkflowExecutionController {
      */
     @GetMapping("/execution/{id}/outputs")
     public ResponseEntity<ExecutionOutputResponse> getExecutionOutputs(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         ExecutionOutputResponse response = executionService.getExecutionOutputs(id);
         return ResponseEntity.ok(response);
     }

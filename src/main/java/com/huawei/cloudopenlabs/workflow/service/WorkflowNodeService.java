@@ -22,7 +22,7 @@ public interface WorkflowNodeService {
      * @param workflowId 工作流ID
      * @return 节点列表
      */
-    List<NodeResponse> getNodes(Long workflowId);
+    List<NodeResponse> getNodes(String workflowId);
 
     /**
      * 获取单个节点
@@ -31,7 +31,7 @@ public interface WorkflowNodeService {
      * @param nodeUuid   节点UUID
      * @return 节点响应
      */
-    NodeResponse getNode(Long workflowId, String nodeUuid);
+    NodeResponse getNode(String workflowId, String nodeUuid);
 
     /**
      * 创建节点
@@ -40,7 +40,7 @@ public interface WorkflowNodeService {
      * @param request    创建请求
      * @return 节点响应
      */
-    NodeResponse createNode(Long workflowId, NodeCreateRequest request);
+    NodeResponse createNode(String workflowId, NodeCreateRequest request);
 
     /**
      * 更新节点
@@ -50,7 +50,7 @@ public interface WorkflowNodeService {
      * @param request    更新请求
      * @return 节点响应
      */
-    NodeResponse updateNode(Long workflowId, String nodeUuid, NodeUpdateRequest request);
+    NodeResponse updateNode(String workflowId, String nodeUuid, NodeUpdateRequest request);
 
     /**
      * 删除节点
@@ -58,7 +58,7 @@ public interface WorkflowNodeService {
      * @param workflowId 工作流ID
      * @param nodeUuid   节点UUID
      */
-    void deleteNode(Long workflowId, String nodeUuid);
+    void deleteNode(String workflowId, String nodeUuid);
 
     // ========== 批量操作 ==========
 
@@ -68,7 +68,7 @@ public interface WorkflowNodeService {
      * @param workflowId 工作流ID
      * @param requests   创建请求列表
      */
-    void batchCreateNodes(Long workflowId, List<NodeCreateRequest> requests);
+    void batchCreateNodes(String workflowId, List<NodeCreateRequest> requests);
 
     /**
      * 批量更新节点
@@ -76,7 +76,7 @@ public interface WorkflowNodeService {
      * @param workflowId 工作流ID
      * @param requests   更新请求列表
      */
-    void batchUpdateNodes(Long workflowId, List<NodeUpdateRequest> requests);
+    void batchUpdateNodes(String workflowId, List<NodeUpdateRequest> requests);
 
     /**
      * 批量删除节点
@@ -84,7 +84,7 @@ public interface WorkflowNodeService {
      * @param workflowId 工作流ID
      * @param nodeUuids  节点UUID列表
      */
-    void batchDeleteNodes(Long workflowId, List<String> nodeUuids);
+    void batchDeleteNodes(String workflowId, List<String> nodeUuids);
 
     // ========== 查询 ==========
 
@@ -102,5 +102,5 @@ public interface WorkflowNodeService {
      * @param nodeIds 节点ID列表
      * @param status  兼容性状态
      */
-    void batchUpdateCompatibilityStatus(List<Long> nodeIds, String status);
+    void batchUpdateCompatibilityStatus(List<String> nodeIds, String status);
 }

@@ -323,7 +323,7 @@ public class LoopNodeExecutor implements NodeExecutor {
         }
 
         // 使用父节点ID来查找循环体节点
-        Long loopNodeId = loopNode.getId();
+        String loopNodeId = loopNode.getId();
 
         return context.getDefinition().getNodes().stream()
                 .filter(n -> loopNodeId != null && loopNodeId.equals(n.getParentNodeId()))

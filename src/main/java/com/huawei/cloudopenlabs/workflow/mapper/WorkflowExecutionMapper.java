@@ -34,7 +34,7 @@ public interface WorkflowExecutionMapper extends BaseMapper<WorkflowExecutionEnt
      * @param workflowId 工作流ID
      * @return 执行记录分页列表
      */
-    IPage<WorkflowExecutionEntity> selectByWorkflowId(Page<WorkflowExecutionEntity> page, @Param("workflowId") Long workflowId);
+    IPage<WorkflowExecutionEntity> selectByWorkflowId(Page<WorkflowExecutionEntity> page, @Param("workflowId") String workflowId);
 
     /**
      * 根据状态查询
@@ -58,7 +58,7 @@ public interface WorkflowExecutionMapper extends BaseMapper<WorkflowExecutionEnt
      * @param workflowId 工作流ID
      * @return 最新执行记录
      */
-    Optional<WorkflowExecutionEntity> selectLatestByWorkflowId(@Param("workflowId") Long workflowId);
+    Optional<WorkflowExecutionEntity> selectLatestByWorkflowId(@Param("workflowId") String workflowId);
 
     /**
      * 统计工作流的执行次数
@@ -66,5 +66,5 @@ public interface WorkflowExecutionMapper extends BaseMapper<WorkflowExecutionEnt
      * @param workflowId 工作流ID
      * @return 执行次数
      */
-    Long countByWorkflowId(@Param("workflowId") Long workflowId);
+    Long countByWorkflowId(@Param("workflowId") String workflowId);
 }

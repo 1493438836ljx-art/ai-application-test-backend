@@ -59,7 +59,7 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public DictionaryDetailResponse getDictionaryDetail(Long id) {
+    public DictionaryDetailResponse getDictionaryDetail(String id) {
         log.info("获取数据字典详情: {}", id);
 
         DataDictionary dictionary = dictionaryMapper.selectById(id);
@@ -101,7 +101,7 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     @Transactional
-    public DictionaryDetailResponse updateDictionary(Long id, DictionaryRequest request) {
+    public DictionaryDetailResponse updateDictionary(String id, DictionaryRequest request) {
         log.info("更新数据字典: {}", id);
 
         DataDictionary dictionary = dictionaryMapper.selectById(id);
@@ -135,7 +135,7 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     @Transactional
-    public void deleteDictionary(Long id) {
+    public void deleteDictionary(String id) {
         log.info("删除数据字典: {}", id);
 
         DataDictionary dictionary = dictionaryMapper.selectById(id);
@@ -158,7 +158,7 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     @Transactional(readOnly = true)
-    public LinkStatusResponse getLinkStatus(Long id) {
+    public LinkStatusResponse getLinkStatus(String id) {
         log.info("检查数据字典关联状态: {}", id);
 
         // TODO: 实际实现时需要查询测评集表
@@ -189,7 +189,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     /**
      * 创建字段定义列表
      */
-    private List<DictionaryColumn> createColumns(Long dictionaryId, List<ColumnRequest> requests) {
+    private List<DictionaryColumn> createColumns(String dictionaryId, List<ColumnRequest> requests) {
         List<DictionaryColumn> columns = new ArrayList<>();
         for (int i = 0; i < requests.size(); i++) {
             ColumnRequest request = requests.get(i);
@@ -224,7 +224,7 @@ public class DictionaryServiceImpl implements DictionaryService {
      * 获取关联的测评集列表
      * TODO: 实际实现时需要关联测评集表查询
      */
-    private List<LinkedDatasetResponse> getLinkedDatasets(Long dictionaryId) {
+    private List<LinkedDatasetResponse> getLinkedDatasets(String dictionaryId) {
         // 模拟返回空列表
         // 实际应该查询 dataset 表：SELECT * FROM dataset WHERE dictionary_id = #{dictionaryId}
         return Collections.emptyList();

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 public class NodeTypeResponse {
 
-    private Long id;
+    private String id;
 
     private String code;
 

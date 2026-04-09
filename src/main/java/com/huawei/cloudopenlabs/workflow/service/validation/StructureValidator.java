@@ -44,7 +44,7 @@ public class StructureValidator {
      * @param workflowId 工作流ID
      * @return 验证结果
      */
-    public ValidationResult validate(Long workflowId) {
+    public ValidationResult validate(String workflowId) {
         log.debug("开始结构验证: workflowId={}", workflowId);
         ValidationResult result = new ValidationResult();
         result.setValid(true);
@@ -59,8 +59,8 @@ public class StructureValidator {
 
         // 构建节点 UUID 到实体的映射
         // 使用数据库 ID 而非 UUID 进行连线映射
-        Set<Long> nodesWithInput = new HashSet<>();
-        Set<Long> nodesWithOutput = new HashSet<>();
+        Set<String> nodesWithInput = new HashSet<>();
+        Set<String> nodesWithOutput = new HashSet<>();
 
         for (WorkflowConnectionEntity conn : connections) {
             nodesWithInput.add(conn.getTargetNodeId());
@@ -127,11 +127,11 @@ public class StructureValidator {
      * @param workflowId 工作流ID
      * @return 孤立节点UUID列表
      */
-    public List<String> getOrphanNodes(Long workflowId) {
+    public List<String> getOrphanNodes(String workflowId) {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectByWorkflowId(workflowId);
         List<WorkflowConnectionEntity> connections = connectionMapper.selectByWorkflowId(workflowId);
 
-        Set<Long> connectedNodeIds = new HashSet<>();
+        Set<String> connectedNodeIds = new HashSet<>();
         for (WorkflowConnectionEntity conn : connections) {
             connectedNodeIds.add(conn.getSourceNodeId());
             connectedNodeIds.add(conn.getTargetNodeId());

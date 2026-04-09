@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class QuickQuestionDTO {
 
-    private Long id;
+    private String id;
 
     private String icon;
 

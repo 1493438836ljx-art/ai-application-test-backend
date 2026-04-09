@@ -229,7 +229,7 @@ public class AgentExecutor {
      * @param conversationId  会话ID（即 Claude CLI session ID）
      * @param callback        多轮会话回调
      */
-    public void processMessage(String userMessage, Long workflowId, String conversationId,
+    public void processMessage(String userMessage, String workflowId, String conversationId,
                               MultiRoundCallback callback) {
         try {
             log.info("开始处理多轮消息: conversationId={}, workflowId={}", conversationId, workflowId);
@@ -485,9 +485,9 @@ public class AgentExecutor {
             }
 
             // 匹配 /api/workflow/{id} - 获取工作流详情
-            if (path.matches("/api/workflow/\\d+")) {
+            if (path.matches("/api/workflow/[0-9a-fA-F\\-]+")) {
                 if (workflowService != null) {
-                    Long workflowId = Long.parseLong(path.substring(path.lastIndexOf('/') + 1));
+                    String workflowId = path.substring(path.lastIndexOf('/') + 1);
                     log.info("查询工作流详情: id={}", workflowId);
                     WorkflowResponse workflow = workflowService.getWorkflowById(workflowId);
                     data = workflow;
@@ -554,9 +554,9 @@ public class AgentExecutor {
             }
 
             // 匹配 POST /api/workflow/{id}/data/json - 保存工作流数据
-            if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/\\d+/data/json")) {
+            if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/[0-9a-fA-F\\-]+/data/json")) {
                 if (workflowService != null && body != null) {
-                    Long workflowId = Long.parseLong(path.split("/")[3]);
+                    String workflowId = path.split("/")[3];
                     log.info("保存工作流数据: workflowId={}", workflowId);
 
                     // 将 Map 转换为 DTO 列表
@@ -600,9 +600,9 @@ public class AgentExecutor {
                 }
             }
             // 匹配 POST /api/workflow/{id}/publish - 发布工作流
-            else if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/\\d+/publish")) {
+            else if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/[0-9a-fA-F\\-]+/publish")) {
                 if (workflowService != null) {
-                    Long workflowId = Long.parseLong(path.split("/")[3]);
+                    String workflowId = path.split("/")[3];
                     log.info("发布工作流: workflowId={}", workflowId);
                     workflowService.publishWorkflow(workflowId);
                     result.put("success", true);
@@ -617,9 +617,9 @@ public class AgentExecutor {
                 }
             }
             // 匹配 POST /api/workflow/{id}/execute - 执行工作流
-            else if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/\\d+/execute")) {
+            else if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/[0-9a-fA-F\\-]+/execute")) {
                 if (workflowService != null) {
-                    Long workflowId = Long.parseLong(path.split("/")[3]);
+                    String workflowId = path.split("/")[3];
                     log.info("执行工作流: workflowId={}", workflowId);
                     // TODO: 调用 workflowService 执行工作流
                     result.put("success", true);
@@ -1373,7 +1373,7 @@ public class AgentExecutor {
          * @param actions         待执行的操作列表
          * @param workflowId      工作流ID
          */
-        default void onConfirmationRequired(String pendingActionId, java.util.List<Map<String, Object>> actions, Long workflowId) {
+        default void onConfirmationRequired(String pendingActionId, java.util.List<Map<String, Object>> actions, String workflowId) {
             log.info("操作需要确认: pendingActionId={}, actionCount={}", pendingActionId, actions.size());
         }
 
@@ -1404,7 +1404,7 @@ public class AgentExecutor {
      * @param conversationId 会话ID（即 Claude CLI session ID）
      * @param callback       流式回调
      */
-    public void processMessageStream(String userMessage, Long workflowId, String conversationId,
+    public void processMessageStream(String userMessage, String workflowId, String conversationId,
                                       StreamCallback callback) {
         // 确定会话ID
         String sessionId = conversationId;
@@ -1443,7 +1443,7 @@ public class AgentExecutor {
      * @param callback       流式回调
      * @param isFirstRound   是否是第一轮（第一轮需要加载 Skill 文件）
      */
-    private void processMessageStreamWithMultiRound(String userMessage, Long workflowId, String conversationId,
+    private void processMessageStreamWithMultiRound(String userMessage, String workflowId, String conversationId,
                                                      StreamCallback callback, boolean isFirstRound) {
         if (streamClient == null) {
             log.warn("流式客户端未初始化，回退到同步模式");
@@ -1571,7 +1571,7 @@ public class AgentExecutor {
      * 处理流式完成后的多轮判断
      */
     private void handleStreamCompletion(AgentSessionEntity session, String fullResponse,
-                                         Long workflowId, StreamCallback callback, boolean isFirstRound) {
+                                         String workflowId, StreamCallback callback, boolean isFirstRound) {
         try {
             // 尝试解析 AI 响应为 AgentPlan
             AgentPlan plan = parseAgentPlan(fullResponse);

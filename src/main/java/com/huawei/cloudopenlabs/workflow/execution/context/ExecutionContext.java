@@ -25,7 +25,7 @@ public class ExecutionContext {
     /**
      * 执行记录ID
      */
-    private Long executionId;
+    private String executionId;
 
     /**
      * 执行UUID
@@ -35,7 +35,7 @@ public class ExecutionContext {
     /**
      * 工作流ID
      */
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 触发人

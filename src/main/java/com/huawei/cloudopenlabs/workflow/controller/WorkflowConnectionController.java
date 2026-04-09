@@ -34,7 +34,7 @@ public class WorkflowConnectionController {
      */
     @GetMapping
     public ResponseEntity<List<ConnectionResponse>> getConnections(
-            @PathVariable Long workflowId) {
+            @PathVariable String workflowId) {
         log.info("获取工作流连线列表: workflowId={}", workflowId);
         List<ConnectionResponse> connections = connectionService.getConnections(workflowId);
         return ResponseEntity.ok(connections);
@@ -49,7 +49,7 @@ public class WorkflowConnectionController {
      */
     @GetMapping("/{connectionUuid}")
     public ResponseEntity<ConnectionResponse> getConnection(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String connectionUuid) {
         log.info("获取连线详情: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
         ConnectionResponse response = connectionService.getConnection(workflowId, connectionUuid);
@@ -65,7 +65,7 @@ public class WorkflowConnectionController {
      */
     @PostMapping
     public ResponseEntity<ConnectionResponse> createConnection(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @Valid @RequestBody WorkflowResponse.ConnectionDTO request) {
         log.info("创建连线: workflowId={}, sourceNode={}, targetNode={}",
                 workflowId, request.getSourceNodeUuid(), request.getTargetNodeUuid());
@@ -82,7 +82,7 @@ public class WorkflowConnectionController {
      */
     @PostMapping("/batch")
     public ResponseEntity<Void> batchCreateConnections(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @Valid @RequestBody List<WorkflowResponse.ConnectionDTO> requests) {
         log.info("批量创建连线: workflowId={}, count={}", workflowId, requests.size());
         connectionService.batchCreateConnections(workflowId, requests);
@@ -98,7 +98,7 @@ public class WorkflowConnectionController {
      */
     @DeleteMapping("/{connectionUuid}")
     public ResponseEntity<Void> deleteConnection(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String connectionUuid) {
         log.info("删除连线: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
         connectionService.deleteConnection(workflowId, connectionUuid);
@@ -114,7 +114,7 @@ public class WorkflowConnectionController {
      */
     @DeleteMapping("/batch")
     public ResponseEntity<Void> batchDeleteConnections(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @RequestBody List<String> connectionUuids) {
         log.info("批量删除连线: workflowId={}, count={}", workflowId, connectionUuids.size());
         connectionService.batchDeleteConnections(workflowId, connectionUuids);
@@ -130,8 +130,8 @@ public class WorkflowConnectionController {
      */
     @GetMapping("/source/{nodeId}")
     public ResponseEntity<List<ConnectionResponse>> getConnectionsBySourceNode(
-            @PathVariable Long workflowId,
-            @PathVariable Long nodeId) {
+            @PathVariable String workflowId,
+            @PathVariable String nodeId) {
         log.info("获取节点出边: workflowId={}, nodeId={}", workflowId, nodeId);
         List<ConnectionResponse> connections = connectionService.getConnectionsBySourceNode(nodeId);
         return ResponseEntity.ok(connections);
@@ -146,8 +146,8 @@ public class WorkflowConnectionController {
      */
     @GetMapping("/target/{nodeId}")
     public ResponseEntity<List<ConnectionResponse>> getConnectionsByTargetNode(
-            @PathVariable Long workflowId,
-            @PathVariable Long nodeId) {
+            @PathVariable String workflowId,
+            @PathVariable String nodeId) {
         log.info("获取节点入边: workflowId={}, nodeId={}", workflowId, nodeId);
         List<ConnectionResponse> connections = connectionService.getConnectionsByTargetNode(nodeId);
         return ResponseEntity.ok(connections);

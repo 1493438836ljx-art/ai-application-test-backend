@@ -52,13 +52,13 @@ class ActionExecutorTest {
         void testResolveWorkflowId() {
             // Given
             String path = "/api/workflow/{workflowId}/nodes";
-            Long workflowId = 123L;
+            String workflowId = "test-workflow-123";
 
             // When
             String result = actionExecutor.resolvePath(path, workflowId);
 
             // Then
-            assertEquals("/api/workflow/123/nodes", result);
+            assertEquals("/api/workflow/test-workflow-123/nodes", result);
         }
 
         @Test
@@ -66,13 +66,13 @@ class ActionExecutorTest {
         void testResolveWorkflowIdWithDollar() {
             // Given
             String path = "/api/workflow/${workflowId}/nodes";
-            Long workflowId = 456L;
+            String workflowId = "test-workflow-456";
 
             // When
             String result = actionExecutor.resolvePath(path, workflowId);
 
             // Then
-            assertEquals("/api/workflow/456/nodes", result);
+            assertEquals("/api/workflow/test-workflow-456/nodes", result);
         }
 
         @Test
@@ -80,13 +80,13 @@ class ActionExecutorTest {
         void testResolveId() {
             // Given
             String path = "/api/workflow/{id}/data";
-            Long workflowId = 789L;
+            String workflowId = "test-workflow-789";
 
             // When
             String result = actionExecutor.resolvePath(path, workflowId);
 
             // Then
-            assertEquals("/api/workflow/789/data", result);
+            assertEquals("/api/workflow/test-workflow-789/data", result);
         }
 
         @Test
@@ -106,7 +106,7 @@ class ActionExecutorTest {
         @DisplayName("空路径处理")
         void testEmptyPath() {
             // When
-            String result = actionExecutor.resolvePath("", 1L);
+            String result = actionExecutor.resolvePath("", "test-workflow-1");
 
             // Then
             assertEquals("", result);
@@ -116,7 +116,7 @@ class ActionExecutorTest {
         @DisplayName("null路径处理")
         void testNullPath() {
             // When
-            String result = actionExecutor.resolvePath(null, 1L);
+            String result = actionExecutor.resolvePath(null, "test-workflow-1");
 
             // Then
             assertNull(result);
@@ -281,7 +281,7 @@ class ActionExecutorTest {
         @DisplayName("null 操作列表返回空结果")
         void testNullActions() {
             // When
-            Map<String, Object> results = actionExecutor.executeActions(null, 1L);
+            Map<String, Object> results = actionExecutor.executeActions(null, "test-workflow-1");
 
             // Then
             assertNotNull(results);
@@ -292,7 +292,7 @@ class ActionExecutorTest {
         @DisplayName("空操作列表返回空结果")
         void testEmptyActions() {
             // When
-            Map<String, Object> results = actionExecutor.executeActions(new ArrayList<>(), 1L);
+            Map<String, Object> results = actionExecutor.executeActions(new ArrayList<>(), "test-workflow-1");
 
             // Then
             assertNotNull(results);
@@ -303,7 +303,7 @@ class ActionExecutorTest {
         @DisplayName("无事务模式下空列表返回空结果")
         void testEmptyActionsNoTransaction() {
             // When
-            Map<String, Object> results = actionExecutor.executeActionsWithoutTransaction(null, 1L);
+            Map<String, Object> results = actionExecutor.executeActionsWithoutTransaction(null, "test-workflow-1");
 
             // Then
             assertNotNull(results);

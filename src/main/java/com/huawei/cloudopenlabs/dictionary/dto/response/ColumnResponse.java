@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ColumnResponse {
 
-    private Long id;
+    private String id;
 
     private String key;
 

@@ -21,20 +21,20 @@ public class WorkflowAssociationEntity implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "id", type = IdType.ASSIGN_UUID)
+    private String id;
 
     /**
      * 所属工作流ID
      */
     @TableField("workflow_id")
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 容器节点ID（原loop_node_id）
      */
     @TableField("container_node_id")
-    private Long containerNodeId;
+    private String containerNodeId;
 
     /**
      * 容器节点UUID
@@ -46,7 +46,7 @@ public class WorkflowAssociationEntity implements Serializable {
      * 子节点ID（原body_node_id）
      */
     @TableField("body_node_id")
-    private Long bodyNodeId;
+    private String bodyNodeId;
 
     /**
      * 子节点UUID

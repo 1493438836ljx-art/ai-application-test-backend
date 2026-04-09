@@ -33,7 +33,7 @@ public class WorkflowValidationController {
      */
     @PostMapping("/validate")
     public ResponseEntity<ValidationResult> validateWorkflow(
-            @PathVariable Long workflowId) {
+            @PathVariable String workflowId) {
         log.info("验证工作流: workflowId={}", workflowId);
         ValidationResult result = validationService.validate(workflowId);
         return ResponseEntity.ok(result);
@@ -48,7 +48,7 @@ public class WorkflowValidationController {
      */
     @GetMapping("/predecessors/{nodeUuid}")
     public ResponseEntity<List<NodeResponse>> getPredecessors(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String nodeUuid) {
         log.info("获取前置节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         List<NodeResponse> predecessors = validationService.getPredecessors(workflowId, nodeUuid);
@@ -64,7 +64,7 @@ public class WorkflowValidationController {
      */
     @GetMapping("/available-variables/{nodeUuid}")
     public ResponseEntity<List<AvailableVariable>> getAvailableVariables(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String nodeUuid) {
         log.info("获取可用变量: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         List<AvailableVariable> variables = validationService.getAvailableVariables(workflowId, nodeUuid);
@@ -81,7 +81,7 @@ public class WorkflowValidationController {
      */
     @GetMapping("/check-reference/{nodeUuid}")
     public ResponseEntity<ReferenceCheckResult> checkReference(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String nodeUuid,
             @RequestParam String reference) {
         log.info("检查参数引用: workflowId={}, nodeUuid={}, reference={}", workflowId, nodeUuid, reference);
@@ -97,7 +97,7 @@ public class WorkflowValidationController {
      */
     @GetMapping("/execution-order")
     public ResponseEntity<List<NodeResponse>> getExecutionOrder(
-            @PathVariable Long workflowId) {
+            @PathVariable String workflowId) {
         log.info("获取执行顺序: workflowId={}", workflowId);
         List<NodeResponse> order = validationService.getExecutionOrder(workflowId);
         return ResponseEntity.ok(order);

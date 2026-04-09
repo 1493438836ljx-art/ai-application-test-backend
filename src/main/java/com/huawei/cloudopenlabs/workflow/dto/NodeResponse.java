@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 public class NodeResponse {
 
-    private Long id;
+    private String id;
 
     private String nodeUuid;
 
@@ -55,7 +55,7 @@ public class NodeResponse {
 
     private Integer retryInterval;
 
-    private Long errorBranchId;
+    private String errorBranchId;
 
     // ========== 条件节点配置 ==========
 

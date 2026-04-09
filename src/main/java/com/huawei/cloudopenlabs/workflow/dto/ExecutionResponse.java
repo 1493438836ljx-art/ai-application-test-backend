@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 @Data
 public class ExecutionResponse {
 
-    private Long id;
+    private String id;
 
-    private Long workflowId;
+    private String workflowId;
 
     private String executionUuid;
 

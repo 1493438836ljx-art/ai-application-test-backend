@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 public class WorkflowResponse {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -56,7 +56,7 @@ public class WorkflowResponse {
      */
     @Data
     public static class NodeDTO {
-        private Long id;
+        private String id;
 
         private String nodeUuid;
 
@@ -78,7 +78,7 @@ public class WorkflowResponse {
 
         private String config;
 
-        private Long parentNodeId;
+        private String parentNodeId;
 
         private String parentNodeUuid;
 
@@ -98,7 +98,7 @@ public class WorkflowResponse {
 
         private Integer retryInterval;
 
-        private Long errorBranchId;
+        private String errorBranchId;
 
         // ========== 条件节点配置 ==========
 
@@ -132,17 +132,17 @@ public class WorkflowResponse {
      */
     @Data
     public static class ConnectionDTO {
-        private Long id;
+        private String id;
 
         private String connectionUuid;
 
-        private Long sourceNodeId;
+        private String sourceNodeId;
 
         private String sourceNodeUuid;
 
         private String sourcePortId;
 
-        private Long targetNodeId;
+        private String targetNodeId;
 
         private String targetNodeUuid;
 
@@ -164,13 +164,13 @@ public class WorkflowResponse {
      */
     @Data
     public static class AssociationDTO {
-        private Long id;
+        private String id;
 
-        private Long containerNodeId;
+        private String containerNodeId;
 
         private String containerNodeUuid;
 
-        private Long bodyNodeId;
+        private String bodyNodeId;
 
         private String bodyNodeUuid;
 

@@ -103,7 +103,7 @@
         FROM skill
         WHERE deleted = 1
         AND deleted_at IS NOT NULL
-        AND deleted_at &lt; DATE_SUB(NOW(), INTERVAL #{days} DAY)
+        AND deleted_at &lt; CURRENT_TIMESTAMP - (#{days} || ' days')::interval
     </select>
 
     <!-- 物理删除Skill（绕过逻辑删除） -->

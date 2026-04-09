@@ -23,7 +23,7 @@ public interface WorkflowAssociationMapper extends BaseMapper<WorkflowAssociatio
      * @param workflowId 工作流ID
      * @return 关联列表
      */
-    List<WorkflowAssociationEntity> selectByWorkflowId(@Param("workflowId") Long workflowId);
+    List<WorkflowAssociationEntity> selectByWorkflowId(@Param("workflowId") String workflowId);
 
     /**
      * 根据循环节点ID查询关联
@@ -31,7 +31,7 @@ public interface WorkflowAssociationMapper extends BaseMapper<WorkflowAssociatio
      * @param loopNodeId 循环节点ID
      * @return 关联
      */
-    Optional<WorkflowAssociationEntity> selectByLoopNodeId(@Param("loopNodeId") Long loopNodeId);
+    Optional<WorkflowAssociationEntity> selectByLoopNodeId(@Param("loopNodeId") String loopNodeId);
 
     /**
      * 删除工作流的所有关联
@@ -39,5 +39,5 @@ public interface WorkflowAssociationMapper extends BaseMapper<WorkflowAssociatio
      * @param workflowId 工作流ID
      * @return 删除数量
      */
-    int deleteByWorkflowId(@Param("workflowId") Long workflowId);
+    int deleteByWorkflowId(@Param("workflowId") String workflowId);
 }

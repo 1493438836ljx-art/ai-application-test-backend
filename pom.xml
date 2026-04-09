@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.12</version>
+        <version>3.4.5</version>
         <relativePath/>
     </parent>
 
@@ -18,11 +18,13 @@
     <description>生成式AI应用推理测试平台</description>
 
     <properties>
-        <java.version>21</java.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <poi.version>5.2.5</poi.version>
         <openpdf.version>1.3.35</openpdf.version>
         <opencsv.version>5.9</opencsv.version>
+        <java.version>21</java.version>
+        <package_name>ets_aistudioservice</package_name>
+        <package_version>2.8.0</package_version>
     </properties>
 
     <dependencies>
@@ -57,10 +59,11 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
-        <!-- MySQL Driver (生产环境) -->
+        <!-- OpenGauss Driver -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
+            <groupId>org.opengauss</groupId>
+            <artifactId>opengauss-jdbc</artifactId>
+            <version>5.1.0</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -148,6 +151,8 @@
     </dependencies>
 
     <build>
+        <defaultGoal>package</defaultGoal>
+        <finalName>${package_name}-${package_version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

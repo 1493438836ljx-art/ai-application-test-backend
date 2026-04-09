@@ -51,7 +51,7 @@ public class NodeUpdateRequest {
 
     private Integer retryInterval;
 
-    private Long errorBranchId;
+    private String errorBranchId;
 
     // ========== 条件节点配置 ==========
 

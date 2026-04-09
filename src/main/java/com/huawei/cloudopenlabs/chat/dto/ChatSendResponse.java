@@ -22,7 +22,7 @@ public class ChatSendResponse {
      */
     @Data
     public static class MessageDTO {
-        private Long id;
+        private String id;
 
         private String messageUuid;
 

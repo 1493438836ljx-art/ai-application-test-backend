@@ -33,7 +33,7 @@ public class ActionConfirmRequest {
     /**
      * 工作流ID
      */
-    private Long workflowId;
+    private String workflowId;
 
     /**
      * 待确认的操作列表

@@ -51,7 +51,7 @@ public class StateManager {
      * 更新工作流执行状态
      */
     @Transactional
-    public void updateWorkflowStatus(Long executionId,
+    public void updateWorkflowStatus(String executionId,
                                       ExecutionStatus status,
                                       Integer progress,
                                       Map<String, Object> outputData) {
@@ -97,7 +97,7 @@ public class StateManager {
      * 更新节点执行状态
      */
     @Transactional
-    public void updateNodeStatus(Long executionId,
+    public void updateNodeStatus(String executionId,
                                   String nodeUuid,
                                   NodeExecutionStatus status) {
         updateNodeStatus(executionId, nodeUuid, status, null);
@@ -107,7 +107,7 @@ public class StateManager {
      * 更新节点执行状态（带结果）
      */
     @Transactional
-    public void updateNodeStatus(Long executionId,
+    public void updateNodeStatus(String executionId,
                                   String nodeUuid,
                                   NodeExecutionStatus status,
                                   NodeExecutionResult result) {
@@ -133,7 +133,7 @@ public class StateManager {
     /**
      * 获取节点执行状态
      */
-    public NodeExecutionStatus getNodeStatus(Long executionId, String nodeUuid) {
+    public NodeExecutionStatus getNodeStatus(String executionId, String nodeUuid) {
         String cacheKey = buildCacheKey(executionId, nodeUuid);
 
         // 优先从缓存获取
@@ -169,7 +169,7 @@ public class StateManager {
     /**
      * 获取所有节点执行状态
      */
-    public Map<String, NodeExecutionStatus> getAllNodeStatuses(Long executionId) {
+    public Map<String, NodeExecutionStatus> getAllNodeStatuses(String executionId) {
         Map<String, NodeExecutionStatus> statuses = new HashMap<>();
 
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);
@@ -197,7 +197,7 @@ public class StateManager {
     /**
      * 统计特定状态的节点数量
      */
-    public int countNodesByStatus(Long executionId, NodeExecutionStatus targetStatus) {
+    public int countNodesByStatus(String executionId, NodeExecutionStatus targetStatus) {
         Map<String, NodeExecutionStatus> statuses = getAllNodeStatuses(executionId);
         return (int) statuses.values().stream()
                 .filter(s -> s == targetStatus)
@@ -207,7 +207,7 @@ public class StateManager {
     /**
      * 获取节点输出
      */
-    public Map<String, Object> getNodeOutputs(Long executionId, String nodeUuid) {
+    public Map<String, Object> getNodeOutputs(String executionId, String nodeUuid) {
         String cacheKey = buildCacheKey(executionId, nodeUuid);
 
         // 优先从缓存获取
@@ -244,7 +244,7 @@ public class StateManager {
     /**
      * 清除执行相关的缓存
      */
-    public void clearCache(Long executionId) {
+    public void clearCache(String executionId) {
         String prefix = executionId + "_";
 
         nodeStatusCache.keySet().removeIf(key -> key.startsWith(prefix));
@@ -257,7 +257,7 @@ public class StateManager {
      * 更新工作流最终输出
      */
     @Transactional
-    public void updateWorkflowOutput(Long executionId, Map<String, Object> outputs) {
+    public void updateWorkflowOutput(String executionId, Map<String, Object> outputs) {
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);
         if (execution == null) {
             return;
@@ -273,7 +273,7 @@ public class StateManager {
 
     // ==================== 私有方法 ====================
 
-    private String buildCacheKey(Long executionId, String nodeUuid) {
+    private String buildCacheKey(String executionId, String nodeUuid) {
         return executionId + "_" + nodeUuid;
     }
 
@@ -281,7 +281,7 @@ public class StateManager {
      * 更新数据库中的节点执行详情
      */
     @SuppressWarnings("unchecked")
-    private void updateNodeExecutionsInDb(Long executionId,
+    private void updateNodeExecutionsInDb(String executionId,
                                            String nodeUuid,
                                            NodeExecutionStatus status,
                                            NodeExecutionResult result) {
@@ -347,7 +347,7 @@ public class StateManager {
     /**
      * 更新工作流执行进度
      */
-    private void updateWorkflowProgress(Long executionId) {
+    private void updateWorkflowProgress(String executionId) {
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);
         if (execution == null) {
             return;

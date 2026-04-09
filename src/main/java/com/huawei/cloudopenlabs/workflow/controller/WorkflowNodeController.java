@@ -35,7 +35,7 @@ public class WorkflowNodeController {
      */
     @GetMapping
     public ResponseEntity<List<NodeResponse>> getNodes(
-            @PathVariable Long workflowId) {
+            @PathVariable String workflowId) {
         log.info("获取工作流节点列表: workflowId={}", workflowId);
         List<NodeResponse> nodes = nodeService.getNodes(workflowId);
         return ResponseEntity.ok(nodes);
@@ -50,7 +50,7 @@ public class WorkflowNodeController {
      */
     @GetMapping("/{nodeUuid}")
     public ResponseEntity<NodeResponse> getNode(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String nodeUuid) {
         log.info("获取节点详情: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         NodeResponse response = nodeService.getNode(workflowId, nodeUuid);
@@ -66,7 +66,7 @@ public class WorkflowNodeController {
      */
     @PostMapping
     public ResponseEntity<NodeResponse> createNode(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @Valid @RequestBody NodeCreateRequest request) {
         log.info("创建节点: workflowId={}, nodeName={}", workflowId, request.getName());
         NodeResponse response = nodeService.createNode(workflowId, request);
@@ -82,7 +82,7 @@ public class WorkflowNodeController {
      */
     @PostMapping("/batch")
     public ResponseEntity<Void> batchCreateNodes(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @Valid @RequestBody List<NodeCreateRequest> requests) {
         log.info("批量创建节点: workflowId={}, count={}", workflowId, requests.size());
         nodeService.batchCreateNodes(workflowId, requests);
@@ -99,7 +99,7 @@ public class WorkflowNodeController {
      */
     @PutMapping("/{nodeUuid}")
     public ResponseEntity<NodeResponse> updateNode(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String nodeUuid,
             @Valid @RequestBody NodeUpdateRequest request) {
         log.info("更新节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
@@ -116,7 +116,7 @@ public class WorkflowNodeController {
      */
     @PutMapping("/batch")
     public ResponseEntity<Void> batchUpdateNodes(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @Valid @RequestBody List<NodeUpdateRequest> requests) {
         log.info("批量更新节点: workflowId={}, count={}", workflowId, requests.size());
         nodeService.batchUpdateNodes(workflowId, requests);
@@ -132,7 +132,7 @@ public class WorkflowNodeController {
      */
     @DeleteMapping("/{nodeUuid}")
     public ResponseEntity<Void> deleteNode(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @PathVariable String nodeUuid) {
         log.info("删除节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         nodeService.deleteNode(workflowId, nodeUuid);
@@ -148,7 +148,7 @@ public class WorkflowNodeController {
      */
     @DeleteMapping("/batch")
     public ResponseEntity<Void> batchDeleteNodes(
-            @PathVariable Long workflowId,
+            @PathVariable String workflowId,
             @RequestBody List<String> nodeUuids) {
         log.info("批量删除节点: workflowId={}, count={}", workflowId, nodeUuids.size());
         nodeService.batchDeleteNodes(workflowId, nodeUuids);

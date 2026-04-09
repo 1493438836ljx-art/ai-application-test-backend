@@ -31,7 +31,7 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessageEntity> {
      * @param conversationId 对话ID
      * @return 消息列表
      */
-    List<ChatMessageEntity> selectByConversationId(@Param("conversationId") Long conversationId);
+    List<ChatMessageEntity> selectByConversationId(@Param("conversationId") String conversationId);
 
     /**
      * 获取对话的最后一条消息
@@ -39,7 +39,7 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessageEntity> {
      * @param conversationId 对话ID
      * @return 最后一条消息
      */
-    Optional<ChatMessageEntity> selectLastMessage(@Param("conversationId") Long conversationId);
+    Optional<ChatMessageEntity> selectLastMessage(@Param("conversationId") String conversationId);
 
     /**
      * 统计对话的消息数量
@@ -47,5 +47,5 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessageEntity> {
      * @param conversationId 对话ID
      * @return 数量
      */
-    Long countByConversationId(@Param("conversationId") Long conversationId);
+    Long countByConversationId(@Param("conversationId") String conversationId);
 }

@@ -79,7 +79,7 @@ public class NodeTypeController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<NodeTypeResponse> getNodeTypeById(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         NodeTypeResponse response = nodeTypeService.getNodeTypeById(id);
         return ResponseEntity.ok(response);
     }
@@ -119,7 +119,7 @@ public class NodeTypeController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<NodeTypeResponse> updateNodeType(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody NodeTypeUpdateRequest request) {
         log.info("更新节点类型: {}", id);
         NodeTypeResponse response = nodeTypeService.updateNodeType(id, request);
@@ -134,7 +134,7 @@ public class NodeTypeController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNodeType(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("删除节点类型: {}", id);
         nodeTypeService.deleteNodeType(id);
         return ResponseEntity.noContent().build();
@@ -148,7 +148,7 @@ public class NodeTypeController {
      */
     @PostMapping("/{id}/enable")
     public ResponseEntity<NodeTypeResponse> enableNodeType(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("启用节点类型: {}", id);
         NodeTypeResponse response = nodeTypeService.toggleNodeType(id, true);
         return ResponseEntity.ok(response);
@@ -162,7 +162,7 @@ public class NodeTypeController {
      */
     @PostMapping("/{id}/disable")
     public ResponseEntity<NodeTypeResponse> disableNodeType(
-            @PathVariable Long id) {
+            @PathVariable String id) {
         log.info("禁用节点类型: {}", id);
         NodeTypeResponse response = nodeTypeService.toggleNodeType(id, false);
         return ResponseEntity.ok(response);

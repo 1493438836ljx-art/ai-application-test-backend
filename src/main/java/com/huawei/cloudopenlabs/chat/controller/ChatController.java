@@ -356,7 +356,7 @@ public class ChatController {
      * 执行工作流操作（动态调用后端 API）
      * 使用 WebClient 内部调用，支持所有已注册的 API 端点
      */
-    private Object executeWorkflowAction(String method, String path, Map<String, Object> body, Long workflowId) {
+    private Object executeWorkflowAction(String method, String path, Map<String, Object> body, String workflowId) {
         Map<String, Object> result = new java.util.LinkedHashMap<>();
 
         try {
@@ -440,11 +440,11 @@ public class ChatController {
                 } catch (Exception e) {
                     // 尝试解析为数字（可能是纯数字响应）
                     try {
-                        Long executionId = Long.parseLong(responseBody.trim());
+                        String executionId = responseBody.trim();
                         result.put("executionId", executionId);
                         result.put("data", responseBody);
                         log.info("解析纯数字响应为 executionId: {}", executionId);
-                    } catch (NumberFormatException nfe) {
+                    } catch (Exception nfe) {
                         result.put("data", responseBody);
                     }
                 }

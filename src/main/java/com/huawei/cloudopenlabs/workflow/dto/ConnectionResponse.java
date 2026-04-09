@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 public class ConnectionResponse {
 
-    private Long id;
+    private String id;
 
     private String connectionUuid;
 

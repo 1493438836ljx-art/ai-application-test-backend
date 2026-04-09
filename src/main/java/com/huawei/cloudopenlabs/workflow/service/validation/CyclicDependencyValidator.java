@@ -36,7 +36,7 @@ public class CyclicDependencyValidator {
      * @param workflowId 工作流ID
      * @return 验证结果
      */
-    public ValidationResult validate(Long workflowId) {
+    public ValidationResult validate(String workflowId) {
         log.debug("开始循环依赖检测: workflowId={}", workflowId);
         ValidationResult result = new ValidationResult();
         result.setValid(true);
@@ -49,9 +49,9 @@ public class CyclicDependencyValidator {
         }
 
         // 构建邻接表和入度表（使用数据库 ID）
-        Map<Long, List<Long>> adjList = new HashMap<>();
-        Map<Long, Integer> inDegree = new HashMap<>();
-        Map<Long, String> idToNameMap = new HashMap<>();
+        Map<String, List<String>> adjList = new HashMap<>();
+        Map<String, Integer> inDegree = new HashMap<>();
+        Map<String, String> idToNameMap = new HashMap<>();
 
         // 初始化
         for (WorkflowNodeEntity node : nodes) {
@@ -62,8 +62,8 @@ public class CyclicDependencyValidator {
 
         // 构建边
         for (WorkflowConnectionEntity conn : connections) {
-            Long sourceId = conn.getSourceNodeId();
-            Long targetId = conn.getTargetNodeId();
+            String sourceId = conn.getSourceNodeId();
+            String targetId = conn.getTargetNodeId();
 
             if (sourceId != null && targetId != null) {
                 adjList.get(sourceId).add(targetId);
@@ -72,8 +72,8 @@ public class CyclicDependencyValidator {
         }
 
         // Kahn 算法
-        Queue<Long> queue = new LinkedList<>();
-        for (Map.Entry<Long, Integer> entry : inDegree.entrySet()) {
+        Queue<String> queue = new LinkedList<>();
+        for (Map.Entry<String, Integer> entry : inDegree.entrySet()) {
             if (entry.getValue() == 0) {
                 queue.add(entry.getKey());
             }
@@ -81,10 +81,10 @@ public class CyclicDependencyValidator {
 
         int processedCount = 0;
         while (!queue.isEmpty()) {
-            Long current = queue.poll();
+            String current = queue.poll();
             processedCount++;
 
-            for (Long next : adjList.get(current)) {
+            for (String next : adjList.get(current)) {
                 int newDegree = inDegree.get(next) - 1;
                 inDegree.put(next, newDegree);
                 if (newDegree == 0) {
@@ -119,13 +119,13 @@ public class CyclicDependencyValidator {
      * @return 节点名称的拓扑排序列表
      * @throws IllegalStateException 如果存在循环依赖
      */
-    public List<String> getTopologicalOrder(Long workflowId) {
+    public List<String> getTopologicalOrder(String workflowId) {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectByWorkflowId(workflowId);
         List<WorkflowConnectionEntity> connections = connectionMapper.selectByWorkflowId(workflowId);
 
-        Map<Long, List<Long>> adjList = new HashMap<>();
-        Map<Long, Integer> inDegree = new HashMap<>();
-        Map<Long, String> idToNameMap = new HashMap<>();
+        Map<String, List<String>> adjList = new HashMap<>();
+        Map<String, Integer> inDegree = new HashMap<>();
+        Map<String, String> idToNameMap = new HashMap<>();
 
         for (WorkflowNodeEntity node : nodes) {
             adjList.put(node.getId(), new ArrayList<>());
@@ -134,8 +134,8 @@ public class CyclicDependencyValidator {
         }
 
         for (WorkflowConnectionEntity conn : connections) {
-            Long sourceId = conn.getSourceNodeId();
-            Long targetId = conn.getTargetNodeId();
+            String sourceId = conn.getSourceNodeId();
+            String targetId = conn.getTargetNodeId();
 
             if (sourceId != null && targetId != null) {
                 adjList.get(sourceId).add(targetId);
@@ -143,8 +143,8 @@ public class CyclicDependencyValidator {
             }
         }
 
-        Queue<Long> queue = new LinkedList<>();
-        for (Map.Entry<Long, Integer> entry : inDegree.entrySet()) {
+        Queue<String> queue = new LinkedList<>();
+        for (Map.Entry<String, Integer> entry : inDegree.entrySet()) {
             if (entry.getValue() == 0) {
                 queue.add(entry.getKey());
             }
@@ -152,10 +152,10 @@ public class CyclicDependencyValidator {
 
         List<String> order = new ArrayList<>();
         while (!queue.isEmpty()) {
-            Long current = queue.poll();
+            String current = queue.poll();
             order.add(idToNameMap.get(current));
 
-            for (Long next : adjList.get(current)) {
+            for (String next : adjList.get(current)) {
                 int newDegree = inDegree.get(next) - 1;
                 inDegree.put(next, newDegree);
                 if (newDegree == 0) {
@@ -178,12 +178,12 @@ public class CyclicDependencyValidator {
      * @return 节点ID的拓扑排序列表
      * @throws IllegalStateException 如果存在循环依赖
      */
-    public List<Long> getTopologicalOrderByIds(Long workflowId) {
+    public List<String> getTopologicalOrderByIds(String workflowId) {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectByWorkflowId(workflowId);
         List<WorkflowConnectionEntity> connections = connectionMapper.selectByWorkflowId(workflowId);
 
-        Map<Long, List<Long>> adjList = new HashMap<>();
-        Map<Long, Integer> inDegree = new HashMap<>();
+        Map<String, List<String>> adjList = new HashMap<>();
+        Map<String, Integer> inDegree = new HashMap<>();
 
         for (WorkflowNodeEntity node : nodes) {
             adjList.put(node.getId(), new ArrayList<>());
@@ -191,8 +191,8 @@ public class CyclicDependencyValidator {
         }
 
         for (WorkflowConnectionEntity conn : connections) {
-            Long sourceId = conn.getSourceNodeId();
-            Long targetId = conn.getTargetNodeId();
+            String sourceId = conn.getSourceNodeId();
+            String targetId = conn.getTargetNodeId();
 
             if (sourceId != null && targetId != null) {
                 adjList.get(sourceId).add(targetId);
@@ -200,19 +200,19 @@ public class CyclicDependencyValidator {
             }
         }
 
-        Queue<Long> queue = new LinkedList<>();
-        for (Map.Entry<Long, Integer> entry : inDegree.entrySet()) {
+        Queue<String> queue = new LinkedList<>();
+        for (Map.Entry<String, Integer> entry : inDegree.entrySet()) {
             if (entry.getValue() == 0) {
                 queue.add(entry.getKey());
             }
         }
 
-        List<Long> order = new ArrayList<>();
+        List<String> order = new ArrayList<>();
         while (!queue.isEmpty()) {
-            Long current = queue.poll();
+            String current = queue.poll();
             order.add(current);
 
-            for (Long next : adjList.get(current)) {
+            for (String next : adjList.get(current)) {
                 int newDegree = inDegree.get(next) - 1;
                 inDegree.put(next, newDegree);
                 if (newDegree == 0) {
@@ -234,7 +234,7 @@ public class CyclicDependencyValidator {
      * @param workflowId 工作流ID
      * @return 是否存在循环
      */
-    public boolean hasCycle(Long workflowId) {
+    public boolean hasCycle(String workflowId) {
         ValidationResult result = validate(workflowId);
         return !result.isValid();
     }

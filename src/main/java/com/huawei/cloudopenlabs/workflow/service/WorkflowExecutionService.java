@@ -23,7 +23,7 @@ public interface WorkflowExecutionService {
      * @param inputData   输入数据
      * @return 执行记录ID
      */
-    Long executeWorkflow(Long workflowId, String triggeredBy, String inputData);
+    String executeWorkflow(String workflowId, String triggeredBy, String inputData);
 
     /**
      * 获取执行记录
@@ -31,7 +31,7 @@ public interface WorkflowExecutionService {
      * @param id 执行记录ID
      * @return 执行响应
      */
-    ExecutionResponse getExecution(Long id);
+    ExecutionResponse getExecution(String id);
 
     /**
      * 根据UUID获取执行记录
@@ -48,7 +48,7 @@ public interface WorkflowExecutionService {
      * @param pageable   分页参数
      * @return 执行记录分页列表
      */
-    Page<ExecutionResponse> getExecutionsByWorkflowId(Long workflowId, Pageable pageable);
+    Page<ExecutionResponse> getExecutionsByWorkflowId(String workflowId, Pageable pageable);
 
     /**
      * 获取正在执行的记录
@@ -62,7 +62,7 @@ public interface WorkflowExecutionService {
      *
      * @param id 执行记录ID
      */
-    void abortExecution(Long id);
+    void abortExecution(String id);
 
     /**
      * 更新执行进度
@@ -70,7 +70,7 @@ public interface WorkflowExecutionService {
      * @param id       执行记录ID
      * @param progress 进度（0-100）
      */
-    void updateProgress(Long id, int progress);
+    void updateProgress(String id, int progress);
 
     /**
      * 完成执行
@@ -79,7 +79,7 @@ public interface WorkflowExecutionService {
      * @param outputData  输出数据
      * @param nodeExecutions 节点执行详情
      */
-    void completeExecution(Long id, String outputData, String nodeExecutions);
+    void completeExecution(String id, String outputData, String nodeExecutions);
 
     /**
      * 执行失败
@@ -87,7 +87,7 @@ public interface WorkflowExecutionService {
      * @param id           执行记录ID
      * @param errorMessage 错误信息
      */
-    void failExecution(Long id, String errorMessage);
+    void failExecution(String id, String errorMessage);
 
     /**
      * 获取执行的结构化输出参数
@@ -95,5 +95,5 @@ public interface WorkflowExecutionService {
      * @param id 执行记录ID
      * @return 输出参数响应
      */
-    ExecutionOutputResponse getExecutionOutputs(Long id);
+    ExecutionOutputResponse getExecutionOutputs(String id);
 }
