@@ -179,7 +179,7 @@ INSERT INTO "chat_message" ("id", "content", "content_type", "created_at", "late
 ('8cfe9d33-c8e6-a031-0f4a-761c4584953e',  '你是什么模型',  'TEXT',  '2026-03-22 23:55:10',  NULL,  '7dfe5801-d4b3-426c-859d-ac61fbf0e5bd',  NULL,  NULL,  'USER',  NULL,  4),
 ('4e02e701-5659-8b80-5861-51d4668561b5',  '我理解你的需求。根据你的描述，我建议...',  'MARKDOWN',  '2026-03-22 23:55:10',  0,  '371d2836-1119-4b9a-90d9-1258d92c6314',  NULL,  NULL,  'ASSISTANT',  NULL,  4),
 ('f14306ad-5944-d760-e3b5-c52818b491e9',  'hello',  'TEXT',  '2026-03-23 00:07:45',  NULL,  '26d5cfab-d7e9-465f-9ab4-1d87523d06b5',  NULL,  NULL,  'USER',  NULL,  5),
-('c330e8cb-6aa4-dedf-98f6-29f4365ef68e',  'Hello! How can I help you today?),
+('c330e8cb-6aa4-dedf-98f6-29f4365ef68e',  'Hello! How can I help you today?
 ', 'MARKDOWN', '2026-03-23 00:07:48', 3387, 'deb8293b-0d9b-454e-9e7d-f6cedd691018', NULL, NULL, 'ASSISTANT', NULL, 5),
 ('1c331b6f-5a4b-e8ed-1493-d39542261be8', '你是什么模型', 'TEXT', '2026-03-23 00:12:37', NULL, '95a4d096-9148-4ac5-bc31-f5a5b4b566fe', NULL, NULL, 'USER', NULL, 6),
 ('19ad9b6e-c58c-3302-3dbe-056b2dd18068', '我被配置为使用 **glm-5[1m]** 模型。
@@ -1596,7 +1596,7 @@ Spring 已成为 Java 企业级开发的事实标准，与 MyBatis、Hibernate �
 
 INSERT INTO "chat_message" ("id", "content", "content_type", "created_at", "latency_ms", "message_uuid", "metadata", "model", "role", "tokens", "conversation_id") VALUES
 ('f5b4b19d-75e1-0ef8-e824-c866b4db9128',  '帮我把当前工作流的所有节点参数都配置好',  'TEXT',  '2026-03-26 01:36:14',  NULL,  '68669837-2082-4b1c-bae7-c6956c2ce845',  NULL,  NULL,  'USER',  NULL,  45),
-('adea8739-f738-f365-4b24-8e4684f4d58a',  '💭 我需要先了解工作流9的结构和所有节点类型定义，才能为每个节点生成合适的配置参数),
+('adea8739-f738-f365-4b24-8e4684f4d58a',  '💭 我需要先了解工作流9的结构和所有节点类型定义，才能为每个节点生成合适的配置参数
 
 ⏳ 正在查询: 获取工作流9的详情，包含所有节点和连线
 
@@ -3494,7 +3494,7 @@ INSERT INTO "chat_message" ("id", "content", "content_type", "created_at", "late
 ('517c6424-f9d8-5850-eb71-6aa52da33aa2', '帮我把开始节点中参数a的默认值设置为1', 'TEXT', '2026-04-07 11:40:01', NULL, 'bab67d42-a60d-43b1-b5b4-70fdeb7cc438', NULL, NULL, 'USER', NULL, 98);
 
 INSERT INTO "chat_message" ("id", "content", "content_type", "created_at", "latency_ms", "message_uuid", "metadata", "model", "role", "tokens", "conversation_id") VALUES
-('c14c4a9e-1cba-ded9-9049-fb9add21d051',  '我需要先获取工作流30的详细信息，找到开始节点及其参数a的当前配置，才能进行修改),
+('c14c4a9e-1cba-ded9-9049-fb9add21d051',  '我需要先获取工作流30的详细信息，找到开始节点及其参数a的当前配置，才能进行修改
 正在获取工作流30的信息...根据查询结果，我已获取到工作流30的完整信息。开始节点参数a的当前默认值是15，需要修改为1。现在执行修改操作：
 
 已获取工作流30的详情，开始节点参数a的当前defaultValue为15，需要修改为1。我将构建完整的保存请求，只修改开始节点的outputParams中参数a的defaultValue，其他节点和连线保持不变
