@@ -5,15 +5,15 @@
 -- =============================================
 -- Table: agent_session
 -- =============================================
-DROP TABLE IF EXISTS "agent_session" CASCADE;
+DROP TABLE IF EXISTS "agent_session" CASCADE CONSTRAINTS;
 CREATE TABLE "agent_session" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "conversation_id" VARCHAR(36) NOT NULL,
     "workflow_id" BIGINT DEFAULT NULL,
     "status" VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
-    "query_results" TEXT DEFAULT NULL,
-    "action_results" TEXT DEFAULT NULL,
-    "last_reasoning" TEXT DEFAULT NULL,
+    "query_results" VARCHAR(10000),
+    "action_results" VARCHAR(10000),
+    "last_reasoning" VARCHAR(2000),
     "round_count" INT NOT NULL DEFAULT 0,
     "parse_error_count" INT NOT NULL DEFAULT 0,
     "start_time" BIGINT DEFAULT NULL,
@@ -42,15 +42,15 @@ COMMENT ON COLUMN "agent_session"."updated_at" IS 'Updated at';
 -- =============================================
 -- Table: async_task
 -- =============================================
-DROP TABLE IF EXISTS "async_task" CASCADE;
+DROP TABLE IF EXISTS "async_task" CASCADE CONSTRAINTS;
 CREATE TABLE "async_task" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "task_id" VARCHAR(64) NOT NULL,
-    "task_content" TEXT DEFAULT NULL,
+    "task_content" VARCHAR(2000),
     "status" VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     "progress" INT DEFAULT 0,
-    "result" TEXT DEFAULT NULL,
-    "error_message" TEXT DEFAULT NULL,
+    "result" VARCHAR(5000),
+    "error_message" VARCHAR(2000),
     "workflow_id" BIGINT DEFAULT NULL,
     "session_id" VARCHAR(64) DEFAULT NULL,
     "start_time" TIMESTAMP DEFAULT NULL,
@@ -82,28 +82,28 @@ COMMENT ON COLUMN "async_task"."updated_at" IS '更新时间';
 -- =============================================
 -- Table: chat_conversation
 -- =============================================
-DROP TABLE IF EXISTS "chat_conversation" CASCADE;
+DROP TABLE IF EXISTS "chat_conversation" CASCADE CONSTRAINTS;
 CREATE TABLE "chat_conversation" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "conversation_uuid" VARCHAR(36) NOT NULL,
-    "created_at" TIMESTAMP(6) NOT NULL,
-    "last_message_at" TIMESTAMP(6) DEFAULT NULL,
+    "created_at" TIMESTAMP NOT NULL,
+    "last_message_at" TIMESTAMP DEFAULT NULL,
     "message_count" INT NOT NULL,
-    "metadata" JSONB DEFAULT NULL,
-    "status" VARCHAR(20) NOT NULL CHECK ("status" IN ('ACTIVE', 'ARCHIVED', 'DELETED')),
+    "metadata" VARCHAR(4000) DEFAULT NULL,
+    "status" VARCHAR(20) NOT NULL,
     "title" VARCHAR(200) DEFAULT NULL,
-    "updated_at" TIMESTAMP(6) NOT NULL,
+    "updated_at" TIMESTAMP NOT NULL,
     "user_id" VARCHAR(64));
 CREATE UNIQUE INDEX "uk_chat_conversation_uuid" ON "chat_conversation" ("conversation_uuid");
 
 -- =============================================
 -- Table: chat_feedback
 -- =============================================
-DROP TABLE IF EXISTS "chat_feedback" CASCADE;
+DROP TABLE IF EXISTS "chat_feedback" CASCADE CONSTRAINTS;
 CREATE TABLE "chat_feedback" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "comment" VARCHAR(500) DEFAULT NULL,
-    "created_at" TIMESTAMP(6) NOT NULL,
+    "created_at" TIMESTAMP NOT NULL,
     "feedback_type" VARCHAR(20) DEFAULT NULL,
     "rating" INT NOT NULL,
     "user_id" VARCHAR(64) DEFAULT NULL,
@@ -114,17 +114,17 @@ CREATE INDEX "idx_chat_feedback_message_id" ON "chat_feedback" ("message_id");
 -- =============================================
 -- Table: chat_message
 -- =============================================
-DROP TABLE IF EXISTS "chat_message" CASCADE;
+DROP TABLE IF EXISTS "chat_message" CASCADE CONSTRAINTS;
 CREATE TABLE "chat_message" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
-    "content" TEXT NOT NULL,
-    "content_type" VARCHAR(20) NOT NULL CHECK ("content_type" IN ('TEXT', 'MARKDOWN')),
-    "created_at" TIMESTAMP(6) NOT NULL,
+    "content" VARCHAR(5000) NOT NULL,
+    "content_type" VARCHAR(20) NOT NULL,
+    "created_at" TIMESTAMP NOT NULL,
     "latency_ms" BIGINT DEFAULT NULL,
     "message_uuid" VARCHAR(36) NOT NULL,
-    "metadata" JSONB DEFAULT NULL,
+    "metadata" VARCHAR(4000) DEFAULT NULL,
     "model" VARCHAR(50) DEFAULT NULL,
-    "role" VARCHAR(20) NOT NULL CHECK ("role" IN ('USER', 'ASSISTANT', 'SYSTEM')),
+    "role" VARCHAR(20) NOT NULL,
     "tokens" INT DEFAULT NULL,
     "conversation_id" BIGINT NOT NULL
 );
@@ -134,22 +134,22 @@ CREATE INDEX "idx_chat_message_conversation_id" ON "chat_message" ("conversation
 -- =============================================
 -- Table: chat_quick_question
 -- =============================================
-DROP TABLE IF EXISTS "chat_quick_question" CASCADE;
+DROP TABLE IF EXISTS "chat_quick_question" CASCADE CONSTRAINTS;
 CREATE TABLE "chat_quick_question" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "category" VARCHAR(50) DEFAULT NULL,
-    "created_at" TIMESTAMP(6) NOT NULL,
-    "enabled" BOOLEAN NOT NULL,
+    "created_at" TIMESTAMP NOT NULL,
+    "enabled" NUMBER(1) NOT NULL,
     "icon" VARCHAR(10) DEFAULT NULL,
     "sort_order" INT NOT NULL,
     "text" VARCHAR(200) NOT NULL,
-    "updated_at" TIMESTAMP(6) NOT NULL
+    "updated_at" TIMESTAMP NOT NULL
 );
 
 -- =============================================
 -- Table: client_registry
 -- =============================================
-DROP TABLE IF EXISTS "client_registry" CASCADE;
+DROP TABLE IF EXISTS "client_registry" CASCADE CONSTRAINTS;
 CREATE TABLE "client_registry" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "client_id" VARCHAR(100) NOT NULL,
@@ -157,11 +157,11 @@ CREATE TABLE "client_registry" (
     "status" VARCHAR(20) DEFAULT 'IDLE',
     "running_tasks" INT DEFAULT 0,
     "max_concurrency" INT DEFAULT 5,
-    "cpu_usage" DOUBLE PRECISION DEFAULT NULL,
-    "memory_usage" DOUBLE PRECISION DEFAULT NULL,
-    "supported_execution_types" JSONB DEFAULT NULL,
+    "cpu_usage" NUMBER(20,6) DEFAULT NULL,
+    "memory_usage" NUMBER(20,6) DEFAULT NULL,
+    "supported_execution_types" VARCHAR(4000) DEFAULT NULL,
     "version" VARCHAR(50) DEFAULT NULL,
-    "labels" JSONB DEFAULT NULL,
+    "labels" VARCHAR(4000) DEFAULT NULL,
     "last_heartbeat" TIMESTAMP DEFAULT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -186,14 +186,14 @@ COMMENT ON COLUMN "client_registry"."last_heartbeat" IS '最后心跳时间';
 -- =============================================
 -- Table: data_dictionary
 -- =============================================
-DROP TABLE IF EXISTS "data_dictionary" CASCADE;
+DROP TABLE IF EXISTS "data_dictionary" CASCADE CONSTRAINTS;
 CREATE TABLE "data_dictionary" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "name" VARCHAR(50) NOT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "is_deleted" BOOLEAN NOT NULL DEFAULT FALSE
+    "is_deleted" NUMBER(1) NOT NULL DEFAULT 0
 );
 CREATE INDEX "idx_data_dictionary_name" ON "data_dictionary" ("name");
 CREATE INDEX "idx_data_dictionary_created_at" ON "data_dictionary" ("created_at");
@@ -209,7 +209,7 @@ COMMENT ON COLUMN "data_dictionary"."is_deleted" IS '逻辑删除标记';
 -- =============================================
 -- Table: dictionary_column
 -- =============================================
-DROP TABLE IF EXISTS "dictionary_column" CASCADE;
+DROP TABLE IF EXISTS "dictionary_column" CASCADE CONSTRAINTS;
 CREATE TABLE "dictionary_column" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "dictionary_id" BIGINT NOT NULL,
@@ -217,8 +217,8 @@ CREATE TABLE "dictionary_column" (
     "column_label" VARCHAR(50) NOT NULL,
     "column_type" VARCHAR(20) NOT NULL,
     "enum_options" VARCHAR(1000) DEFAULT NULL,
-    "min_value" DECIMAL(20,6) DEFAULT NULL,
-    "max_value" DECIMAL(20,6) DEFAULT NULL,
+    "min_value" NUMBER(20,6) DEFAULT NULL,
+    "max_value" NUMBER(20,6) DEFAULT NULL,
     "sort_order" INT NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -242,13 +242,13 @@ COMMENT ON COLUMN "dictionary_column"."updated_at" IS '更新时间';
 -- =============================================
 -- Table: execution_log
 -- =============================================
-DROP TABLE IF EXISTS "execution_log" CASCADE;
+DROP TABLE IF EXISTS "execution_log" CASCADE CONSTRAINTS;
 CREATE TABLE "execution_log" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "execution_id" BIGINT NOT NULL,
     "node_uuid" VARCHAR(50) DEFAULT NULL,
     "log_level" VARCHAR(20) NOT NULL,
-    "message" TEXT NOT NULL,
+    "message" VARCHAR(2000) NOT NULL,
     "timestamp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX "idx_execution_log_execution_id" ON "execution_log" ("execution_id");
@@ -263,7 +263,7 @@ COMMENT ON COLUMN "execution_log"."timestamp" IS '时间戳';
 -- =============================================
 -- Table: skill
 -- =============================================
-DROP TABLE IF EXISTS "skill" CASCADE;
+DROP TABLE IF EXISTS "skill" CASCADE CONSTRAINTS;
 CREATE TABLE "skill" (
     "id" VARCHAR(36) NOT NULL PRIMARY KEY,
     "name" VARCHAR(100) NOT NULL,
@@ -273,16 +273,16 @@ CREATE TABLE "skill" (
     "execution_type" VARCHAR(20) NOT NULL,
     "category" VARCHAR(20) NOT NULL,
     "access_type" VARCHAR(20) NOT NULL,
-    "is_container" BOOLEAN NOT NULL DEFAULT FALSE,
+    "is_container" NUMBER(1) NOT NULL DEFAULT 0,
     "status" VARCHAR(20) NOT NULL,
     "created_by" VARCHAR(100) NOT NULL,
     "updated_by" VARCHAR(100) NOT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "deleted" BOOLEAN NOT NULL DEFAULT FALSE,
+    "deleted" NUMBER(1) NOT NULL DEFAULT 0,
     "deleted_at" TIMESTAMP DEFAULT NULL,
-    "allow_add_input_params" BOOLEAN DEFAULT FALSE,
-    "allow_add_output_params" BOOLEAN DEFAULT FALSE
+    "allow_add_input_params" NUMBER(1) DEFAULT 0,
+    "allow_add_output_params" NUMBER(1) DEFAULT 0
 );
 CREATE UNIQUE INDEX "uk_skill_name" ON "skill" ("name");
 CREATE INDEX "idx_skill_category" ON "skill" ("category");
@@ -310,7 +310,7 @@ COMMENT ON COLUMN "skill"."allow_add_output_params" IS '是否支持增加出参
 -- =============================================
 -- Table: skill_access_control
 -- =============================================
-DROP TABLE IF EXISTS "skill_access_control" CASCADE;
+DROP TABLE IF EXISTS "skill_access_control" CASCADE CONSTRAINTS;
 CREATE TABLE "skill_access_control" (
     "id" VARCHAR(36) NOT NULL PRIMARY KEY,
     "skill_id" VARCHAR(36) NOT NULL,
@@ -329,7 +329,7 @@ COMMENT ON COLUMN "skill_access_control"."target_id" IS 'Target ID';
 -- =============================================
 -- Table: skill_parameter
 -- =============================================
-DROP TABLE IF EXISTS "skill_parameter" CASCADE;
+DROP TABLE IF EXISTS "skill_parameter" CASCADE CONSTRAINTS;
 CREATE TABLE "skill_parameter" (
     "id" VARCHAR(36) NOT NULL PRIMARY KEY,
     "skill_id" VARCHAR(36) NOT NULL,
@@ -339,48 +339,48 @@ CREATE TABLE "skill_parameter" (
     "param_name" VARCHAR(100) DEFAULT NULL,
     "default_value" VARCHAR(1000) DEFAULT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
-    "required" BOOLEAN DEFAULT FALSE
+    "required" NUMBER(1) DEFAULT 0
 );
 CREATE INDEX "idx_skill_parameter_skill_id" ON "skill_parameter" ("skill_id");
 
 -- =============================================
 -- Table: variable_type
 -- =============================================
-DROP TABLE IF EXISTS "variable_type" CASCADE;
+DROP TABLE IF EXISTS "variable_type" CASCADE CONSTRAINTS;
 CREATE TABLE "variable_type" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "category" VARCHAR(50) NOT NULL,
     "code" VARCHAR(50) NOT NULL,
-    "created_at" TIMESTAMP(6) NOT NULL,
+    "created_at" TIMESTAMP NOT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
     "element_type" VARCHAR(50) DEFAULT NULL,
-    "enabled" BOOLEAN NOT NULL,
+    "enabled" NUMBER(1) NOT NULL,
     "file_type" VARCHAR(50) DEFAULT NULL,
     "name" VARCHAR(100) NOT NULL,
     "sort_order" INT NOT NULL,
-    "updated_at" TIMESTAMP(6) NOT NULL
+    "updated_at" TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX "uk_variable_type_code" ON "variable_type" ("code");
 
 -- =============================================
 -- Table: workflow
 -- =============================================
-DROP TABLE IF EXISTS "workflow" CASCADE;
+DROP TABLE IF EXISTS "workflow" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "name" VARCHAR(100) NOT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
-    "published" BOOLEAN NOT NULL DEFAULT FALSE,
-    "has_run" BOOLEAN NOT NULL DEFAULT FALSE,
+    "published" NUMBER(1) NOT NULL DEFAULT 0,
+    "has_run" NUMBER(1) NOT NULL DEFAULT 0,
     "version" INT NOT NULL DEFAULT 1,
     "status" VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
     "trigger_type" VARCHAR(20) DEFAULT 'MANUAL',
-    "trigger_config" JSONB DEFAULT NULL,
+    "trigger_config" VARCHAR(4000) DEFAULT NULL,
     "created_by" VARCHAR(64) DEFAULT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by" VARCHAR(64) DEFAULT NULL,
     "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "deleted" BOOLEAN NOT NULL DEFAULT FALSE,
+    "deleted" NUMBER(1) NOT NULL DEFAULT 0,
     "published_at" TIMESTAMP DEFAULT NULL,
     "published_by" VARCHAR(100));
 CREATE INDEX "idx_workflow_name" ON "workflow" ("name");
@@ -408,7 +408,7 @@ COMMENT ON COLUMN "workflow"."published_by" IS 'publisher';
 -- =============================================
 -- Table: workflow_association
 -- =============================================
-DROP TABLE IF EXISTS "workflow_association" CASCADE;
+DROP TABLE IF EXISTS "workflow_association" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_association" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
@@ -432,7 +432,7 @@ COMMENT ON COLUMN "workflow_association"."body_node_uuid" IS 'body node UUID';
 -- =============================================
 -- Table: workflow_connection
 -- =============================================
-DROP TABLE IF EXISTS "workflow_connection" CASCADE;
+DROP TABLE IF EXISTS "workflow_connection" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_connection" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
@@ -470,7 +470,7 @@ COMMENT ON COLUMN "workflow_connection"."created_at" IS '创建时间';
 -- =============================================
 -- Table: workflow_error_log
 -- =============================================
-DROP TABLE IF EXISTS "workflow_error_log" CASCADE;
+DROP TABLE IF EXISTS "workflow_error_log" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_error_log" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "execution_id" BIGINT DEFAULT NULL,
@@ -480,8 +480,8 @@ CREATE TABLE "workflow_error_log" (
     "error_type" VARCHAR(50) DEFAULT NULL,
     "error_code" INT DEFAULT NULL,
     "error_message" VARCHAR(2000) DEFAULT NULL,
-    "error_stack" TEXT DEFAULT NULL,
-    "context_json" JSONB DEFAULT NULL,
+    "error_stack" VARCHAR(5000),
+    "context_json" VARCHAR(4000),
     "retry_count" INT DEFAULT NULL,
     "timestamp" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -505,7 +505,7 @@ COMMENT ON COLUMN "workflow_error_log"."timestamp" IS '发生时间';
 -- =============================================
 -- Table: workflow_execution
 -- =============================================
-DROP TABLE IF EXISTS "workflow_execution" CASCADE;
+DROP TABLE IF EXISTS "workflow_execution" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_execution" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
@@ -513,10 +513,10 @@ CREATE TABLE "workflow_execution" (
     "status" VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     "trigger_type" VARCHAR(20) NOT NULL DEFAULT 'MANUAL',
     "triggered_by" VARCHAR(64) DEFAULT NULL,
-    "input_data" TEXT DEFAULT NULL,
-    "output_data" TEXT DEFAULT NULL,
-    "error_message" TEXT DEFAULT NULL,
-    "node_executions" TEXT DEFAULT NULL,
+    "input_data" VARCHAR(10000),
+    "output_data" VARCHAR(10000),
+    "error_message" VARCHAR(2000),
+    "node_executions" VARCHAR(10000),
     "progress" INT NOT NULL DEFAULT 0,
     "start_time" TIMESTAMP DEFAULT NULL,
     "end_time" TIMESTAMP DEFAULT NULL,
@@ -550,7 +550,7 @@ COMMENT ON COLUMN "workflow_execution"."updated_at" IS '更新时间';
 -- =============================================
 -- Table: workflow_node
 -- =============================================
-DROP TABLE IF EXISTS "workflow_node" CASCADE;
+DROP TABLE IF EXISTS "workflow_node" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_node" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "workflow_id" BIGINT NOT NULL,
@@ -559,26 +559,26 @@ CREATE TABLE "workflow_node" (
     "type_id" BIGINT DEFAULT NULL,
     "name" VARCHAR(100) NOT NULL,
     "skill_id" VARCHAR(50) DEFAULT NULL,
-    "skill_snapshot" JSONB DEFAULT NULL,
+    "skill_snapshot" VARCHAR(4000) DEFAULT NULL,
     "position_x" INT NOT NULL DEFAULT 0,
     "position_y" INT NOT NULL DEFAULT 0,
-    "input_ports" TEXT DEFAULT NULL,
-    "output_ports" TEXT DEFAULT NULL,
-    "input_params" TEXT DEFAULT NULL,
-    "output_params" TEXT DEFAULT NULL,
-    "config" TEXT DEFAULT NULL,
+    "input_ports" VARCHAR(4000),
+    "output_ports" VARCHAR(4000),
+    "input_params" VARCHAR(4000),
+    "output_params" VARCHAR(4000),
+    "config" VARCHAR(4000),
     "execution_location" VARCHAR(20) DEFAULT NULL,
     "error_strategy" VARCHAR(20) DEFAULT 'STOP',
     "retry_count" INT DEFAULT 3,
     "retry_interval" INT DEFAULT 1000,
     "error_branch_id" BIGINT DEFAULT NULL,
     "condition_type" VARCHAR(20) DEFAULT NULL,
-    "conditions" JSONB DEFAULT NULL,
+    "conditions" VARCHAR(4000) DEFAULT NULL,
     "loop_type" VARCHAR(20) DEFAULT NULL,
-    "loop_config" JSONB DEFAULT NULL,
-    "batch_config" JSONB DEFAULT NULL,
-    "async_config" JSONB DEFAULT NULL,
-    "collect_config" JSONB DEFAULT NULL,
+    "loop_config" VARCHAR(4000) DEFAULT NULL,
+    "batch_config" VARCHAR(4000) DEFAULT NULL,
+    "async_config" VARCHAR(4000) DEFAULT NULL,
+    "collect_config" VARCHAR(4000) DEFAULT NULL,
     "compatibility_status" VARCHAR(20) DEFAULT 'COMPATIBLE',
     "parent_node_id" BIGINT DEFAULT NULL,
     "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -626,7 +626,7 @@ COMMENT ON COLUMN "workflow_node"."node_category" IS 'node category: BASIC/LOGIC
 -- =============================================
 -- Table: workflow_node_execution
 -- =============================================
-DROP TABLE IF EXISTS "workflow_node_execution" CASCADE;
+DROP TABLE IF EXISTS "workflow_node_execution" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_node_execution" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "execution_id" BIGINT NOT NULL,
@@ -635,10 +635,10 @@ CREATE TABLE "workflow_node_execution" (
     "node_name" VARCHAR(100) DEFAULT NULL,
     "node_type" VARCHAR(50) DEFAULT NULL,
     "status" VARCHAR(20) NOT NULL,
-    "input_data" JSONB DEFAULT NULL,
-    "output_data" JSONB DEFAULT NULL,
-    "error_message" TEXT DEFAULT NULL,
-    "error_stack" TEXT DEFAULT NULL,
+    "input_data" VARCHAR(4000) DEFAULT NULL,
+    "output_data" VARCHAR(4000) DEFAULT NULL,
+    "error_message" VARCHAR(2000),
+    "error_stack" VARCHAR(5000),
     "retry_count" INT DEFAULT 0,
     "start_time" TIMESTAMP DEFAULT NULL,
     "end_time" TIMESTAMP DEFAULT NULL,
@@ -672,28 +672,28 @@ COMMENT ON COLUMN "workflow_node_execution"."client_id" IS '执行的Client ID';
 -- =============================================
 -- Table: workflow_node_type
 -- =============================================
-DROP TABLE IF EXISTS "workflow_node_type" CASCADE;
+DROP TABLE IF EXISTS "workflow_node_type" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_node_type" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "category" VARCHAR(50) NOT NULL,
     "code" VARCHAR(50) NOT NULL,
-    "created_at" TIMESTAMP(6) NOT NULL,
-    "default_config" JSONB DEFAULT NULL,
+    "created_at" TIMESTAMP NOT NULL,
+    "default_config" VARCHAR(4000) DEFAULT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
-    "enabled" BOOLEAN NOT NULL,
+    "enabled" NUMBER(1) NOT NULL,
     "icon" VARCHAR(255) DEFAULT NULL,
-    "input_ports" JSONB DEFAULT NULL,
+    "input_ports" VARCHAR(4000) DEFAULT NULL,
     "name" VARCHAR(100) NOT NULL,
-    "output_ports" JSONB DEFAULT NULL,
+    "output_ports" VARCHAR(4000) DEFAULT NULL,
     "sort_order" INT NOT NULL,
-    "updated_at" TIMESTAMP(6) NOT NULL
+    "updated_at" TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX "uk_workflow_node_type_code" ON "workflow_node_type" ("code");
 
 -- =============================================
 -- Table: workflow_variable_type
 -- =============================================
-DROP TABLE IF EXISTS "workflow_variable_type" CASCADE;
+DROP TABLE IF EXISTS "workflow_variable_type" CASCADE CONSTRAINTS;
 CREATE TABLE "workflow_variable_type" (
     "id" BIGINT AUTO_INCREMENT PRIMARY KEY,
     "code" VARCHAR(100) NOT NULL,
@@ -704,7 +704,7 @@ CREATE TABLE "workflow_variable_type" (
     "dictionary_type" VARCHAR(100) DEFAULT NULL,
     "description" VARCHAR(500) DEFAULT NULL,
     "sort_order" INT DEFAULT 0,
-    "enabled" BOOLEAN DEFAULT TRUE,
+    "enabled" NUMBER(1) DEFAULT 1,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -728,7 +728,7 @@ COMMENT ON COLUMN "workflow_variable_type"."updated_at" IS '更新时间';
 -- =============================================
 ALTER TABLE "chat_feedback" ADD CONSTRAINT "fk_chat_feedback_message" FOREIGN KEY ("message_id") REFERENCES "chat_message" ("id");
 ALTER TABLE "chat_message" ADD CONSTRAINT "fk_chat_message_conversation" FOREIGN KEY ("conversation_id") REFERENCES "chat_conversation" ("id");
-ALTER TABLE "dictionary_column" ADD CONSTRAINT "fk_dictionary_column_dictionary" FOREIGN KEY ("dictionary_id") REFERENCES "data_dictionary" ("id") ON DELETE CASCADE;
-ALTER TABLE "skill_access_control" ADD CONSTRAINT "fk_skill_access_control_skill" FOREIGN KEY ("skill_id") REFERENCES "skill" ("id") ON DELETE CASCADE;
-ALTER TABLE "execution_log" ADD CONSTRAINT "fk_execution_log_workflow_execution" FOREIGN KEY ("execution_id") REFERENCES "workflow_execution" ("id") ON DELETE CASCADE;
-ALTER TABLE "workflow_node_execution" ADD CONSTRAINT "fk_workflow_node_execution_workflow_execution" FOREIGN KEY ("execution_id") REFERENCES "workflow_execution" ("id") ON DELETE CASCADE;
+ALTER TABLE "dictionary_column" ADD CONSTRAINT "fk_dictionary_column_dictionary" FOREIGN KEY ("dictionary_id") REFERENCES "data_dictionary" ("id") ON DELETE CASCADE CONSTRAINTS;
+ALTER TABLE "skill_access_control" ADD CONSTRAINT "fk_skill_access_control_skill" FOREIGN KEY ("skill_id") REFERENCES "skill" ("id") ON DELETE CASCADE CONSTRAINTS;
+ALTER TABLE "execution_log" ADD CONSTRAINT "fk_execution_log_workflow_execution" FOREIGN KEY ("execution_id") REFERENCES "workflow_execution" ("id") ON DELETE CASCADE CONSTRAINTS;
+ALTER TABLE "workflow_node_execution" ADD CONSTRAINT "fk_workflow_node_execution_workflow_execution" FOREIGN KEY ("execution_id") REFERENCES "workflow_execution" ("id") ON DELETE CASCADE CONSTRAINTS;

@@ -61,9 +61,19 @@ src/main/java/com/example/demo/
 - H2 控制台：http://localhost:8080/h2-console（JDBC URL: `jdbc:h2:mem:testdb`，用户名: `sa`，密码为空）
 - API 基础路径：`/api/*`
 
+## 数据库规范
+
+**数据库对接的是 OpenGauss，数据库和代码中的 SQL 首先必须遵从 GaussDB100 语法。**
+
+GaussDB100 使用 Oracle 风格语法，与标准 PostgreSQL 的主要语法差异：
+- 自增列使用 `BIGINT AUTO_INCREMENT`，不支持 `BIGSERIAL`
+- 不支持 `DEFAULT NULL`（NULL 为默认行为，无需显式声明）
+- `DROP TABLE` 级联删除使用 `CASCADE CONSTRAINTS`，不支持 `CASCADE`
+- 不支持 `TEXT` 类型，需使用 `VARCHAR(N)` 替代并限定长度
+
 ## 依赖说明
 
-项目已配置 MySQL 驱动，生产环境需在 `application.yml` 中切换数据库配置。
+项目已配置 OpenGauss 驱动，生产环境在 `application.yml` 中配置数据库连接。
 
 ## Git 工作流
 
