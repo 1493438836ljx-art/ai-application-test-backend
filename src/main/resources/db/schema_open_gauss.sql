@@ -24,7 +24,6 @@ CREATE UNIQUE INDEX "idx_agent_session_conversation_id" ON "agent_session" ("con
 CREATE INDEX "idx_agent_session_workflow_id" ON "agent_session" ("workflow_id");
 CREATE INDEX "idx_agent_session_status" ON "agent_session" ("status");
 CREATE INDEX "idx_agent_session_created_at" ON "agent_session" ("created_at");
-CREATE TRIGGER "trg_agent_session_updated_at" BEFORE UPDATE ON "agent_session" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "agent_session" IS 'Agent session table';
 COMMENT ON COLUMN "agent_session"."id" IS 'Primary key ID';
 COMMENT ON COLUMN "agent_session"."conversation_id" IS 'Conversation ID';
@@ -63,7 +62,6 @@ CREATE INDEX "idx_async_task_status" ON "async_task" ("status");
 CREATE INDEX "idx_async_task_workflow" ON "async_task" ("workflow_id");
 CREATE INDEX "idx_async_task_session" ON "async_task" ("session_id");
 CREATE INDEX "idx_async_task_created" ON "async_task" ("created_at");
-CREATE TRIGGER "trg_async_task_updated_at" BEFORE UPDATE ON "async_task" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "async_task" IS '异步任务表';
 COMMENT ON COLUMN "async_task"."id" IS '主键ID';
 COMMENT ON COLUMN "async_task"."task_id" IS '任务唯一标识';
@@ -169,7 +167,6 @@ CREATE TABLE "client_registry" (
 CREATE UNIQUE INDEX "uk_client_registry_client_id" ON "client_registry" ("client_id");
 CREATE INDEX "idx_client_registry_status" ON "client_registry" ("status");
 CREATE INDEX "idx_client_registry_last_heartbeat" ON "client_registry" ("last_heartbeat");
-CREATE TRIGGER "trg_client_registry_updated_at" BEFORE UPDATE ON "client_registry" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "client_registry" IS 'Client执行机注册表';
 COMMENT ON COLUMN "client_registry"."client_id" IS 'Client ID';
 COMMENT ON COLUMN "client_registry"."client_name" IS 'Client名称';
@@ -197,7 +194,6 @@ CREATE TABLE "data_dictionary" (
 );
 CREATE INDEX "idx_data_dictionary_name" ON "data_dictionary" ("name");
 CREATE INDEX "idx_data_dictionary_created_at" ON "data_dictionary" ("created_at");
-CREATE TRIGGER "trg_data_dictionary_updated_at" BEFORE UPDATE ON "data_dictionary" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "data_dictionary" IS '数据字典表';
 COMMENT ON COLUMN "data_dictionary"."id" IS '主键ID';
 COMMENT ON COLUMN "data_dictionary"."name" IS '数据字典名称';
@@ -225,7 +221,6 @@ CREATE TABLE "dictionary_column" (
 );
 CREATE INDEX "idx_dictionary_column_dictionary_id" ON "dictionary_column" ("dictionary_id");
 CREATE INDEX "idx_dictionary_column_sort_order" ON "dictionary_column" ("sort_order");
-CREATE TRIGGER "trg_dictionary_column_updated_at" BEFORE UPDATE ON "dictionary_column" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "dictionary_column" IS '字段定义表';
 COMMENT ON COLUMN "dictionary_column"."id" IS '主键ID';
 COMMENT ON COLUMN "dictionary_column"."dictionary_id" IS '关联的数据字典ID';
@@ -288,7 +283,6 @@ CREATE UNIQUE INDEX "uk_skill_name" ON "skill" ("name");
 CREATE INDEX "idx_skill_category" ON "skill" ("category");
 CREATE INDEX "idx_skill_status" ON "skill" ("status");
 CREATE INDEX "idx_skill_created_by" ON "skill" ("created_by");
-CREATE TRIGGER "trg_skill_updated_at" BEFORE UPDATE ON "skill" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "skill" IS 'Skill main table';
 COMMENT ON COLUMN "skill"."id" IS 'Primary key, UUID';
 COMMENT ON COLUMN "skill"."name" IS 'Skill name, globally unique';
@@ -386,7 +380,6 @@ CREATE TABLE "workflow" (
 CREATE INDEX "idx_workflow_name" ON "workflow" ("name");
 CREATE INDEX "idx_workflow_status" ON "workflow" ("status");
 CREATE INDEX "idx_workflow_created_at" ON "workflow" ("created_at");
-CREATE TRIGGER "trg_workflow_updated_at" BEFORE UPDATE ON "workflow" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "workflow" IS '工作流主表';
 COMMENT ON COLUMN "workflow"."id" IS '主键ID';
 COMMENT ON COLUMN "workflow"."name" IS '工作流名称';
@@ -528,7 +521,6 @@ CREATE INDEX "idx_workflow_execution_workflow_id" ON "workflow_execution" ("work
 CREATE INDEX "idx_workflow_execution_uuid" ON "workflow_execution" ("execution_uuid");
 CREATE INDEX "idx_workflow_execution_status" ON "workflow_execution" ("status");
 CREATE INDEX "idx_workflow_execution_start_time" ON "workflow_execution" ("start_time");
-CREATE TRIGGER "trg_workflow_execution_updated_at" BEFORE UPDATE ON "workflow_execution" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "workflow_execution" IS '工作流执行记录表';
 COMMENT ON COLUMN "workflow_execution"."id" IS '主键ID';
 COMMENT ON COLUMN "workflow_execution"."workflow_id" IS '工作流ID';
@@ -590,7 +582,6 @@ CREATE INDEX "idx_workflow_node_uuid" ON "workflow_node" ("node_uuid");
 CREATE INDEX "idx_workflow_node_type" ON "workflow_node" ("type");
 CREATE INDEX "idx_workflow_node_parent_id" ON "workflow_node" ("parent_node_id");
 CREATE INDEX "idx_workflow_node_skill_id" ON "workflow_node" ("skill_id");
-CREATE TRIGGER "trg_workflow_node_updated_at" BEFORE UPDATE ON "workflow_node" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "workflow_node" IS '工作流节点表';
 COMMENT ON COLUMN "workflow_node"."id" IS '主键ID';
 COMMENT ON COLUMN "workflow_node"."workflow_id" IS '所属工作流ID';
@@ -651,7 +642,6 @@ CREATE INDEX "idx_workflow_node_execution_execution_id" ON "workflow_node_execut
 CREATE INDEX "idx_workflow_node_execution_workflow_id" ON "workflow_node_execution" ("workflow_id");
 CREATE INDEX "idx_workflow_node_execution_node_uuid" ON "workflow_node_execution" ("node_uuid");
 CREATE INDEX "idx_workflow_node_execution_status" ON "workflow_node_execution" ("status");
-CREATE TRIGGER "trg_workflow_node_execution_updated_at" BEFORE UPDATE ON "workflow_node_execution" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "workflow_node_execution" IS '节点执行记录表';
 COMMENT ON COLUMN "workflow_node_execution"."execution_id" IS '执行记录ID';
 COMMENT ON COLUMN "workflow_node_execution"."workflow_id" IS '工作流ID';
@@ -709,7 +699,6 @@ CREATE TABLE "workflow_variable_type" (
     "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE UNIQUE INDEX "uk_workflow_variable_type_code" ON "workflow_variable_type" ("code");
-CREATE TRIGGER "trg_workflow_variable_type_updated_at" BEFORE UPDATE ON "workflow_variable_type" FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 COMMENT ON TABLE "workflow_variable_type" IS '工作流变量类型表';
 COMMENT ON COLUMN "workflow_variable_type"."code" IS '变量类型编码';
 COMMENT ON COLUMN "workflow_variable_type"."name" IS '变量类型名称';
