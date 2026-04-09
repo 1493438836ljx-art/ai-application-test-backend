@@ -71,6 +71,7 @@ GaussDB100 使用 Oracle 风格语法，与标准 PostgreSQL 的主要语法差�
 - `DROP TABLE` 级联删除使用 `CASCADE CONSTRAINTS`，不支持 `CASCADE`
 - 不支持 `TEXT` 类型，需使用 `VARCHAR(N)` 替代并限定长度
 - `VARCHAR(N)` 的 N 最大值为 8000
+- 禁止使用外键约束，数据一致性由应用层 Service 代码保证
 
 ## 依赖说明
 

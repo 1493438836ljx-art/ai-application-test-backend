@@ -723,12 +723,3 @@ COMMENT ON COLUMN "workflow_variable_type"."enabled" IS '是否启用';
 COMMENT ON COLUMN "workflow_variable_type"."created_at" IS '创建时间';
 COMMENT ON COLUMN "workflow_variable_type"."updated_at" IS '更新时间';
 
--- =============================================
--- Foreign Key Constraints (created after all tables)
--- =============================================
-ALTER TABLE "chat_feedback" ADD CONSTRAINT "fk_chat_feedback_message" FOREIGN KEY ("message_id") REFERENCES "chat_message" ("id");
-ALTER TABLE "chat_message" ADD CONSTRAINT "fk_chat_message_conversation" FOREIGN KEY ("conversation_id") REFERENCES "chat_conversation" ("id");
-ALTER TABLE "dictionary_column" ADD CONSTRAINT "fk_dictionary_column_dictionary" FOREIGN KEY ("dictionary_id") REFERENCES "data_dictionary" ("id") ON DELETE CASCADE CONSTRAINTS;
-ALTER TABLE "skill_access_control" ADD CONSTRAINT "fk_skill_access_control_skill" FOREIGN KEY ("skill_id") REFERENCES "skill" ("id") ON DELETE CASCADE CONSTRAINTS;
-ALTER TABLE "execution_log" ADD CONSTRAINT "fk_execution_log_workflow_execution" FOREIGN KEY ("execution_id") REFERENCES "workflow_execution" ("id") ON DELETE CASCADE CONSTRAINTS;
-ALTER TABLE "workflow_node_execution" ADD CONSTRAINT "fk_workflow_node_execution_workflow_execution" FOREIGN KEY ("execution_id") REFERENCES "workflow_execution" ("id") ON DELETE CASCADE CONSTRAINTS;
