@@ -9,9 +9,9 @@ import com.huawei.cloudopenlabs.workflow.execution.executor.NodeExecutionResult;
 import com.huawei.cloudopenlabs.workflow.execution.executor.NodeExecutor;
 import com.huawei.cloudopenlabs.workflow.execution.executor.ValidationResult;
 import com.huawei.cloudopenlabs.workflow.execution.executor.skill.dto.SkillExecutionRequest;
-import com.huawei.cloudopenlabs.workflow.execution.executor.skill.dto.SkillExecutionResult;
-import com.huawei.cloudopenlabs.workflow.execution.executor.skill.strategy.SkillExecutionStrategy;
-import com.huawei.cloudopenlabs.workflow.execution.executor.skill.strategy.SkillExecutionStrategyRegistry;
+import com.huawei.cloudopenlabs.workflow.kafka.dto.SkillExecutionKafkaRequest;
+import com.huawei.cloudopenlabs.workflow.kafka.dto.SkillExecutionKafkaResponse;
+import com.huawei.cloudopenlabs.workflow.kafka.service.SkillKafkaService;
 import com.huawei.cloudopenlabs.skill.service.SkillService;
 import com.huawei.cloudopenlabs.skill.dto.SkillResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -28,10 +28,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 技能节点执行器
- * 作为统一入口，根据执行方式分发到对应的执行策略
+ * 通过Kafka向Executor微服务发送执行请求，阻塞等待执行结果
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1
@@ -43,7 +44,7 @@ public class SkillNodeExecutor implements NodeExecutor {
 
     private final ObjectMapper objectMapper;
     private final ParameterResolver parameterResolver;
-    private final SkillExecutionStrategyRegistry strategyRegistry;
+    private final SkillKafkaService skillKafkaService;
 
     @Autowired(required = false)
     private SkillService skillService;
@@ -77,33 +78,38 @@ public class SkillNodeExecutor implements NodeExecutor {
             // 2. 构建执行请求（包含所有执行所需信息）
             SkillExecutionRequest request = buildExecutionRequest(node, inputs, context);
 
-            // 3. 获取执行策略并执行
-            String executionType = request.getExecutionType();
-            SkillExecutionStrategy strategy = strategyRegistry.getStrategy(executionType);
+            // 3. 构建Kafka请求消息
+            SkillExecutionKafkaRequest kafkaRequest = SkillExecutionKafkaRequest.builder()
+                    .requestId(UUID.randomUUID().toString())
+                    .executionId(context.getExecutionId())
+                    .workflowId(context.getWorkflowId())
+                    .nodeUuid(node.getNodeUuid())
+                    .callbackTopic("${skill-executor.kafka.response-topic}")
+                    .timestamp(System.currentTimeMillis())
+                    .request(request)
+                    .build();
 
-            if (strategy == null) {
-                throw new WorkflowExecutionException(
-                        ErrorCode.SKILL_EXECUTION_FAILED,
-                        node.getNodeUuid(),
-                        node.getName(),
-                        "未找到执行策略: " + executionType
-                );
-            }
+            log.info("通过Kafka发送Skill执行请求: requestId={}, executionType={}",
+                    kafkaRequest.getRequestId(), request.getExecutionType());
 
-            log.info("使用执行策略: {}, executionType={}", strategy.getStrategyName(), executionType);
-
-            // 4. 执行Skill
-            SkillExecutionResult result = strategy.execute(request);
+            // 4. 发送请求并等待响应
+            SkillExecutionKafkaResponse response = skillKafkaService.sendAndReceive(kafkaRequest);
 
             long durationMs = System.currentTimeMillis() - startTime;
 
-            // 5. 处理结果
-            if (!result.isSuccess()) {
-                return handleExecutionFailure(node, result, context);
+            // 5. 处理响应
+            if (!response.isSuccess()) {
+                log.error("Skill执行失败: nodeUuid={}, error={}", node.getNodeUuid(), response.getErrorMessage());
+                return NodeExecutionResult.builder()
+                        .success(false)
+                        .errorMessage(response.getErrorMessage())
+                        .errorStack(response.getErrorStack())
+                        .durationMs(durationMs)
+                        .build();
             }
 
             // 6. 映射输出参数
-            Map<String, Object> outputs = mapOutputs(node, result.getOutputs());
+            Map<String, Object> outputs = mapOutputs(node, response.getOutputs());
 
             log.info("技能节点执行完成: nodeUuid={}, skillId={}, durationMs={}",
                     node.getNodeUuid(), skillId, durationMs);
@@ -111,12 +117,21 @@ public class SkillNodeExecutor implements NodeExecutor {
             return NodeExecutionResult.builder()
                     .success(true)
                     .outputs(outputs)
-                    .logs(result.getLogs())
+                    .logs(response.getLogs())
                     .durationMs(durationMs)
                     .build();
 
         } catch (WorkflowExecutionException e) {
             throw e;
+        } catch (java.util.concurrent.TimeoutException e) {
+            log.error("技能节点执行超时: nodeUuid={}, skillId={}",
+                    node.getNodeUuid(), node.getSkillId());
+            throw new WorkflowExecutionException(
+                    ErrorCode.SKILL_EXECUTION_FAILED,
+                    node.getNodeUuid(),
+                    node.getName(),
+                    "技能执行超时"
+            );
         } catch (Exception e) {
             log.error("技能节点执行异常: nodeUuid={}, skillId={}",
                     node.getNodeUuid(), node.getSkillId(), e);
@@ -195,7 +210,6 @@ public class SkillNodeExecutor implements NodeExecutor {
         }
 
         // 从inputs获取已解析的实际输入值（由ParameterResolver解析）
-        // inputs已经包含了从上游节点传递过来的解析后的实际值
         log.debug("构建Skill执行请求: inputs={}", inputs);
 
         // 如果inputParams为空但inputs有值，直接从inputs构建参数定义
@@ -261,7 +275,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                 .skillName(skillName)
                 .description(description)
                 .executionType(executionType)
-                .executionLocation("SERVICE") // 当前只支持服务端执行
+                .executionLocation("SERVICE")
                 .suitePath(suitePath)
                 .suiteContent(suiteContent)
                 .inputParameters(inputParams)
@@ -287,57 +301,6 @@ public class SkillNodeExecutor implements NodeExecutor {
                 }
             }
         return result;
-    }
-
-    /**
-     * 解析输入参数值
-     */
-    private Map<String, Object> resolveInputValues(WorkflowNodeEntity node,
-                                                   Map<String, Object> inputs,
-                                                   ExecutionContext context) {
-        Map<String, Object> values = new HashMap<>();
-
-        String inputParamsJson = node.getInputParams();
-        if (inputParamsJson == null || inputParamsJson.isEmpty()) {
-            return values;
-        }
-
-        try {
-            List<Map<String, Object>> inputParams = objectMapper.readValue(
-                    inputParamsJson,
-                    new TypeReference<List<Map<String, Object>>>() {}
-            );
-
-            for (Map<String, Object> param : inputParams) {
-                String paramName = (String) param.get("name");
-                Object value = param.get("value");
-
-                if (value != null) {
-                    values.put(paramName, value);
-                }
-            }
-
-        } catch (Exception e) {
-            log.warn("解析输入参数失败: {}", e.getMessage());
-        }
-
-        return values;
-    }
-
-    /**
-     * 处理执行失败
-     */
-    private NodeExecutionResult handleExecutionFailure(WorkflowNodeEntity node,
-                                                       SkillExecutionResult result,
-                                                       ExecutionContext context) {
-        log.error("技能节点执行失败: nodeUuid={}, error={}",
-                node.getNodeUuid(), result.getErrorMessage());
-
-        return NodeExecutionResult.builder()
-                .success(false)
-                .errorMessage(result.getErrorMessage())
-                .errorStack(result.getErrorStack())
-                .build();
     }
 
     /**
