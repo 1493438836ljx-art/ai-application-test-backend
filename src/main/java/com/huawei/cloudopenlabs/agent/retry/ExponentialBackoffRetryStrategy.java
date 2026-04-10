@@ -1,3 +1,6 @@
+/*
+* Copyright(c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+*/
 package com.huawei.cloudopenlabs.agent.retry;
 
 import lombok.extern.slf4j.Slf4j;

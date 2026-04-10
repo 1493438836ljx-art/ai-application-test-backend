@@ -1,3 +1,6 @@
+/*
+* Copyright(c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+*/
 package com.huawei.cloudopenlabs.workflow.kafka.service;
 
 import com.huawei.cloudopenlabs.workflow.kafka.dto.SkillExecutionKafkaRequest;
