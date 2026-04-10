@@ -52,5 +52,5 @@ public interface VariableTypeMapper extends BaseMapper<VariableTypeEntity> {
      * @param code 变量类型编码
      * @return 是否存在
      */
-    boolean existsByCode(@Param("code") String code);
+    int existsByCode(@Param("code") String code);
 }

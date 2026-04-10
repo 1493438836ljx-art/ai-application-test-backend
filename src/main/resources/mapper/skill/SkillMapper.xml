@@ -36,7 +36,7 @@
         <include refid="Base_Column_List"/>
         FROM skill
         WHERE deleted = 0
-        AND name LIKE CONCAT('%', #{name}, '%')
+        AND name LIKE '%' || #{name} || '%'
         ORDER BY created_at DESC
     </select>
 
@@ -103,7 +103,7 @@
         FROM skill
         WHERE deleted = 1
         AND deleted_at IS NOT NULL
-        AND deleted_at &lt; CURRENT_TIMESTAMP - (#{days} || ' days')::interval
+        AND deleted_at &lt; CURRENT_TIMESTAMP - NUMTODSINTERVAL(#{days}, 'DAY')
     </select>
 
     <!-- 物理删除Skill（绕过逻辑删除） -->

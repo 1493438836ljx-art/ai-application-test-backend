@@ -35,7 +35,7 @@
         <include refid="Base_Column_List"/>
         FROM workflow
         WHERE deleted = 0
-        AND name LIKE CONCAT('%', #{name}, '%')
+        AND name LIKE '%' || #{name} || '%'
         ORDER BY created_at DESC
     </select>
 

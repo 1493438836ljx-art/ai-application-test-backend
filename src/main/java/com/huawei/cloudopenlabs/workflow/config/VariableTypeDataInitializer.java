@@ -100,7 +100,7 @@ public class VariableTypeDataInitializer implements CommandLineRunner {
 
     private void createVariableTypeIfNotExists(String code, String name, String category,
             String elementType, String fileType, String dictionaryType, String description, int sortOrder) {
-        if (!variableTypeMapper.existsByCode(code)) {
+        if (variableTypeMapper.existsByCode(code) == 0) {
             VariableTypeEntity variableType = new VariableTypeEntity();
             variableType.setCode(code);
             variableType.setName(name);

@@ -30,7 +30,7 @@
     <select id="selectEnabled" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM workflow_variable_type
-        WHERE enabled = true
+        WHERE enabled = 1
         ORDER BY sort_order ASC
     </select>
 
@@ -44,12 +44,12 @@
     <select id="selectAllCategories" resultType="java.lang.String">
         SELECT DISTINCT category
         FROM workflow_variable_type
-        WHERE enabled = true
+        WHERE enabled = 1
         ORDER BY category
     </select>
 
-    <select id="existsByCode" resultType="boolean">
-        SELECT COUNT(*) > 0
+    <select id="existsByCode" resultType="int">
+        SELECT COUNT(*)
         FROM workflow_variable_type
         WHERE code = #{code}
     </select>

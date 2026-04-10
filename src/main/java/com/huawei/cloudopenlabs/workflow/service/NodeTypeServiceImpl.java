@@ -37,7 +37,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
         log.info("创建节点类型: {}", request.getCode());
 
         // 检查编码是否已存在
-        if (nodeTypeMapper.existsByCode(request.getCode())) {
+        if (nodeTypeMapper.existsByCode(request.getCode()) > 0) {
             throw BusinessException.conflict("节点类型编码已存在: " + request.getCode());
         }
 

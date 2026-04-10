@@ -46,5 +46,5 @@ public interface WorkflowNodeTypeMapper extends BaseMapper<WorkflowNodeTypeEntit
      * @param code 节点类型编码
      * @return 是否存在
      */
-    boolean existsByCode(@Param("code") String code);
+    int existsByCode(@Param("code") String code);
 }
