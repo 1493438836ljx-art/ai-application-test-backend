@@ -1,6 +1,6 @@
 /*
-* Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
-*/
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
 package com.huawei.cloudopenlabs.skill.scheduler;
 
 import com.huawei.cloudopenlabs.skill.entity.SkillEntity;
@@ -83,6 +83,8 @@ public class SuiteFileCleanupScheduler {
 
     /**
      * 获取数据库中所有有效的执行套件文件路径（只取文件名）
+     *
+     * @return 执行套件文件路径
      */
     private Set<String> getReferencedSuiteFiles() {
         // 查询所有未删除的Skill
