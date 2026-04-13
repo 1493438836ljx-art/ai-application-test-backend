@@ -11,6 +11,7 @@ package com.huawei.cloudopenlabs.agent.exception;
  *
  * @author GNEEC LIVE
  * @version 27.0.2.0
+ * @since 2026-04-13
  */
 public class QueryExecutionException extends RuntimeException {
 

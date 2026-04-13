@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1
+ * @since 2026-04-13
  */
 public interface ChatService {
 

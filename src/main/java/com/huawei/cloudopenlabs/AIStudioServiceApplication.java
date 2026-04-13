@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1
+ * @since 2026-04-13
  */
 @SpringBootApplication
 @EnableAsync        // 启用异步方法执行支持

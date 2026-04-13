@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1
+ * @since 2026-04-13
  */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {

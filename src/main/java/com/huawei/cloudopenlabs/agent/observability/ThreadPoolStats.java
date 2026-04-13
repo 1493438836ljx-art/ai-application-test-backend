@@ -14,6 +14,7 @@ package com.huawei.cloudopenlabs.agent.observability;
  *
  * @author GNEEC LIVE
  * @version 27.0.4.0
+ * @since 2026-04-13
  */
 public record ThreadPoolStats(
         int activeCount,

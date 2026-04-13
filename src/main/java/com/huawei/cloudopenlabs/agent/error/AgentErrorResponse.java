@@ -18,6 +18,7 @@ import java.util.UUID;
  *
  * @author GNEEC LIVE
  * @version 27.0.3.0
+ * @since 2026-04-13
  */
 @Data
 @NoArgsConstructor

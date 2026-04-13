@@ -12,6 +12,7 @@ import lombok.Data;
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1
+ * @since 2026-04-13
  */
 @Data
 public class NodeUpdateRequest {

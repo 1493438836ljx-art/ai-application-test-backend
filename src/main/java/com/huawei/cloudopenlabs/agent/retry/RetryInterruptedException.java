@@ -11,6 +11,7 @@ package com.huawei.cloudopenlabs.agent.retry;
  *
  * @author GNEEC LIVE
  * @version 27.0.3.0
+ * @since 2026-04-13
  */
 public class RetryInterruptedException extends RuntimeException {
 

@@ -22,6 +22,7 @@ import lombok.Getter;
  *
  * @author GNEEC LIVE
  * @version 27.0.3.0
+ * @since 2026-04-13
  */
 @Getter
 public enum AgentErrorCode {

@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1
+ * @since 2026-04-13
  */
 public interface SkillService {
 
