@@ -97,6 +97,8 @@ public class SkillKafkaService {
     /**
      * 接收Executor的执行响应
      * 通过Kafka Consumer监听响应topic
+     *
+     * @param response 执行响应消息
      */
     @org.springframework.kafka.annotation.KafkaListener(
             topics = "${skill-executor.kafka.response-topic}",
@@ -137,6 +139,8 @@ public class SkillKafkaService {
 
     /**
      * 获取当前待响应请求数量（用于监控）
+     *
+     * @return 待响应请求数量
      */
     public int getPendingRequestCount() {
         return pendingRequests.size();

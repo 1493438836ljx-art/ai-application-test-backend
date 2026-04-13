@@ -86,6 +86,9 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
 
     /**
      * 快速验证（仅结构和循环）
+     *
+     * @param workflowId 工作流ID
+     * @return 验证结果
      */
     public ValidationResult quickValidate(String workflowId) {
         log.info("Quick workflow validation: workflowId={}", workflowId);

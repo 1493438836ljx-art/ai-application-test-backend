@@ -117,6 +117,9 @@ public class DegradationStrategy {
 
     /**
      * 将技术错误转换为用户友好的消息
+     *
+     * @param error 原始异常
+     * @return 用户友好的错误消息
      */
     public String extractUserFriendlyMessage(Exception error) {
         if (error == null) {
@@ -154,6 +157,9 @@ public class DegradationStrategy {
 
     /**
      * 判断是否应该降级
+     *
+     * @param error 原始异常
+     * @return 是否应该执行降级处理
      */
     public boolean shouldDegrade(Exception error) {
         if (error == null) {
@@ -186,6 +192,9 @@ public class DegradationStrategy {
 
     /**
      * 获取降级级别
+     *
+     * @param error 原始异常
+     * @return 降级级别
      */
     public DegradationLevel getDegradationLevel(Exception error) {
         if (error == null) {

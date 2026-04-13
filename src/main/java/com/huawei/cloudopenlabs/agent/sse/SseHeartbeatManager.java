@@ -227,6 +227,9 @@ public class SseHeartbeatManager {
 
     /**
      * 检查连接是否活跃
+     *
+     * @param sessionId 会话ID
+     * @return 连接活跃时返回true
      */
     public boolean isActive(String sessionId) {
         return activeConnections.containsKey(sessionId);
@@ -234,6 +237,8 @@ public class SseHeartbeatManager {
 
     /**
      * 获取活跃连接数
+     *
+     * @return 活跃连接数
      */
     public int getActiveConnectionCount() {
         return activeConnections.size();
@@ -241,6 +246,8 @@ public class SseHeartbeatManager {
 
     /**
      * 获取连接统计信息
+     *
+     * @return 连接统计信息
      */
     public ConnectionStats getStats() {
         return new ConnectionStats(

@@ -86,6 +86,9 @@ public class SkillChangeListener {
 
     /**
      * 处理 Skill 更新
+     *
+     * @param skillId Skill ID
+     * @param event   Skill 变更事件
      */
     @Transactional(rollbackFor = Exception.class)
     public void handleSkillUpdate(String skillId, SkillChangeEvent event) {
@@ -152,6 +155,8 @@ public class SkillChangeListener {
 
     /**
      * 处理 Skill 禁用
+     *
+     * @param skillId Skill ID
      */
     @Transactional(rollbackFor = Exception.class)
     public void handleSkillDisable(String skillId) {
@@ -175,6 +180,8 @@ public class SkillChangeListener {
 
     /**
      * 处理 Skill 启用
+     *
+     * @param skillId Skill ID
      */
     @Transactional(rollbackFor = Exception.class)
     public void handleSkillEnable(String skillId) {
@@ -207,6 +214,8 @@ public class SkillChangeListener {
 
     /**
      * 处理 Skill 删除
+     *
+     * @param skillId Skill ID
      */
     @Transactional(rollbackFor = Exception.class)
     public void handleSkillDelete(String skillId) {

@@ -517,6 +517,9 @@ public class AgentOrchestrator {
 
     /**
      * 获取会话摘要
+     *
+     * @param sessionId 会话ID
+     * @return 会话状态摘要，会话不存在时返回null
      */
     public SessionSummary getSessionSummary(String sessionId) {
         Optional<AgentSessionEntity> sessionOpt = sessionService.getByConversationId(sessionId);

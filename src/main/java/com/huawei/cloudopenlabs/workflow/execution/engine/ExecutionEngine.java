@@ -55,6 +55,11 @@ public class ExecutionEngine {
 
     private ThreadPoolTaskExecutor workflowExecutor;
 
+    /**
+     * 设置工作流线程池执行器
+     *
+     * @param workflowExecutor 线程池执行器
+     */
     @Autowired(required = false)
     public void setWorkflowExecutor(@Qualifier("workflowExecutor") ThreadPoolTaskExecutor workflowExecutor) {
         this.workflowExecutor = workflowExecutor;

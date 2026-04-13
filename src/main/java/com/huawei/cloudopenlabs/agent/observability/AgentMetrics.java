@@ -145,6 +145,8 @@ public class AgentMetrics {
 
     /**
      * 记录失败（带错误码）
+     *
+     * @param errorCode 错误码
      */
     public void recordFailure(String errorCode) {
         Counter.builder("agent.requests.failure")
@@ -172,6 +174,8 @@ public class AgentMetrics {
 
     /**
      * 记录重试（带操作类型）
+     *
+     * @param operation 操作类型
      */
     public void recordRetry(String operation) {
         Counter.builder("agent.retry.attempts")
@@ -185,6 +189,8 @@ public class AgentMetrics {
 
     /**
      * 开始计时
+     *
+     * @return Timer采样对象
      */
     public Timer.Sample startTimer() {
         return Timer.start(meterRegistry);
@@ -192,6 +198,8 @@ public class AgentMetrics {
 
     /**
      * 记录请求耗时
+     *
+     * @param sample Timer采样对象
      */
     public void recordRequestDuration(Timer.Sample sample) {
         sample.stop(requestTimer);
@@ -199,6 +207,8 @@ public class AgentMetrics {
 
     /**
      * 记录请求耗时（直接传入时间）
+     *
+     * @param durationMs 耗时（毫秒）
      */
     public void recordRequestDuration(long durationMs) {
         requestTimer.record(durationMs, TimeUnit.MILLISECONDS);
@@ -206,6 +216,8 @@ public class AgentMetrics {
 
     /**
      * 记录 CLI 执行耗时
+     *
+     * @param durationMs 耗时（毫秒）
      */
     public void recordCliDuration(long durationMs) {
         cliExecutionTimer.record(durationMs, TimeUnit.MILLISECONDS);
@@ -213,6 +225,9 @@ public class AgentMetrics {
 
     /**
      * 记录 CLI 执行耗时（带命令标签）
+     *
+     * @param durationMs 耗时（毫秒）
+     * @param command    CLI 命令名称
      */
     public void recordCliDuration(long durationMs, String command) {
         Timer.builder("agent.cli.duration")
@@ -225,6 +240,8 @@ public class AgentMetrics {
 
     /**
      * 记录查询执行耗时
+     *
+     * @param durationMs 耗时（毫秒）
      */
     public void recordQueryDuration(long durationMs) {
         queryExecutionTimer.record(durationMs, TimeUnit.MILLISECONDS);
@@ -232,6 +249,9 @@ public class AgentMetrics {
 
     /**
      * 记录查询执行耗时（带查询类型）
+     *
+     * @param durationMs 耗时（毫秒）
+     * @param queryType  查询类型
      */
     public void recordQueryDuration(long durationMs, String queryType) {
         Timer.builder("agent.query.duration")
@@ -243,6 +263,8 @@ public class AgentMetrics {
 
     /**
      * 记录操作执行耗时
+     *
+     * @param durationMs 耗时（毫秒）
      */
     public void recordActionDuration(long durationMs) {
         actionExecutionTimer.record(durationMs, TimeUnit.MILLISECONDS);
@@ -250,6 +272,9 @@ public class AgentMetrics {
 
     /**
      * 记录操作执行耗时（带操作类型）
+     *
+     * @param durationMs 耗时（毫秒）
+     * @param actionType 操作类型
      */
     public void recordActionDuration(long durationMs, String actionType) {
         Timer.builder("agent.action.duration")
@@ -277,6 +302,8 @@ public class AgentMetrics {
 
     /**
      * 设置活跃连接数
+     *
+     * @param count 活跃连接数
      */
     public void setActiveConnections(int count) {
         activeConnections.set(count);
@@ -286,6 +313,8 @@ public class AgentMetrics {
 
     /**
      * 获取活跃会话数
+     *
+     * @return 活跃会话数
      */
     public int getActiveSessionCount() {
         return activeSessions.get();
@@ -293,6 +322,8 @@ public class AgentMetrics {
 
     /**
      * 获取活跃连接数
+     *
+     * @return 活跃连接数
      */
     public int getActiveConnectionCount() {
         return activeConnections.get();
@@ -300,6 +331,8 @@ public class AgentMetrics {
 
     /**
      * 获取请求总数
+     *
+     * @return 请求总数
      */
     public double getRequestCount() {
         return requestCounter.count();
@@ -307,6 +340,8 @@ public class AgentMetrics {
 
     /**
      * 获取成功数
+     *
+     * @return 成功请求数
      */
     public double getSuccessCount() {
         return successCounter.count();
@@ -314,6 +349,8 @@ public class AgentMetrics {
 
     /**
      * 获取失败数
+     *
+     * @return 失败请求数
      */
     public double getFailureCount() {
         return failureCounter.count();
@@ -321,6 +358,8 @@ public class AgentMetrics {
 
     /**
      * 获取超时数
+     *
+     * @return 超时请求数
      */
     public double getTimeoutCount() {
         return timeoutCounter.count();
@@ -328,6 +367,8 @@ public class AgentMetrics {
 
     /**
      * 计算成功率
+     *
+     * @return 成功率（0.0~1.0）
      */
     public double getSuccessRate() {
         double total = requestCounter.count();
@@ -337,6 +378,8 @@ public class AgentMetrics {
 
     /**
      * 计算错误率
+     *
+     * @return 错误率（0.0~1.0）
      */
     public double getErrorRate() {
         double total = requestCounter.count();

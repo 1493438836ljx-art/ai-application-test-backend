@@ -139,6 +139,8 @@ public class SkillCacheManager {
 
     /**
      * 获取缓存统计
+     *
+     * @return 缓存统计信息
      */
     public CacheStatistics getStats() {
         return stats;

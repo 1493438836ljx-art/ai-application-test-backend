@@ -304,6 +304,11 @@ public class ParameterResolver {
     /**
      * 解析条件表达式中的值
      * 支持引用和字面值
+     *
+     * @param value           原始值，可能包含 ${节点名.参数名} 引用
+     * @param currentNodeUuid 当前节点UUID
+     * @param context         执行上下文
+     * @return 解析后的值
      */
     public Object resolveValue(Object value, String currentNodeUuid, ExecutionContext context) {
         if (value == null) {

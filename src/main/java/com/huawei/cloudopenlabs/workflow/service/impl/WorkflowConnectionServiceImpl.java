@@ -201,6 +201,10 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
 
     /**
      * 转换为响应DTO（带UUID映射）
+     *
+     * @param entity     连接实体
+     * @param idToUuidMap 数据库ID到节点UUID的映射
+     * @return 连接响应DTO
      */
     public ConnectionResponse convertToResponse(WorkflowConnectionEntity entity, Map<String, String> idToUuidMap) {
         ConnectionResponse response = convertToResponse(entity);

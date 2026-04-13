@@ -239,6 +239,10 @@ public class ActionExecutor {
 
     /**
      * 构建错误结果
+     *
+     * @param action 操作定义
+     * @param error  异常信息
+     * @return 错误结果Map
      */
     // 包可见，便于测试
     Map<String, Object> buildErrorResult(AgentPlan.Action action, Throwable error) {
@@ -257,6 +261,9 @@ public class ActionExecutor {
 
     /**
      * 判断是否为错误结果
+     *
+     * @param result 操作结果
+     * @return 是错误结果时返回true
      */
     // 包可见，便于测试
     boolean isErrorResult(Object result) {
@@ -341,6 +348,9 @@ public class ActionExecutor {
 
     /**
      * 生成操作结果摘要
+     *
+     * @param results 操作结果Map
+     * @return 操作结果摘要
      */
     public ActionResultSummary summarizeResults(Map<String, Object> results) {
         if (results == null || results.isEmpty()) {

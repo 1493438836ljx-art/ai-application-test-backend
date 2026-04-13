@@ -229,6 +229,10 @@ public class QueryExecutor {
 
     /**
      * 构建错误结果
+     *
+     * @param query 查询定义
+     * @param error 异常信息
+     * @return 错误结果Map
      */
     // 包可见，便于测试
     Map<String, Object> buildErrorResult(AgentPlan.Query query, Throwable error) {
@@ -248,6 +252,9 @@ public class QueryExecutor {
 
     /**
      * 判断是否为错误结果
+     *
+     * @param result 查询结果
+     * @return 是错误结果时返回true
      */
     // 包可见，便于测试
     boolean isErrorResult(Object result) {
@@ -353,6 +360,9 @@ public class QueryExecutor {
 
     /**
      * 生成查询结果摘要
+     *
+     * @param results 查询结果Map
+     * @return 查询结果摘要
      */
     public QueryResultSummary summarizeResults(Map<String, Object> results) {
         if (results == null || results.isEmpty()) {

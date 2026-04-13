@@ -43,6 +43,8 @@ public class TracingContext {
 
     /**
      * 获取当前追踪信息
+     *
+     * @return 当前追踪信息，不存在则返回null
      */
     public TraceInfo getCurrentTrace() {
         return TRACE_HOLDER.get();
@@ -50,6 +52,8 @@ public class TracingContext {
 
     /**
      * 获取追踪ID
+     *
+     * @return 追踪ID，无活跃追踪时返回 "no-trace"
      */
     public String getTraceId() {
         TraceInfo info = getCurrentTrace();
@@ -58,6 +62,8 @@ public class TracingContext {
 
     /**
      * 获取SpanID
+     *
+     * @return SpanID，无活跃追踪时返回 "no-span"
      */
     public String getSpanId() {
         TraceInfo info = getCurrentTrace();
@@ -104,6 +110,8 @@ public class TracingContext {
 
     /**
      * 检查是否有活跃追踪
+     *
+     * @return 存在活跃追踪时返回true
      */
     public boolean hasActiveTrace() {
         return TRACE_HOLDER.get() != null;

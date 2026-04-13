@@ -36,6 +36,8 @@ public class NodeExecutorRegistry {
 
     /**
      * 自动注入所有 NodeExecutor 实现
+     *
+     * @param executors 执行器实例列表
      */
     @Autowired(required = false)
     public void setExecutors(List<NodeExecutor> executors) {
