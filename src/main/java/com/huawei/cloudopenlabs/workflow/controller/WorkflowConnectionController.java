@@ -39,7 +39,7 @@ public class WorkflowConnectionController {
     @GetMapping
     public ResponseEntity<List<ConnectionResponse>> getConnections(
             @PathVariable String workflowId) {
-        log.info("获取工作流连线列表: workflowId={}", workflowId);
+        log.info("Getting workflow connection list: workflowId={}", workflowId);
         List<ConnectionResponse> connections = connectionService.getConnections(workflowId);
         return ResponseEntity.ok(connections);
     }
@@ -55,7 +55,7 @@ public class WorkflowConnectionController {
     public ResponseEntity<ConnectionResponse> getConnection(
             @PathVariable String workflowId,
             @PathVariable String connectionUuid) {
-        log.info("获取连线详情: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
+        log.info("Getting connection details: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
         ConnectionResponse response = connectionService.getConnection(workflowId, connectionUuid);
         return ResponseEntity.ok(response);
     }
@@ -71,7 +71,7 @@ public class WorkflowConnectionController {
     public ResponseEntity<ConnectionResponse> createConnection(
             @PathVariable String workflowId,
             @Valid @RequestBody WorkflowResponse.ConnectionDTO request) {
-        log.info("创建连线: workflowId={}, sourceNode={}, targetNode={}",
+        log.info("Creating connection: workflowId={}, sourceNode={}, targetNode={}",
                 workflowId, request.getSourceNodeUuid(), request.getTargetNodeUuid());
         ConnectionResponse response = connectionService.createConnection(workflowId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -88,7 +88,7 @@ public class WorkflowConnectionController {
     public ResponseEntity<Void> batchCreateConnections(
             @PathVariable String workflowId,
             @Valid @RequestBody List<WorkflowResponse.ConnectionDTO> requests) {
-        log.info("批量创建连线: workflowId={}, count={}", workflowId, requests.size());
+        log.info("Batch creating connections: workflowId={}, count={}", workflowId, requests.size());
         connectionService.batchCreateConnections(workflowId, requests);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -104,7 +104,7 @@ public class WorkflowConnectionController {
     public ResponseEntity<Void> deleteConnection(
             @PathVariable String workflowId,
             @PathVariable String connectionUuid) {
-        log.info("删除连线: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
+        log.info("Deleting connection: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
         connectionService.deleteConnection(workflowId, connectionUuid);
         return ResponseEntity.noContent().build();
     }
@@ -120,7 +120,7 @@ public class WorkflowConnectionController {
     public ResponseEntity<Void> batchDeleteConnections(
             @PathVariable String workflowId,
             @RequestBody List<String> connectionUuids) {
-        log.info("批量删除连线: workflowId={}, count={}", workflowId, connectionUuids.size());
+        log.info("Batch deleting connections: workflowId={}, count={}", workflowId, connectionUuids.size());
         connectionService.batchDeleteConnections(workflowId, connectionUuids);
         return ResponseEntity.noContent().build();
     }
@@ -136,7 +136,7 @@ public class WorkflowConnectionController {
     public ResponseEntity<List<ConnectionResponse>> getConnectionsBySourceNode(
             @PathVariable String workflowId,
             @PathVariable String nodeId) {
-        log.info("获取节点出边: workflowId={}, nodeId={}", workflowId, nodeId);
+        log.info("Getting node outgoing edges: workflowId={}, nodeId={}", workflowId, nodeId);
         List<ConnectionResponse> connections = connectionService.getConnectionsBySourceNode(nodeId);
         return ResponseEntity.ok(connections);
     }
@@ -152,7 +152,7 @@ public class WorkflowConnectionController {
     public ResponseEntity<List<ConnectionResponse>> getConnectionsByTargetNode(
             @PathVariable String workflowId,
             @PathVariable String nodeId) {
-        log.info("获取节点入边: workflowId={}, nodeId={}", workflowId, nodeId);
+        log.info("Getting node incoming edges: workflowId={}, nodeId={}", workflowId, nodeId);
         List<ConnectionResponse> connections = connectionService.getConnectionsByTargetNode(nodeId);
         return ResponseEntity.ok(connections);
     }

@@ -46,7 +46,7 @@ public class ClaudeCodeStreamClient {
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
                 .build();
 
-        log.info("Claude Code 流式客户端初始化完成，基础URL: {}", properties.getBaseUrl());
+        log.info("Claude Code streaming client initialized, baseUrl: {}", properties.getBaseUrl());
     }
 
     /**
@@ -55,7 +55,7 @@ public class ClaudeCodeStreamClient {
     public Flux<StreamChunk> executeTaskStream(String taskContent, String configJson,
                                                 byte[] skillFile, String skillFileName,
                                                 String sessionId) {
-        log.debug("开始流式任务，sessionId: {}, 任务摘要: {}",
+        log.debug("Starting streaming task, sessionId: {}, taskSummary: {}",
                 sessionId, taskContent != null && taskContent.length() > 50
                         ? taskContent.substring(0, 50) + "..." : taskContent);
 
@@ -80,7 +80,7 @@ public class ClaudeCodeStreamClient {
             bodyBuilder.part("sessionId", sessionId);
         }
 
-        log.info("发送流式请求到: {}/api/task/stream", properties.getBaseUrl());
+        log.info("Sending streaming request to: {}/api/task/stream", properties.getBaseUrl());
 
         // 使用 String 类型接收 SSE 流
         return webClient.post()
@@ -90,11 +90,11 @@ public class ClaudeCodeStreamClient {
                 .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
                 .retrieve()
                 .bodyToFlux(String.class)
-                .doOnSubscribe(s -> log.info("SSE 连接已建立"))
-                .doOnCancel(() -> log.warn("SSE 连接被取消"))
+                .doOnSubscribe(s -> log.info("SSE connection established"))
+                .doOnCancel(() -> log.warn("SSE connection cancelled"))
                 // 解析每一行
                 .flatMap(content -> {
-                    log.debug("收到原始内容: {}", content);
+                    log.debug("Received raw content: {}", content);
                     String[] lines = content.split("\n");
                     return Flux.fromArray(lines)
                             .filter(line -> line != null && !line.trim().isEmpty())
@@ -102,9 +102,9 @@ public class ClaudeCodeStreamClient {
                             .filter(Optional::isPresent)
                             .map(Optional::get);
                 })
-                .doOnNext(chunk -> log.info("收到流式块: type={}", chunk.getType()))
-                .doOnError(e -> log.error("流式请求error: {}", e.getMessage(), e))
-                .doOnComplete(() -> log.info("流式任务完成"))
+                .doOnNext(chunk -> log.info("Received streaming chunk: type={}", chunk.getType()))
+                .doOnError(e -> log.error("Streaming request error: {}", e.getMessage(), e))
+                .doOnComplete(() -> log.info("Streaming task completed"))
                 .timeout(Duration.ofMinutes(10));
     }
 
@@ -139,7 +139,7 @@ public class ClaudeCodeStreamClient {
             StreamChunk chunk = parseChunk(jsonStr);
             return Optional.ofNullable(chunk);
         } catch (Exception e) {
-            log.warn("解析 SSE 行失败: {}, error: {}", line, e.getMessage());
+            log.warn("Failed to parse SSE line: {}, error: {}", line, e.getMessage());
             return Optional.empty();
         }
     }
@@ -151,7 +151,7 @@ public class ClaudeCodeStreamClient {
         try {
             return objectMapper.readValue(dataStr, StreamChunk.class);
         } catch (Exception e) {
-            log.warn("解析 JSON 失败: {}, error: {}", dataStr, e.getMessage());
+            log.warn("Failed to parse JSON: {}, error: {}", dataStr, e.getMessage());
             // 解析失败时，创建一个包含原始数据的 chunk
             StreamChunk fallbackChunk = new StreamChunk();
             fallbackChunk.setType("chunk");

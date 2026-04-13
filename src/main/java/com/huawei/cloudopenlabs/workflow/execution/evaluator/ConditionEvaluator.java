@@ -51,7 +51,7 @@ public class ConditionEvaluator {
             );
             return evaluateExpression(expression, context, currentNodeUuid);
         } catch (Exception e) {
-            log.error("评估条件表达式失败: {}", expressionJson, e);
+            log.error("Failed to evaluate condition expression: {}", expressionJson, e);
             throw new WorkflowExecutionException(
                     ErrorCode.PARAM_RESOLVE_FAILED,
                     currentNodeUuid,
@@ -99,7 +99,7 @@ public class ConditionEvaluator {
                 if (conditionJson != null && !conditionJson.isEmpty()) {
                     boolean matched = evaluate(conditionJson, context, currentNodeUuid);
                     if (matched) {
-                        log.info("条件分支匹配: caseId={}", caseId);
+                        log.info("Condition branch matched: caseId={}", caseId);
                         return caseId;
                     }
                 }
@@ -107,11 +107,11 @@ public class ConditionEvaluator {
 
             // 返回默认分支
             String defaultBranch = (String) config.get("defaultBranch");
-            log.info("使用默认分支: defaultBranch={}", defaultBranch);
+            log.info("Using default branch: defaultBranch={}", defaultBranch);
             return defaultBranch;
 
         } catch (Exception e) {
-            log.error("评估多条件配置失败: {}", conditionsJson, e);
+            log.error("Failed to evaluate multi-condition config: {}", conditionsJson, e);
             throw new WorkflowExecutionException(
                     ErrorCode.PARAM_RESOLVE_FAILED,
                     currentNodeUuid,
@@ -308,7 +308,7 @@ public class ConditionEvaluator {
                 return false;
 
             default:
-                log.warn("未知的比较运算符: {}", operator);
+                log.warn("Unknown comparison operator: {}", operator);
                 return false;
         }
     }

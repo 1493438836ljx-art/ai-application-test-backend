@@ -55,7 +55,7 @@ public class NodeExecutorRegistry {
         String nodeType = executor.getNodeType();
 
         if (executorMap.containsKey(nodeType)) {
-            log.warn("覆盖已存在的执行器: nodeType={}, oldExecutor={}, newExecutor={}",
+            log.warn("Overwriting existing executor: nodeType={}, oldExecutor={}, newExecutor={}",
                     nodeType,
                     executorMap.get(nodeType).getClass().getSimpleName(),
                     executor.getClass().getSimpleName());
@@ -119,6 +119,6 @@ public class NodeExecutorRegistry {
      */
     @PostConstruct
     public void logRegisteredExecutors() {
-        log.info("已注册 {} 个节点执行器: {}", executorMap.size(), executorMap.keySet());
+        log.info("Registered {} node executors: {}", executorMap.size(), executorMap.keySet());
     }
 }

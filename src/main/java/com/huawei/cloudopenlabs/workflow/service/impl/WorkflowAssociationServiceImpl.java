@@ -92,7 +92,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
         association.setAssociationType(associationType);
 
         associationMapper.insert(association);
-        log.info("创建关联成功: workflowId={}, containerNodeUuid={}, bodyNodeUuid={}",
+        log.info("Created association successfully: workflowId={}, containerNodeUuid={}, bodyNodeUuid={}",
                 workflowId, request.getContainerNodeUuid(), request.getBodyNodeUuid());
 
         Map<String, String> idToUuidMap = getIdToUuidMap(workflowId);
@@ -110,7 +110,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
                 .orElseThrow(() -> new IllegalArgumentException("关联不存在: " + associationId));
 
         associationMapper.deleteById(associationId);
-        log.info("删除关联成功: workflowId={}, associationId={}", workflowId, associationId);
+        log.info("Deleted association successfully: workflowId={}, associationId={}", workflowId, associationId);
     }
 
     // ========== 批量操作 ==========
@@ -124,7 +124,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
         for (AssociationCreateRequest request : requests) {
             createAssociation(workflowId, request);
         }
-        log.info("批量创建关联成功: workflowId={}, count={}", workflowId, requests.size());
+        log.info("Batch created associations successfully: workflowId={}, count={}", workflowId, requests.size());
     }
 
     @Override
@@ -136,7 +136,7 @@ public class WorkflowAssociationServiceImpl implements WorkflowAssociationServic
         for (String associationId : associationIds) {
             deleteAssociation(workflowId, associationId);
         }
-        log.info("批量删除关联成功: workflowId={}, count={}", workflowId, associationIds.size());
+        log.info("Batch deleted associations successfully: workflowId={}, count={}", workflowId, associationIds.size());
     }
 
     // ========== 查询 ==========

@@ -93,7 +93,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
         connection.setBranchPriority(request.getBranchPriority());
 
         connectionMapper.insert(connection);
-        log.info("创建连线成功: workflowId={}, connectionUuid={}", workflowId, connection.getConnectionUuid());
+        log.info("Created connection successfully: workflowId={}, connectionUuid={}", workflowId, connection.getConnectionUuid());
 
         return convertToResponse(connection);
     }
@@ -108,7 +108,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
                 .orElseThrow(() -> new IllegalArgumentException("连线不存在: " + connectionUuid));
 
         connectionMapper.deleteById(connection.getId());
-        log.info("删除连线成功: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
+        log.info("Deleted connection successfully: workflowId={}, connectionUuid={}", workflowId, connectionUuid);
     }
 
     // ========== 批量操作 ==========
@@ -122,7 +122,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
         for (WorkflowResponse.ConnectionDTO request : requests) {
             createConnection(workflowId, request);
         }
-        log.info("批量创建连线成功: workflowId={}, count={}", workflowId, requests.size());
+        log.info("Batch created connections successfully: workflowId={}, count={}", workflowId, requests.size());
     }
 
     @Override
@@ -134,7 +134,7 @@ public class WorkflowConnectionServiceImpl implements WorkflowConnectionService 
         for (String connectionUuid : connectionUuids) {
             deleteConnection(workflowId, connectionUuid);
         }
-        log.info("批量删除连线成功: workflowId={}, count={}", workflowId, connectionUuids.size());
+        log.info("Batch deleted connections successfully: workflowId={}, count={}", workflowId, connectionUuids.size());
     }
 
     // ========== 查询 ==========

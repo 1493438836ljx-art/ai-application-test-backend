@@ -64,7 +64,7 @@ public class QueryExecutor {
                 .baseUrl("http://localhost:8080")
                 .build();
         this.objectMapper = objectMapper;
-        log.info("QueryExecutor 初始化完成");
+        log.info("QueryExecutor initialized");
     }
 
     /**
@@ -76,11 +76,11 @@ public class QueryExecutor {
      */
     public Map<String, Object> executeQueries(List<AgentPlan.Query> queries, String workflowId) {
         if (queries == null || queries.isEmpty()) {
-            log.debug("查询列表为空，返回空结果");
+            log.debug("Query list is empty, returning empty result");
             return Collections.emptyMap();
         }
 
-        log.info("开始并行执行 {} 个查询请求", queries.size());
+        log.info("Starting parallel execution of {} query requests", queries.size());
 
         // 并行执行所有查询
         Map<String, Object> results = new ConcurrentHashMap<>();
@@ -91,10 +91,10 @@ public class QueryExecutor {
             Mono<Void> queryMono = executeQueryAsync(query, workflowId)
                     .doOnNext(result -> {
                         results.put(query.getId(), result);
-                        log.debug("查询完成: id={}, path={}", query.getId(), query.getPath());
+                        log.debug("Query completed: id={}, path={}", query.getId(), query.getPath());
                     })
                     .doOnError(error -> {
-                        log.error("查询失败: id={}, path={}, error={}",
+                        log.error("Query failed: id={}, path={}, error={}",
                                 query.getId(), query.getPath(), error.getMessage());
                         results.put(query.getId(), buildErrorResult(query, error));
                     })
@@ -108,7 +108,7 @@ public class QueryExecutor {
         Mono.when(queryMonos)
                 .block(Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS * queries.size()));
 
-        log.info("Query execution completed: 成功={}, 失败={}",
+        log.info("Query execution completed: success={}, failed={}",
                 results.values().stream().filter(v -> !isErrorResult(v)).count(),
                 results.values().stream().filter(this::isErrorResult).count());
 
@@ -147,13 +147,13 @@ public class QueryExecutor {
                     .block(Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
 
             long duration = System.currentTimeMillis() - startTime;
-            log.debug("查询成功: id={}, duration={}ms", queryId, duration);
+            log.debug("Query succeeded: id={}, duration={}ms", queryId, duration);
 
             return result;
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("查询失败: id={}, path={}, duration={}ms, error={}",
+            log.error("Query failed: id={}, path={}, duration={}ms, error={}",
                     queryId, path, duration, e.getMessage());
 
             throw new QueryExecutionException(queryId, path, "查询Execution failed: " + e.getMessage(), e);
@@ -286,7 +286,7 @@ public class QueryExecutor {
                     lastError = e;
                     retryCount++;
                     if (retryCount <= maxRetries) {
-                        log.warn("查询失败，准备重试: id={}, retry={}/{}",
+                        log.warn("Query failed, preparing to retry: id={}, retry={}/{}",
                                 query.getId(), retryCount, maxRetries);
                         try {
                             Thread.sleep(1000 * retryCount); // 递增延迟

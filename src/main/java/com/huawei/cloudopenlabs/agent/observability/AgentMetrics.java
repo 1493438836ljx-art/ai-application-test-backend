@@ -114,7 +114,7 @@ public class AgentMetrics {
                 .description("Number of active SSE connections")
                 .register(meterRegistry);
 
-        log.info("Agent 指标采集器初始化完成");
+        log.info("Agent metrics collector initialized");
     }
 
     // ==================== 请求计数 ====================

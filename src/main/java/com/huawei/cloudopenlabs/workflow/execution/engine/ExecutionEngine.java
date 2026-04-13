@@ -103,7 +103,7 @@ public class ExecutionEngine {
             log.info("Workflow execution completed: executionId={}", executionId);
 
         } catch (WorkflowExecutionException e) {
-            log.error("工作流Execution failed: executionId={}, error={}", executionId, e.getMessage());
+            log.error("Workflow execution failed: executionId={}, error={}", executionId, e.getMessage());
             handleExecutionError(context, e);
             throw e;
         } catch (Exception e) {
@@ -248,7 +248,7 @@ public class ExecutionEngine {
         String nodeUuid = node.getNodeUuid();
         String nodeName = node.getName();
 
-        log.info("开始Executing node: nodeUuid={}, nodeName={}", nodeUuid, nodeName);
+        log.info("Starting to execute node: nodeUuid={}, nodeName={}", nodeUuid, nodeName);
 
         // 1. 更新节点状态为 RUNNING
         context.setNodeState(nodeUuid, NodeExecutionStatus.RUNNING.name());
@@ -279,7 +279,7 @@ public class ExecutionEngine {
                 stateManager.updateNodeStatus(context.getExecutionId(), nodeUuid,
                         NodeExecutionStatus.SUCCESS, result);
 
-                log.info("节点执行成功: nodeUuid={}, nodeName={}, durationMs={}",
+                log.info("Node executed successfully: nodeUuid={}, nodeName={}, durationMs={}",
                         nodeUuid, nodeName, durationMs);
 
             } else {
@@ -302,7 +302,7 @@ public class ExecutionEngine {
                                     NodeExecutionResult result) {
         String nodeUuid = node.getNodeUuid();
 
-        log.error("节点Execution failed: nodeUuid={}, error={}", nodeUuid, result.getErrorMessage());
+        log.error("Node execution failed: nodeUuid={}, error={}", nodeUuid, result.getErrorMessage());
 
         // 更新节点状态为 FAILED
         context.setNodeState(nodeUuid, NodeExecutionStatus.FAILED.name());
@@ -317,7 +317,7 @@ public class ExecutionEngine {
 
         switch (errorStrategy) {
             case "SKIP":
-                log.info("节点错误策略为跳过，继续执行: nodeUuid={}", nodeUuid);
+                log.info("Node error strategy is skip, continuing execution: nodeUuid={}", nodeUuid);
                 context.setNodeState(nodeUuid, NodeExecutionStatus.SKIPPED.name());
                 stateManager.updateNodeStatus(context.getExecutionId(), nodeUuid,
                         NodeExecutionStatus.SKIPPED, result);
@@ -358,7 +358,7 @@ public class ExecutionEngine {
         for (String nodeUuid : graph.getAllNodeUuids()) {
             String state = context.getNodeState(nodeUuid);
             if (state == null || NodeExecutionStatus.PENDING.name().equals(state)) {
-                log.warn("节点未执行: nodeUuid={}", nodeUuid);
+                log.warn("Node not executed: nodeUuid={}", nodeUuid);
             }
         }
     }

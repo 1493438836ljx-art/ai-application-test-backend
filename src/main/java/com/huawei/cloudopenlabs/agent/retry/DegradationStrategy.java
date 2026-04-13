@@ -40,7 +40,7 @@ public class DegradationStrategy {
      * @return 降级响应
      */
     public Object handleDegradation(String operation, Exception error) {
-        log.warn("执行Degradation strategy: operation={}, error={}", operation, error.getMessage());
+        log.warn("Executing degradation strategy: operation={}, error={}", operation, error.getMessage());
 
         return switch (operation.toLowerCase()) {
             case "query" -> degradeQuery(error);
@@ -55,7 +55,7 @@ public class DegradationStrategy {
      * 查询操作降级
      */
     private Object degradeQuery(Exception error) {
-        log.info("执行查询降级：返回提示信息");
+        log.info("Executing query degradation: returning hint message");
 
         return Map.of(
                 "degraded", true,
@@ -69,7 +69,7 @@ public class DegradationStrategy {
      * 操作降级
      */
     private Object degradeAction(Exception error) {
-        log.info("执行操作降级：记录操作请求");
+        log.info("Executing action degradation: recording action request");
 
         // 在实际实现中，这里可以将操作记录到队列或数据库，稍后重试
         return Map.of(
@@ -84,7 +84,7 @@ public class DegradationStrategy {
      * 流式操作降级
      */
     private Object degradeStream(Exception error) {
-        log.info("执行流式降级：切换到非流式模式");
+        log.info("Executing streaming degradation: switching to non-streaming mode");
 
         return Map.of(
                 "degraded", true,
@@ -98,7 +98,7 @@ public class DegradationStrategy {
      * 执行操作降级
      */
     private Object degradeExecute(Exception error) {
-        log.info("执行通用降级");
+        log.info("Executing generic degradation");
 
         return Map.of(
                 "degraded", true,

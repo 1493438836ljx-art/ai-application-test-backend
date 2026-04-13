@@ -62,7 +62,7 @@ public class ActionExecutor {
                 .baseUrl("http://localhost:8080")
                 .build();
         this.objectMapper = objectMapper;
-        log.info("ActionExecutor 初始化完成");
+        log.info("ActionExecutor initialized");
     }
 
     /**
@@ -75,11 +75,11 @@ public class ActionExecutor {
     @Transactional
     public Map<String, Object> executeActions(List<AgentPlan.Action> actions, String workflowId) {
         if (actions == null || actions.isEmpty()) {
-            log.debug("操作列表为空，返回空结果");
+            log.debug("Action list is empty, returning empty result");
             return Collections.emptyMap();
         }
 
-        log.info("开始顺序执行 {} 个操作请求", actions.size());
+        log.info("Starting sequential execution of {} action requests", actions.size());
 
         Map<String, Object> results = new LinkedHashMap<>();
         List<String> executedActions = new ArrayList<>();
@@ -89,10 +89,10 @@ public class ActionExecutor {
                 Object result = executeAction(action, workflowId);
                 results.put(action.getId(), result);
                 executedActions.add(action.getId());
-                log.info("操作成功: id={}, path={}", action.getId(), action.getPath());
+                log.info("Action succeeded: id={}, path={}", action.getId(), action.getPath());
 
             } catch (Exception e) {
-                log.error("操作失败: id={}, path={}, error={}",
+                log.error("Action failed: id={}, path={}, error={}",
                         action.getId(), action.getPath(), e.getMessage());
 
                 // 记录失败结果
@@ -108,7 +108,7 @@ public class ActionExecutor {
             }
         }
 
-        log.info("操作执行完成: 成功={}", executedActions.size());
+        log.info("Action execution completed: success={}", executedActions.size());
         return results;
     }
 
@@ -140,13 +140,13 @@ public class ActionExecutor {
                     .block(Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
 
             long duration = System.currentTimeMillis() - startTime;
-            log.debug("操作成功: id={}, duration={}ms", actionId, duration);
+            log.debug("Action succeeded: id={}, duration={}ms", actionId, duration);
 
             return result;
 
         } catch (Exception e) {
             long duration = System.currentTimeMillis() - startTime;
-            log.error("操作失败: id={}, path={}, duration={}ms, error={}",
+            log.error("Action failed: id={}, path={}, duration={}ms, error={}",
                     actionId, path, duration, e.getMessage());
 
             throw new ActionExecutionException(actionId, path, "操作Execution failed: " + e.getMessage(), e);
@@ -279,7 +279,7 @@ public class ActionExecutor {
             return Collections.emptyMap();
         }
 
-        log.info("开始执行 {} 个操作（无事务模式）", actions.size());
+        log.info("Starting execution of {} actions (non-transactional mode)", actions.size());
 
         Map<String, Object> results = new LinkedHashMap<>();
 
@@ -288,7 +288,7 @@ public class ActionExecutor {
                 Object result = executeAction(action, workflowId);
                 results.put(action.getId(), result);
             } catch (Exception e) {
-                log.warn("操作失败（无事务模式）: id={}, error={}", action.getId(), e.getMessage());
+                log.warn("Action failed (non-transactional mode): id={}, error={}", action.getId(), e.getMessage());
                 results.put(action.getId(), buildErrorResult(action, e));
             }
         }

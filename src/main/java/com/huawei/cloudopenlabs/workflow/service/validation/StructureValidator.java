@@ -49,7 +49,7 @@ public class StructureValidator {
      * @return 验证结果
      */
     public ValidationResult validate(String workflowId) {
-        log.debug("开始结构验证: workflowId={}", workflowId);
+        log.debug("Starting structure validation: workflowId={}", workflowId);
         ValidationResult result = new ValidationResult();
         result.setValid(true);
 
@@ -119,7 +119,7 @@ public class StructureValidator {
             }
         }
 
-        log.debug("结构验证完成: workflowId={}, valid={}, errors={}, warnings={}",
+        log.debug("Structure validation completed: workflowId={}, valid={}, errors={}, warnings={}",
                 workflowId, result.isValid(), result.getErrors().size(), result.getWarnings().size());
 
         return result;

@@ -69,7 +69,7 @@ public class ClaudeCliExecutor {
             return t;
         });
 
-        log.info("ClaudeCliExecutor 初始化完成，新架构模式: {}", properties.getUseNewArchitecture());
+        log.info("ClaudeCliExecutor initialized, new architecture mode: {}", properties.getUseNewArchitecture());
     }
 
     /**
@@ -99,7 +99,7 @@ public class ClaudeCliExecutor {
 
         // 构建命令参数
         List<String> command = buildCommand(request);
-        log.info("执行 Claude CLI: {}", maskSensitiveArgs(command));
+        log.info("Executing Claude CLI: {}", maskSensitiveArgs(command));
 
         // 创建进程构建器
         ProcessBuilder pb = new ProcessBuilder(command);
@@ -147,7 +147,7 @@ public class ClaudeCliExecutor {
                     stdin.write(request.getInput().getBytes(StandardCharsets.UTF_8));
                     stdin.flush();
                 } catch (IOException e) {
-                    log.warn("写入 stdin 失败（进程可能已结束）: {}", e.getMessage());
+                    log.warn("Failed to write stdin (process may have ended): {}", e.getMessage());
                 }
             }
 
@@ -167,7 +167,7 @@ public class ClaudeCliExecutor {
                 stdoutFuture.get(10, TimeUnit.SECONDS);
                 stderrFuture.get(10, TimeUnit.SECONDS);
             } catch (TimeoutException e) {
-                log.warn("等待流Read timeout，继续处理");
+                log.warn("Stream read timeout, continuing processing");
             }
 
             int exitCode = finalProcess.exitValue();
@@ -197,7 +197,7 @@ public class ClaudeCliExecutor {
             return new ClaudeExecutionResult(sessionId.get(), exitCode, 0L);
 
         } catch (IOException e) {
-            log.error("执行 Claude CLI IO 异常", e);
+            log.error("Claude CLI IO exception", e);
             if (onError != null) {
                 onError.accept(e);
             }
@@ -211,11 +211,11 @@ public class ClaudeCliExecutor {
             throw new ClaudeCliException("执行被中断", e);
 
         } catch (ExecutionException e) {
-            log.error("读取输出流异常", e);
+            log.error("Output stream read exception", e);
             if (onError != null) {
                 onError.accept(e);
             }
-            throw new ClaudeCliException("读取输出流异常: " + e.getCause().getMessage(), e.getCause());
+            throw new ClaudeCliException("Output stream read exception: " + e.getCause().getMessage(), e.getCause());
         }
     }
 
@@ -296,7 +296,7 @@ public class ClaudeCliExecutor {
                         }
                     }
                 } catch (Exception e) {
-                    log.warn("解析流数据失败，作为原始文本处理: {} ...",
+                    log.warn("Failed to parse stream data, treating as raw text: {} ...",
                             line.substring(0, Math.min(50, line.length())));
 
                     // 作为原始文本处理
@@ -311,7 +311,7 @@ public class ClaudeCliExecutor {
             }
         } catch (IOException e) {
             if (!completed.get()) {
-                log.error("读取输出流异常", e);
+                log.error("Output stream read exception", e);
             }
         }
     }
@@ -333,7 +333,7 @@ public class ClaudeCliExecutor {
                 }
             }
         } catch (IOException e) {
-            log.debug("读取错误流异常（进程可能已结束）: {}", e.getMessage());
+            log.debug("Error stream read exception (process may have ended): {}", e.getMessage());
         }
     }
 
@@ -418,7 +418,7 @@ public class ClaudeCliExecutor {
             return chunk;
 
         } catch (Exception e) {
-            log.debug("JSON 解析失败，返回原始文本: {}", e.getMessage());
+            log.debug("JSON parsing failed, returning raw text: {}", e.getMessage());
             StreamChunk chunk = new StreamChunk();
             chunk.setType("chunk");
             chunk.setContentType("text");
@@ -546,7 +546,7 @@ public class ClaudeCliExecutor {
 
     @PreDestroy
     public void shutdown() {
-        log.info("关闭 ClaudeCliExecutor 线程池");
+        log.info("Shutting down ClaudeCliExecutor thread pool");
         streamReaderExecutor.shutdown();
         try {
             if (!streamReaderExecutor.awaitTermination(5, TimeUnit.SECONDS)) {

@@ -153,7 +153,7 @@ public class NodeTypeController {
     @PostMapping("/{id}/enable")
     public ResponseEntity<NodeTypeResponse> enableNodeType(
             @PathVariable String id) {
-        log.info("启用节点类型: {}", id);
+        log.info("Enabling node type: {}", id);
         NodeTypeResponse response = nodeTypeService.toggleNodeType(id, true);
         return ResponseEntity.ok(response);
     }
@@ -167,7 +167,7 @@ public class NodeTypeController {
     @PostMapping("/{id}/disable")
     public ResponseEntity<NodeTypeResponse> disableNodeType(
             @PathVariable String id) {
-        log.info("禁用节点类型: {}", id);
+        log.info("Disabling node type: {}", id);
         NodeTypeResponse response = nodeTypeService.toggleNodeType(id, false);
         return ResponseEntity.ok(response);
     }

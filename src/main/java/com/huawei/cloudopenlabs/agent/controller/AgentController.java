@@ -61,7 +61,7 @@ public class AgentController {
     @PostMapping("/execute")
     public AgentResponse executeSimple(
             @RequestParam @NotBlank String taskContent) {
-        log.info("收到简单 Agent 任务请求: {}", taskContent);
+        log.info("Received simple Agent task request: {}", taskContent);
         return agentExecutor.executeSimple(taskContent);
     }
 
@@ -78,7 +78,7 @@ public class AgentController {
             @RequestParam @NotBlank String taskContent,
             @RequestParam(defaultValue = "120") Integer timeout,
             @RequestParam(defaultValue = "false") Boolean debug) {
-        log.info("收到带配置的 Agent 任务请求: {}, timeout: {}, debug: {}", taskContent, timeout, debug);
+        log.info("Received configured Agent task request: {}, timeout: {}, debug: {}", taskContent, timeout, debug);
         return agentExecutor.executeWithConfig(taskContent, timeout, debug);
     }
 
@@ -90,7 +90,7 @@ public class AgentController {
      */
     @PostMapping("/execute/full")
     public AgentResponse executeFull(@RequestBody AgentRequest agentRequest) {
-        log.info("收到完整 Agent 任务请求: {}", agentRequest.getTaskContent());
+        log.info("Received full Agent task request: {}", agentRequest.getTaskContent());
         return agentExecutor.execute(agentRequest);
     }
 
@@ -110,7 +110,7 @@ public class AgentController {
             @RequestParam(defaultValue = "false") Boolean debug,
             @RequestParam(required = false) MultipartFile skillFile) {
 
-        log.info("收到带 Skill 的 Agent 任务请求: {}", taskContent);
+        log.info("Received Agent task request with skill: {}", taskContent);
 
         // 构造请求
         AgentRequest.AgentRequestBuilder builder = AgentRequest.builder()
@@ -122,9 +122,9 @@ public class AgentController {
             try {
                 builder.skillFileBytes(skillFile.getBytes());
                 builder.skillFileName(skillFile.getOriginalFilename());
-                log.info("已附加 Skill 文件: {}", skillFile.getOriginalFilename());
+                log.info("Skill file attached: {}", skillFile.getOriginalFilename());
             } catch (Exception e) {
-                log.error("读取 Skill 文件失败: {}", e.getMessage());
+                log.error("Failed to read skill file: {}", e.getMessage());
                 return AgentResponse.builder()
                         .success(false)
                         .error("读取 Skill 文件失败: " + e.getMessage())

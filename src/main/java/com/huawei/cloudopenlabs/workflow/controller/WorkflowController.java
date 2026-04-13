@@ -238,7 +238,7 @@ public class WorkflowController {
     public ResponseEntity<WorkflowResponse> saveWorkflowDataJson(
             @PathVariable String id,
             @Valid @RequestBody WorkflowDataRequest request) {
-        log.info("保存工作流数据(JSON): {}", id);
+        log.info("Saving workflow data (JSON): {}", id);
         WorkflowResponse response = workflowService.saveWorkflowData(
                 id,
                 request.getNodes(),

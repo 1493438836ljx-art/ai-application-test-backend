@@ -80,7 +80,7 @@ public class AgentExecutorConfig {
 
         // 拒绝策略：由调用线程执行
         executor.setRejectedExecutionHandler((r, e) -> {
-            log.warn("Agent 线程池已满，由调用线程执行任务");
+            log.warn("Agent thread pool full, executing in caller thread");
             r.run();
         });
 
@@ -93,7 +93,7 @@ public class AgentExecutorConfig {
 
         executor.initialize();
 
-        log.info("Agent 主执行线程池初始化完成: core={}, max={}, queue={}",
+        log.info("Agent main executor thread pool initialized: core={}, max={}, queue={}",
                 corePoolSize, maxPoolSize, queueCapacity);
 
         return executor;
@@ -115,7 +115,7 @@ public class AgentExecutorConfig {
                 new NamedThreadFactory("stream-reader")
         );
 
-        log.info("流读取线程池初始化完成: threads={}", streamReaderThreads);
+        log.info("Stream reader thread pool initialized: threads={}", streamReaderThreads);
 
         return executor;
     }
@@ -140,7 +140,7 @@ public class AgentExecutorConfig {
         executor.setThreadNamePrefix("query-par-");
 
         executor.setRejectedExecutionHandler((r, e) -> {
-            log.warn("查询并行线程池已满，由调用线程执行");
+            log.warn("Query parallel thread pool full, executing in caller thread");
             r.run();
         });
 
@@ -150,7 +150,7 @@ public class AgentExecutorConfig {
 
         executor.initialize();
 
-        log.info("查询并行线程池初始化完成: core={}, max={}",
+        log.info("Query parallel thread pool initialized: core={}, max={}",
                 queryParallelThreads, queryParallelThreads * 2);
 
         return executor;
@@ -176,7 +176,7 @@ public class AgentExecutorConfig {
                 new NamedThreadFactory("agent-sched")
         );
 
-        log.info("Agent 调度线程池初始化完成");
+        log.info("Agent scheduler thread pool initialized");
 
         return executor;
     }

@@ -37,10 +37,10 @@ public class BatchNodeExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行批处理节点: nodeUuid={}, nodeName={}",
+        log.info("Executing batch node: nodeUuid={}, nodeName={}",
                 node.getNodeUuid(), node.getName());
 
-        log.warn("批处理节点执行器尚未实现完整功能，返回模拟结果: nodeUuid={}", node.getNodeUuid());
+        log.warn("Batch node executor not fully implemented, returning mock result: nodeUuid={}", node.getNodeUuid());
 
         // TODO: 实现批处理逻辑
         // 1. 解析批处理配置 (batchConfig)

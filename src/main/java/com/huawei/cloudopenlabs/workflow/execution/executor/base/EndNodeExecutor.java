@@ -56,7 +56,7 @@ public class EndNodeExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行结束节点: nodeUuid={}, nodeName={}", node.getNodeUuid(), node.getName());
+        log.info("Executing end node: nodeUuid={}, nodeName={}", node.getNodeUuid(), node.getName());
 
         Map<String, Object> rawOutputs = new HashMap<>();
 
@@ -64,7 +64,7 @@ public class EndNodeExecutor implements NodeExecutor {
             // 1. 首先尝试从配置的输入参数获取值（由ParameterResolver解析）
             if (inputs != null && !inputs.isEmpty()) {
                 rawOutputs.putAll(inputs);
-                log.debug("结束节点从配置参数获取输入: {}", inputs.keySet());
+                log.debug("End node getting inputs from config parameters: {}", inputs.keySet());
             }
 
             // 2. 如果没有配置输入参数，自动从直接前驱节点收集输出
@@ -80,12 +80,12 @@ public class EndNodeExecutor implements NodeExecutor {
                 enrichedOutputs = rawOutputs;
             }
 
-            log.info("结束Node execution completed: nodeUuid={}, outputs={}", node.getNodeUuid(), enrichedOutputs);
+            log.info("End node execution completed: nodeUuid={}, outputs={}", node.getNodeUuid(), enrichedOutputs);
 
             return NodeExecutionResult.success(enrichedOutputs);
 
         } catch (Exception e) {
-            log.error("结束Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("End node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             // 结束节点即使出错也返回成功，但记录错误信息
             return NodeExecutionResult.success(rawOutputs);
         }
@@ -99,19 +99,19 @@ public class EndNodeExecutor implements NodeExecutor {
                                                  Map<String, Object> outputs) {
         ExecutionGraph graph = context.getExecutionGraph();
         if (graph == null) {
-            log.warn("执行图为空，无法获取前驱节点");
+            log.warn("Execution graph is empty, cannot get predecessor nodes");
             return;
         }
 
         // 获取直接前驱节点（不是所有前置节点，只是直接连接的节点）
         List<String> directPredecessors = graph.getPredecessors(node.getNodeUuid());
-        log.debug("结束节点的直接前驱节点: {}", directPredecessors);
+        log.debug("Direct predecessor nodes of end node: {}", directPredecessors);
 
         for (String predUuid : directPredecessors) {
             Map<String, Object> predOutputs = context.getNodeOutputs(predUuid);
             if (predOutputs != null && !predOutputs.isEmpty()) {
                 outputs.putAll(predOutputs);
-                log.debug("结束节点从前驱节点 {} 收集输出: {}", predUuid, predOutputs.keySet());
+                log.debug("End node collecting outputs from predecessor {}: {}", predUuid, predOutputs.keySet());
             }
         }
     }
@@ -165,11 +165,11 @@ public class EndNodeExecutor implements NodeExecutor {
                     }
 
                     enriched.put(name, param);
-                    log.debug("构建输出参数: {} = {}", name, param);
+                    log.debug("Building output parameter: {} = {}", name, param);
                 }
             }
         } catch (Exception e) {
-            log.warn("解析输出参数定义失败: {}", e.getMessage());
+            log.warn("Failed to parse output parameter definition: {}", e.getMessage());
         }
 
         return enriched;
@@ -180,7 +180,7 @@ public class EndNodeExecutor implements NodeExecutor {
      */
     private void enrichFileParam(Map<String, Object> param, Object value) {
         if (fileUploadService == null) {
-            log.warn("FileUploadService  not injected，无法获取文件信息");
+            log.warn("FileUploadService not injected, cannot get file info");
             param.put("downloadUrl", "/api/file/download/" + value);
             return;
         }
@@ -197,7 +197,7 @@ public class EndNodeExecutor implements NodeExecutor {
     @SuppressWarnings("unchecked")
     private void enrichFileArrayParam(Map<String, Object> param, Object value) {
         if (fileUploadService == null) {
-            log.warn("FileUploadService  not injected，无法获取文件信息");
+            log.warn("FileUploadService not injected, cannot get file info");
             return;
         }
 

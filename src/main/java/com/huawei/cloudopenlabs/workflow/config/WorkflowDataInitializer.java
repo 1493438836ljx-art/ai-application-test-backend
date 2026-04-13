@@ -26,7 +26,7 @@ public class WorkflowDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("初始化工作流节点类型数据...");
+        log.info("Initializing workflow node type data...");
         initNodeTypes();
     }
 
@@ -77,7 +77,7 @@ public class WorkflowDataInitializer implements CommandLineRunner {
         createNodeTypeIfNotExists("reportGenerate", "生成测试报告", "REPORT", "生成测试报告", "Document", "#3b82f6", 90);
         createNodeTypeIfNotExists("reportAnalysis", "报告分析", "REPORT", "报告分析", "Search", "#8b5cf6", 91);
 
-        log.info("节点类型数据初始化完成");
+        log.info("Node type data initialization completed");
     }
 
     private void createNodeTypeIfNotExists(String code, String name, String category, String description, String icon, String color, int sortOrder) {
@@ -89,7 +89,7 @@ public class WorkflowDataInitializer implements CommandLineRunner {
                 nodeType.setIcon(icon);
                 nodeType.setColor(color);
                 nodeTypeMapper.updateById(nodeType);
-                log.debug("更新节点类型图标和颜色: {}", code);
+                log.debug("Updating node type icon and color: {}", code);
             }
         } else {
             WorkflowNodeTypeEntity nodeType = new WorkflowNodeTypeEntity();

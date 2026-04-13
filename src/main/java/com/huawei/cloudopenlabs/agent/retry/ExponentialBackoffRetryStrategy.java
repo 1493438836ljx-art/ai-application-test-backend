@@ -77,7 +77,7 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
                 }
 
                 long delay = calculateDelay(attempt);
-                log.warn("操作失败，{}ms 后重试 (第{}/{}次): {}",
+                log.warn("Action failed, retrying in {}ms (attempt {}/{}): {}",
                         delay, attempt + 1, attempts, e.getMessage());
 
                 try {

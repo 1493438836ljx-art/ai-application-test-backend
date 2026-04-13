@@ -45,14 +45,14 @@ public class SkillChangeListener {
         String skillId = event.getSkillId();
         SkillChangeEvent.ChangeType changeType = event.getChangeType();
 
-        log.info("收到 Skill 变更事件: skillId={}, changeType={}", skillId, changeType);
+        log.info("Received skill change event: skillId={}, changeType={}", skillId, changeType);
 
         try {
             // 根据变更类型处理
             switch (changeType) {
                 case CREATED:
                     // 新增 Skill，无需处理
-                    log.debug("Skill 新增，无需处理兼容性检查: skillId={}", skillId);
+                    log.debug("Skill created, no compatibility check needed: skillId={}", skillId);
                     break;
 
                 case UPDATED:
@@ -77,10 +77,10 @@ public class SkillChangeListener {
                     break;
 
                 default:
-                    log.warn("未知的变更类型: {}", changeType);
+                    log.warn("Unknown change type: {}", changeType);
             }
         } catch (Exception e) {
-            log.error("处理 Skill 变更事件失败: skillId={}, changeType={}", skillId, changeType, e);
+            log.error("Failed to process skill change event: skillId={}, changeType={}", skillId, changeType, e);
         }
     }
 
@@ -93,11 +93,11 @@ public class SkillChangeListener {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectBySkillId(skillId);
 
         if (nodes.isEmpty()) {
-            log.debug("没有节点使用该 Skill: skillId={}", skillId);
+            log.debug("No nodes using this skill: skillId={}", skillId);
             return;
         }
 
-        log.info("开始检查 {} 个节点的兼容性: skillId={}", nodes.size(), skillId);
+        log.info("Starting compatibility check for {} nodes: skillId={}", nodes.size(), skillId);
 
         // 2. 逐个检查节点兼容性
         int compatibleCount = 0;
@@ -130,18 +130,18 @@ public class SkillChangeListener {
                         break;
                 }
 
-                log.debug("节点兼容性检查结果: nodeId={}, nodeName={}, status={}",
+                log.debug("Node compatibility check result: nodeId={}, nodeName={}, status={}",
                         node.getId(), node.getName(), status);
 
             } catch (Exception e) {
-                log.error("检查节点兼容性失败: nodeId={}, nodeName={}", node.getId(), node.getName(), e);
+                log.error("Failed to check node compatibility: nodeId={}, nodeName={}", node.getId(), node.getName(), e);
                 node.setCompatibilityStatus(CompatibilityStatus.INVALID.name());
                 nodeMapper.updateById(node);
                 incompatibleCount++;
             }
         }
 
-        log.info("兼容性检查完成: skillId={}, 兼容={}, 需更新={}, 不兼容={}",
+        log.info("Compatibility check completed: skillId={}, compatible={}, needsUpdate={}, incompatible={}",
                 skillId, compatibleCount, needsUpdateCount, incompatibleCount);
 
         // 3. 如果有不兼容的节点，发送通知
@@ -158,7 +158,7 @@ public class SkillChangeListener {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectBySkillId(skillId);
 
         if (nodes.isEmpty()) {
-            log.debug("没有节点使用该 Skill: skillId={}", skillId);
+            log.debug("No nodes using this skill: skillId={}", skillId);
             return;
         }
 
@@ -167,7 +167,7 @@ public class SkillChangeListener {
             nodeMapper.updateById(node);
         }
 
-        log.info("Skill 已禁用，已标记 {} 个节点为不兼容: skillId={}", nodes.size(), skillId);
+        log.info("Skill disabled, marked {} nodes as incompatible: skillId={}", nodes.size(), skillId);
 
         // 发送通知
         sendDisableNotification(skillId, nodes);
@@ -181,7 +181,7 @@ public class SkillChangeListener {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectBySkillId(skillId);
 
         if (nodes.isEmpty()) {
-            log.debug("没有节点使用该 Skill: skillId={}", skillId);
+            log.debug("No nodes using this skill: skillId={}", skillId);
             return;
         }
 
@@ -201,7 +201,7 @@ public class SkillChangeListener {
             }
         }
 
-        log.info("Skill 已启用，兼容性检查完成: skillId={}, 兼容={}, 需更新={}",
+        log.info("Skill enabled, compatibility check completed: skillId={}, compatible={}, needsUpdate={}",
                 skillId, compatibleCount, needsUpdateCount);
     }
 
@@ -213,7 +213,7 @@ public class SkillChangeListener {
         List<WorkflowNodeEntity> nodes = nodeMapper.selectBySkillId(skillId);
 
         if (nodes.isEmpty()) {
-            log.debug("没有节点使用该 Skill: skillId={}", skillId);
+            log.debug("No nodes using this skill: skillId={}", skillId);
             return;
         }
 
@@ -222,7 +222,7 @@ public class SkillChangeListener {
             nodeMapper.updateById(node);
         }
 
-        log.info("Skill 已删除，已标记 {} 个节点为无效: skillId={}", nodes.size(), skillId);
+        log.info("Skill deleted, marked {} nodes as invalid: skillId={}", nodes.size(), skillId);
 
         // 发送通知
         sendDeleteNotification(skillId, nodes);
@@ -237,7 +237,7 @@ public class SkillChangeListener {
                                                 int incompatibleCount) {
         // TODO: 实现通知逻辑
         // 可以通过 WebSocket、邮件、站内信等方式通知相关用户
-        log.info("发送兼容性变更通知: skillId={}, 需更新={}, 不兼容={}",
+        log.info("Sending compatibility change notification: skillId={}, needsUpdate={}, incompatible={}",
                 skillId, needsUpdateCount, incompatibleCount);
     }
 
@@ -246,7 +246,7 @@ public class SkillChangeListener {
      */
     private void sendDisableNotification(String skillId, List<WorkflowNodeEntity> nodes) {
         // TODO: 实现通知逻辑
-        log.info("发送 Skill 禁用通知: skillId={}, 影响节点数={}", skillId, nodes.size());
+        log.info("Sending skill disabled notification: skillId={}, affectedNodeCount={}", skillId, nodes.size());
     }
 
     /**
@@ -254,6 +254,6 @@ public class SkillChangeListener {
      */
     private void sendDeleteNotification(String skillId, List<WorkflowNodeEntity> nodes) {
         // TODO: 实现通知逻辑
-        log.info("发送 Skill 删除通知: skillId={}, 影响节点数={}", skillId, nodes.size());
+        log.info("Sending skill deleted notification: skillId={}, affectedNodeCount={}", skillId, nodes.size());
     }
 }

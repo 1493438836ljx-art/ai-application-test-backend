@@ -52,9 +52,9 @@ public class ClaudeCodeApiClient {
         if (properties.getShowDangerModeWarning()) {
             log.warn("========================================");
             log.warn("⚠️  CLAUDE CODE AGENT - DANGEROUS MODE ⚠️");
-            log.warn("此服务使用 --dangerously-skip-permissions 标志");
-            log.warn("跳过所有权限检查，可执行任意系统命令");
-            log.warn("请确保仅在内网或受控环境中使用！");
+            log.warn("This service uses --dangerously-skip-permissions flag");
+            log.warn("Skipping all permission checks, can execute arbitrary system commands");
+            log.warn("Please ensure this is only used in internal or controlled environments!");
             log.warn("========================================");
         }
     }
@@ -66,13 +66,13 @@ public class ClaudeCodeApiClient {
      */
     public HealthCheckResponse healthCheck() {
         String url = properties.getBaseUrl() + "/health";
-        log.debug("执行健康检查，请求 URL: {}", url);
+        log.debug("Executing health check, request URL: {}", url);
 
         try {
             ResponseEntity<HealthCheckResponse> response = restTemplate.getForEntity(url, HealthCheckResponse.class);
             return response.getBody();
         } catch (Exception e) {
-            log.error("健康检查失败: {}", e.getMessage());
+            log.error("Health check failed: {}", e.getMessage());
             throw new RuntimeException("Claude Code API 连接失败: " + e.getMessage(), e);
         }
     }
@@ -102,7 +102,7 @@ public class ClaudeCodeApiClient {
      */
         public TaskExecuteResponse executeTask(String taskContent, String configJson, byte[] skillFile, String skillFileName, String sessionId) {
         String url = properties.getBaseUrl() + "/api/task";
-        log.debug("执行任务，请求 URL: {}, 任务内容: {}, sessionId: {}", url, taskContent, sessionId);
+        log.debug("Executing task, request URL: {}, task content: {}, sessionId: {}", url, taskContent, sessionId);
 
         // 构建 multipart/form-data 请求
         HttpHeaders headers = new HttpHeaders();
@@ -132,7 +132,7 @@ public class ClaudeCodeApiClient {
         // 添加可选字段：sessionId（多轮会话支持）
         if (sessionId != null && !sessionId.isBlank()) {
             body.add("sessionId", sessionId);
-            log.info("使用会话ID: {}", sessionId);
+            log.info("Using session ID: {}", sessionId);
         }
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
@@ -152,14 +152,14 @@ public class ClaudeCodeApiClient {
 
             // 检查业务执行结果
             if (!responseBody.getSuccess()) {
-                log.error("任务Execution failed: {}", responseBody.getError());
+                log.error("Task execution failed: {}", responseBody.getError());
             } else {
-                log.debug("任务执行成功");
+                log.debug("Task executed successfully");
             }
 
             return responseBody;
         } catch (Exception e) {
-            log.error("任务执行异常: {}", e.getMessage(), e);
+            log.error("Task execution exception: {}", e.getMessage(), e);
             // 构造失败响应
             TaskExecuteResponse errorResponse = new TaskExecuteResponse();
             errorResponse.setSuccess(false);
@@ -219,7 +219,7 @@ public class ClaudeCodeApiClient {
         try {
             return objectMapper.writeValueAsString(config);
         } catch (IOException e) {
-            log.warn("配置对象转换为 JSON 失败: {}", e.getMessage());
+            log.warn("Failed to convert config object to JSON: {}", e.getMessage());
             return null;
         }
     }

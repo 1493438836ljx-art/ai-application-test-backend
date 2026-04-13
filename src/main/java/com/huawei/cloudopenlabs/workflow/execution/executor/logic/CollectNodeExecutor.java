@@ -37,10 +37,10 @@ public class CollectNodeExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行结果收集节点: nodeUuid={}, nodeName={}",
+        log.info("Executing collect node: nodeUuid={}, nodeName={}",
                 node.getNodeUuid(), node.getName());
 
-        log.warn("结果收集节点执行器尚未实现完整功能，返回模拟结果: nodeUuid={}", node.getNodeUuid());
+        log.warn("Collect node executor not fully implemented, returning mock result: nodeUuid={}", node.getNodeUuid());
 
         // TODO: 实现结果收集逻辑
         // 1. 解析收集配置 (collectConfig)

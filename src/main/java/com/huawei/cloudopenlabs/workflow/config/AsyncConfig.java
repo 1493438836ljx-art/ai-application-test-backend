@@ -63,7 +63,7 @@ public class AsyncConfig {
         // 初始化
         executor.initialize();
 
-        log.info("工作流任务执行器初始化完成: corePoolSize={}, maxPoolSize={}",
+        log.info("Workflow task executor initialized: corePoolSize={}, maxPoolSize={}",
                 executor.getCorePoolSize(), executor.getMaxPoolSize());
 
         return executor;
@@ -97,7 +97,7 @@ public class AsyncConfig {
         // 初始化
         executor.initialize();
 
-        log.info("工作流验证执行器初始化完成");
+        log.info("Workflow validation executor initialized");
 
         return executor;
     }
@@ -142,7 +142,7 @@ public class AsyncConfig {
         // 初始化
         executor.initialize();
 
-        log.info("工作流执行线程池初始化完成: corePoolSize=10, maxPoolSize=50, queueCapacity=500");
+        log.info("Workflow execution thread pool initialized: corePoolSize=10, maxPoolSize=50, queueCapacity=500");
 
         return executor;
     }
@@ -187,7 +187,7 @@ public class AsyncConfig {
         // 初始化
         executor.initialize();
 
-        log.info("节点执行线程池初始化完成: corePoolSize=20, maxPoolSize=100, queueCapacity=1000");
+        log.info("Node execution thread pool initialized: corePoolSize=20, maxPoolSize=100, queueCapacity=1000");
 
         return executor;
     }

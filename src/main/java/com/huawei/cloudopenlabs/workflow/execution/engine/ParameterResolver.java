@@ -70,7 +70,7 @@ public class ParameterResolver {
             }
 
         } catch (Exception e) {
-            log.error("解析节点输入参数失败: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("Failed to parse node input parameters: nodeUuid={}", node.getNodeUuid(), e);
             throw new WorkflowExecutionException(
                     ErrorCode.PARAM_RESOLVE_FAILED,
                     node.getNodeUuid(),
@@ -203,7 +203,7 @@ public class ParameterResolver {
         Object value = context.getNodeOutput(targetNodeUuid, paramName);
 
         if (value == null) {
-            log.warn("引用的参数值为空: node={}, param={}", nodeIdentifier, paramName);
+            log.warn("Referenced parameter value is null: node={}, param={}", nodeIdentifier, paramName);
         }
 
         return value;
@@ -295,7 +295,7 @@ public class ParameterResolver {
                     return value;
             }
         } catch (Exception e) {
-            log.warn("类型转换失败: value={}, targetType={}, error={}",
+            log.warn("Type conversion failed: value={}, targetType={}, error={}",
                     value, targetType, e.getMessage());
             return value;
         }

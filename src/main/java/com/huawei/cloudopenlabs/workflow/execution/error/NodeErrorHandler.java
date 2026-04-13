@@ -52,7 +52,7 @@ public class NodeErrorHandler {
         String nodeUuid = node.getNodeUuid();
         String nodeName = node.getName();
 
-        log.error("处理节点执行error: nodeUuid={}, nodeName={}, error={}",
+        log.error("Handling node execution error: nodeUuid={}, nodeName={}, error={}",
                 nodeUuid, nodeName, exception.getMessage());
 
         // 获取节点的错误策略配置
@@ -103,7 +103,7 @@ public class NodeErrorHandler {
     private ErrorHandleResult handleStop(WorkflowNodeEntity node,
                                           ExecutionContext context,
                                           Exception exception) {
-        log.error("节点执行失败，终止工作流: nodeUuid={}, error={}",
+        log.error("Node execution failed, terminating workflow: nodeUuid={}, error={}",
                 node.getNodeUuid(), exception.getMessage());
 
         return ErrorHandleResult.stop(exception.getMessage());
@@ -116,7 +116,7 @@ public class NodeErrorHandler {
                                           ExecutionContext context,
                                           Exception exception,
                                           ErrorStrategyConfig errorConfig) {
-        log.warn("节点执行失败，跳过继续: nodeUuid={}, error={}",
+        log.warn("Node execution failed, skipping and continuing: nodeUuid={}, error={}",
                 node.getNodeUuid(), exception.getMessage());
 
         String skipReason = errorConfig.getSkipReason() != null ?
@@ -137,7 +137,7 @@ public class NodeErrorHandler {
         int currentRetryCount = getRetryCount(context, nodeUuid);
 
         if (currentRetryCount >= errorConfig.getMaxRetries()) {
-            log.error("节点重试次数已达上限: nodeUuid={}, retries={}/{}",
+            log.error("Node retry count reached limit: nodeUuid={}, retries={}/{}",
                     nodeUuid, currentRetryCount, errorConfig.getMaxRetries());
 
             // 重试失败，使用默认策略处理
@@ -148,7 +148,7 @@ public class NodeErrorHandler {
         // 计算重试间隔
         long retryInterval = calculateRetryInterval(errorConfig, currentRetryCount);
 
-        log.info("节点执行失败，准备重试: nodeUuid={}, retry={}/{}, interval={}ms",
+        log.info("Node execution failed, preparing to retry: nodeUuid={}, retry={}/{}, interval={}ms",
                 nodeUuid, currentRetryCount + 1, errorConfig.getMaxRetries(), retryInterval);
 
         // 更新重试计数
@@ -168,11 +168,11 @@ public class NodeErrorHandler {
         String errorBranchNodeUuid = errorConfig.getErrorBranchNodeUuid();
 
         if (errorBranchNodeUuid == null) {
-            log.warn("未配置错误分支节点，使用终止策略: nodeUuid={}", node.getNodeUuid());
+            log.warn("No error branch node configured, using terminate strategy: nodeUuid={}", node.getNodeUuid());
             return handleStop(node, context, exception);
         }
 
-        log.info("节点执行失败，跳转到错误分支: nodeUuid={}, errorBranch={}",
+        log.info("Node execution failed, jumping to error branch: nodeUuid={}, errorBranch={}",
                 node.getNodeUuid(), errorBranchNodeUuid);
 
         // 设置错误信息到上下文
@@ -236,7 +236,7 @@ public class NodeErrorHandler {
                 }
 
             } catch (Exception e) {
-                log.warn("解析错误配置失败", e);
+                log.warn("Failed to parse error config", e);
             }
         }
 

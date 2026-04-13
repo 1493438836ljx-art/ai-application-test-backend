@@ -170,7 +170,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
     @Override
     @Transactional
     public NodeTypeResponse toggleNodeType(String id, boolean enabled) {
-        log.info("{}节点类型: {}", enabled ? "启用" : "禁用", id);
+        log.info("{} node type: {}", enabled ? "启用" : "禁用", id);
 
         WorkflowNodeTypeEntity entity = nodeTypeMapper.selectById(id);
         if (entity == null) {

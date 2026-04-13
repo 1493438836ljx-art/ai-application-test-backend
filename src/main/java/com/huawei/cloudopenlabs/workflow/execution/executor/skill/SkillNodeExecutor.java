@@ -62,7 +62,7 @@ public class SkillNodeExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行技能节点: nodeUuid={}, nodeName={}, skillId={}",
+        log.info("Executing skill node: nodeUuid={}, nodeName={}, skillId={}",
                 node.getNodeUuid(), node.getName(), node.getSkillId());
 
         long startTime = System.currentTimeMillis();
@@ -93,7 +93,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                     .request(request)
                     .build();
 
-            log.info("通过Kafka发送Skill执行请求: requestId={}, executionType={}",
+            log.info("Sending skill execution request via Kafka: requestId={}, executionType={}",
                     kafkaRequest.getRequestId(), request.getExecutionType());
 
             // 4. 发送请求并等待响应
@@ -115,7 +115,7 @@ public class SkillNodeExecutor implements NodeExecutor {
             // 6. 映射输出参数
             Map<String, Object> outputs = mapOutputs(node, response.getOutputs());
 
-            log.info("技能Node execution completed: nodeUuid={}, skillId={}, durationMs={}",
+            log.info("Skill node execution completed: nodeUuid={}, skillId={}, durationMs={}",
                     node.getNodeUuid(), skillId, durationMs);
 
             return NodeExecutionResult.builder()
@@ -128,7 +128,7 @@ public class SkillNodeExecutor implements NodeExecutor {
         } catch (WorkflowExecutionException e) {
             throw e;
         } catch (java.util.concurrent.TimeoutException e) {
-            log.error("技能节点Execution timeout: nodeUuid={}, skillId={}",
+            log.error("Skill node execution timeout: nodeUuid={}, skillId={}",
                     node.getNodeUuid(), node.getSkillId());
             throw new WorkflowExecutionException(
                     ErrorCode.SKILL_EXECUTION_FAILED,
@@ -137,7 +137,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                     "技能执行超时"
             );
         } catch (Exception e) {
-            log.error("技能Node execution exception: nodeUuid={}, skillId={}",
+            log.error("Skill node execution exception: nodeUuid={}, skillId={}",
                     node.getNodeUuid(), node.getSkillId(), e);
             throw new WorkflowExecutionException(
                     ErrorCode.SKILL_EXECUTION_FAILED,
@@ -193,7 +193,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                 }
 
             } catch (Exception e) {
-                log.warn("解析skillSnapshot失败: {}", e.getMessage());
+                log.warn("Failed to parse skillSnapshot: {}", e.getMessage());
             }
         }
 
@@ -209,16 +209,16 @@ public class SkillNodeExecutor implements NodeExecutor {
                     executionType = configMap.get("executionType").toString();
                 }
             } catch (Exception e) {
-                log.warn("解析节点配置失败", e);
+                log.warn("Failed to parse node config", e);
             }
         }
 
         // 从inputs获取已解析的实际输入值（由ParameterResolver解析）
         log.debug("Building skill execution request: inputs={}", inputs);
 
-        // 如果inputParams为空但inputs有值，直接从inputs构建参数定义
+        // 如果inputParams为空但inputs有值，直接Building parameter definitions from inputs
         if ((inputParams == null || inputParams.isEmpty()) && inputs != null && !inputs.isEmpty()) {
-            log.debug("从inputs构建参数定义");
+            log.debug("Building parameter definitions from inputs");
             inputParams = new ArrayList<>();
             for (Map.Entry<String, Object> entry : inputs.entrySet()) {
                 SkillExecutionRequest.SkillParameterDef param = SkillExecutionRequest.SkillParameterDef.builder()
@@ -247,10 +247,10 @@ public class SkillNodeExecutor implements NodeExecutor {
                 Path path = Paths.get(suitePath);
                 if (Files.exists(path)) {
                     suiteContent = Files.readAllBytes(path);
-                    log.debug("读取执行套件: path={}, size={} bytes", suitePath, suiteContent.length);
+                    log.debug("Reading execution suite: path={}, size={} bytes", suitePath, suiteContent.length);
                 }
             } catch (Exception e) {
-                log.warn("读取执行套件失败: {}", e.getMessage());
+                log.warn("Failed to read execution suite: {}", e.getMessage());
             }
         }
 
@@ -262,7 +262,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                     Path path = Paths.get(skillResponse.getSuitePath());
                     if (Files.exists(path)) {
                         suiteContent = Files.readAllBytes(path);
-                        log.debug("从SkillService读取执行套件: size={} bytes", suiteContent.length);
+                        log.debug("Reading execution suite from SkillService: size={} bytes", suiteContent.length);
                     }
                     // 使用Skill定义的执行类型
                     if (skillResponse.getExecutionType() != null) {
@@ -270,7 +270,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                     }
                 }
             } catch (Exception e) {
-                log.warn("从SkillService获取执行套件失败: {}", e.getMessage());
+                log.warn("Failed to get execution suite from SkillService: {}", e.getMessage());
             }
         }
 
@@ -335,7 +335,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                 }
 
             } catch (Exception e) {
-                log.warn("映射输出参数失败", e);
+                log.warn("Failed to map output parameters", e);
             }
         }
 
@@ -378,7 +378,7 @@ public class SkillNodeExecutor implements NodeExecutor {
                     return ((Number) timeout).longValue();
                 }
             } catch (Exception e) {
-                log.warn("解析超时配置失败", e);
+                log.warn("Failed to parse timeout config", e);
             }
         }
 

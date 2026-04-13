@@ -37,7 +37,7 @@ public class TracingContext {
         String actualTraceId = traceId != null ? traceId : generateTraceId();
         TraceInfo info = new TraceInfo(actualTraceId, generateSpanId(), System.currentTimeMillis());
         TRACE_HOLDER.set(info);
-        log.debug("开始追踪: traceId={}", actualTraceId);
+        log.debug("Starting trace: traceId={}", actualTraceId);
         return info;
     }
 
@@ -70,7 +70,7 @@ public class TracingContext {
     public void endTrace() {
         TraceInfo info = TRACE_HOLDER.get();
         if (info != null) {
-            log.debug("结束追踪: traceId={}, duration={}ms",
+            log.debug("Ending trace: traceId={}, duration={}ms",
                     info.traceId(), info.duration());
         }
         TRACE_HOLDER.remove();
@@ -85,7 +85,7 @@ public class TracingContext {
     public TraceInfo createChildSpan(String operation) {
         TraceInfo parent = getCurrentTrace();
         if (parent == null) {
-            log.warn("无父追踪信息，创建新追踪");
+            log.warn("No parent trace info, creating new trace");
             return startTrace(null);
         }
 
@@ -97,7 +97,7 @@ public class TracingContext {
                 operation
         );
         TRACE_HOLDER.set(childInfo);
-        log.debug("创建子追踪: traceId={}, spanId={}, operation={}",
+        log.debug("Creating child trace: traceId={}, spanId={}, operation={}",
                 parent.traceId(), spanId, operation);
         return childInfo;
     }

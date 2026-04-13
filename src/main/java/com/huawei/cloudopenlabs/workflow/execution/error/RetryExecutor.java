@@ -73,7 +73,7 @@ public class RetryExecutor {
 
                 if (result.isSuccess()) {
                     if (attempt > 1) {
-                        log.info("节点重试成功: nodeUuid={}, attempts={}",
+                        log.info("Node retry succeeded: nodeUuid={}, attempts={}",
                                 node.getNodeUuid(), attempt);
                     }
                     return result;
@@ -82,7 +82,7 @@ public class RetryExecutor {
                 // 执行失败，记录异常
                 lastException = new RuntimeException(result.getErrorMessage());
 
-                log.warn("节点Execution failed: nodeUuid={}, attempt={}/{}, error={}",
+                log.warn("Node execution failed: nodeUuid={}, attempt={}/{}, error={}",
                         node.getNodeUuid(), attempt, maxRetries + 1,
                         result.getErrorMessage());
 
@@ -97,7 +97,7 @@ public class RetryExecutor {
                 // 计算等待时间
                 long waitTime = calculateWaitTime(config, attempt - 1);
 
-                log.info("等待重试: nodeUuid={}, waitMs={}, nextAttempt={}",
+                log.info("Waiting for retry: nodeUuid={}, waitMs={}, nextAttempt={}",
                         node.getNodeUuid(), waitTime, attempt + 1);
 
                 // 等待
@@ -116,7 +116,7 @@ public class RetryExecutor {
         }
 
         // 所有重试都失败
-        log.error("节点执行最终失败: nodeUuid={}, attempts={}, lastError={}",
+        log.error("Node execution ultimately failed: nodeUuid={}, attempts={}, lastError={}",
                 node.getNodeUuid(), attempt,
                 lastException != null ? lastException.getMessage() : "unknown");
 

@@ -210,7 +210,7 @@ public class SkillController {
     @GetMapping("/{id}/download")
     public ResponseEntity<org.springframework.core.io.Resource> downloadSuite(
             @PathVariable String id) {
-        log.info("下载执行套件: {}", id);
+        log.info("Downloading execution suite: {}", id);
         return skillService.downloadSuite(id);
     }
 }

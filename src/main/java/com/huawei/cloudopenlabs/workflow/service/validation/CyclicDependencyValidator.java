@@ -41,7 +41,7 @@ public class CyclicDependencyValidator {
      * @return 验证结果
      */
     public ValidationResult validate(String workflowId) {
-        log.debug("开始循环依赖检测: workflowId={}", workflowId);
+        log.debug("Starting cyclic dependency detection: workflowId={}", workflowId);
         ValidationResult result = new ValidationResult();
         result.setValid(true);
 
@@ -110,7 +110,7 @@ public class CyclicDependencyValidator {
                     null, null);
         }
 
-        log.debug("循环依赖检测完成: workflowId={}, valid={}, hasCycle={}",
+        log.debug("Cyclic dependency detection completed: workflowId={}, valid={}, hasCycle={}",
                 workflowId, result.isValid(), !result.isValid());
 
         return result;

@@ -99,7 +99,7 @@ public class VariableTypeDataInitializer implements CommandLineRunner {
                 sortOrder++
             );
         }
-        log.info("Dictionary子类型初始化完成，共 {} 个", dictionaries.size());
+        log.info("Dictionary subtype initialization completed, total: {}", dictionaries.size());
     }
 
     private void createVariableTypeIfNotExists(String code, String name, String category,

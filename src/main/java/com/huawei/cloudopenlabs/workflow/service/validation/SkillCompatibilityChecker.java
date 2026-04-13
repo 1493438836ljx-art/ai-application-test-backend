@@ -46,7 +46,7 @@ public class SkillCompatibilityChecker {
      * @return 验证结果
      */
     public ValidationResult check(String workflowId) {
-        log.debug("开始 Skill 兼容性检查: workflowId={}", workflowId);
+        log.debug("Starting skill compatibility check: workflowId={}", workflowId);
         ValidationResult result = new ValidationResult();
         result.setValid(true);
 
@@ -62,7 +62,7 @@ public class SkillCompatibilityChecker {
             updateCompatibilityStatus(node, status);
         }
 
-        log.debug("Skill 兼容性检查完成: workflowId={}, valid={}, errors={}",
+        log.debug("Skill compatibility check completed: workflowId={}, valid={}, errors={}",
                 workflowId, result.isValid(), result.getErrors().size());
 
         return result;
@@ -153,7 +153,7 @@ public class SkillCompatibilityChecker {
                 }
             }
         } catch (Exception e) {
-            log.warn("解析输入参数失败: nodeUuid={}", node.getNodeUuid(), e);
+            log.warn("Failed to parse input parameters: nodeUuid={}", node.getNodeUuid(), e);
             result.addError(PARAM_TYPE_MISMATCH,
                     "节点 '" + node.getName() + "' 的输入参数格式错误",
                     node.getNodeUuid(), "inputParams");
@@ -183,7 +183,7 @@ public class SkillCompatibilityChecker {
             // 这里暂时返回 false，实际应该获取当前 Skill 版本进行比较
             return false;
         } catch (Exception e) {
-            log.warn("解析 Skill 快照失败: nodeUuid={}", node.getNodeUuid(), e);
+            log.warn("Failed to parse skill snapshot: nodeUuid={}", node.getNodeUuid(), e);
             return true;
         }
     }
@@ -198,7 +198,7 @@ public class SkillCompatibilityChecker {
         if (!status.name().equals(node.getCompatibilityStatus())) {
             node.setCompatibilityStatus(status.name());
             nodeMapper.updateById(node);
-            log.info("更新节点兼容性状态: nodeUuid={}, status={}", node.getNodeUuid(), status);
+            log.info("Updated node compatibility status: nodeUuid={}, status={}", node.getNodeUuid(), status);
         }
     }
 
@@ -213,7 +213,7 @@ public class SkillCompatibilityChecker {
             return;
         }
         nodeMapper.batchUpdateCompatibilityStatus(nodeIds, status);
-        log.info("批量更新节点兼容性状态: count={}, status={}", nodeIds.size(), status);
+        log.info("Batch updated node compatibility status: count={}, status={}", nodeIds.size(), status);
     }
 
     /**

@@ -76,20 +76,20 @@ public class SkillKafkaService {
             // 等待发送确认
             sendFuture.get(10, TimeUnit.SECONDS);
 
-            log.info("已发送Skill执行请求: requestId={}, nodeUuid={}", requestId, kafkaRequest.getNodeUuid());
+            log.info("Skill execution request sent: requestId={}, nodeUuid={}", requestId, kafkaRequest.getNodeUuid());
 
             // 阻塞等待响应
             return future.get(requestTimeoutMs, TimeUnit.MILLISECONDS);
 
         } catch (TimeoutException e) {
             pendingRequests.remove(requestId);
-            log.error("Skill执行请求超时: requestId={}, nodeUuid={}, timeoutMs={}",
+            log.error("Skill execution request timeout: requestId={}, nodeUuid={}, timeoutMs={}",
                     requestId, kafkaRequest.getNodeUuid(), requestTimeoutMs);
             throw new TimeoutException("SkillExecution timeout: requestId=" + requestId);
 
         } catch (Exception e) {
             pendingRequests.remove(requestId);
-            log.error("Skill执行请求失败: requestId={}, error={}", requestId, e.getMessage());
+            log.error("Skill execution request failed: requestId={}, error={}", requestId, e.getMessage());
             throw e;
         }
     }
@@ -110,7 +110,7 @@ public class SkillKafkaService {
         if (pending != null) {
             pending.getFuture().complete(response);
         } else {
-            log.warn("收到过期的Skill执行响应（无匹配的pending request）: requestId={}", requestId);
+            log.warn("Received expired skill execution response (no matching pending request): requestId={}", requestId);
         }
     }
 
@@ -129,7 +129,7 @@ public class SkillKafkaService {
                 if (removed != null) {
                     removed.getFuture().completeExceptionally(
                             new TimeoutException("Skill执行请求已过期: requestId=" + entry.getKey()));
-                    log.warn("清理过期的Skill执行请求: requestId={}, ageMs={}", entry.getKey(), age);
+                    log.warn("Cleaning up expired skill execution request: requestId={}, ageMs={}", entry.getKey(), age);
                 }
             }
         }

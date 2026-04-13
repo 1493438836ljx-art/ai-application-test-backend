@@ -40,7 +40,7 @@ public class WorkflowNodeController {
     @GetMapping
     public ResponseEntity<List<NodeResponse>> getNodes(
             @PathVariable String workflowId) {
-        log.info("获取工作流节点列表: workflowId={}", workflowId);
+        log.info("Getting workflow node list: workflowId={}", workflowId);
         List<NodeResponse> nodes = nodeService.getNodes(workflowId);
         return ResponseEntity.ok(nodes);
     }
@@ -56,7 +56,7 @@ public class WorkflowNodeController {
     public ResponseEntity<NodeResponse> getNode(
             @PathVariable String workflowId,
             @PathVariable String nodeUuid) {
-        log.info("获取节点详情: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
+        log.info("Getting node details: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         NodeResponse response = nodeService.getNode(workflowId, nodeUuid);
         return ResponseEntity.ok(response);
     }
@@ -72,7 +72,7 @@ public class WorkflowNodeController {
     public ResponseEntity<NodeResponse> createNode(
             @PathVariable String workflowId,
             @Valid @RequestBody NodeCreateRequest request) {
-        log.info("创建节点: workflowId={}, nodeName={}", workflowId, request.getName());
+        log.info("Creating node: workflowId={}, nodeName={}", workflowId, request.getName());
         NodeResponse response = nodeService.createNode(workflowId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -88,7 +88,7 @@ public class WorkflowNodeController {
     public ResponseEntity<Void> batchCreateNodes(
             @PathVariable String workflowId,
             @Valid @RequestBody List<NodeCreateRequest> requests) {
-        log.info("批量创建节点: workflowId={}, count={}", workflowId, requests.size());
+        log.info("Batch creating nodes: workflowId={}, count={}", workflowId, requests.size());
         nodeService.batchCreateNodes(workflowId, requests);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -106,7 +106,7 @@ public class WorkflowNodeController {
             @PathVariable String workflowId,
             @PathVariable String nodeUuid,
             @Valid @RequestBody NodeUpdateRequest request) {
-        log.info("更新节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
+        log.info("Updating node: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         NodeResponse response = nodeService.updateNode(workflowId, nodeUuid, request);
         return ResponseEntity.ok(response);
     }
@@ -122,7 +122,7 @@ public class WorkflowNodeController {
     public ResponseEntity<Void> batchUpdateNodes(
             @PathVariable String workflowId,
             @Valid @RequestBody List<NodeUpdateRequest> requests) {
-        log.info("批量更新节点: workflowId={}, count={}", workflowId, requests.size());
+        log.info("Batch updating nodes: workflowId={}, count={}", workflowId, requests.size());
         nodeService.batchUpdateNodes(workflowId, requests);
         return ResponseEntity.ok().build();
     }
@@ -138,7 +138,7 @@ public class WorkflowNodeController {
     public ResponseEntity<Void> deleteNode(
             @PathVariable String workflowId,
             @PathVariable String nodeUuid) {
-        log.info("删除节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
+        log.info("Deleting node: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
         nodeService.deleteNode(workflowId, nodeUuid);
         return ResponseEntity.noContent().build();
     }
@@ -154,7 +154,7 @@ public class WorkflowNodeController {
     public ResponseEntity<Void> batchDeleteNodes(
             @PathVariable String workflowId,
             @RequestBody List<String> nodeUuids) {
-        log.info("批量删除节点: workflowId={}, count={}", workflowId, nodeUuids.size());
+        log.info("Batch deleting nodes: workflowId={}, count={}", workflowId, nodeUuids.size());
         nodeService.batchDeleteNodes(workflowId, nodeUuids);
         return ResponseEntity.noContent().build();
     }
@@ -168,7 +168,7 @@ public class WorkflowNodeController {
     @GetMapping("/by-skill/{skillId}")
     public ResponseEntity<List<NodeResponse>> getNodesBySkillId(
             @PathVariable String skillId) {
-        log.info("根据Skill查询节点: skillId={}", skillId);
+        log.info("Querying nodes by skill: skillId={}", skillId);
         List<NodeResponse> nodes = nodeService.getNodesBySkillId(skillId);
         return ResponseEntity.ok(nodes);
     }

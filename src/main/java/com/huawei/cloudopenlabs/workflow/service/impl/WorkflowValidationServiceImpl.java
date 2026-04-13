@@ -53,32 +53,32 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
 
     @Override
     public ValidationResult validate(String workflowId) {
-        log.info("开始验证工作流: workflowId={}", workflowId);
+        log.info("Starting workflow validation: workflowId={}", workflowId);
 
         ValidationResult result = new ValidationResult();
         result.setValid(true);
 
         // 1. 结构验证
-        log.debug("执行结构验证...");
+        log.debug("Executing structure validation...");
         ValidationResult structureResult = structureValidator.validate(workflowId);
         result.merge(structureResult);
 
         // 2. 循环依赖检测
-        log.debug("执行循环依赖检测...");
+        log.debug("Executing cyclic dependency detection...");
         ValidationResult cycleResult = cyclicDependencyValidator.validate(workflowId);
         result.merge(cycleResult);
 
         // 3. 参数引用验证
-        log.debug("执行参数引用验证...");
+        log.debug("Executing parameter reference validation...");
         ValidationResult paramRefResult = validateParameterReferences(workflowId);
         result.merge(paramRefResult);
 
         // 4. Skill 兼容性检查
-        log.debug("执行 Skill 兼容性检查...");
+        log.debug("Executing skill compatibility check...");
         ValidationResult skillResult = skillCompatibilityChecker.check(workflowId);
         result.merge(skillResult);
 
-        log.info("工作流验证完成: workflowId={}, valid={}, errors={}, warnings={}",
+        log.info("Workflow validation completed: workflowId={}, valid={}, errors={}, warnings={}",
                 workflowId, result.isValid(), result.getErrors().size(), result.getWarnings().size());
 
         return result;
@@ -88,7 +88,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
      * 快速验证（仅结构和循环）
      */
     public ValidationResult quickValidate(String workflowId) {
-        log.info("快速验证工作流: workflowId={}", workflowId);
+        log.info("Quick workflow validation: workflowId={}", workflowId);
 
         ValidationResult result = new ValidationResult();
         result.setValid(true);
@@ -250,7 +250,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
                         }
                     }
                 } catch (Exception e) {
-                    log.warn("解析输出参数失败: nodeUuid={}", predecessor.getNodeUuid(), e);
+                    log.warn("Failed to parse output parameters: nodeUuid={}", predecessor.getNodeUuid(), e);
                 }
             }
         }
@@ -312,7 +312,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
                     .map(this::convertToResponse)
                     .collect(Collectors.toList());
         } catch (IllegalStateException e) {
-            log.warn("获取执行顺序失败: {}", e.getMessage());
+            log.warn("Failed to get execution order: {}", e.getMessage());
             throw e;
         }
     }
@@ -389,7 +389,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
                 }
             }
         } catch (Exception e) {
-            log.warn("解析输出参数失败: nodeUuid={}", node.getNodeUuid(), e);
+            log.warn("Failed to parse output parameters: nodeUuid={}", node.getNodeUuid(), e);
         }
 
         return false;

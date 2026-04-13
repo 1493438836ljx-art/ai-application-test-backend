@@ -43,14 +43,14 @@ public class SimpleConditionExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行简单条件节点: nodeUuid={}, nodeName={}",
+        log.info("Executing simple condition node: nodeUuid={}, nodeName={}",
                 node.getNodeUuid(), node.getName());
 
         try {
             // 1. 获取条件配置
             String conditionsJson = node.getConditions();
             if (conditionsJson == null || conditionsJson.isEmpty()) {
-                log.warn("简单条件节点没有配置条件表达式: nodeUuid={}", node.getNodeUuid());
+                log.warn("Simple condition node has no condition expression configured: nodeUuid={}", node.getNodeUuid());
                 return NodeExecutionResult.failure("条件表达式未配置");
             }
 
@@ -72,7 +72,7 @@ public class SimpleConditionExecutor implements NodeExecutor {
             outputs.put("condition_result", result);
             outputs.put("branch", branchLabel);
 
-            log.info("简单条件Node execution completed: nodeUuid={}, branch={}, nextNodes={}",
+            log.info("Simple condition node execution completed: nodeUuid={}, branch={}, nextNodes={}",
                     node.getNodeUuid(), branchLabel, nextNodes);
 
             return NodeExecutionResult.builder()
@@ -82,7 +82,7 @@ public class SimpleConditionExecutor implements NodeExecutor {
                     .build();
 
         } catch (Exception e) {
-            log.error("简单条件Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("Simple condition node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             return NodeExecutionResult.failure(
                     "条件评估异常: " + e.getMessage(),
                     e instanceof Exception ? (Exception) e : new RuntimeException(e)

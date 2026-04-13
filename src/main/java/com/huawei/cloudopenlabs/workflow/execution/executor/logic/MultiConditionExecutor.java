@@ -43,14 +43,14 @@ public class MultiConditionExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行多路条件节点: nodeUuid={}, nodeName={}",
+        log.info("Executing multi-condition node: nodeUuid={}, nodeName={}",
                 node.getNodeUuid(), node.getName());
 
         try {
             // 1. 获取多条件配置
             String conditionsJson = node.getConditions();
             if (conditionsJson == null || conditionsJson.isEmpty()) {
-                log.warn("多路条件节点没有配置条件: nodeUuid={}", node.getNodeUuid());
+                log.warn("Multi-condition node has no conditions configured: nodeUuid={}", node.getNodeUuid());
                 return NodeExecutionResult.failure("多条件配置未配置");
             }
 
@@ -62,11 +62,11 @@ public class MultiConditionExecutor implements NodeExecutor {
             );
 
             if (matchedBranchId == null) {
-                log.warn("多路条件节点没有匹配的分支: nodeUuid={}", node.getNodeUuid());
+                log.warn("Multi-condition node has no matching branch: nodeUuid={}", node.getNodeUuid());
                 matchedBranchId = "default";
             }
 
-            log.info("多路条件匹配: nodeUuid={}, matchedBranchId={}",
+            log.info("Multi-condition matched: nodeUuid={}, matchedBranchId={}",
                     node.getNodeUuid(), matchedBranchId);
 
             // 3. 获取对应分支的目标节点
@@ -76,7 +76,7 @@ public class MultiConditionExecutor implements NodeExecutor {
             Map<String, Object> outputs = new HashMap<>();
             outputs.put("matched_branch", matchedBranchId);
 
-            log.info("多路条件Node execution completed: nodeUuid={}, matchedBranch={}, nextNodes={}",
+            log.info("Multi-condition node execution completed: nodeUuid={}, matchedBranch={}, nextNodes={}",
                     node.getNodeUuid(), matchedBranchId, nextNodes);
 
             return NodeExecutionResult.builder()
@@ -86,7 +86,7 @@ public class MultiConditionExecutor implements NodeExecutor {
                     .build();
 
         } catch (Exception e) {
-            log.error("多路条件Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("Multi-condition node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             return NodeExecutionResult.failure(
                     "多条件评估异常: " + e.getMessage(),
                     e instanceof Exception ? (Exception) e : new RuntimeException(e)

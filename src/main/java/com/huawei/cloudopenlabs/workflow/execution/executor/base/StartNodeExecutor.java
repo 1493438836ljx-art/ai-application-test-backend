@@ -44,7 +44,7 @@ public class StartNodeExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行开始节点: nodeUuid={}, nodeName={}", node.getNodeUuid(), node.getName());
+        log.info("Executing start node: nodeUuid={}, nodeName={}", node.getNodeUuid(), node.getName());
 
         Map<String, Object> outputs = new HashMap<>();
 
@@ -82,7 +82,7 @@ public class StartNodeExecutor implements NodeExecutor {
 
                     if (value != null) {
                         outputs.put(paramName, value);
-                        log.debug("开始节点参数: {} = {}", paramName, value);
+                        log.debug("Start node parameter: {} = {}", paramName, value);
                     }
                 }
             }
@@ -90,14 +90,14 @@ public class StartNodeExecutor implements NodeExecutor {
             // 将开始节点的输出设置到全局变量
             outputs.forEach((key, value) -> context.setGlobalVariable(key, value));
 
-            log.info("开始Node execution completed: nodeUuid={}, outputs={}", node.getNodeUuid(), outputs.keySet());
+            log.info("Start node execution completed: nodeUuid={}, outputs={}", node.getNodeUuid(), outputs.keySet());
 
             return NodeExecutionResult.success(outputs);
 
         } catch (WorkflowExecutionException e) {
             throw e;
         } catch (Exception e) {
-            log.error("开始Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("Start node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             throw new WorkflowExecutionException(
                     ErrorCode.NODE_EXECUTION_FAILED,
                     node.getNodeUuid(),

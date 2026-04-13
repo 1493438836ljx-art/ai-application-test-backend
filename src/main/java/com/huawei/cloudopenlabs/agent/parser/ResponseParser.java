@@ -84,7 +84,7 @@ public class ResponseParser {
             JsonNode root = objectMapper.readTree(jsonContent);
             return parseAgentPlan(root);
         } catch (Exception e) {
-            log.error("解析 JSON 失败: {}", jsonContent.substring(0, Math.min(200, jsonContent.length())), e);
+            log.error("Failed to parse JSON: {}", jsonContent.substring(0, Math.min(200, jsonContent.length())), e);
             throw new ResponseParseException("JSON 解析失败: " + e.getMessage(), response, e);
         }
     }
@@ -99,7 +99,7 @@ public class ResponseParser {
         try {
             return parse(response);
         } catch (ResponseParseException e) {
-            log.warn("响应解析失败，返回 parse_error 状态: {}", e.getMessage());
+            log.warn("Response parsing failed, returning parse_error status: {}", e.getMessage());
             return AgentPlan.builder()
                     .status(AgentPlan.STATUS_PARSE_ERROR)
                     .reasoning("响应格式解析失败: " + e.getMessage())
@@ -122,7 +122,7 @@ public class ResponseParser {
         Matcher blockMatcher = JSON_BLOCK_PATTERN.matcher(response);
         if (blockMatcher.find()) {
             String extracted = blockMatcher.group(1).trim();
-            log.debug("从代码块中提取到 JSON，长度: {}", extracted.length());
+            log.debug("Extracted JSON from code block, length: {}", extracted.length());
             return extracted;
         }
 
@@ -130,11 +130,11 @@ public class ResponseParser {
         Matcher objectMatcher = JSON_OBJECT_PATTERN.matcher(response);
         if (objectMatcher.find()) {
             String extracted = objectMatcher.group();
-            log.debug("直接提取到 JSON 对象，长度: {}", extracted.length());
+            log.debug("Directly extracted JSON object, length: {}", extracted.length());
             return extracted;
         }
 
-        log.debug("未能提取到 JSON 内容");
+        log.debug("Failed to extract JSON content");
         return null;
     }
 
@@ -219,7 +219,7 @@ public class ResponseParser {
 
             // 默认为解析错误
             default:
-                log.warn("未知的状态值: {}，将视为解析错误", status);
+                log.warn("Unknown status value: {}, treating as parse error", status);
                 return AgentPlan.STATUS_PARSE_ERROR;
         }
     }
@@ -244,10 +244,10 @@ public class ResponseParser {
                 if (query.getPath() != null && !query.getPath().isBlank()) {
                     queries.add(query);
                 } else {
-                    log.warn("跳过无效查询（缺少 path）: {}", queryNode);
+                    log.warn("Skipping invalid query (missing path): {}", queryNode);
                 }
             } catch (Exception e) {
-                log.warn("解析查询失败: {}", queryNode, e);
+                log.warn("Failed to parse query: {}", queryNode, e);
             }
         }
 
@@ -274,10 +274,10 @@ public class ResponseParser {
                 if (action.getPath() != null && !action.getPath().isBlank()) {
                     actions.add(action);
                 } else {
-                    log.warn("跳过无效操作（缺少 path）: {}", actionNode);
+                    log.warn("Skipping invalid action (missing path): {}", actionNode);
                 }
             } catch (Exception e) {
-                log.warn("解析操作失败: {}", actionNode, e);
+                log.warn("Failed to parse action: {}", actionNode, e);
             }
         }
 

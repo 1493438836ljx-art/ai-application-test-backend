@@ -72,7 +72,7 @@ public class ContextBuilder {
         String context = sb.toString();
         if (properties.isTruncationEnabled() && context.length() > properties.getMaxLength()) {
             context = emergencyTruncate(context, properties.getMaxLength());
-            log.info("上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
+            log.info("Context truncated: originalLength={}, truncatedLength={}", sb.length(), context.length());
         }
 
         return context;
@@ -120,7 +120,7 @@ public class ContextBuilder {
         String context = sb.toString();
         if (properties.isTruncationEnabled() && context.length() > properties.getMaxLength()) {
             context = emergencyTruncate(context, properties.getMaxLength());
-            log.info("带结果上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
+            log.info("Context with results truncated: originalLength={}, truncatedLength={}", sb.length(), context.length());
         }
 
         return context;
@@ -143,7 +143,7 @@ public class ContextBuilder {
             return jsonContent;
         }
 
-        log.debug("{}内容过长，进行截断: originalLength={}, 最大长度={}", label, jsonContent.length(), maxLength);
+        log.debug("{} content too long, truncating: originalLength={}, maxLength={}", label, jsonContent.length(), maxLength);
         return jsonContent.substring(0, maxLength) + "\n...(内容已截断)";
     }
 
@@ -198,7 +198,7 @@ public class ContextBuilder {
         try {
             return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (JsonProcessingException e) {
-            log.warn("JSON 解析失败: {}", e.getMessage());
+            log.warn("JSON parsing failed: {}", e.getMessage());
             return new HashMap<>();
         }
     }

@@ -95,7 +95,7 @@ public class AgentOrchestrator {
         this.contextProperties = contextProperties;
         this.objectMapper = objectMapper;
 
-        log.info("AgentOrchestrator 初始化完成: maxRounds={}, maxParseErrors={}",
+        log.info("AgentOrchestrator initialized: maxRounds={}, maxParseErrors={}",
                 MAX_ROUNDS, MAX_PARSE_ERRORS);
     }
 
@@ -120,11 +120,11 @@ public class AgentOrchestrator {
         String sessionId = normalizeSessionId(conversationId);
         long startTime = System.currentTimeMillis();
 
-        log.info("开始处理消息流: sessionId={}, workflowId={}", sessionId, workflowId);
+        log.info("Starting message stream processing: sessionId={}, workflowId={}", sessionId, workflowId);
 
         // 获取锁
         if (!lockService.tryLock(sessionId)) {
-            log.warn("会话正在处理中，拒绝请求: sessionId={}", sessionId);
+            log.warn("Session is processing, rejecting request: sessionId={}", sessionId);
             callback.onError("会话正在处理中，请稍后重试");
             return;
         }
@@ -136,7 +136,7 @@ public class AgentOrchestrator {
             // 首次会话，准备 Skill
             if (session.getRoundCount() == null || session.getRoundCount() == 0) {
                 String skillDir = skillManager.prepareSkill(sessionId);
-                log.info("首次会话，Skill 目录已准备: {}", skillDir);
+                log.info("First session, skill directory prepared: {}", skillDir);
             }
 
             // 发送开始事件
@@ -149,7 +149,7 @@ public class AgentOrchestrator {
             processRound(session, context, callback, true, startTime);
 
         } catch (Exception e) {
-            log.error("处理消息流异常: sessionId={}, error={}", sessionId, e.getMessage(), e);
+            log.error("Message stream processing exception: sessionId={}, error={}", sessionId, e.getMessage(), e);
             callback.onError("处理消息失败: " + e.getMessage());
         } finally {
             lockService.unlock(sessionId);
@@ -234,13 +234,13 @@ public class AgentOrchestrator {
                     },
                     // 错误回调
                     error -> {
-                        log.error("CLI 执行error: {}", error.getMessage());
+                        log.error("CLI execution error: {}", error.getMessage());
                         callback.onError("Execution failed: " + error.getMessage());
                     }
             );
 
         } catch (ClaudeCliException e) {
-            log.error("CLI 执行异常: sessionId={}, error={}", session.getConversationId(), e.getMessage());
+            log.error("CLI execution exception: sessionId={}, error={}", session.getConversationId(), e.getMessage());
             callback.onError("CLI Execution failed: " + e.getMessage());
         }
     }
@@ -254,7 +254,7 @@ public class AgentOrchestrator {
             StreamCallback callback,
             long startTime) {
 
-        log.info("Agent 计划: status={}, queries={}, actions={}",
+        log.info("Agent plan: status={}, queries={}, actions={}",
                 plan.getStatus(),
                 plan.getQueries() != null ? plan.getQueries().size() : 0,
                 plan.getActions() != null ? plan.getActions().size() : 0);
@@ -273,7 +273,7 @@ public class AgentOrchestrator {
                 break;
 
             default:
-                log.warn("未知的状态: {}, 视为解析错误", plan.getStatus());
+                log.warn("Unknown status: {}, treating as parse error", plan.getStatus());
                 handleParseError(session,
                         new ResponseParseException("未知状态: " + plan.getStatus()),
                         callback, startTime);
@@ -350,7 +350,7 @@ public class AgentOrchestrator {
             log.error("Action execution exception: {}", e.getMessage(), e);
             callback.onError("操作Execution failed: " + e.getMessage());
         } catch (Exception e) {
-            log.error("操作处理异常: {}", e.getMessage(), e);
+            log.error("Action processing exception: {}", e.getMessage(), e);
             callback.onError("操作处理失败: " + e.getMessage());
         }
     }
@@ -366,7 +366,7 @@ public class AgentOrchestrator {
 
         long duration = System.currentTimeMillis() - startTime;
 
-        log.info("Agent 任务完成: sessionId={}, duration={}ms",
+        log.info("Agent task completed: sessionId={}, duration={}ms",
                 session.getConversationId(), duration);
 
         // 更新会话状态
@@ -395,13 +395,13 @@ public class AgentOrchestrator {
         sessionService.updateParseErrorCount(session.getConversationId(), parseErrorCount);
 
         if (parseErrorCount > MAX_PARSE_ERRORS) {
-            log.error("解析错误次数超过限制: sessionId={}, count={}", session.getConversationId(), parseErrorCount);
+            log.error("Parse error count exceeded limit: sessionId={}, count={}", session.getConversationId(), parseErrorCount);
             sessionService.markAsError(session.getConversationId(), "AI 响应格式持续异常");
             callback.onError("AI 响应格式持续异常，请重试或联系管理员");
             return;
         }
 
-        log.warn("解析错误，准备重试: sessionId={}, count={}/{}",
+        log.warn("Parse error, preparing to retry: sessionId={}, count={}/{}",
                 session.getConversationId(), parseErrorCount, MAX_PARSE_ERRORS);
 
         // 构建错误提示上下文重试
@@ -474,7 +474,7 @@ public class AgentOrchestrator {
          * @param result 更新结果
          */
         default void onWorkflowUpdate(Object result) {
-            log.debug("工作流更新: {}", result);
+            log.debug("Workflow update: {}", result);
         }
 
         /**
@@ -484,7 +484,7 @@ public class AgentOrchestrator {
          * @param duration  执行耗时（毫秒）
          */
         default void onDone(String sessionId, Long duration) {
-            log.debug("流式会话完成: sessionId={}, duration={}ms", sessionId, duration);
+            log.debug("Streaming session completed: sessionId={}, duration={}ms", sessionId, duration);
         }
 
         /**
@@ -542,7 +542,7 @@ public class AgentOrchestrator {
                 actionCount = actions.size();
             }
         } catch (Exception e) {
-            log.debug("解析会话结果计数失败: {}", e.getMessage());
+            log.debug("Failed to parse session result count: {}", e.getMessage());
         }
 
         return new SessionSummary(

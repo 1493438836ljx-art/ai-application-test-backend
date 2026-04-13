@@ -61,7 +61,7 @@ public class StateManager {
                                       Map<String, Object> outputData) {
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);
         if (execution == null) {
-            log.warn("执行记录不存在: executionId={}", executionId);
+            log.warn("Execution record not found: executionId={}", executionId);
             return;
         }
 
@@ -75,7 +75,7 @@ public class StateManager {
             try {
                 execution.setOutputData(objectMapper.writeValueAsString(outputData));
             } catch (JsonProcessingException e) {
-                log.error("序列化输出数据失败", e);
+                log.error("Failed to serialize output data", e);
             }
         }
 
@@ -93,7 +93,7 @@ public class StateManager {
         }
 
         executionMapper.updateById(execution);
-        log.info("工作流状态已更新: executionId={}, status={}, progress={}%",
+        log.info("Workflow state updated: executionId={}, status={}, progress={}%",
                 executionId, status, execution.getProgress());
     }
 
@@ -130,7 +130,7 @@ public class StateManager {
         // 更新工作流进度
         updateWorkflowProgress(executionId);
 
-        log.info("节点状态已更新: executionId={}, nodeUuid={}, status={}",
+        log.info("Node state updated: executionId={}, nodeUuid={}, status={}",
                 executionId, nodeUuid, status);
     }
 
@@ -163,7 +163,7 @@ public class StateManager {
                     }
                 }
             } catch (Exception e) {
-                log.error("解析节点执行状态失败", e);
+                log.error("Failed to parse node execution state", e);
             }
         }
 
@@ -191,7 +191,7 @@ public class StateManager {
                     }
                 }
             } catch (Exception e) {
-                log.error("解析节点执行状态失败", e);
+                log.error("Failed to parse node execution state", e);
             }
         }
 
@@ -238,7 +238,7 @@ public class StateManager {
                     }
                 }
             } catch (Exception e) {
-                log.error("解析节点输出失败", e);
+                log.error("Failed to parse node outputs", e);
             }
         }
 
@@ -254,7 +254,7 @@ public class StateManager {
         nodeStatusCache.keySet().removeIf(key -> key.startsWith(prefix));
         nodeOutputCache.keySet().removeIf(key -> key.startsWith(prefix));
 
-        log.debug("清除执行缓存: executionId={}", executionId);
+        log.debug("Cleared execution cache: executionId={}", executionId);
     }
 
     /**
@@ -271,7 +271,7 @@ public class StateManager {
             execution.setOutputData(objectMapper.writeValueAsString(outputs));
             executionMapper.updateById(execution);
         } catch (JsonProcessingException e) {
-            log.error("序列化输出数据失败", e);
+            log.error("Failed to serialize output data", e);
         }
     }
 
@@ -344,7 +344,7 @@ public class StateManager {
             executionMapper.updateById(execution);
 
         } catch (Exception e) {
-            log.error("更新节点执行详情失败: executionId={}, nodeUuid={}", executionId, nodeUuid, e);
+            log.error("Failed to update node execution details: executionId={}, nodeUuid={}", executionId, nodeUuid, e);
         }
     }
 
@@ -376,7 +376,7 @@ public class StateManager {
             executionMapper.updateById(execution);
 
         } catch (Exception e) {
-            log.error("更新工作流进度失败: executionId={}", executionId, e);
+            log.error("Failed to update workflow progress: executionId={}", executionId, e);
         }
     }
 }

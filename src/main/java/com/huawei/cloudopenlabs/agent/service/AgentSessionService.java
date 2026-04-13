@@ -150,7 +150,7 @@ public class AgentSessionService {
     public void updateActionResults(String conversationId, Map<String, Object> actionResults) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法更新操作结果: conversationId={}", conversationId);
+            log.warn("Session not found, cannot update action result: conversationId={}", conversationId);
             return;
         }
 
@@ -164,7 +164,7 @@ public class AgentSessionService {
         session.setRoundCount(session.getRoundCount() + 1);
         sessionMapper.updateById(session);
 
-        log.info("更新操作结果: conversationId={}, roundCount={}", conversationId, session.getRoundCount());
+        log.info("Updated action result: conversationId={}, roundCount={}", conversationId, session.getRoundCount());
     }
 
     /**
@@ -177,7 +177,7 @@ public class AgentSessionService {
     public void updateLastReasoning(String conversationId, String reasoning) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法更新推理内容: conversationId={}", conversationId);
+            log.warn("Session not found, cannot update reasoning content: conversationId={}", conversationId);
             return;
         }
 
@@ -195,7 +195,7 @@ public class AgentSessionService {
     public void markAsCompleted(String conversationId) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法标记完成: conversationId={}", conversationId);
+            log.warn("Session not found, cannot mark completed: conversationId={}", conversationId);
             return;
         }
 
@@ -203,7 +203,7 @@ public class AgentSessionService {
         session.setStatus("COMPLETED");
         sessionMapper.updateById(session);
 
-        log.info("会话标记为完成: conversationId={}", conversationId);
+        log.info("Session marked as completed: conversationId={}", conversationId);
     }
 
     /**
@@ -217,7 +217,7 @@ public class AgentSessionService {
     public AgentSessionEntity updateConversationId(String oldConversationId, String newConversationId) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(oldConversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法更新 conversationId: oldId={}", oldConversationId);
+            log.warn("Session not found, cannot update conversationId: oldId={}", oldConversationId);
             return null;
         }
 
@@ -226,7 +226,7 @@ public class AgentSessionService {
         session.setConversationId(newConversationId);
         sessionMapper.updateById(session);
 
-        log.info("更新会话 conversationId: {} -> {}", oldId, newConversationId);
+        log.info("Updated session conversationId: {} -> {}", oldId, newConversationId);
         return session;
     }
 
@@ -240,7 +240,7 @@ public class AgentSessionService {
     public void markAsError(String conversationId, String errorMessage) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法标记error: conversationId={}", conversationId);
+            log.warn("Session not found, cannot mark error: conversationId={}", conversationId);
             return;
         }
 
@@ -250,7 +250,7 @@ public class AgentSessionService {
         session.setLastReasoning("ERROR: " + errorMessage);
         sessionMapper.updateById(session);
 
-        log.info("会话标记为error: conversationId={}, error={}", conversationId, errorMessage);
+        log.info("Session marked as error: conversationId={}, error={}", conversationId, errorMessage);
     }
 
     /**
@@ -263,7 +263,7 @@ public class AgentSessionService {
     public void updateRoundCount(String conversationId, int roundCount) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法更新轮次计数: conversationId={}", conversationId);
+            log.warn("Session not found, cannot update round count: conversationId={}", conversationId);
             return;
         }
 
@@ -271,7 +271,7 @@ public class AgentSessionService {
         session.setRoundCount(roundCount);
         sessionMapper.updateById(session);
 
-        log.debug("更新轮次计数: conversationId={}, roundCount={}", conversationId, roundCount);
+        log.debug("Updated round count: conversationId={}, roundCount={}", conversationId, roundCount);
     }
 
     /**
@@ -284,7 +284,7 @@ public class AgentSessionService {
     public void updateParseErrorCount(String conversationId, int parseErrorCount) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法更新解析错误计数: conversationId={}", conversationId);
+            log.warn("Session not found, cannot update parse error count: conversationId={}", conversationId);
             return;
         }
 
@@ -292,7 +292,7 @@ public class AgentSessionService {
         session.setParseErrorCount(parseErrorCount);
         sessionMapper.updateById(session);
 
-        log.debug("更新解析错误计数: conversationId={}, parseErrorCount={}", conversationId, parseErrorCount);
+        log.debug("Updated parse error count: conversationId={}, parseErrorCount={}", conversationId, parseErrorCount);
     }
 
     /**
@@ -305,7 +305,7 @@ public class AgentSessionService {
     public void setStartTime(String conversationId, Long startTime) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法设置开始时间: conversationId={}", conversationId);
+            log.warn("Session not found, cannot set start time: conversationId={}", conversationId);
             return;
         }
 
@@ -313,7 +313,7 @@ public class AgentSessionService {
         session.setStartTime(startTime);
         sessionMapper.updateById(session);
 
-        log.debug("设置开始时间: conversationId={}, startTime={}", conversationId, startTime);
+        log.debug("Set start time: conversationId={}, startTime={}", conversationId, startTime);
     }
 
     /**
@@ -326,7 +326,7 @@ public class AgentSessionService {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isPresent()) {
             sessionMapper.deleteById(sessionOpt.get().getId());
-            log.info("删除会话: conversationId={}", conversationId);
+            log.info("Deleted session: conversationId={}", conversationId);
         }
     }
 
@@ -342,7 +342,7 @@ public class AgentSessionService {
         try {
             return objectMapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
-            log.error("Map转JSON失败: {}", e.getMessage());
+            log.error("Failed to convert Map to JSON: {}", e.getMessage());
             return "{}";
         }
     }
@@ -357,7 +357,7 @@ public class AgentSessionService {
         try {
             return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (JsonProcessingException e) {
-            log.error("JSON转Map失败: {}", e.getMessage());
+            log.error("Failed to convert JSON to Map: {}", e.getMessage());
             return new HashMap<>();
         }
     }

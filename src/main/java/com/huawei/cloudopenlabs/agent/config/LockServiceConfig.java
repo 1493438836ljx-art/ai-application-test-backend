@@ -26,7 +26,7 @@ public class LockServiceConfig {
     @Bean
     @ConditionalOnMissingBean(LockService.class)
     public LockService localLockService() {
-        log.info("使用本地锁服务 (单机模式)");
+        log.info("Using local lock service (standalone mode)");
         return new LocalLockService();
     }
 }

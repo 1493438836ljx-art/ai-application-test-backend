@@ -96,7 +96,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
         }
 
         nodeMapper.insert(node);
-        log.info("创建节点成功: workflowId={}, nodeUuid={}", workflowId, node.getNodeUuid());
+        log.info("Node created successfully: workflowId={}, nodeUuid={}", workflowId, node.getNodeUuid());
 
         return convertToResponse(node);
     }
@@ -176,7 +176,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
         }
 
         nodeMapper.updateById(node);
-        log.info("更新节点成功: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
+        log.info("Node updated successfully: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
 
         return convertToResponse(node);
     }
@@ -201,7 +201,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
 
         // 删除节点
         nodeMapper.deleteById(node.getId());
-        log.info("删除节点成功: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
+        log.info("Node deleted successfully: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
     }
 
     // ========== 批量操作 ==========
@@ -215,7 +215,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
         for (NodeCreateRequest request : requests) {
             createNode(workflowId, request);
         }
-        log.info("批量创建节点成功: workflowId={}, count={}", workflowId, requests.size());
+        log.info("Batch created nodes successfully: workflowId={}, count={}", workflowId, requests.size());
     }
 
     @Override
@@ -227,7 +227,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
         for (NodeUpdateRequest request : requests) {
             updateNode(workflowId, request.getNodeUuid(), request);
         }
-        log.info("批量更新节点成功: workflowId={}, count={}", workflowId, requests.size());
+        log.info("Batch updated nodes successfully: workflowId={}, count={}", workflowId, requests.size());
     }
 
     @Override
@@ -239,7 +239,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
         for (String nodeUuid : nodeUuids) {
             deleteNode(workflowId, nodeUuid);
         }
-        log.info("批量删除节点成功: workflowId={}, count={}", workflowId, nodeUuids.size());
+        log.info("Batch deleted nodes successfully: workflowId={}, count={}", workflowId, nodeUuids.size());
     }
 
     // ========== 查询 ==========
@@ -259,7 +259,7 @@ public class WorkflowNodeServiceImpl implements WorkflowNodeService {
             return;
         }
         nodeMapper.batchUpdateCompatibilityStatus(nodeIds, status);
-        log.info("批量更新节点兼容性状态成功: count={}, status={}", nodeIds.size(), status);
+        log.info("Batch updated node compatibility status successfully: count={}, status={}", nodeIds.size(), status);
     }
 
     // ========== 私有方法 ==========

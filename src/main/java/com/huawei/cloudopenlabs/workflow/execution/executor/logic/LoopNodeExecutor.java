@@ -63,7 +63,7 @@ public class LoopNodeExecutor implements NodeExecutor {
             List<WorkflowNodeEntity> bodyNodes = getLoopBodyNodes(node, context);
 
             if (bodyNodes.isEmpty()) {
-                log.warn("循环体为空: nodeUuid={}", node.getNodeUuid());
+                log.warn("Loop body is empty: nodeUuid={}", node.getNodeUuid());
                 return NodeExecutionResult.success();
             }
 
@@ -136,7 +136,7 @@ public class LoopNodeExecutor implements NodeExecutor {
                 }
 
             } catch (Exception e) {
-                log.warn("解析循环配置失败，using default config", e);
+                log.warn("Failed to parse loop config, using default config", e);
             }
         }
 
@@ -153,7 +153,7 @@ public class LoopNodeExecutor implements NodeExecutor {
         int times = config.getTimes() != null ? config.getTimes() : 1;
         List<Object> results = new ArrayList<>();
 
-        log.info("开始计数循环: times={}", times);
+        log.info("Starting count loop: times={}", times);
 
         for (int i = 0; i <= times; i++) {
             // 进入循环上下文
@@ -166,7 +166,7 @@ public class LoopNodeExecutor implements NodeExecutor {
             // 退出循环上下文
             context.exitLoop();
 
-            log.debug("循环迭代完成: index={}/{}", i, times);
+            log.debug("Loop iteration completed: index={}/{}", i, times);
         }
 
         return results;
@@ -183,13 +183,13 @@ public class LoopNodeExecutor implements NodeExecutor {
         List<?> items = resolveArraySource(config.getArraySource(), context);
 
         if (items == null || items.isEmpty()) {
-            log.warn("数组为空，跳过循环: nodeUuid={}", node.getNodeUuid());
+            log.warn("Array is empty, skipping loop: nodeUuid={}", node.getNodeUuid());
             return Collections.emptyList();
         }
 
         List<Object> results = new ArrayList<>();
 
-        log.info("开始数组遍历循环: itemsCount={}", items.size());
+        log.info("Starting array iteration loop: itemsCount={}", items.size());
 
         for (int i = 0; i <= items.size(); i++) {
             Object currentItem = items.get(i - 1);
@@ -208,7 +208,7 @@ public class LoopNodeExecutor implements NodeExecutor {
             // 退出循环上下文
             context.exitLoop();
 
-            log.debug("循环迭代完成: index={}/{}, item={}",
+            log.debug("Loop iteration completed: index={}/{}, item={}",
                     i, items.size(), currentItem);
         }
 
@@ -228,7 +228,7 @@ public class LoopNodeExecutor implements NodeExecutor {
         int iteration = 0;
         boolean conditionMet = true;
 
-        log.info("开始条件循环: maxIterations={}", maxIterations);
+        log.info("Starting condition loop: maxIterations={}", maxIterations);
 
         while (conditionMet && iteration < maxIterations) {
             // 评估循环条件
@@ -237,7 +237,7 @@ public class LoopNodeExecutor implements NodeExecutor {
             }
 
             if (!conditionMet) {
-                log.debug("循环条件不满足，退出循环: iteration={}", iteration);
+                log.debug("Loop condition not satisfied, exiting loop: iteration={}", iteration);
                 break;
             }
 
@@ -253,11 +253,11 @@ public class LoopNodeExecutor implements NodeExecutor {
             // 退出循环上下文
             context.exitLoop();
 
-            log.debug("条件循环迭代完成: iteration={}", iteration);
+            log.debug("Condition loop iteration completed: iteration={}", iteration);
         }
 
         if (iteration >= maxIterations) {
-            log.warn("条件循环达到最大迭代次数限制: maxIterations={}", maxIterations);
+            log.warn("Condition loop reached max iterations limit: maxIterations={}", maxIterations);
         }
 
         return results;
@@ -272,7 +272,7 @@ public class LoopNodeExecutor implements NodeExecutor {
         for (WorkflowNodeEntity bodyNode : bodyNodes) {
             try {
                 if (executorRegistry == null || !executorRegistry.hasExecutor(bodyNode.getType())) {
-                    log.warn("没有找到节点执行器: type={}", bodyNode.getType());
+                    log.warn("Node executor not found: type={}", bodyNode.getType());
                     continue;
                 }
 
@@ -291,7 +291,7 @@ public class LoopNodeExecutor implements NodeExecutor {
                     context.setNodeOutputs(bodyNode.getNodeUuid(), result.getOutputs());
                 } else {
                     // 循环体内节点执行失败处理
-                    log.error("循环体节点Execution failed: nodeUuid={}, error={}",
+                    log.error("Loop body node execution failed: nodeUuid={}, error={}",
                             bodyNode.getNodeUuid(), result.getErrorMessage());
                     throw new WorkflowExecutionException(
                             ErrorCode.NODE_EXECUTION_FAILED,
@@ -302,7 +302,7 @@ public class LoopNodeExecutor implements NodeExecutor {
                 }
 
             } catch (Exception e) {
-                log.error("循环体Node execution exception: nodeUuid={}", bodyNode.getNodeUuid(), e);
+                log.error("Loop body node execution exception: nodeUuid={}", bodyNode.getNodeUuid(), e);
                 throw new WorkflowExecutionException(
                         ErrorCode.NODE_EXECUTION_FAILED,
                         bodyNode.getNodeUuid(),

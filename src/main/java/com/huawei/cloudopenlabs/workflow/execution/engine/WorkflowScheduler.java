@@ -67,7 +67,7 @@ public class WorkflowScheduler {
                                    String triggeredBy,
                                    String triggerType) {
 
-        log.info("提交工作流执行请求: workflowId={}, triggeredBy={}", workflowId, triggeredBy);
+        log.info("Submitting workflow execution request: workflowId={}, triggeredBy={}", workflowId, triggeredBy);
 
         // 1. 查询工作流定义
         WorkflowEntity workflow = workflowMapper.selectById(workflowId);
@@ -100,7 +100,7 @@ public class WorkflowScheduler {
             try {
                 execution.setInputData(objectMapper.writeValueAsString(inputData));
             } catch (JsonProcessingException e) {
-                log.error("序列化输入数据失败", e);
+                log.error("Failed to serialize input data", e);
             }
         }
 
@@ -148,7 +148,7 @@ public class WorkflowScheduler {
             // 3. 状态已由执行引擎更新
 
         } catch (WorkflowExecutionException e) {
-            log.error("工作流Execution failed: executionUuid={}, error={}", executionUuid, e.getMessage());
+            log.error("Workflow execution failed: executionUuid={}, error={}", executionUuid, e.getMessage());
 
             // 更新执行状态为失败
             updateExecutionStatus(executionId, ExecutionStatus.FAILED, e.getMessage());
@@ -174,7 +174,7 @@ public class WorkflowScheduler {
     private void updateExecutionStatus(String executionId, ExecutionStatus status, String errorMessage) {
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);
         if (execution == null) {
-            log.warn("执行记录不存在: executionId={}", executionId);
+            log.warn("Execution record not found: executionId={}", executionId);
             return;
         }
 
@@ -224,9 +224,9 @@ public class WorkflowScheduler {
             execution.setEndTime(LocalDateTime.now());
             executionMapper.updateById(execution);
 
-            log.info("执行已中止: executionId={}", executionId);
+            log.info("Execution aborted: executionId={}", executionId);
         } else {
-            log.warn("执行状态不是运行中，无法中止: executionId={}, status={}",
+            log.warn("Execution status is not running, cannot abort: executionId={}, status={}",
                     executionId, execution.getStatus());
         }
     }

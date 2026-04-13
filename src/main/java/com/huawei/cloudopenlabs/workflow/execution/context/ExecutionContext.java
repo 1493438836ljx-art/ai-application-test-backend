@@ -140,7 +140,7 @@ public class ExecutionContext {
      */
     public void setNodeOutputs(String nodeUuid, Map<String, Object> outputs) {
         nodeOutputs.put(nodeUuid, new ConcurrentHashMap<>(outputs));
-        log.debug("节点输出已保存: nodeUuid={}, outputs={}", nodeUuid, outputs.keySet());
+        log.debug("Node outputs saved: nodeUuid={}, outputs={}", nodeUuid, outputs.keySet());
     }
 
     /**
@@ -274,7 +274,7 @@ public class ExecutionContext {
     public void enterLoop(String loopNodeUuid, Object currentItem, int currentIndex) {
         LoopContext loopContext = new LoopContext(loopNodeUuid, currentItem, currentIndex);
         loopContextStack.push(loopContext);
-        log.debug("进入循环: loopNodeUuid={}, index={}", loopNodeUuid, currentIndex);
+        log.debug("Entering loop: loopNodeUuid={}, index={}", loopNodeUuid, currentIndex);
     }
 
     /**
@@ -283,7 +283,7 @@ public class ExecutionContext {
     public void exitLoop() {
         if (!loopContextStack.isEmpty()) {
             LoopContext context = loopContextStack.pop();
-            log.debug("退出循环: loopNodeUuid={}", context.getLoopNodeUuid());
+            log.debug("Exiting loop: loopNodeUuid={}", context.getLoopNodeUuid());
         }
     }
 

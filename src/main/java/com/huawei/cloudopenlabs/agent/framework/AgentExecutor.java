@@ -195,7 +195,7 @@ public class AgentExecutor {
                     .executionTimeMs(executionTime)
                     .build();
 
-            log.info("Agent task execution completed, latency: {}ms，成功: {}", executionTime, response.getSuccess());
+            log.info("Agent task execution completed, latency: {}ms, success: {}", executionTime, response.getSuccess());
 
             // 请求后回调
             if (callback != null) {
@@ -596,11 +596,11 @@ public class AgentExecutor {
                     result.put("updatedNodes", nodes != null ? nodes.size() : 0);
                     result.put("data", response);
                     result.put("message", "工作流数据保存成功");
-                    log.info("工作流数据保存成功: workflowId={}, nodes={}", workflowId, nodes != null ? nodes.size() : 0);
+                    log.info("Workflow data saved successfully: workflowId={}, nodes={}", workflowId, nodes != null ? nodes.size() : 0);
                 } else {
-                    log.warn("WorkflowService  not injected或 body 为空");
+                    log.warn("WorkflowService not injected or body is empty");
                     result.put("success", false);
-                    result.put("error", "WorkflowService  not injected或 body 为空");
+                    result.put("error", "WorkflowService not injected or body is empty");
                 }
             }
             // 匹配 POST /api/workflow/{id}/publish - 发布工作流
@@ -640,7 +640,7 @@ public class AgentExecutor {
             }
             // 其他操作
             else {
-                log.warn("未知的操作路径: method={}, path={}", method, path);
+                log.warn("Unknown action path: method={}, path={}", method, path);
                 result.put("success", false);
                 result.put("error", "未知的操作路径: " + method + " " + path);
             }
@@ -691,7 +691,7 @@ public class AgentExecutor {
         String context = sb.toString();
         if (context.length() > getMaxContextLength()) {
             context = emergencyTruncate(context, getMaxContextLength());
-            log.info("上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
+            log.info("Context truncated: originalLength={}, truncatedLength={}", sb.length(), context.length());
         }
 
         return context;
@@ -733,7 +733,7 @@ public class AgentExecutor {
         String context = sb.toString();
         if (context.length() > getMaxContextLength()) {
             context = emergencyTruncate(context, getMaxContextLength());
-            log.info("带结果上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
+            log.info("Context with results truncated: originalLength={}, truncatedLength={}", sb.length(), context.length());
         }
 
         return context;
@@ -795,7 +795,7 @@ public class AgentExecutor {
         try {
             sessionService.updateRoundCount(session.getConversationId(), currentRound);
         } catch (Exception e) {
-            log.warn("更新轮次计数失败: {}", e.getMessage());
+            log.warn("Failed to update round count: {}", e.getMessage());
         }
 
         return currentRound;
@@ -815,7 +815,7 @@ public class AgentExecutor {
         try {
             sessionService.updateParseErrorCount(session.getConversationId(), currentCount);
         } catch (Exception e) {
-            log.warn("更新解析错误计数失败: {}", e.getMessage());
+            log.warn("Failed to update parse error count: {}", e.getMessage());
         }
 
         return currentCount;
@@ -915,7 +915,7 @@ public class AgentExecutor {
         if (content.length() <= maxLength) {
             return content;
         }
-        log.debug("内容已截断: originalLength={}, 最大长度={}", content.length(), maxLength);
+        log.debug("Content truncated: originalLength={}, maxLength={}", content.length(), maxLength);
         return content.substring(0, maxLength) + "...(内容已截断)";
     }
 
@@ -1003,7 +1003,7 @@ public class AgentExecutor {
 
                 // 验证 status 是否是有效的值
                 if (status == null || (!status.equals("query") && !status.equals("action") && !status.equals("complete"))) {
-                    log.warn("status 字段无效或缺失: {}", status);
+                    log.warn("Status field invalid or missing: {}", status);
                     plan.setStatus("parse_error");
                     plan.setSummary("响应中的 status 字段无效。status 只能是 'query'、'action' 或 'complete'。当前值: " + status + "。请修正后重新生成。");
                     return plan;
@@ -1046,26 +1046,26 @@ public class AgentExecutor {
 
                 // 额外验证：query 状态必须有 queries，action 状态必须有 actions
                 if ("query".equals(status) && (plan.getQueries() == null || plan.getQueries().isEmpty())) {
-                    log.warn("query 状态但 queries 为空");
+                    log.warn("Query status but queries is empty");
                     plan.setStatus("parse_error");
                     plan.setSummary("status 为 'query' 时必须包含 'queries' 数组。请添加至少一个查询请求。");
                     return plan;
                 }
 
                 if ("action".equals(status) && (plan.getActions() == null || plan.getActions().isEmpty())) {
-                    log.warn("action 状态但 actions 为空");
+                    log.warn("Action status but actions is empty");
                     plan.setStatus("parse_error");
                     plan.setSummary("status 为 'action' 时必须包含 'actions' 数组。请添加至少一个操作请求。");
                     return plan;
                 }
 
-                log.info("解析 AgentPlan 成功: status={}, queries={}, actions={}",
+                log.info("AgentPlan parsed successfully: status={}, queries={}, actions={}",
                         plan.getStatus(),
                         plan.getQueries() != null ? plan.getQueries().size() : 0,
                         plan.getActions() != null ? plan.getActions().size() : 0);
                 return plan;
             } catch (JsonProcessingException e) {
-                log.warn("解析 AI 响应为 JSON 失败: {}", e.getMessage());
+                log.warn("Failed to parse AI response as JSON: {}", e.getMessage());
                 // 返回解析错误，让 Claude Code 重新生成
                 plan.setStatus("parse_error");
                 plan.setSummary("响应格式解析失败: " + e.getMessage() + "。请确保返回有效的 JSON 格式，包含 status、reasoning 等必要字段。原始响应: " +
@@ -1075,7 +1075,7 @@ public class AgentExecutor {
         }
 
         // 非 JSON 格式，返回解析错误
-        log.warn("响应不是有效的 JSON 格式: {}", response.substring(0, Math.min(200, response.length())));
+        log.warn("Response is not valid JSON format: {}", response.substring(0, Math.min(200, response.length())));
         plan.setStatus("parse_error");
         plan.setSummary("响应不是有效的 JSON 格式。请返回标准的 JSON 格式响应，包含 status、reasoning、queries/actions 等字段。原始响应: " +
                 (response.length() > 500 ? response.substring(0, 500) + "..." : response));
@@ -1095,7 +1095,7 @@ public class AgentExecutor {
 
         // 如果是纯 JSON，直接返回
         if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
-            log.debug("响应是纯 JSON，直接返回");
+            log.debug("Response is plain JSON, returning directly");
             return trimmed;
         }
 
@@ -1133,8 +1133,8 @@ public class AgentExecutor {
                     int lastBrace = content.lastIndexOf('}');
                     if (lastBrace != -1) {
                         String json = content.substring(0, lastBrace + 1);
-                        log.debug("从 markdown 代码块中提取到 JSON，长度: {}", json.length());
-                        log.debug("JSON 前 200 字符: {}", json.substring(0, Math.min(200, json.length())));
+                        log.debug("Extracted JSON from markdown code block, length: {}", json.length());
+                        log.debug("First 200 chars of JSON: {}", json.substring(0, Math.min(200, json.length())));
                         return json;
                     }
                 }
@@ -1146,7 +1146,7 @@ public class AgentExecutor {
         int end = response.lastIndexOf('}');
         if (start != -1 && end != -1 && end > start) {
             String json = response.substring(start, end + 1);
-            log.debug("使用回退方案提取 JSON，长度: {}", json.length());
+            log.debug("Using fallback to extract JSON, length: {}", json.length());
             return json;
         }
 
@@ -1204,7 +1204,7 @@ public class AgentExecutor {
             apiClient.healthCheck();
             return true;
         } catch (Exception e) {
-            log.error("Claude Code 健康检查失败: {}", e.getMessage());
+            log.error("Claude Code health check failed: {}", e.getMessage());
             return false;
         }
     }
@@ -1220,7 +1220,7 @@ public class AgentExecutor {
          * @param request Agent 请求
          */
         default void beforeExecute(AgentRequest request) {
-            log.debug("Agent 任务即将执行: {}", request.getTaskContent());
+            log.debug("Agent task about to execute: {}", request.getTaskContent());
         }
 
         /**
@@ -1230,7 +1230,7 @@ public class AgentExecutor {
          * @param response Agent 响应
          */
         default void afterExecute(AgentRequest request, AgentResponse response) {
-            log.debug("Agent 任务执行完成，成功: {}", response.getSuccess());
+            log.debug("Agent task execution completed, success: {}", response.getSuccess());
         }
 
         /**
@@ -1276,11 +1276,11 @@ public class AgentExecutor {
             }
 
             byte[] bytes = Files.readAllBytes(path);
-            log.info("成功Loading skill file: {}, 大小: {} bytes", path.toAbsolutePath(), bytes.length);
+            log.info("Successfully loaded skill file: {}, size: {} bytes", path.toAbsolutePath(), bytes.length);
             return bytes;
 
         } catch (IOException e) {
-            log.error("加载 Skill 文件失败: {}", e.getMessage(), e);
+            log.error("Failed to load skill file: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -1296,7 +1296,7 @@ public class AgentExecutor {
          * @param sessionId Claude CLI 返回的会话ID
          */
         default void onSessionCreated(String sessionId) {
-            log.debug("会话创建: sessionId={}", sessionId);
+            log.debug("Session created: sessionId={}", sessionId);
         }
 
         /**
@@ -1363,7 +1363,7 @@ public class AgentExecutor {
          * @param result 更新结果
          */
         default void onWorkflowUpdate(Object result) {
-            log.debug("工作流更新: {}", result);
+            log.debug("Workflow update: {}", result);
         }
 
         /**
@@ -1378,7 +1378,7 @@ public class AgentExecutor {
          * @param workflowId      工作流ID
          */
         default void onConfirmationRequired(String pendingActionId, java.util.List<Map<String, Object>> actions, String workflowId) {
-            log.info("操作需要确认: pendingActionId={}, actionCount={}", pendingActionId, actions.size());
+            log.info("Action requires confirmation: pendingActionId={}, actionCount={}", pendingActionId, actions.size());
         }
 
         /**
@@ -1388,7 +1388,7 @@ public class AgentExecutor {
          * @param duration  执行耗时（毫秒）
          */
         default void onDone(String sessionId, Long duration) {
-            log.debug("流式会话完成: sessionId={}, duration={}ms", sessionId, duration);
+            log.debug("Streaming session completed: sessionId={}, duration={}ms", sessionId, duration);
         }
 
         /**
@@ -1419,7 +1419,7 @@ public class AgentExecutor {
         // 如果有锁服务，先获取锁
         if (lockService != null) {
             if (!lockService.tryLock(sessionId)) {
-                log.warn("会话正在处理中，拒绝请求: sessionId={}", sessionId);
+                log.warn("Session is processing, rejecting request: sessionId={}", sessionId);
                 callback.onError("会话正在处理中，请稍后重试");
                 return;
             }
@@ -1430,7 +1430,7 @@ public class AgentExecutor {
             } finally {
                 // 释放锁
                 lockService.unlock(sessionId);
-                log.debug("释放会话锁: sessionId={}", sessionId);
+                log.debug("Released session lock: sessionId={}", sessionId);
             }
         } else {
             // 没有锁服务，直接执行
@@ -1450,13 +1450,13 @@ public class AgentExecutor {
     private void processMessageStreamWithMultiRound(String userMessage, String workflowId, String conversationId,
                                                      StreamCallback callback, boolean isFirstRound) {
         if (streamClient == null) {
-            log.warn("流式客户端未初始化，回退到同步模式");
+            log.warn("Streaming client not initialized, falling back to sync mode");
             callback.onError("流式客户端未初始化");
             return;
         }
 
         try {
-            log.info("开始流式处理消息: conversationId={}, workflowId={}, isFirstRound={}",
+            log.info("Starting streaming message processing: conversationId={}, workflowId={}, isFirstRound={}",
                     conversationId, workflowId, isFirstRound);
 
             // 判断是否是新会话
@@ -1478,7 +1478,7 @@ public class AgentExecutor {
                         try {
                             sessionService.markAsError(session.getConversationId(), "超过最大轮次限制");
                         } catch (Exception e) {
-                            log.error("标记会话错误失败: {}", e.getMessage());
+                            log.error("Failed to mark session error: {}", e.getMessage());
                         }
                     }).subscribeOn(Schedulers.boundedElastic()).subscribe();
                     return;
@@ -1493,13 +1493,13 @@ public class AgentExecutor {
                         try {
                             sessionService.markAsError(session.getConversationId(), "执行超时");
                         } catch (Exception e) {
-                            log.error("标记会话错误失败: {}", e.getMessage());
+                            log.error("Failed to mark session error: {}", e.getMessage());
                         }
                     }).subscribeOn(Schedulers.boundedElastic()).subscribe();
                     return;
                 }
 
-                log.info("流式处理第 {}  round, , conversationId={}, elapsed={}ms",
+                log.info("Streaming round {}, conversationId={}, elapsed={}ms",
                         currentRound, session.getConversationId(), getElapsedTime(session));
             }
 
@@ -1512,12 +1512,12 @@ public class AgentExecutor {
             String sessionIdForApi = null;
 
             if (isNewSession && isFirstRound) {
-                log.info("新会话第一轮，Loading skill file: {}", skillFilePath);
+                log.info("First round of new session, loading skill file: {}", skillFilePath);
                 skillFileBytes = loadSkillFile();
                 skillFileName = "workflow-assistant.zip";
                 sessionIdForApi = null;  // 新会话不传 sessionId，让 Claude CLI 生成
             } else {
-                log.info("已有会话或后续轮次，sessionId: {}", session.getConversationId());
+                log.info("Existing session or subsequent round, sessionId: {}", session.getConversationId());
                 skillFileBytes = null;  // 已有会话不传 Skill 文件
                 skillFileName = null;
                 sessionIdForApi = session.getConversationId();  // 传 sessionId 恢复会话
@@ -1552,12 +1552,12 @@ public class AgentExecutor {
                                 }
                             },
                             error -> {
-                                log.error("流式处理error: {}", error.getMessage());
+                                log.error("Streaming processing error: {}", error.getMessage());
                                 callback.onError("流式处理error: " + error.getMessage());
                             },
                             () -> {
                                 // 流完成时的回调
-                                log.info("流式传输完成: workflowId={}", workflowId);
+                                log.info("Streaming completed: workflowId={}", workflowId);
                                 // 如果还没有处理完成（可能没有收到 done 事件），在这里处理
                                 if (!completed.getAndSet(true)) {
                                     handleStreamCompletion(session, fullResponse.toString(), workflowId, callback, isFirstRound);
@@ -1566,7 +1566,7 @@ public class AgentExecutor {
                     );
 
         } catch (Exception e) {
-            log.error("流式处理异常: {}", e.getMessage(), e);
+            log.error("Streaming processing exception: {}", e.getMessage(), e);
             callback.onError("流式处理异常: " + e.getMessage());
         }
     }
@@ -1580,12 +1580,12 @@ public class AgentExecutor {
             // 尝试解析 AI 响应为 AgentPlan
             AgentPlan plan = parseAgentPlan(fullResponse);
 
-            log.info("流式响应解析完成: status={}, isFirstRound={}", plan.getStatus(), isFirstRound);
+            log.info("Streaming response parsing completed: status={}, isFirstRound={}", plan.getStatus(), isFirstRound);
 
             switch (plan.getStatus()) {
                 case "query":
                     // AI 需要查询信息
-                    log.info("检测到 query 请求，执行查询...");
+                    log.info("Detected query request, executing queries...");
                     Map<String, Object> queryResults = executeQueriesInStream(plan.getQueries(), session);
                     // 构建带结果的上下文，递归调用下一轮
                     String queryContext = buildContextWithResults(session, queryResults, "query");
@@ -1595,7 +1595,7 @@ public class AgentExecutor {
 
                 case "action":
                     // AI 要执行操作
-                    log.info("检测到 action 请求，执行操作...");
+                    log.info("Detected action request, executing actions...");
                     Map<String, Object> actionResults = executeActionsInStream(plan.getActions(), session, callback);
 
                     // 检查是否有待确认的操作（非查询操作）
@@ -1610,7 +1610,7 @@ public class AgentExecutor {
 
                     if (hasMutationAction) {
                         // 有待确认操作，等待用户确认后通过 /api/chat/action/confirm 继续执行
-                        log.info("有 {} 个操作待确认，等待用户确认...", plan.getActions().size());
+                        log.info("{} actions pending confirmation, waiting for user confirmation...", plan.getActions().size());
                         // 不继续下一轮，等待用户确认
                     } else {
                         // 只有查询操作（GET），构建带结果的上下文，递归调用下一轮
@@ -1622,21 +1622,21 @@ public class AgentExecutor {
 
                 case "complete":
                     // 任务完成
-                    log.info("任务完成: {}", plan.getSummary());
+                    log.info("Task completed: {}", plan.getSummary());
                     callback.onDone(session.getConversationId(), null);
                     // 异步更新状态
                     Mono.fromRunnable(() -> {
                         try {
                             sessionService.markAsCompleted(session.getConversationId());
                         } catch (Exception e) {
-                            log.error("标记会话完成失败: {}", e.getMessage());
+                            log.error("Failed to mark session completed: {}", e.getMessage());
                         }
                     }).subscribeOn(Schedulers.boundedElastic()).subscribe();
                     break;
 
                 case "parse_error":
                     // 解析错误，将问题反馈给 AI
-                    log.warn("响应格式解析error: {}", plan.getSummary());
+                    log.warn("Response format parse error: {}", plan.getSummary());
 
                     // 递增解析错误计数
                     int parseErrorCount = incrementParseErrorCount(session);
@@ -1652,7 +1652,7 @@ public class AgentExecutor {
                             try {
                                 sessionService.markAsError(session.getConversationId(), "超过最大解析错误次数限制");
                             } catch (Exception e) {
-                                log.error("标记会话错误失败: {}", e.getMessage());
+                                log.error("Failed to mark session error: {}", e.getMessage());
                             }
                         }).subscribeOn(Schedulers.boundedElastic()).subscribe();
                         return;
@@ -1666,12 +1666,12 @@ public class AgentExecutor {
                 default:
                     // 未知的 status，可能是自然语言响应（非 JSON 格式）
                     // 这种情况下直接完成任务
-                    log.info("非结构化响应，直接完成");
+                    log.info("Unstructured response, completing directly");
                     callback.onDone(session.getConversationId(), null);
                     break;
             }
         } catch (Exception e) {
-            log.error("处理流式完成异常: {}", e.getMessage(), e);
+            log.error("Streaming completion processing exception: {}", e.getMessage(), e);
             // 如果解析失败，可能是纯自然语言响应，直接完成
             callback.onDone(session.getConversationId(), null);
         }
@@ -1684,12 +1684,12 @@ public class AgentExecutor {
         Map<String, Object> queryResults = new HashMap<>();
 
         if (queries == null || queries.isEmpty()) {
-            log.warn("查询请求为空");
+            log.warn("Query request is empty");
             return queryResults;
         }
 
         for (AgentPlan.Query query : queries) {
-            log.info("流式模式执行查询: id={}, path={}", query.getId(), query.getPath());
+            log.info("Executing query in streaming mode: id={}, path={}", query.getId(), query.getPath());
             Object result = executeQuery(query.getMethod(), query.getPath(), query.getParams());
             queryResults.put(query.getId(), result);
         }
@@ -1712,7 +1712,7 @@ public class AgentExecutor {
         Map<String, Object> actionResults = new HashMap<>();
 
         if (actions == null || actions.isEmpty()) {
-            log.warn("操作请求为空");
+            log.warn("Action request is empty");
             return actionResults;
         }
 
@@ -1733,7 +1733,7 @@ public class AgentExecutor {
 
         // 如果有非查询操作，发送确认请求
         if (!mutationActions.isEmpty()) {
-            log.info("检测到 {} 个非查询操作，Requires user confirmation", mutationActions.size());
+            log.info("Detected {} mutation actions, requires user confirmation", mutationActions.size());
 
             // 生成待确认操作ID
             String pendingActionId = "pending-" + java.util.UUID.randomUUID().toString();
@@ -1747,7 +1747,7 @@ public class AgentExecutor {
 
         // 如果只有查询操作（GET），直接执行
         for (AgentPlan.Action action : actions) {
-            log.info("流式模式执行查询操作: id={}, method={}, path={}",
+            log.info("Executing query action in streaming mode: id={}, method={}, path={}",
                     action.getId(), action.getMethod(), action.getPath());
 
             Object result = executeAction(action.getMethod(), action.getPath(), action.getBody());
@@ -1779,7 +1779,7 @@ public class AgentExecutor {
     private void handleStreamChunk(AgentSessionEntity session, StreamChunk chunk,
                                     StreamCallback callback, boolean isNewSession) {
         String chunkType = chunk.getType();
-        log.info("处理流式块: type={}, sessionId={}, content={}", chunkType, chunk.getSessionId(),
+        log.info("Processing streaming chunk: type={}, sessionId={}, content={}", chunkType, chunk.getSessionId(),
                 chunk.getContentOrMessage() != null ? chunk.getContentOrMessage().substring(0, Math.min(50, chunk.getContentOrMessage().length())) + "..." : "null");
 
         // 处理 type 为 null 的情况
@@ -1788,7 +1788,7 @@ public class AgentExecutor {
             if (chunk.getContentOrMessage() != null && !chunk.getContentOrMessage().isEmpty()) {
                 callback.onChunk(chunk);
             } else {
-                log.debug("忽略无内容的 null 类型块");
+                log.debug("Ignoring null type chunk with no content");
             }
             return;
         }
@@ -1805,9 +1805,9 @@ public class AgentExecutor {
                     Mono.fromRunnable(() -> {
                         try {
                             sessionService.updateConversationId(oldId, newId);
-                            log.info("会话ID更新成功: {} -> {}", oldId, newId);
+                            log.info("Session ID updated successfully: {} -> {}", oldId, newId);
                         } catch (Exception e) {
-                            log.error("更新会话ID失败: {}", e.getMessage());
+                            log.error("Failed to update session ID: {}", e.getMessage());
                         }
                     }).subscribeOn(Schedulers.boundedElastic()).subscribe();
 
@@ -1818,7 +1818,7 @@ public class AgentExecutor {
             case "chunk":
                 // 直接转发内容块给前端（包含 contentType 等元数据）
                 if (chunk.getContentOrMessage() != null) {
-                    log.info("转发 chunk 到回调，contentType={}, toolName={}, contentLength={}",
+                    log.info("Forwarding chunk to callback, contentType={}, toolName={}, contentLength={}",
                             chunk.getContentType(), chunk.getToolName(), chunk.getContentOrMessage().length());
                     callback.onChunk(chunk);
                 }
@@ -1828,7 +1828,7 @@ public class AgentExecutor {
                 // 注意：在多轮模式下，done 事件由 handleStreamCompletion 统一处理
                 // 这里只记录日志，不调用 callback.onDone()
                 // 因为 collectList().subscribe() 会在收集完成后调用 handleStreamCompletion
-                log.debug("收到 done 事件，sessionId={}, duration={}", chunk.getSessionId(), chunk.getDuration());
+                log.debug("Received done event, sessionId={}, duration={}", chunk.getSessionId(), chunk.getDuration());
                 break;
 
             case "error":
@@ -1842,13 +1842,13 @@ public class AgentExecutor {
                     try {
                         sessionService.markAsError(session.getConversationId(), errorMsg);
                     } catch (Exception e) {
-                        log.error("标记会话错误失败: {}", e.getMessage());
+                        log.error("Failed to mark session error: {}", e.getMessage());
                     }
                 }).subscribeOn(Schedulers.boundedElastic()).subscribe();
                 break;
 
             default:
-                log.debug("未知的流式块类型: {}", chunk.getType());
+                log.debug("Unknown streaming chunk type: {}", chunk.getType());
         }
     }
 

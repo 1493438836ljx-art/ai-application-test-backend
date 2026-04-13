@@ -68,7 +68,7 @@ public class FileUploadController {
     @GetMapping("/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(
             @PathVariable String fileId) {
-        log.info("下载文件: {}", fileId);
+        log.info("Downloading file: {}", fileId);
 
         Resource resource = fileUploadService.loadFileAsResource(fileId);
         String filename = fileUploadService.getOriginalFilename(fileId);
@@ -89,7 +89,7 @@ public class FileUploadController {
     @GetMapping("/info/{fileId}")
     public ResponseEntity<Map<String, Object>> getFileInfo(
             @PathVariable String fileId) {
-        log.info("获取文件信息: {}", fileId);
+        log.info("Getting file info: {}", fileId);
 
         Map<String, Object> result = new HashMap<>();
         result.put("fileId", fileId);
@@ -109,7 +109,7 @@ public class FileUploadController {
     @DeleteMapping("/{fileId}")
     public ResponseEntity<Map<String, Object>> deleteFile(
             @PathVariable String fileId) {
-        log.info("删除文件: {}", fileId);
+        log.info("Deleting file: {}", fileId);
 
         fileUploadService.deleteFile(fileId);
 

@@ -100,17 +100,17 @@ public class AgentHealthIndicator implements HealthIndicator {
             if (threadStats.queueUsageRate() > queueUsageThreshold) {
                 builder.status(Status.DOWN)
                         .withDetail("reason", "Thread pool queue nearly full: " + threadStats.queueUsageRate());
-                log.warn("Health check abnormal: 线程池队列接近满载");
+                log.warn("Health check abnormal: thread pool queue near capacity");
             } else if (cacheHitRate < cacheHitRateThreshold && cacheStats.requestCount() > 10) {
                 builder.status(Status.OUT_OF_SERVICE)
                         .withDetail("reason", "Low cache hit rate: " + cacheHitRate);
-                log.warn("健康检查警告: 缓存命中率较低");
+                log.warn("Health check warning: low cache hit rate");
             } else {
                 builder.withDetail("status", "healthy");
             }
 
         } catch (Exception e) {
-            log.error("健康检查异常", e);
+            log.error("Health check exception", e);
             builder.status(Status.DOWN)
                     .withException(e)
                     .withDetail("error", e.getMessage());

@@ -87,7 +87,7 @@ public class ExecutionGraph {
             String targetUuid = graph.getNodeUuid(conn.getTargetNodeId());
 
             if (sourceUuid == null || targetUuid == null) {
-                log.warn("连线引用了不存在的节点: sourceId={}, targetId={}",
+                log.warn("Connection references non-existent node: sourceId={}, targetId={}",
                         conn.getSourceNodeId(), conn.getTargetNodeId());
                 continue;
             }
