@@ -51,6 +51,9 @@ public class PageResponse<T> {
 
     /**
      * 从Spring Data Page转换
+     *
+     * @param page Spring Data 分页对象
+     * @return 分页响应对象
      */
     public static <T> PageResponse<T> from(Page<T> page) {
         return PageResponse.<T>builder()

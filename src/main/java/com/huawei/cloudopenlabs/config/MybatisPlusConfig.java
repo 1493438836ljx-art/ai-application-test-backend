@@ -27,6 +27,8 @@ public class MybatisPlusConfig implements MetaObjectHandler {
 
     /**
      * 分页插件
+     *
+     * @return MyBatis-Plus拦截器
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

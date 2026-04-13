@@ -123,6 +123,8 @@ public class ParameterTypeValidator {
 
     /**
      * 获取所有有效的基本类型
+     *
+     * @return 基本类型列表
      */
     public static List<String> getBasicTypes() {
         return BASIC_TYPES;
@@ -130,6 +132,8 @@ public class ParameterTypeValidator {
 
     /**
      * 获取所有有效的Array元素类型
+     *
+     * @return Array元素类型列表
      */
     public static List<String> getArrayElementTypes() {
         return ARRAY_ELEMENT_TYPES;
@@ -137,6 +141,8 @@ public class ParameterTypeValidator {
 
     /**
      * 获取所有有效的File类型
+     *
+     * @return File类型列表
      */
     public static List<String> getFileTypes() {
         return FILE_TYPES;

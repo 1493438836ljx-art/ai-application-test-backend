@@ -44,6 +44,10 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 资源未找到异常
+     *
+     * @param resource 资源类型名称
+     * @param id       资源标识
+     * @return 业务异常实例
      */
     public static BusinessException notFound(String resource, Object id) {
         return new BusinessException("RESOURCE_NOT_FOUND",
@@ -52,6 +56,9 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 参数无效异常
+     *
+     * @param message 错误消息
+     * @return 业务异常实例
      */
     public static BusinessException invalidParam(String message) {
         return new BusinessException("INVALID_PARAMETER", message, 400);
@@ -59,6 +66,9 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 操作不允许异常
+     *
+     * @param message 错误消息
+     * @return 业务异常实例
      */
     public static BusinessException forbidden(String message) {
         return new BusinessException("FORBIDDEN", message, 403);
@@ -66,6 +76,9 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 冲突异常
+     *
+     * @param message 错误消息
+     * @return 业务异常实例
      */
     public static BusinessException conflict(String message) {
         return new BusinessException("CONFLICT", message, 409);
@@ -73,6 +86,9 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 业务错误异常
+     *
+     * @param message 错误消息
+     * @return 业务异常实例
      */
     public static BusinessException bizError(String message) {
         return new BusinessException("BIZ_ERROR", message, 400);
@@ -80,6 +96,9 @@ public class BusinessException extends RuntimeException {
 
     /**
      * 系统错误异常
+     *
+     * @param message 错误消息
+     * @return 业务异常实例
      */
     public static BusinessException systemError(String message) {
         return new BusinessException("SYSTEM_ERROR", message, 500);

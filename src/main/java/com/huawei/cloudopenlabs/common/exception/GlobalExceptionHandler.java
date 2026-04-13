@@ -33,6 +33,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理业务异常
+     *
+     * @param ex      业务异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(
@@ -46,6 +50,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理参数校验异常（@Valid）
+     *
+     * @param ex      校验异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(
@@ -63,6 +71,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理约束违反异常
+     *
+     * @param ex      约束违反异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(
@@ -80,6 +92,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理请求参数缺失异常
+     *
+     * @param ex      参数缺失异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingParameterException(
@@ -93,6 +109,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理参数类型不匹配异常
+     *
+     * @param ex      类型不匹配异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<Void>> handleTypeMismatchException(
@@ -109,6 +129,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理请求体解析异常
+     *
+     * @param ex      消息不可读异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(
@@ -122,6 +146,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理404异常
+     *
+     * @param ex      未找到处理器异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(
@@ -135,6 +163,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理运行时异常
+     *
+     * @param ex      运行时异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleRuntimeException(
@@ -148,6 +180,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理所有未捕获的异常
+     *
+     * @param ex      异常
+     * @param request HTTP请求
+     * @return 错误响应
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(
