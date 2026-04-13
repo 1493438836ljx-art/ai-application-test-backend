@@ -41,15 +41,15 @@ public class SkillAgingCleanupScheduler {
      */
     @Scheduled(cron = "0 5 0 * * ?")
     public void cleanupAgedSkillData() {
-        log.info("开始执行Skill数据老化清理任务...");
+        log.info("Starting skill data aging cleanup task...");
 
         try {
             // 1. 查询已删除超过1年的Skill
             List<SkillEntity> agedSkills = skillMapper.selectDeletedOlderThan(AGING_DAYS);
-            log.info("发现已删除超过{}天的Skill数量: {}", AGING_DAYS, agedSkills.size());
+            log.info("Found skills deleted more than{}days ago: {}", AGING_DAYS, agedSkills.size());
 
             if (agedSkills.isEmpty()) {
-                log.info("没有需要清理的Skill数据");
+                log.info("No skill data to clean up");
                 return;
             }
 
@@ -67,16 +67,16 @@ public class SkillAgingCleanupScheduler {
                     skillMapper.physicalDeleteById(skill.getId());
 
                     deletedCount++;
-                    log.info("已物理删除Skill: ID={}, Name={}", skill.getId(), skill.getName());
+                    log.info("Physically deleted skill: ID={}, Name={}", skill.getId(), skill.getName());
                 } catch (Exception e) {
-                    log.error("物理删除Skill失败: ID={}, Name={}", skill.getId(), skill.getName(), e);
+                    log.error("Failed to physically delete skill: ID={}, Name={}", skill.getId(), skill.getName(), e);
                 }
             }
 
-            log.info("Skill数据老化清理任务完成，共物理删除 {} 条Skill记录", deletedCount);
+            log.info("Skill aging cleanup completed, physically deleted {} skill records", deletedCount);
 
         } catch (Exception e) {
-            log.error("Skill数据老化清理任务失败", e);
+            log.error("Skill data aging cleanup task failed", e);
         }
     }
 }

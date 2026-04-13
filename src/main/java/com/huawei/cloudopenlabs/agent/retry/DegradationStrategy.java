@@ -40,7 +40,7 @@ public class DegradationStrategy {
      * @return 降级响应
      */
     public Object handleDegradation(String operation, Exception error) {
-        log.warn("执行降级策略: operation={}, error={}", operation, error.getMessage());
+        log.warn("执行Degradation strategy: operation={}, error={}", operation, error.getMessage());
 
         return switch (operation.toLowerCase()) {
             case "query" -> degradeQuery(error);

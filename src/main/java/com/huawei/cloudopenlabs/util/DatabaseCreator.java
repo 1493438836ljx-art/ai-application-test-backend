@@ -3,6 +3,9 @@
 */
 package com.huawei.cloudopenlabs.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -10,8 +13,14 @@ import java.sql.Statement;
 /**
  * OpenGauss 数据库初始化工具
  * 用于创建数据库（如果不存在）
+ *
+ * @author GNEEC LIVE
+ * @version 27.0.1.1
+ * @since 2026-04-13
  */
 public class DatabaseCreator {
+
+    private static final Logger log = LoggerFactory.getLogger(DatabaseCreator.class);
 
     public static void main(String[] args) {
         String host = "8.218.55.180";
@@ -24,67 +33,65 @@ public class DatabaseCreator {
         String url = String.format("jdbc:postgresql://%s:%s/postgres?currentSchema=public",
                 host, port);
 
-        System.out.println("========================================");
-        System.out.println("OpenGauss 数据库初始化工具");
-        System.out.println("========================================");
-        System.out.println("服务器: " + host + ":" + port);
-        System.out.println("用户名: " + username);
-        System.out.println("目标数据库: " + database);
-        System.out.println("========================================\n");
+        log.info("========================================");
+        log.info("OpenGauss Database Initialization Tool");
+        log.info("========================================");
+        log.info("Server: {}:{}", host, port);
+        log.info("Username: {}", username);
+        log.info("Target database: {}", database);
+        log.info("========================================");
 
         try {
             // 加载驱动
             Class.forName("org.postgresql.Driver");
-            System.out.println("OpenGauss 驱动加载成功");
+            log.info("OpenGauss driver loaded successfully");
 
             // 连接到 OpenGauss 服务器
-            System.out.println("\n正在连接到 OpenGauss 服务器...");
+            log.info("Connecting to OpenGauss server...");
             Connection connection = DriverManager.getConnection(url, username, password);
-            System.out.println("成功连接到 OpenGauss 服务器");
+            log.info("Successfully connected to OpenGauss server");
 
             // 创建数据库
-            System.out.println("\n正在检查数据库 '" + database + "'...");
+            log.info("Checking database '{}'...", database);
             Statement statement = connection.createStatement();
 
             // 检查数据库是否已存在
             var rs = statement.executeQuery(
                     "SELECT 1 FROM pg_database WHERE datname = '" + database + "'");
             if (rs.next()) {
-                System.out.println("数据库 '" + database + "' 已存在");
+                log.info("Database '{}' already exists", database);
             } else {
                 String createDbSQL = "CREATE DATABASE " + database + " ENCODING 'UTF8'";
                 statement.executeUpdate(createDbSQL);
-                System.out.println("数据库 '" + database + "' 已创建");
+                log.info("Database '{}' created", database);
             }
 
             // 显示数据库列表
-            System.out.println("\n当前服务器上的数据库列表：");
+            log.info("Databases on current server:");
             rs = statement.executeQuery("SELECT datname FROM pg_database WHERE datistemplate = false");
             while (rs.next()) {
-                System.out.println("  - " + rs.getString(1));
+                log.info("  - {}", rs.getString(1));
             }
 
             // 关闭连接
             rs.close();
             statement.close();
             connection.close();
-            System.out.println("\n========================================");
-            System.out.println("数据库初始化完成！");
-            System.out.println("========================================");
+            log.info("========================================");
+            log.info("Database initialization completed!");
+            log.info("========================================");
 
         } catch (ClassNotFoundException e) {
-            System.err.println("\n错误: OpenGauss 驱动未找到");
-            System.err.println("错误详情: " + e.getMessage());
+            log.error("OpenGauss driver not found: {}", e.getMessage());
             System.exit(1);
         } catch (Exception e) {
-            System.err.println("\n错误: " + e.getMessage());
-            System.err.println("\n可能的原因：");
-            System.err.println("  1. OpenGauss 服务器未运行或无法访问");
-            System.err.println("  2. 用户名或密码不正确");
-            System.err.println("  3. 用户权限不足");
-            System.err.println("  4. 网络连接问题");
-            System.err.println("  5. 防火墙阻止了连接");
-            e.printStackTrace();
+            log.error("Error: {}", e.getMessage());
+            log.error("Possible causes:");
+            log.error("  1. OpenGauss server is not running or unreachable");
+            log.error("  2. Incorrect username or password");
+            log.error("  3. Insufficient user permissions");
+            log.error("  4. Network connection issue");
+            log.error("  5. Firewall blocking connection");
             System.exit(1);
         }
     }

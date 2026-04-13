@@ -44,27 +44,27 @@ public class SuiteFileCleanupScheduler {
      */
     @Scheduled(cron = "0 0 0 * * ?")
     public void cleanupOrphanedSuiteFiles() {
-        log.info("开始执行执行套件文件清理任务...");
+        log.info("Starting suite file cleanup task...");
 
         try {
             Path uploadDir = Paths.get(uploadPath);
             if (!Files.exists(uploadDir) || !Files.isDirectory(uploadDir)) {
-                log.info("执行套件目录不存在或不是目录: {}", uploadPath);
+                log.info("Suite directory does not exist or is not a directory: {}", uploadPath);
                 return;
             }
 
             // 1. 获取数据库中所有有效的执行套件路径
             Set<String> referencedFiles = getReferencedSuiteFiles();
-            log.info("数据库中引用的执行套件文件数量: {}", referencedFiles.size());
+            log.info("Referenced suite files in database: {}", referencedFiles.size());
 
             // 2. 获取文件系统中的所有文件
             Set<String> existingFiles = getExistingSuiteFiles(uploadDir);
-            log.info("文件系统中执行套件文件数量: {}", existingFiles.size());
+            log.info("Existing suite files on filesystem: {}", existingFiles.size());
 
             // 3. 找出孤儿文件（文件系统存在但数据库未引用）
             Set<String> orphanedFiles = new HashSet<>(existingFiles);
             orphanedFiles.removeAll(referencedFiles);
-            log.info("发现孤儿文件数量: {}", orphanedFiles.size());
+            log.info("Orphaned files found: {}", orphanedFiles.size());
 
             // 4. 删除孤儿文件
             int deletedCount = 0;
@@ -74,10 +74,10 @@ public class SuiteFileCleanupScheduler {
                 }
             }
 
-            log.info("执行套件文件清理任务完成，共删除 {} 个孤儿文件", deletedCount);
+            log.info("Suite file cleanup completed, deleted {} orphan files", deletedCount);
 
         } catch (Exception e) {
-            log.error("执行套件文件清理任务失败", e);
+            log.error("Suite file cleanup task failed", e);
         }
     }
 
@@ -104,7 +104,7 @@ public class SuiteFileCleanupScheduler {
                     .map(path -> path.getFileName().toString())
                     .collect(Collectors.toSet());
         } catch (IOException e) {
-            log.error("读取执行套件目录失败: {}", uploadDir, e);
+            log.error("Failed to read suite directory: {}", uploadDir, e);
             return Set.of();
         }
     }
@@ -130,11 +130,11 @@ public class SuiteFileCleanupScheduler {
             Path filePath = Paths.get(uploadPath, fileName);
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
-                log.info("已删除孤儿文件: {}", fileName);
+                log.info("Deleted orphan file: {}", fileName);
                 return true;
             }
         } catch (IOException e) {
-            log.warn("删除文件失败: {}", fileName, e);
+            log.warn("Failed to delete file: {}", fileName, e);
         }
         return false;
     }

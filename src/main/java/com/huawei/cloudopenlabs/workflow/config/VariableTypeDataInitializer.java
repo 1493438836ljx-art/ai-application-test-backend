@@ -33,7 +33,7 @@ public class VariableTypeDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("初始化变量类型数据...");
+        log.info("Initializing variable type data...");
         initVariableTypes();
     }
 
@@ -73,7 +73,7 @@ public class VariableTypeDataInitializer implements CommandLineRunner {
         // 复合类型 - Dictionary
         initDictionaryTypes();
 
-        log.info("变量类型数据初始化完成");
+        log.info("Variable type data initialization completed");
     }
 
     /**
@@ -116,7 +116,7 @@ public class VariableTypeDataInitializer implements CommandLineRunner {
             variableType.setSortOrder(sortOrder);
             variableType.setEnabled(true);
             variableTypeMapper.insert(variableType);
-            log.debug("创建变量类型: {}", code);
+            log.debug("Creating variable type: {}", code);
         }
     }
 }

@@ -52,7 +52,7 @@ public class LoopNodeExecutor implements NodeExecutor {
     public NodeExecutionResult execute(WorkflowNodeEntity node,
                                         Map<String, Object> inputs,
                                         ExecutionContext context) {
-        log.info("执行循环节点: nodeUuid={}, nodeName={}",
+        log.info("Executing loop node: nodeUuid={}, nodeName={}",
                 node.getNodeUuid(), node.getName());
 
         try {
@@ -89,15 +89,15 @@ public class LoopNodeExecutor implements NodeExecutor {
             outputs.put("loop_results", collectedOutputs);
             outputs.put("iteration_count", collectedOutputs.size());
 
-            log.info("循环节点执行完成: nodeUuid={}, iterations={}",
+            log.info("Loop node execution completed: nodeUuid={}, iterations={}",
                     node.getNodeUuid(), collectedOutputs.size());
 
             return NodeExecutionResult.success(outputs);
 
         } catch (Exception e) {
-            log.error("循环节点执行异常: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("Loop node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             return NodeExecutionResult.failure(
-                    "循环节点执行失败: " + e.getMessage(),
+                    "循环节点Execution failed: " + e.getMessage(),
                     e instanceof Exception ? (Exception) e : new RuntimeException(e)
             );
         }
@@ -136,7 +136,7 @@ public class LoopNodeExecutor implements NodeExecutor {
                 }
 
             } catch (Exception e) {
-                log.warn("解析循环配置失败，使用默认配置", e);
+                log.warn("解析循环配置失败，using default config", e);
             }
         }
 
@@ -291,18 +291,18 @@ public class LoopNodeExecutor implements NodeExecutor {
                     context.setNodeOutputs(bodyNode.getNodeUuid(), result.getOutputs());
                 } else {
                     // 循环体内节点执行失败处理
-                    log.error("循环体节点执行失败: nodeUuid={}, error={}",
+                    log.error("循环体节点Execution failed: nodeUuid={}, error={}",
                             bodyNode.getNodeUuid(), result.getErrorMessage());
                     throw new WorkflowExecutionException(
                             ErrorCode.NODE_EXECUTION_FAILED,
                             bodyNode.getNodeUuid(),
                             bodyNode.getName(),
-                            "循环体节点执行失败: " + result.getErrorMessage()
+                            "循环体节点Execution failed: " + result.getErrorMessage()
                     );
                 }
 
             } catch (Exception e) {
-                log.error("循环体节点执行异常: nodeUuid={}", bodyNode.getNodeUuid(), e);
+                log.error("循环体Node execution exception: nodeUuid={}", bodyNode.getNodeUuid(), e);
                 throw new WorkflowExecutionException(
                         ErrorCode.NODE_EXECUTION_FAILED,
                         bodyNode.getNodeUuid(),

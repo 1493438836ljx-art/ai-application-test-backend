@@ -167,7 +167,7 @@ public class ClaudeCliExecutor {
                 stdoutFuture.get(10, TimeUnit.SECONDS);
                 stderrFuture.get(10, TimeUnit.SECONDS);
             } catch (TimeoutException e) {
-                log.warn("等待流读取超时，继续处理");
+                log.warn("等待流Read timeout，继续处理");
             }
 
             int exitCode = finalProcess.exitValue();

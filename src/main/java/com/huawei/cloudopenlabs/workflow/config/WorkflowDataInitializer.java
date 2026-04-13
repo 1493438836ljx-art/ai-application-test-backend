@@ -102,7 +102,7 @@ public class WorkflowDataInitializer implements CommandLineRunner {
             nodeType.setSortOrder(sortOrder);
             nodeType.setEnabled(true);
             nodeTypeMapper.insert(nodeType);
-            log.debug("创建节点类型: {}", code);
+            log.debug("Creating node type: {}", code);
         }
     }
 }

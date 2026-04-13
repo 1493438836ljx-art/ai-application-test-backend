@@ -27,7 +27,7 @@ public class ChatDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("初始化AI聊天数据...");
+        log.info("Initializing AI chat data...");
         initQuickQuestions();
     }
 
@@ -40,7 +40,7 @@ public class ChatDataInitializer implements CommandLineRunner {
         createQuickQuestionIfNotExists("❓", "支持哪些测试类型？", "test", 5);
         createQuickQuestionIfNotExists("⚙️", "如何配置评估指标？", "config", 6);
 
-        log.info("快捷问题数据初始化完成");
+        log.info("Quick questions data initialization completed");
     }
 
     private void createQuickQuestionIfNotExists(String icon, String text, String category, int sortOrder) {
@@ -58,7 +58,7 @@ public class ChatDataInitializer implements CommandLineRunner {
             question.setSortOrder(sortOrder);
             question.setEnabled(true);
             quickQuestionMapper.insert(question);
-            log.debug("创建快捷问题: {}", text);
+            log.debug("Creating quick question: {}", text);
         }
     }
 }

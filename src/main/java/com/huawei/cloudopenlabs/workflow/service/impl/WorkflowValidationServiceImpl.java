@@ -138,7 +138,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
             for (String ref : references) {
                 String[] parts = ref.split("\\.");
                 if (parts.length < 2) {
-                    result.addError("WF_PARAM_001", "参数引用语法错误: " + ref,
+                    result.addError("WF_PARAM_001", "参数引用语法error: " + ref,
                             node.getNodeUuid(), "inputParams");
                     continue;
                 }
@@ -174,7 +174,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
 
     @Override
     public List<NodeResponse> getPredecessors(String workflowId, String nodeUuid) {
-        log.info("获取前置节点: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
+        log.info("Getting prerequisite nodes: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
 
         List<WorkflowNodeEntity> allNodes = nodeMapper.selectByWorkflowId(workflowId);
         List<WorkflowConnectionEntity> allConnections = connectionMapper.selectByWorkflowId(workflowId);
@@ -229,7 +229,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
 
     @Override
     public List<AvailableVariable> getAvailableVariables(String workflowId, String nodeUuid) {
-        log.info("获取可用变量: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
+        log.info("Getting available variables: workflowId={}, nodeUuid={}", workflowId, nodeUuid);
 
         List<NodeResponse> predecessors = getPredecessors(workflowId, nodeUuid);
         List<AvailableVariable> variables = new ArrayList<>();
@@ -260,7 +260,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
 
     @Override
     public ReferenceCheckResult checkReference(String workflowId, String nodeUuid, String reference) {
-        log.info("检查参数引用: workflowId={}, nodeUuid={}, reference={}", workflowId, nodeUuid, reference);
+        log.info("Checking parameter reference: workflowId={}, nodeUuid={}, reference={}", workflowId, nodeUuid, reference);
 
         ReferenceCheckResult result = new ReferenceCheckResult();
 
@@ -297,7 +297,7 @@ public class WorkflowValidationServiceImpl implements WorkflowValidationService 
 
     @Override
     public List<NodeResponse> getExecutionOrder(String workflowId) {
-        log.info("获取执行顺序: workflowId={}", workflowId);
+        log.info("Getting execution order: workflowId={}", workflowId);
 
         try {
             List<String> orderIds = cyclicDependencyValidator.getTopologicalOrderByIds(workflowId);

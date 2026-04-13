@@ -52,15 +52,15 @@ public class DistributedLockService implements LockService {
                     .setIfAbsent(lockKey, lockValue, timeoutMs, TimeUnit.MILLISECONDS);
 
             if (Boolean.TRUE.equals(acquired)) {
-                log.debug("获取分布式锁成功: sessionId={}", sessionId);
+                log.debug("Distributed lock acquired: sessionId={}", sessionId);
                 return true;
             }
 
-            log.warn("获取分布式锁失败: sessionId={}", sessionId);
+            log.warn("Failed to acquire distributed lock: sessionId={}", sessionId);
             return false;
 
         } catch (Exception e) {
-            log.error("Redis操作异常， sessionId={}, error={}", sessionId, e.getMessage());
+            log.error("Redis operation exception, sessionId={}, error={}", sessionId, e.getMessage());
             return false;
         }
     }
@@ -71,10 +71,10 @@ public class DistributedLockService implements LockService {
 
         try {
             redisTemplate.delete(lockKey);
-            log.debug("释放分布式锁: sessionId={}", sessionId);
+            log.debug("Releasing distributed lock: sessionId={}", sessionId);
 
         } catch (Exception e) {
-            log.error("释放分布式锁异常: sessionId={}, error={}", sessionId, e.getMessage());
+            log.error("Distributed lock release exception: sessionId={}, error={}", sessionId, e.getMessage());
         }
     }
 

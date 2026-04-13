@@ -72,7 +72,7 @@ public class ContextBuilder {
         String context = sb.toString();
         if (properties.isTruncationEnabled() && context.length() > properties.getMaxLength()) {
             context = emergencyTruncate(context, properties.getMaxLength());
-            log.info("上下文已截断: 原长度={}, 截断后长度={}", sb.length(), context.length());
+            log.info("上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
         }
 
         return context;
@@ -120,7 +120,7 @@ public class ContextBuilder {
         String context = sb.toString();
         if (properties.isTruncationEnabled() && context.length() > properties.getMaxLength()) {
             context = emergencyTruncate(context, properties.getMaxLength());
-            log.info("带结果上下文已截断: 原长度={}, 截断后长度={}", sb.length(), context.length());
+            log.info("带结果上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
         }
 
         return context;
@@ -143,7 +143,7 @@ public class ContextBuilder {
             return jsonContent;
         }
 
-        log.debug("{}内容过长，进行截断: 原长度={}, 最大长度={}", label, jsonContent.length(), maxLength);
+        log.debug("{}内容过长，进行截断: originalLength={}, 最大长度={}", label, jsonContent.length(), maxLength);
         return jsonContent.substring(0, maxLength) + "\n...(内容已截断)";
     }
 

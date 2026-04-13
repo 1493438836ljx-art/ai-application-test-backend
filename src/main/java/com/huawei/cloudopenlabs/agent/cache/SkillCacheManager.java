@@ -81,7 +81,7 @@ public class SkillCacheManager {
                 5, 5, TimeUnit.MINUTES
         );
 
-        log.info("Skill 缓存管理器初始化完成: ttl={}min, maxSize={}",
+        log.info("Skill cache manager initialized: ttl={}min, maxSize={}",
                 cacheTtlMinutes, maxCacheSize);
     }
 
@@ -106,7 +106,7 @@ public class SkillCacheManager {
             fileCache.put(skillPath, new CacheEntry<>(content, System.currentTimeMillis() + cacheTtlMinutes * 60 * 1000L));
             return content;
         } catch (Exception e) {
-            log.error("获取 Skill 文件失败: {}", skillPath, e);
+            log.error("Failed to get skill file: {}", skillPath, e);
             throw new SkillCacheException("Skill 文件加载失败", e);
         }
     }
@@ -132,7 +132,7 @@ public class SkillCacheManager {
             dirCache.put(sessionId, new CacheEntry<>(dir, System.currentTimeMillis() + cacheTtlMinutes * 60 * 1000L));
             return dir;
         } catch (Exception e) {
-            log.error("准备 Skill 目录失败: sessionId={}", sessionId, e);
+            log.error("Failed to prepare skill directory: sessionId={}", sessionId, e);
             throw new SkillCacheException("Skill 目录准备失败", e);
         }
     }
@@ -153,14 +153,14 @@ public class SkillCacheManager {
             cleanupDirectory(entry.getValue());
         });
         dirCache.clear();
-        log.info("已清理所有缓存");
+        log.info("All caches cleared");
     }
 
     /**
      * 加载 Skill 文件
      */
     private byte[] loadSkillFile(String path) {
-        log.info("加载 Skill 文件: {}", path);
+        log.info("Loading skill file: {}", path);
         try {
             return Files.readAllBytes(Path.of(path));
         } catch (IOException e) {
@@ -172,7 +172,7 @@ public class SkillCacheManager {
      * 准备 Skill 目录
      */
     private String prepareSkillDir(String sessionId) {
-        log.info("准备 Skill 目录: sessionId={}", sessionId);
+        log.info("Preparing skill directory: sessionId={}", sessionId);
         Path dirPath = Path.of(skillTempDir, sessionId);
         try {
             Files.createDirectories(dirPath);
@@ -197,7 +197,7 @@ public class SkillCacheManager {
             return false;
         });
 
-        log.debug("清理过期缓存完成: fileCache={}, dirCache={}",
+        log.debug("Expired cache cleanup completed: fileCache={}, dirCache={}",
                 fileCache.size(), dirCache.size());
     }
 
@@ -205,7 +205,7 @@ public class SkillCacheManager {
      * 清理目录
      */
     private void cleanupDirectory(String dirPath) {
-        log.info("清理缓存目录: {}", dirPath);
+        log.info("Cleaning cache directory: {}", dirPath);
         try {
             Files.walk(Path.of(dirPath))
                     .sorted(Comparator.reverseOrder())
@@ -213,11 +213,11 @@ public class SkillCacheManager {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException e) {
-                            log.warn("清理文件失败: {}", p);
+                            log.warn("Failed to clean file: {}", p);
                         }
                     });
         } catch (IOException e) {
-            log.warn("清理目录失败: {}", dirPath, e);
+            log.warn("Failed to clean directory: {}", dirPath, e);
         }
     }
 
@@ -225,7 +225,7 @@ public class SkillCacheManager {
     public void shutdown() {
         cleanupExecutor.shutdown();
         invalidateAll();
-        log.info("Skill 缓存管理器已关闭");
+        log.info("Skill cache manager shut down");
     }
 
     /**

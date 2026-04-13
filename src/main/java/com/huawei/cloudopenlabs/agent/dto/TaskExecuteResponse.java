@@ -54,7 +54,7 @@ public class TaskExecuteResponse {
     private String skillFile;
 
     /**
-     * 会话ID（用于多轮对话会话持久化）
+     * 会话ID（用于多 round, 会话持久化）
      */
     @JsonProperty("sessionId")
     private String sessionId;

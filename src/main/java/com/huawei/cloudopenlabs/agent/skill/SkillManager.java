@@ -44,25 +44,25 @@ public class SkillManager {
 
         // 如果目录已存在，直接返回
         if (Files.exists(skillDir)) {
-            log.debug("Skill 目录已存在: {}", skillDir);
+            log.debug("Skill directory already exists: {}", skillDir);
             return skillDir.toAbsolutePath().toString();
         }
 
         // 检查 Skill 文件是否存在
         Path skillFile = Paths.get(skillFilePath);
         if (!Files.exists(skillFile)) {
-            log.warn("Skill 文件不存在: {}，使用默认配置", skillFile);
+            log.warn("Skill file not found: {}，using default config", skillFile);
             return null;
         }
 
         try {
             // 解压 Skill 文件
             extractZip(skillFile, skillDir);
-            log.info("Skill 解压完成: {} -> {}", skillFile, skillDir);
+            log.info("Skill extraction completed: {} -> {}", skillFile, skillDir);
             return skillDir.toAbsolutePath().toString();
 
         } catch (IOException e) {
-            log.error("解压 Skill 文件失败: {}", e.getMessage(), e);
+            log.error("Failed to extract skill file: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -80,7 +80,7 @@ public class SkillManager {
 
                 // 安全检查：防止路径遍历
                 if (!entryPath.normalize().startsWith(targetDir.normalize())) {
-                    log.warn("检测到路径遍历攻击，跳过: {}", entry.getName());
+                    log.warn("Path traversal attack detected, skipping: {}", entry.getName());
                     continue;
                 }
 
@@ -117,16 +117,16 @@ public class SkillManager {
                     if (now - lastModified > maxAgeMs) {
                         deleteDirectory(skillDir);
                         cleanedCount++;
-                        log.info("清理过期 Skill 目录: {}", skillDir);
+                        log.info("Cleaning expired skill directory: {}", skillDir);
                     }
                 }
             }
         } catch (IOException e) {
-            log.error("清理 Skill 目录失败: {}", e.getMessage(), e);
+            log.error("Failed to clean skill directory: {}", e.getMessage(), e);
         }
 
         if (cleanedCount > 0) {
-            log.info("清理完成: 共清理 {} 个过期 Skill 目录", cleanedCount);
+            log.info("Cleanup completed: cleaned {} expired skill directories", cleanedCount);
         }
     }
 
@@ -141,7 +141,7 @@ public class SkillManager {
                         try {
                             Files.deleteIfExists(p);
                         } catch (IOException e) {
-                            log.warn("删除文件失败: {}", p);
+                            log.warn("Failed to delete file: {}", p);
                         }
                     });
         }

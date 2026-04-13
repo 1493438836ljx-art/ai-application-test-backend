@@ -52,7 +52,7 @@ public class NodeErrorHandler {
         String nodeUuid = node.getNodeUuid();
         String nodeName = node.getName();
 
-        log.error("处理节点执行错误: nodeUuid={}, nodeName={}, error={}",
+        log.error("处理节点执行error: nodeUuid={}, nodeName={}, error={}",
                 nodeUuid, nodeName, exception.getMessage());
 
         // 获取节点的错误策略配置

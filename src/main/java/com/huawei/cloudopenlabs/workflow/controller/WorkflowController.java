@@ -46,13 +46,13 @@ public class WorkflowController {
      */
     @PostMapping
     public ResponseEntity<WorkflowResponse> createWorkflow(@Valid @RequestBody WorkflowCreateRequest request) {
-        log.info("创建工作流: {}", request.getName());
+        log.info("Creating workflow: {}", request.getName());
         WorkflowResponse response = workflowService.createWorkflow(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
-     * 获取默认工作流详情
+     * Getting default workflow details
      *
      * @return 默认工作流响应
      */
@@ -63,7 +63,7 @@ public class WorkflowController {
     }
 
     /**
-     * 获取工作流列表
+     * Getting workflow list
      *
      * @param page 页码（前端从1开始，后端自动转换为0开始）
      * @param size 每页大小
@@ -97,7 +97,7 @@ public class WorkflowController {
     }
 
     /**
-     * 根据状态获取工作流列表
+     * 根据状态Getting workflow list
      *
      * @param status    状态
      * @param page      页码
@@ -143,7 +143,7 @@ public class WorkflowController {
     public ResponseEntity<WorkflowResponse> updateWorkflow(
             @PathVariable String id,
             @Valid @RequestBody WorkflowUpdateRequest request) {
-        log.info("更新工作流: {}", id);
+        log.info("Updating workflow: {}", id);
         WorkflowResponse response = workflowService.updateWorkflow(id, request);
         return ResponseEntity.ok(response);
     }
@@ -157,7 +157,7 @@ public class WorkflowController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkflow(
             @PathVariable String id) {
-        log.info("删除工作流: {}", id);
+        log.info("Deleting workflow: {}", id);
         workflowService.deleteWorkflow(id);
         return ResponseEntity.noContent().build();
     }
@@ -171,7 +171,7 @@ public class WorkflowController {
     @PostMapping("/{id}/publish")
     public ResponseEntity<WorkflowResponse> publishWorkflow(
             @PathVariable String id) {
-        log.info("发布工作流: {}", id);
+        log.info("Publishing workflow: {}", id);
         WorkflowResponse response = workflowService.publishWorkflow(id);
         return ResponseEntity.ok(response);
     }
@@ -185,7 +185,7 @@ public class WorkflowController {
     @PostMapping("/{id}/unpublish")
     public ResponseEntity<WorkflowResponse> unpublishWorkflow(
             @PathVariable String id) {
-        log.info("取消发布工作流: {}", id);
+        log.info("Unpublishing workflow: {}", id);
         WorkflowResponse response = workflowService.unpublishWorkflow(id);
         return ResponseEntity.ok(response);
     }
@@ -199,7 +199,7 @@ public class WorkflowController {
     @PostMapping("/{id}/copy")
     public ResponseEntity<WorkflowResponse> copyWorkflow(
             @PathVariable String id) {
-        log.info("复制工作流: {}", id);
+        log.info("Copying workflow: {}", id);
         WorkflowResponse response = workflowService.copyWorkflow(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -219,7 +219,7 @@ public class WorkflowController {
             @RequestParam(required = false) List<WorkflowResponse.NodeDTO> nodes,
             @RequestParam(required = false) List<WorkflowResponse.ConnectionDTO> connections,
             @RequestParam(required = false) List<WorkflowResponse.AssociationDTO> associations) {
-        log.info("保存工作流数据: {}", id);
+        log.info("Saving workflow data: {}", id);
         if (nodes == null) nodes = List.of();
         if (connections == null) connections = List.of();
         if (associations == null) associations = List.of();

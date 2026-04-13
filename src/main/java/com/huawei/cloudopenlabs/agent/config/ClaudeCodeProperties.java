@@ -29,12 +29,12 @@ public class ClaudeCodeProperties {
     private String baseUrl = "http://localhost:3000";
 
     /**
-     * 连接超时时间（秒）
+     * Connection timeout时间（秒）
      */
     private Integer connectTimeout = 10;
 
     /**
-     * 读取超时时间（秒）
+     * Read timeout时间（秒）
      * 注意：任务执行接口本身的超时为 120 秒，此值应大于 120
      */
     private Integer readTimeout = 130;

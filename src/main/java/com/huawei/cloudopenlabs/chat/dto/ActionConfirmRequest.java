@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * 操作确认请求
- * 当 AI 请求执行非查询操作时，需要用户确认
+ * 当 AI 请求执行非查询操作时，Requires user confirmation
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1

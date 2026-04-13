@@ -71,7 +71,7 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
                 // 检查是否应该重试
                 if (!shouldRetry.test(e) || attempt == attempts) {
                     throw new RetryExhaustedException(
-                            "操作失败，已达到最大重试次数: " + (attempt + 1),
+                            "操作失败，已达到最大Retry count: " + (attempt + 1),
                             e
                     );
                 }

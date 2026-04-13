@@ -61,7 +61,7 @@ public class SimpleConditionExecutor implements NodeExecutor {
                     node.getNodeUuid()
             );
 
-            log.info("条件评估结果: nodeUuid={}, result={}", node.getNodeUuid(), result);
+            log.info("Condition evaluation result: nodeUuid={}, result={}", node.getNodeUuid(), result);
 
             // 3. 确定下一步要执行的分支
             String branchLabel = result ? "true" : "false";
@@ -72,7 +72,7 @@ public class SimpleConditionExecutor implements NodeExecutor {
             outputs.put("condition_result", result);
             outputs.put("branch", branchLabel);
 
-            log.info("简单条件节点执行完成: nodeUuid={}, branch={}, nextNodes={}",
+            log.info("简单条件Node execution completed: nodeUuid={}, branch={}, nextNodes={}",
                     node.getNodeUuid(), branchLabel, nextNodes);
 
             return NodeExecutionResult.builder()
@@ -82,7 +82,7 @@ public class SimpleConditionExecutor implements NodeExecutor {
                     .build();
 
         } catch (Exception e) {
-            log.error("简单条件节点执行异常: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("简单条件Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             return NodeExecutionResult.failure(
                     "条件评估异常: " + e.getMessage(),
                     e instanceof Exception ? (Exception) e : new RuntimeException(e)

@@ -21,7 +21,7 @@ import java.util.UUID;
 
 /**
  * Agent会话管理服务
- * 负责多轮对话会话的创建、查询和更新
+ * 负责多 round, 会话的创建、查询和更新
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1
@@ -57,7 +57,7 @@ public class AgentSessionService {
         String effectiveConversationId = conversationId;
         if (effectiveConversationId == null || effectiveConversationId.isEmpty()) {
             effectiveConversationId = UUID.randomUUID().toString();
-            log.info("生成临时 conversationId: {}", effectiveConversationId);
+            log.info("Generated temporary conversationId: {}", effectiveConversationId);
         }
 
         Optional<AgentSessionEntity> existingSession = sessionMapper.selectByConversationId(effectiveConversationId);
@@ -74,7 +74,7 @@ public class AgentSessionService {
                 session.setParseErrorCount(0);
                 session.setStartTime(System.currentTimeMillis()); // 重置开始时间
                 sessionMapper.updateById(session);
-                log.info("重置会话状态为ACTIVE: conversationId={}", effectiveConversationId);
+                log.info("Resetting session state to ACTIVE: conversationId={}", effectiveConversationId);
             }
             return session;
         }
@@ -89,7 +89,7 @@ public class AgentSessionService {
         newSession.setStartTime(System.currentTimeMillis()); // 设置开始时间
         sessionMapper.insert(newSession);
 
-        log.info("创建新会话: conversationId={}, workflowId={}", effectiveConversationId, workflowId);
+        log.info("Creating new session: conversationId={}, workflowId={}", effectiveConversationId, workflowId);
         return newSession;
     }
 
@@ -123,7 +123,7 @@ public class AgentSessionService {
     public void updateQueryResults(String conversationId, Map<String, Object> queryResults) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法更新查询结果: conversationId={}", conversationId);
+            log.warn("Session not found, cannot update query result: conversationId={}", conversationId);
             return;
         }
 
@@ -137,7 +137,7 @@ public class AgentSessionService {
         session.setRoundCount(session.getRoundCount() + 1);
         sessionMapper.updateById(session);
 
-        log.info("更新查询结果: conversationId={}, roundCount={}", conversationId, session.getRoundCount());
+        log.info("Updating query result: conversationId={}, roundCount={}", conversationId, session.getRoundCount());
     }
 
     /**
@@ -240,7 +240,7 @@ public class AgentSessionService {
     public void markAsError(String conversationId, String errorMessage) {
         Optional<AgentSessionEntity> sessionOpt = sessionMapper.selectByConversationId(conversationId);
         if (sessionOpt.isEmpty()) {
-            log.warn("会话不存在，无法标记错误: conversationId={}", conversationId);
+            log.warn("会话不存在，无法标记error: conversationId={}", conversationId);
             return;
         }
 
@@ -250,7 +250,7 @@ public class AgentSessionService {
         session.setLastReasoning("ERROR: " + errorMessage);
         sessionMapper.updateById(session);
 
-        log.info("会话标记为错误: conversationId={}, error={}", conversationId, errorMessage);
+        log.info("会话标记为error: conversationId={}, error={}", conversationId, errorMessage);
     }
 
     /**

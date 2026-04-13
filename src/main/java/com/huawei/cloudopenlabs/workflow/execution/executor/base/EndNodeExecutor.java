@@ -80,12 +80,12 @@ public class EndNodeExecutor implements NodeExecutor {
                 enrichedOutputs = rawOutputs;
             }
 
-            log.info("结束节点执行完成: nodeUuid={}, outputs={}", node.getNodeUuid(), enrichedOutputs);
+            log.info("结束Node execution completed: nodeUuid={}, outputs={}", node.getNodeUuid(), enrichedOutputs);
 
             return NodeExecutionResult.success(enrichedOutputs);
 
         } catch (Exception e) {
-            log.error("结束节点执行异常: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("结束Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             // 结束节点即使出错也返回成功，但记录错误信息
             return NodeExecutionResult.success(rawOutputs);
         }
@@ -180,7 +180,7 @@ public class EndNodeExecutor implements NodeExecutor {
      */
     private void enrichFileParam(Map<String, Object> param, Object value) {
         if (fileUploadService == null) {
-            log.warn("FileUploadService 未注入，无法获取文件信息");
+            log.warn("FileUploadService  not injected，无法获取文件信息");
             param.put("downloadUrl", "/api/file/download/" + value);
             return;
         }
@@ -197,7 +197,7 @@ public class EndNodeExecutor implements NodeExecutor {
     @SuppressWarnings("unchecked")
     private void enrichFileArrayParam(Map<String, Object> param, Object value) {
         if (fileUploadService == null) {
-            log.warn("FileUploadService 未注入，无法获取文件信息");
+            log.warn("FileUploadService  not injected，无法获取文件信息");
             return;
         }
 

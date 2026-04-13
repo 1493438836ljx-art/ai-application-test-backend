@@ -37,7 +37,7 @@ public class TaskExecuteRequest {
     private String skillFileName;
 
     /**
-     * 会话ID（可选，用于多轮对话会话持久化）
+     * 会话ID（可选，用于多 round, 会话持久化）
      * 即 chat_conversation.conversation_uuid
      */
     private String sessionId;

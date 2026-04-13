@@ -38,11 +38,11 @@ public class NodeTypeServiceImpl implements NodeTypeService {
     @Override
     @Transactional
     public NodeTypeResponse createNodeType(NodeTypeCreateRequest request) {
-        log.info("创建节点类型: {}", request.getCode());
+        log.info("Creating node type: {}", request.getCode());
 
         // 检查编码是否已存在
         if (nodeTypeMapper.existsByCode(request.getCode()) > 0) {
-            throw BusinessException.conflict("节点类型编码已存在: " + request.getCode());
+            throw BusinessException.conflict("Node type code already exists: " + request.getCode());
         }
 
         WorkflowNodeTypeEntity entity = new WorkflowNodeTypeEntity();
@@ -114,7 +114,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
     @Override
     @Transactional
     public NodeTypeResponse updateNodeType(String id, NodeTypeUpdateRequest request) {
-        log.info("更新节点类型: {}", id);
+        log.info("Updating node type: {}", id);
 
         WorkflowNodeTypeEntity entity = nodeTypeMapper.selectById(id);
         if (entity == null) {
@@ -157,7 +157,7 @@ public class NodeTypeServiceImpl implements NodeTypeService {
     @Override
     @Transactional
     public void deleteNodeType(String id) {
-        log.info("删除节点类型: {}", id);
+        log.info("Deleting node type: {}", id);
 
         WorkflowNodeTypeEntity entity = nodeTypeMapper.selectById(id);
         if (entity == null) {

@@ -48,7 +48,7 @@ public class SkillController {
     public ResponseEntity<SkillResponse> createSkill(
             @RequestPart(value = "file", required = false) MultipartFile file,
             @Valid @RequestPart("data") SkillCreateRequest request) {
-        log.info("创建Skill: {}", request.getName());
+        log.info("Creating skill: {}", request.getName());
         SkillResponse response = skillService.createSkill(request, file);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -140,7 +140,7 @@ public class SkillController {
             @PathVariable String id,
             @RequestPart(value = "file", required = false) MultipartFile file,
             @Valid @RequestPart("data") SkillUpdateRequest request) {
-        log.info("更新Skill: {}", id);
+        log.info("Updating skill: {}", id);
         SkillResponse response = skillService.updateSkill(id, request, file);
         return ResponseEntity.ok(response);
     }
@@ -154,7 +154,7 @@ public class SkillController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSkill(
             @PathVariable String id) {
-        log.info("删除Skill: {}", id);
+        log.info("Deleting skill: {}", id);
         skillService.deleteSkill(id);
         return ResponseEntity.noContent().build();
     }
@@ -168,7 +168,7 @@ public class SkillController {
     @PostMapping("/{id}/publish")
     public ResponseEntity<SkillResponse> publishSkill(
             @PathVariable String id) {
-        log.info("发布Skill: {}", id);
+        log.info("Publishing skill: {}", id);
         SkillResponse response = skillService.publishSkill(id);
         return ResponseEntity.ok(response);
     }
@@ -182,7 +182,7 @@ public class SkillController {
     @PostMapping("/{id}/unpublish")
     public ResponseEntity<SkillResponse> unpublishSkill(
             @PathVariable String id) {
-        log.info("取消发布Skill: {}", id);
+        log.info("Unpublishing skill: {}", id);
         SkillResponse response = skillService.unpublishSkill(id);
         return ResponseEntity.ok(response);
     }
@@ -196,7 +196,7 @@ public class SkillController {
     @PostMapping("/{id}/copy")
     public ResponseEntity<SkillResponse> copySkill(
             @PathVariable String id) {
-        log.info("复制Skill: {}", id);
+        log.info("Copying skill: {}", id);
         SkillResponse response = skillService.copySkill(id);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -126,7 +126,7 @@ public class WorkflowScheduler {
         // 7. 提交异步执行任务
         workflowExecutor.submit(() -> executeWorkflowAsync(context, workflow));
 
-        log.info("工作流执行已提交: workflowId={}, executionUuid={}", workflowId, executionUuid);
+        log.info("Workflow execution submitted: workflowId={}, executionUuid={}", workflowId, executionUuid);
 
         return executionUuid;
     }
@@ -148,13 +148,13 @@ public class WorkflowScheduler {
             // 3. 状态已由执行引擎更新
 
         } catch (WorkflowExecutionException e) {
-            log.error("工作流执行失败: executionUuid={}, error={}", executionUuid, e.getMessage());
+            log.error("工作流Execution failed: executionUuid={}, error={}", executionUuid, e.getMessage());
 
             // 更新执行状态为失败
             updateExecutionStatus(executionId, ExecutionStatus.FAILED, e.getMessage());
 
         } catch (Exception e) {
-            log.error("工作流执行异常: executionUuid={}", executionUuid, e);
+            log.error("Workflow execution exception: executionUuid={}", executionUuid, e);
 
             // 更新执行状态为失败
             updateExecutionStatus(executionId, ExecutionStatus.FAILED, e.getMessage());
@@ -209,7 +209,7 @@ public class WorkflowScheduler {
      */
     @Transactional
     public void abortExecution(String executionId) {
-        log.info("中止执行: executionId={}", executionId);
+        log.info("Aborting execution: executionId={}", executionId);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(executionId);
         if (execution == null) {

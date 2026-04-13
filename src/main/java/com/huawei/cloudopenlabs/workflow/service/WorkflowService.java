@@ -39,7 +39,7 @@ public interface WorkflowService {
     WorkflowResponse getWorkflowById(String id);
 
     /**
-     * 获取工作流列表
+     * Getting workflow list
      *
      * @param pageable 分页参数
      * @return 工作流分页列表
@@ -47,7 +47,7 @@ public interface WorkflowService {
     Page<WorkflowResponse> getWorkflowList(Pageable pageable);
 
     /**
-     * 根据状态获取工作流列表
+     * 根据状态Getting workflow list
      *
      * @param status   状态
      * @param pageable 分页参数
@@ -119,7 +119,7 @@ public interface WorkflowService {
                                        List<WorkflowResponse.AssociationDTO> associations);
 
     /**
-     * 获取默认工作流详情
+     * Getting default workflow details
      *
      * @return 默认工作流响应
      */

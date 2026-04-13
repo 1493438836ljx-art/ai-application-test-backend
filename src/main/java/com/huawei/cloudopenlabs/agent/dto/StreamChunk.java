@@ -60,7 +60,7 @@ public class StreamChunk {
 
     /**
      * 会话ID
-     * 用于多轮对话的会话持久化
+     * 用于多 round, 的会话持久化
      */
     private String sessionId;
 

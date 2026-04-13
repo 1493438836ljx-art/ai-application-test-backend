@@ -61,7 +61,7 @@ public class ExecutionGraph {
     private Map<String, Map<String, List<String>>> branchConnections;
 
     /**
-     * 从工作流定义构建执行图
+     * 从工作流定义Building execution graph
      */
     public static ExecutionGraph build(WorkflowDefinition definition) {
         ExecutionGraph graph = new ExecutionGraph();

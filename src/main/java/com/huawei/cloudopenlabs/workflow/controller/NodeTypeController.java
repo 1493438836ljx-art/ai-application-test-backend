@@ -43,7 +43,7 @@ public class NodeTypeController {
      */
     @PostMapping
     public ResponseEntity<NodeTypeResponse> createNodeType(@Valid @RequestBody NodeTypeCreateRequest request) {
-        log.info("创建节点类型: {}", request.getCode());
+        log.info("Creating node type: {}", request.getCode());
         NodeTypeResponse response = nodeTypeService.createNodeType(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -125,7 +125,7 @@ public class NodeTypeController {
     public ResponseEntity<NodeTypeResponse> updateNodeType(
             @PathVariable String id,
             @Valid @RequestBody NodeTypeUpdateRequest request) {
-        log.info("更新节点类型: {}", id);
+        log.info("Updating node type: {}", id);
         NodeTypeResponse response = nodeTypeService.updateNodeType(id, request);
         return ResponseEntity.ok(response);
     }
@@ -139,7 +139,7 @@ public class NodeTypeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNodeType(
             @PathVariable String id) {
-        log.info("删除节点类型: {}", id);
+        log.info("Deleting node type: {}", id);
         nodeTypeService.deleteNodeType(id);
         return ResponseEntity.noContent().build();
     }

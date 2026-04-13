@@ -51,7 +51,7 @@ public class LocalLockService implements LockService {
     @Override
     public boolean tryLock(String sessionId, long timeoutMs) {
         if (sessionId == null || sessionId.isEmpty()) {
-            log.warn("尝试获取锁失败: sessionId 为空");
+            log.warn("Lock acquisition failed: sessionId is empty");
             return false;
         }
 
@@ -59,14 +59,14 @@ public class LocalLockService implements LockService {
         try {
             boolean acquired = lock.tryLock(timeoutMs, TimeUnit.MILLISECONDS);
             if (acquired) {
-                log.debug("成功获取锁: sessionId={}", sessionId);
+                log.debug("Lock acquired successfully: sessionId={}", sessionId);
             } else {
-                log.warn("获取锁超时: sessionId={}", sessionId);
+                log.warn("Lock acquisition timeout: sessionId={}", sessionId);
             }
             return acquired;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.warn("获取锁被中断: sessionId={}", sessionId);
+            log.warn("Lock acquisition interrupted: sessionId={}", sessionId);
             return false;
         }
     }
@@ -85,7 +85,7 @@ public class LocalLockService implements LockService {
         ReentrantLock lock = lockMap.get(sessionId);
         if (lock != null && lock.isHeldByCurrentThread()) {
             lock.unlock();
-            log.debug("释放锁: sessionId={}", sessionId);
+            log.debug("Releasing lock: sessionId={}", sessionId);
         }
     }
 
@@ -138,7 +138,7 @@ public class LocalLockService implements LockService {
         });
         int afterSize = lockMap.size();
         if (beforeSize != afterSize) {
-            log.debug("清理空闲锁: 清理前={}, 清理后={}", beforeSize, afterSize);
+            log.debug("Cleaning idle locks: before={}, after={}", beforeSize, afterSize);
         }
     }
 }

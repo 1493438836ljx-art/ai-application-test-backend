@@ -108,7 +108,7 @@ public class QueryExecutor {
         Mono.when(queryMonos)
                 .block(Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS * queries.size()));
 
-        log.info("查询执行完成: 成功={}, 失败={}",
+        log.info("Query execution completed: 成功={}, 失败={}",
                 results.values().stream().filter(v -> !isErrorResult(v)).count(),
                 results.values().stream().filter(this::isErrorResult).count());
 
@@ -135,7 +135,7 @@ public class QueryExecutor {
         String path = resolvePath(query.getPath(), workflowId);
         String method = query.getMethod() != null ? query.getMethod().toUpperCase() : "GET";
 
-        log.info("执行查询: id={}, method={}, path={}", queryId, method, path);
+        log.info("Executing query: id={}, method={}, path={}", queryId, method, path);
 
         long startTime = System.currentTimeMillis();
 
@@ -156,7 +156,7 @@ public class QueryExecutor {
             log.error("查询失败: id={}, path={}, duration={}ms, error={}",
                     queryId, path, duration, e.getMessage());
 
-            throw new QueryExecutionException(queryId, path, "查询执行失败: " + e.getMessage(), e);
+            throw new QueryExecutionException(queryId, path, "查询Execution failed: " + e.getMessage(), e);
         }
     }
 

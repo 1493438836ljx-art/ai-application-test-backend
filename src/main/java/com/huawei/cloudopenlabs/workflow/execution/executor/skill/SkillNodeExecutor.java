@@ -103,7 +103,7 @@ public class SkillNodeExecutor implements NodeExecutor {
 
             // 5. 处理响应
             if (!response.isSuccess()) {
-                log.error("Skill执行失败: nodeUuid={}, error={}", node.getNodeUuid(), response.getErrorMessage());
+                log.error("SkillExecution failed: nodeUuid={}, error={}", node.getNodeUuid(), response.getErrorMessage());
                 return NodeExecutionResult.builder()
                         .success(false)
                         .errorMessage(response.getErrorMessage())
@@ -115,7 +115,7 @@ public class SkillNodeExecutor implements NodeExecutor {
             // 6. 映射输出参数
             Map<String, Object> outputs = mapOutputs(node, response.getOutputs());
 
-            log.info("技能节点执行完成: nodeUuid={}, skillId={}, durationMs={}",
+            log.info("技能Node execution completed: nodeUuid={}, skillId={}, durationMs={}",
                     node.getNodeUuid(), skillId, durationMs);
 
             return NodeExecutionResult.builder()
@@ -128,7 +128,7 @@ public class SkillNodeExecutor implements NodeExecutor {
         } catch (WorkflowExecutionException e) {
             throw e;
         } catch (java.util.concurrent.TimeoutException e) {
-            log.error("技能节点执行超时: nodeUuid={}, skillId={}",
+            log.error("技能节点Execution timeout: nodeUuid={}, skillId={}",
                     node.getNodeUuid(), node.getSkillId());
             throw new WorkflowExecutionException(
                     ErrorCode.SKILL_EXECUTION_FAILED,
@@ -137,13 +137,13 @@ public class SkillNodeExecutor implements NodeExecutor {
                     "技能执行超时"
             );
         } catch (Exception e) {
-            log.error("技能节点执行异常: nodeUuid={}, skillId={}",
+            log.error("技能Node execution exception: nodeUuid={}, skillId={}",
                     node.getNodeUuid(), node.getSkillId(), e);
             throw new WorkflowExecutionException(
                     ErrorCode.SKILL_EXECUTION_FAILED,
                     node.getNodeUuid(),
                     node.getName(),
-                    "技能执行失败: " + e.getMessage(),
+                    "技能Execution failed: " + e.getMessage(),
                     e
             );
         }
@@ -214,7 +214,7 @@ public class SkillNodeExecutor implements NodeExecutor {
         }
 
         // 从inputs获取已解析的实际输入值（由ParameterResolver解析）
-        log.debug("构建Skill执行请求: inputs={}", inputs);
+        log.debug("Building skill execution request: inputs={}", inputs);
 
         // 如果inputParams为空但inputs有值，直接从inputs构建参数定义
         if ((inputParams == null || inputParams.isEmpty()) && inputs != null && !inputs.isEmpty()) {

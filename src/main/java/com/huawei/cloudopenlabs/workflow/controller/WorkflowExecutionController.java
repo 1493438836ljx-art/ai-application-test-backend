@@ -45,7 +45,7 @@ public class WorkflowExecutionController {
             @PathVariable String id,
             @RequestParam(required = false) String triggeredBy,
             @RequestBody(required = false) String inputData) {
-        log.info("执行工作流: {}", id);
+        log.info("Executing workflow: {}", id);
         String executionId = executionService.executeWorkflow(id, triggeredBy, inputData);
         return ResponseEntity.ok(executionId);
     }
@@ -114,7 +114,7 @@ public class WorkflowExecutionController {
     @PostMapping("/execution/{id}/abort")
     public ResponseEntity<Void> abortExecution(
             @PathVariable String id) {
-        log.info("中止执行: {}", id);
+        log.info("Aborting execution: {}", id);
         executionService.abortExecution(id);
         return ResponseEntity.noContent().build();
     }

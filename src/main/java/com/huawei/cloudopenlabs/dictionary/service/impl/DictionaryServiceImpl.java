@@ -49,7 +49,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional(readOnly = true)
     public org.springframework.data.domain.Page<DictionaryListResponse> getDictionaryList(String keyword, Pageable pageable) {
-        log.info("查询数据字典列表, keyword: {}, page: {}, size: {}", keyword, pageable.getPageNumber(), pageable.getPageSize());
+        log.info("Querying data dictionary list, keyword: {}, page: {}, size: {}", keyword, pageable.getPageNumber(), pageable.getPageSize());
 
         Page<DataDictionary> page = new Page<>(pageable.getPageNumber() + 1, pageable.getPageSize());
         IPage<DataDictionary> result = dictionaryMapper.searchByKeyword(page, keyword);
@@ -64,7 +64,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional(readOnly = true)
     public DictionaryDetailResponse getDictionaryDetail(String id) {
-        log.info("获取数据字典详情: {}", id);
+        log.info("Getting data dictionary details: {}", id);
 
         DataDictionary dictionary = dictionaryMapper.selectById(id);
         if (dictionary == null || dictionary.getIsDeleted() == 1) {
@@ -77,7 +77,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional
     public DictionaryDetailResponse createDictionary(DictionaryRequest request) {
-        log.info("创建数据字典: {}", request.getName());
+        log.info("Creating data dictionary: {}", request.getName());
 
         // 检查名称是否重复
         LambdaQueryWrapper<DataDictionary> wrapper = new LambdaQueryWrapper<>();
@@ -106,7 +106,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional
     public DictionaryDetailResponse updateDictionary(String id, DictionaryRequest request) {
-        log.info("更新数据字典: {}", id);
+        log.info("Updating data dictionary: {}", id);
 
         DataDictionary dictionary = dictionaryMapper.selectById(id);
         if (dictionary == null || dictionary.getIsDeleted() == 1) {
@@ -140,7 +140,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional
     public void deleteDictionary(String id) {
-        log.info("删除数据字典: {}", id);
+        log.info("Deleting data dictionary: {}", id);
 
         DataDictionary dictionary = dictionaryMapper.selectById(id);
         if (dictionary == null || dictionary.getIsDeleted() == 1) {
@@ -163,7 +163,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional(readOnly = true)
     public LinkStatusResponse getLinkStatus(String id) {
-        log.info("检查数据字典关联状态: {}", id);
+        log.info("Checking data dictionary association status: {}", id);
 
         // TODO: 实际实现时需要查询测评集表
         // 目前返回模拟数据，表示没有关联
@@ -182,7 +182,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional(readOnly = true)
     public List<DictionarySimpleResponse> getAllDictionaries() {
-        log.info("获取所有数据字典（下拉用）");
+        log.info("Getting all data dictionaries (for dropdown)");
 
         List<DataDictionary> dictionaries = dictionaryMapper.selectAllForDropdown();
         return dictionaries.stream()
@@ -209,7 +209,7 @@ public class DictionaryServiceImpl implements DictionaryService {
                 try {
                     column.setEnumOptions(objectMapper.writeValueAsString(request.getEnumOptions()));
                 } catch (JsonProcessingException e) {
-                    log.error("序列化枚举选项失败", e);
+                    log.error("Failed to serialize enum options", e);
                 }
             }
 
@@ -283,7 +283,7 @@ public class DictionaryServiceImpl implements DictionaryService {
             try {
                 enumOptions = objectMapper.readValue(column.getEnumOptions(), new TypeReference<List<String>>() {});
             } catch (JsonProcessingException e) {
-                log.error("反序列化枚举选项失败", e);
+                log.error("Failed to deserialize enum options", e);
             }
         }
 
@@ -314,7 +314,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     @Transactional(readOnly = true)
     public List<ColumnResponse> getColumnsByDictionaryName(String name) {
-        log.info("根据名称获取数据字典columns: {}", name);
+        log.info("Getting data dictionary columns by name: {}", name);
 
         DataDictionary dictionary = dictionaryMapper.selectByName(name);
         if (dictionary == null) {

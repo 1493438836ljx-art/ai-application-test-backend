@@ -85,7 +85,7 @@ public class SkillKafkaService {
             pendingRequests.remove(requestId);
             log.error("Skill执行请求超时: requestId={}, nodeUuid={}, timeoutMs={}",
                     requestId, kafkaRequest.getNodeUuid(), requestTimeoutMs);
-            throw new TimeoutException("Skill执行超时: requestId=" + requestId);
+            throw new TimeoutException("SkillExecution timeout: requestId=" + requestId);
 
         } catch (Exception e) {
             pendingRequests.remove(requestId);
@@ -104,7 +104,7 @@ public class SkillKafkaService {
     )
     public void handleResponse(SkillExecutionKafkaResponse response) {
         String requestId = response.getRequestId();
-        log.info("收到Skill执行响应: requestId={}, success={}", requestId, response.isSuccess());
+        log.info("Received skill execution response: requestId={}, success={}", requestId, response.isSuccess());
 
         PendingRequest pending = pendingRequests.remove(requestId);
         if (pending != null) {

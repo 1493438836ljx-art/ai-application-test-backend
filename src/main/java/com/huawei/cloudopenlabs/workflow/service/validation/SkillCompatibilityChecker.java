@@ -146,7 +146,7 @@ public class SkillCompatibilityChecker {
                         // 检查参数引用语法
                         if (value.startsWith("${") && !value.endsWith("}")) {
                             result.addError(PARAM_TYPE_MISMATCH,
-                                    "节点 '" + node.getName() + "' 的参数引用语法错误: " + value,
+                                    "节点 '" + node.getName() + "' 的参数引用语法error: " + value,
                                     node.getNodeUuid(), "inputParams");
                         }
                     }

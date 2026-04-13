@@ -60,7 +60,7 @@ public class AgentExecutorConfig {
      * <p>
      * 用于执行 Agent 的主要处理任务，包括：
      * <ul>
-     *   <li>多轮对话处理</li>
+     *   <li>多 round, 处理</li>
      *   <li>查询/操作执行</li>
      *   <li>响应解析</li>
      * </ul>

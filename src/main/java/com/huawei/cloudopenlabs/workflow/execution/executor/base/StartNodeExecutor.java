@@ -90,19 +90,19 @@ public class StartNodeExecutor implements NodeExecutor {
             // 将开始节点的输出设置到全局变量
             outputs.forEach((key, value) -> context.setGlobalVariable(key, value));
 
-            log.info("开始节点执行完成: nodeUuid={}, outputs={}", node.getNodeUuid(), outputs.keySet());
+            log.info("开始Node execution completed: nodeUuid={}, outputs={}", node.getNodeUuid(), outputs.keySet());
 
             return NodeExecutionResult.success(outputs);
 
         } catch (WorkflowExecutionException e) {
             throw e;
         } catch (Exception e) {
-            log.error("开始节点执行异常: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("开始Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             throw new WorkflowExecutionException(
                     ErrorCode.NODE_EXECUTION_FAILED,
                     node.getNodeUuid(),
                     node.getName(),
-                    "开始节点执行失败: " + e.getMessage(),
+                    "开始节点Execution failed: " + e.getMessage(),
                     e
             );
         }
@@ -128,7 +128,7 @@ public class StartNodeExecutor implements NodeExecutor {
                     }
                 }
             } catch (Exception e) {
-                result.addError("开始节点输出参数配置格式错误: " + e.getMessage());
+                result.addError("开始节点输出参数配置格式error: " + e.getMessage());
             }
         }
 

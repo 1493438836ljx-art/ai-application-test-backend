@@ -51,7 +51,7 @@ public class DictionaryController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        log.info("查询数据字典列表, keyword: {}, page: {}, size: {}", keyword, page, size);
+        log.info("Querying data dictionary list, keyword: {}, page: {}, size: {}", keyword, page, size);
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<DictionaryListResponse> result = dictionaryService.getDictionaryList(keyword, pageable);
         return ResponseEntity.ok(ApiResponse.<PageResponse<DictionaryListResponse>>builder()
@@ -71,7 +71,7 @@ public class DictionaryController {
     public ResponseEntity<ApiResponse<DictionaryDetailResponse>> getDictionaryDetail(
             @PathVariable String id) {
 
-        log.info("获取数据字典详情: {}", id);
+        log.info("Getting data dictionary details: {}", id);
         DictionaryDetailResponse response = dictionaryService.getDictionaryDetail(id);
         return ResponseEntity.ok(ApiResponse.<DictionaryDetailResponse>builder()
                 .code(200)
@@ -90,7 +90,7 @@ public class DictionaryController {
     public ResponseEntity<ApiResponse<DictionaryDetailResponse>> createDictionary(
             @Valid @RequestBody DictionaryRequest request) {
 
-        log.info("创建数据字典: {}", request.getName());
+        log.info("Creating data dictionary: {}", request.getName());
         DictionaryDetailResponse response = dictionaryService.createDictionary(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<DictionaryDetailResponse>builder()
@@ -112,7 +112,7 @@ public class DictionaryController {
             @PathVariable String id,
             @Valid @RequestBody DictionaryRequest request) {
 
-        log.info("更新数据字典: {}", id);
+        log.info("Updating data dictionary: {}", id);
         DictionaryDetailResponse response = dictionaryService.updateDictionary(id, request);
         return ResponseEntity.ok(ApiResponse.<DictionaryDetailResponse>builder()
                 .code(200)
@@ -131,7 +131,7 @@ public class DictionaryController {
     public ResponseEntity<ApiResponse<Void>> deleteDictionary(
             @PathVariable String id) {
 
-        log.info("删除数据字典: {}", id);
+        log.info("Deleting data dictionary: {}", id);
         dictionaryService.deleteDictionary(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(200)
@@ -149,7 +149,7 @@ public class DictionaryController {
     public ResponseEntity<ApiResponse<LinkStatusResponse>> getLinkStatus(
             @PathVariable String id) {
 
-        log.info("检查数据字典关联状态: {}", id);
+        log.info("Checking data dictionary association status: {}", id);
         LinkStatusResponse response = dictionaryService.getLinkStatus(id);
         return ResponseEntity.ok(ApiResponse.<LinkStatusResponse>builder()
                 .code(200)
@@ -166,7 +166,7 @@ public class DictionaryController {
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<DictionarySimpleResponse>>> getAllDictionaries() {
 
-        log.info("获取所有数据字典（下拉用）");
+        log.info("Getting all data dictionaries (for dropdown)");
         List<DictionarySimpleResponse> response = dictionaryService.getAllDictionaries();
         return ResponseEntity.ok(ApiResponse.<List<DictionarySimpleResponse>>builder()
                 .code(200)
@@ -185,7 +185,7 @@ public class DictionaryController {
     public ResponseEntity<ApiResponse<List<ColumnResponse>>> getColumnsByName(
             @PathVariable String name) {
 
-        log.info("根据名称获取数据字典columns: {}", name);
+        log.info("Getting data dictionary columns by name: {}", name);
         List<ColumnResponse> response = dictionaryService.getColumnsByDictionaryName(name);
         return ResponseEntity.ok(ApiResponse.<List<ColumnResponse>>builder()
                 .code(200)

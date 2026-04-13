@@ -28,7 +28,7 @@ public class ClaudeExecutionRequest {
 
     /**
      * 会话ID
-     * 用于多轮对话的会话持久化
+     * 用于多 round, 的会话持久化
      * 新会话时为 null 或空
      */
     private String sessionId;

@@ -76,7 +76,7 @@ public class MultiConditionExecutor implements NodeExecutor {
             Map<String, Object> outputs = new HashMap<>();
             outputs.put("matched_branch", matchedBranchId);
 
-            log.info("多路条件节点执行完成: nodeUuid={}, matchedBranch={}, nextNodes={}",
+            log.info("多路条件Node execution completed: nodeUuid={}, matchedBranch={}, nextNodes={}",
                     node.getNodeUuid(), matchedBranchId, nextNodes);
 
             return NodeExecutionResult.builder()
@@ -86,7 +86,7 @@ public class MultiConditionExecutor implements NodeExecutor {
                     .build();
 
         } catch (Exception e) {
-            log.error("多路条件节点执行异常: nodeUuid={}", node.getNodeUuid(), e);
+            log.error("多路条件Node execution exception: nodeUuid={}", node.getNodeUuid(), e);
             return NodeExecutionResult.failure(
                     "多条件评估异常: " + e.getMessage(),
                     e instanceof Exception ? (Exception) e : new RuntimeException(e)

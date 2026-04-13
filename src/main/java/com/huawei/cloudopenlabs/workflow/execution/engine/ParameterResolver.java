@@ -75,7 +75,7 @@ public class ParameterResolver {
                     ErrorCode.PARAM_RESOLVE_FAILED,
                     node.getNodeUuid(),
                     node.getName(),
-                    "参数解析失败: " + e.getMessage(),
+                    "Parameter resolution failed: " + e.getMessage(),
                     e
             );
         }

@@ -97,7 +97,7 @@ public class ClaudeCodeApiClient {
      * @param configJson   配置 JSON 字符串（可选）
      * @param skillFile    Skill 文件字节数组（可选）
      * @param skillFileName Skill 文件名（可选）
-     * @param sessionId    会话ID（可选，用于多轮对话）
+     * @param sessionId    会话ID（可选，用于多 round, ）
      * @return 任务执行响应
      */
         public TaskExecuteResponse executeTask(String taskContent, String configJson, byte[] skillFile, String skillFileName, String sessionId) {
@@ -152,7 +152,7 @@ public class ClaudeCodeApiClient {
 
             // 检查业务执行结果
             if (!responseBody.getSuccess()) {
-                log.error("任务执行失败: {}", responseBody.getError());
+                log.error("任务Execution failed: {}", responseBody.getError());
             } else {
                 log.debug("任务执行成功");
             }

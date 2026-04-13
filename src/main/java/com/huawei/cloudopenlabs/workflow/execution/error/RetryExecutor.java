@@ -62,7 +62,7 @@ public class RetryExecutor {
                 String nodeType = node.getType();
                 if (nodeExecutorRegistry == null || !nodeExecutorRegistry.hasExecutor(nodeType)) {
                     return NodeExecutionResult.failure(
-                            "未找到节点执行器: " + nodeType
+                            "Node executor not found: " + nodeType
                     );
                 }
 
@@ -82,13 +82,13 @@ public class RetryExecutor {
                 // 执行失败，记录异常
                 lastException = new RuntimeException(result.getErrorMessage());
 
-                log.warn("节点执行失败: nodeUuid={}, attempt={}/{}, error={}",
+                log.warn("节点Execution failed: nodeUuid={}, attempt={}/{}, error={}",
                         node.getNodeUuid(), attempt, maxRetries + 1,
                         result.getErrorMessage());
 
             } catch (Exception e) {
                 lastException = e;
-                log.warn("节点执行异常: nodeUuid={}, attempt={}/{}, error={}",
+                log.warn("Node execution exception: nodeUuid={}, attempt={}/{}, error={}",
                         node.getNodeUuid(), attempt, maxRetries + 1, e.getMessage());
             }
 

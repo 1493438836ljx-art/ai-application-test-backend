@@ -21,7 +21,7 @@ import java.util.List;
 public class ValidationResult {
 
     /**
-     * 是否验证通过
+     * 是否Validation passed
      */
     private boolean success;
 

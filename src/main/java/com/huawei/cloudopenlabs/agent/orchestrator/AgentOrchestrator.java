@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Agent 编排器
  * <p>
- * 负责多轮对话的编排和协调，整合所有组件
+ * 负责多 round, 的编排和协调，整合所有组件
  * </p>
  *
  * <h3>整合的组件：</h3>
@@ -102,7 +102,7 @@ public class AgentOrchestrator {
     /**
      * 处理消息流（主入口）
      * <p>
-     * 支持多轮对话的流式处理
+     * 支持多 round, 的流式处理
      * </p>
      *
      * @param userMessage    用户消息
@@ -157,7 +157,7 @@ public class AgentOrchestrator {
     }
 
     /**
-     * 处理单轮对话
+     * 处理单 round, 
      */
     private void processRound(
             AgentSessionEntity session,
@@ -170,7 +170,7 @@ public class AgentOrchestrator {
 
         // 检查轮次限制
         if (currentRound >= MAX_ROUNDS) {
-            log.warn("超过最大轮次限制: sessionId={}, round={}", session.getConversationId(), currentRound);
+            log.warn("Exceeded max round limit: sessionId={}, round={}", session.getConversationId(), currentRound);
             callback.onError(buildMaxRoundsError(session));
             return;
         }
@@ -180,7 +180,7 @@ public class AgentOrchestrator {
         sessionService.updateRoundCount(session.getConversationId(), newRound);
         sessionService.setStartTime(session.getConversationId(), System.currentTimeMillis());
 
-        log.info("开始第 {} 轮对话: sessionId={}", newRound, session.getConversationId());
+        log.info("Starting round {}  round, : sessionId={}", newRound, session.getConversationId());
 
         // 构建执行请求
         ClaudeExecutionRequest request = ClaudeExecutionRequest.builder()
@@ -234,14 +234,14 @@ public class AgentOrchestrator {
                     },
                     // 错误回调
                     error -> {
-                        log.error("CLI 执行错误: {}", error.getMessage());
-                        callback.onError("执行失败: " + error.getMessage());
+                        log.error("CLI 执行error: {}", error.getMessage());
+                        callback.onError("Execution failed: " + error.getMessage());
                     }
             );
 
         } catch (ClaudeCliException e) {
             log.error("CLI 执行异常: sessionId={}, error={}", session.getConversationId(), e.getMessage());
-            callback.onError("CLI 执行失败: " + e.getMessage());
+            callback.onError("CLI Execution failed: " + e.getMessage());
         }
     }
 
@@ -289,7 +289,7 @@ public class AgentOrchestrator {
             StreamCallback callback,
             long startTime) {
 
-        log.info("执行查询: sessionId={}, queryCount={}", session.getConversationId(), plan.getQueries().size());
+        log.info("Executing query: sessionId={}, queryCount={}", session.getConversationId(), plan.getQueries().size());
 
         try {
             // 并行执行查询
@@ -311,8 +311,8 @@ public class AgentOrchestrator {
             processRound(updatedSession, newContext, callback, false, startTime);
 
         } catch (Exception e) {
-            log.error("查询执行异常: {}", e.getMessage(), e);
-            callback.onError("查询执行失败: " + e.getMessage());
+            log.error("Query execution exception: {}", e.getMessage(), e);
+            callback.onError("查询Execution failed: " + e.getMessage());
         }
     }
 
@@ -325,7 +325,7 @@ public class AgentOrchestrator {
             StreamCallback callback,
             long startTime) {
 
-        log.info("执行操作: sessionId={}, actionCount={}", session.getConversationId(), plan.getActions().size());
+        log.info("Executing action: sessionId={}, actionCount={}", session.getConversationId(), plan.getActions().size());
 
         try {
             // 顺序执行操作（带事务）
@@ -347,8 +347,8 @@ public class AgentOrchestrator {
             processRound(updatedSession, newContext, callback, false, startTime);
 
         } catch (ActionExecutionException e) {
-            log.error("操作执行异常: {}", e.getMessage(), e);
-            callback.onError("操作执行失败: " + e.getMessage());
+            log.error("Action execution exception: {}", e.getMessage(), e);
+            callback.onError("操作Execution failed: " + e.getMessage());
         } catch (Exception e) {
             log.error("操作处理异常: {}", e.getMessage(), e);
             callback.onError("操作处理失败: " + e.getMessage());
@@ -405,7 +405,7 @@ public class AgentOrchestrator {
                 session.getConversationId(), parseErrorCount, MAX_PARSE_ERRORS);
 
         // 构建错误提示上下文重试
-        String errorContext = "【系统提示】\n上一次响应格式解析错误: " + error.getMessage() + "\n\n" +
+        String errorContext = "【系统提示】\n上一次响应格式解析error: " + error.getMessage() + "\n\n" +
                 "请检查你的响应格式，确保：\n" +
                 "1. 返回有效的 JSON 格式\n" +
                 "2. status 字段必须是 query、action 或 complete 之一\n" +
@@ -458,7 +458,7 @@ public class AgentOrchestrator {
          * @param sessionId 会话ID
          */
         default void onStart(String sessionId) {
-            log.debug("流式会话开始: sessionId={}", sessionId);
+            log.debug("Streaming session started: sessionId={}", sessionId);
         }
 
         /**

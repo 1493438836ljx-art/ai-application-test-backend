@@ -69,10 +69,10 @@ public class ExecutionEngine {
         String executionId = context.getExecutionId();
         String executionUuid = context.getExecutionUuid();
 
-        log.info("开始执行工作流: executionId={}, workflowId={}", executionId, context.getWorkflowId());
+        log.info("Starting workflow execution: executionId={}, workflowId={}", executionId, context.getWorkflowId());
 
         try {
-            // 1. 构建执行图
+            // 1. Building execution graph
             ExecutionGraph graph = ExecutionGraph.build(context.getDefinition());
             context.setExecutionGraph(graph);
 
@@ -100,14 +100,14 @@ public class ExecutionEngine {
             // 7. 更新工作流最终状态
             updateFinalStatus(context, ExecutionStatus.SUCCESS);
 
-            log.info("工作流执行完成: executionId={}", executionId);
+            log.info("Workflow execution completed: executionId={}", executionId);
 
         } catch (WorkflowExecutionException e) {
-            log.error("工作流执行失败: executionId={}, error={}", executionId, e.getMessage());
+            log.error("工作流Execution failed: executionId={}, error={}", executionId, e.getMessage());
             handleExecutionError(context, e);
             throw e;
         } catch (Exception e) {
-            log.error("工作流执行异常: executionId={}", executionId, e);
+            log.error("Workflow execution exception: executionId={}", executionId, e);
             handleExecutionError(context, e);
             throw new WorkflowExecutionException(ErrorCode.WORKFLOW_EXECUTION_FAILED, e);
         }
@@ -214,7 +214,7 @@ public class ExecutionEngine {
                         }
 
                     } catch (Exception e) {
-                        log.error("节点执行异常: nodeUuid={}", nodeUuid, e);
+                        log.error("Node execution exception: nodeUuid={}", nodeUuid, e);
                         handleNodeExecutionError(nodeUuid, context, e);
                     } finally {
                         runningCount.decrementAndGet();
@@ -248,7 +248,7 @@ public class ExecutionEngine {
         String nodeUuid = node.getNodeUuid();
         String nodeName = node.getName();
 
-        log.info("开始执行节点: nodeUuid={}, nodeName={}", nodeUuid, nodeName);
+        log.info("开始Executing node: nodeUuid={}, nodeName={}", nodeUuid, nodeName);
 
         // 1. 更新节点状态为 RUNNING
         context.setNodeState(nodeUuid, NodeExecutionStatus.RUNNING.name());
@@ -288,7 +288,7 @@ public class ExecutionEngine {
             }
 
         } catch (Exception e) {
-            log.error("节点执行异常: nodeUuid={}, nodeName={}", nodeUuid, nodeName, e);
+            log.error("Node execution exception: nodeUuid={}, nodeName={}", nodeUuid, nodeName, e);
             handleNodeExecutionError(nodeUuid, context, e);
             throw e;
         }
@@ -302,7 +302,7 @@ public class ExecutionEngine {
                                     NodeExecutionResult result) {
         String nodeUuid = node.getNodeUuid();
 
-        log.error("节点执行失败: nodeUuid={}, error={}", nodeUuid, result.getErrorMessage());
+        log.error("节点Execution failed: nodeUuid={}, error={}", nodeUuid, result.getErrorMessage());
 
         // 更新节点状态为 FAILED
         context.setNodeState(nodeUuid, NodeExecutionStatus.FAILED.name());

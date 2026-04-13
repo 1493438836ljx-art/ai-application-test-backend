@@ -111,7 +111,7 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     public SseEmitter streamMessageRealtime(ChatSendRequest request) {
-        log.info("实时流式发送消息: conversationId={}, message={}", request.getConversationId(), request.getMessage());
+        log.info("Real-time streaming message: conversationId={}, message={}", request.getConversationId(), request.getMessage());
 
         // 创建 SSE 发射器，超时 10 分钟
         SseEmitter emitter = new SseEmitter(600000L);
@@ -152,19 +152,19 @@ public class ChatServiceImpl implements ChatService {
 
                     @Override
                     public void onStart(String sessionId) {
-                        log.info("流式会话开始: sessionId={}", sessionId);
+                        log.info("Streaming session started: sessionId={}", sessionId);
                         finalSessionId[0] = sessionId;
 
-                        // 如果是新会话，异步更新对话的 UUID（非阻塞）
+                        // 如果是New session, 异步更新对话的 UUID（非阻塞）
                         if (isNewConversation && sessionId != null) {
                             conversation.setConversationUuid(sessionId);
                             // 异步执行数据库更新，不阻塞响应式流
                             Mono.fromRunnable(() -> {
                                 try {
                                     conversationMapper.updateById(conversation);
-                                    log.info("对话UUID更新成功: {}", sessionId);
+                                    log.info("Conversation UUID updated successfully: {}", sessionId);
                                 } catch (Exception e) {
-                                    log.error("更新对话UUID失败: {}", e.getMessage());
+                                    log.error("Failed to update conversation UUID: {}", e.getMessage());
                                 }
                             }).subscribeOn(Schedulers.boundedElastic()).subscribe();
                         }
@@ -173,7 +173,7 @@ public class ChatServiceImpl implements ChatService {
                         try {
                             sendStartEvent(emitter, objectMapper, sessionId);
                         } catch (Exception e) {
-                            log.error("发送 start 事件失败: {}", e.getMessage());
+                            log.error("Failed to send start event: {}", e.getMessage());
                         }
                     }
 
@@ -182,12 +182,12 @@ public class ChatServiceImpl implements ChatService {
                         try {
                             String content = chunk.getContentOrMessage();
                             String contentType = chunk.getContentType();
-                            log.info("onChunk 回调被调用，内容类型: {}, 内容长度: {}",
+                            log.info("onChunk callback invoked, content type: {}, content length: {}",
                                     contentType, content != null ? content.length() : 0);
 
                             // 过滤空内容
                             if (content == null || content.trim().isEmpty()) {
-                                log.debug("跳过空内容: contentType={}", contentType);
+                                log.debug("Skipping empty content: contentType={}", contentType);
                                 return;
                             }
 
@@ -197,14 +197,14 @@ public class ChatServiceImpl implements ChatService {
                                 content.startsWith("[工具结果]") ||
                                 content.contains("💭 思考:") ||
                                 content.contains("📤 工具结果:")) {
-                                log.debug("过滤内部调试信息: contentType={}, preview={}",
+                                log.debug("Filtering internal debug info: contentType={}, preview={}",
                                         contentType, content.substring(0, Math.min(50, content.length())));
                                 return;
                             }
 
                             // 过滤 user 类型（工具结果）
                             if ("user".equals(contentType)) {
-                                log.debug("过滤 user 类型内容（工具结果）");
+                                log.debug("Filtering user type content (tool result)");
                                 return;
                             }
 
@@ -220,14 +220,14 @@ public class ChatServiceImpl implements ChatService {
 
                             // 如果没有有效内容，跳过
                             if (displayContent == null || displayContent.trim().isEmpty()) {
-                                log.debug("跳过无效内容: contentType={}", contentType);
+                                log.debug("Skipping invalid content: contentType={}", contentType);
                                 return;
                             }
 
                             // 内容去重检查（基于会话ID）
                             String sessionId = finalSessionId[0];
                             if (isDuplicateContent(sessionId, displayContent)) {
-                                log.debug("跳过重复内容: contentType={}, length={}, preview={}",
+                                log.debug("Skipping duplicate content: contentType={}, length={}, preview={}",
                                         contentType, displayContent.length(),
                                         displayContent.substring(0, Math.min(50, displayContent.length())));
                                 return;
@@ -236,7 +236,7 @@ public class ChatServiceImpl implements ChatService {
                             // 过滤重复和冗余的内容片段
                             displayContent = filterDuplicateContent(displayContent);
                             if (displayContent == null || displayContent.trim().isEmpty()) {
-                                log.debug("过滤后内容为空，跳过: contentType={}", contentType);
+                                log.debug("Filtered content is empty, skipping: contentType={}", contentType);
                                 return;
                             }
 
@@ -247,21 +247,21 @@ public class ChatServiceImpl implements ChatService {
                             chunkData.put("contentType", contentType);
 
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
-                            log.info("SSE chunk 已发送到前端，contentType={}, contentLength={}", contentType, displayContent.length());
+                            log.info("SSE chunk sent to frontend, contentType={}, contentLength={}", contentType, displayContent.length());
 
                             // 累积文本内容
                             fullContent.append(displayContent);
                         } catch (IOException e) {
-                            log.error("发送 chunk 失败: {}", e.getMessage());
+                            log.error("Failed to send chunk: {}", e.getMessage());
                         } catch (Exception e) {
-                            log.error("发送 chunk 异常: {}", e.getMessage(), e);
+                            log.error("Chunk sending exception: {}", e.getMessage(), e);
                         }
                     }
 
                     @Override
                     public void onDone(String sessionId, Long duration) {
                         try {
-                            log.info("流式会话完成: sessionId={}, duration={}ms", sessionId, duration);
+                            log.info("Streaming session completed: sessionId={}, duration={}ms", sessionId, duration);
 
                             // 清理去重集合
                             clearDedupSet(sessionId);
@@ -274,20 +274,20 @@ public class ChatServiceImpl implements ChatService {
                             sendDoneEvent(emitter, objectMapper, conversation);
                             emitter.complete();
                         } catch (Exception e) {
-                            log.error("处理 onDone 失败: {}", e.getMessage());
+                            log.error("Failed to process onDone: {}", e.getMessage());
                         }
                     }
 
                     @Override
                     public void onError(String error) {
                         try {
-                            log.error("流式会话错误: {}", error);
+                            log.error("Streaming session error: {}", error);
 
                             // 清理去重集合
                             clearDedupSet(finalSessionId[0]);
 
                             // 保存包含错误的消息
-                            String errorContent = fullContent.toString() + "\n\n❌ 错误: " + error;
+                            String errorContent = fullContent.toString() + "\n\n❌ error: " + error;
                             saveAssistantMessage(conversation, errorContent,
                                     System.currentTimeMillis() - startTime[0]);
 
@@ -298,7 +298,7 @@ public class ChatServiceImpl implements ChatService {
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(errorData)));
                             emitter.complete();
                         } catch (Exception e) {
-                            log.error("处理 onError 失败: {}", e.getMessage());
+                            log.error("Failed to process onError: {}", e.getMessage());
                         }
                     }
 
@@ -307,7 +307,7 @@ public class ChatServiceImpl implements ChatService {
                                                        java.util.List<Map<String, Object>> actions,
                                                        String workflowId) {
                         try {
-                            log.info("收到操作确认请求: pendingActionId={}, actionCount={}, workflowId={}",
+                            log.info("Action confirmation request received: pendingActionId={}, actionCount={}, workflowId={}",
                                     pendingActionId, actions.size(), workflowId);
 
                             // 存储待确认操作（用于后续通过 /api/chat/action/confirm 执行）
@@ -348,12 +348,12 @@ public class ChatServiceImpl implements ChatService {
                             confirmData.put("message", "即将执行 " + actions.size() + " 个修改操作，请确认是否继续？");
 
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(confirmData)));
-                            log.info("已发送确认请求到前端: pendingActionId={}", pendingActionId);
+                            log.info("Confirmation request sent to frontend: pendingActionId={}", pendingActionId);
 
                             // 注意：不调用 emitter.complete()，保持连接打开，等待用户确认
                             // 用户确认后，前端会调用 /api/chat/action/confirm API
                         } catch (Exception e) {
-                            log.error("处理 onConfirmationRequired 失败: {}", e.getMessage(), e);
+                            log.error("Failed to process onConfirmationRequired: {}", e.getMessage(), e);
                         }
                     }
                 }
@@ -361,13 +361,13 @@ public class ChatServiceImpl implements ChatService {
 
         // 设置超时和完成回调
         emitter.onTimeout(() -> {
-            log.warn("SSE 连接超时");
+            log.warn("SSE connection timed out");
             // 清理去重集合
             clearDedupSet(finalSessionId[0]);
         });
 
         emitter.onCompletion(() -> {
-            log.debug("SSE 连接完成");
+            log.debug("SSE connection completed");
             // 清理去重集合
             clearDedupSet(finalSessionId[0]);
         });
@@ -378,7 +378,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional
     public ChatSendResponse sendMessage(ChatSendRequest request) {
-        log.info("发送消息: conversationId={}, message={}", request.getConversationId(), request.getMessage());
+        log.info("Sending message: conversationId={}, message={}", request.getConversationId(), request.getMessage());
 
         ChatConversationEntity conversation;
         boolean isNewConversation = request.getConversationId() == null || request.getConversationId().isEmpty();
@@ -434,7 +434,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public SseEmitter streamMessage(ChatSendRequest request) {
-        log.info("流式发送消息: conversationId={}, message={}", request.getConversationId(), request.getMessage());
+        log.info("Streaming message: conversationId={}, message={}", request.getConversationId(), request.getMessage());
 
         // 创建SSE发射器，超时时间5分钟
         SseEmitter emitter = new SseEmitter(300000L);
@@ -526,14 +526,14 @@ public class ChatServiceImpl implements ChatService {
 
                 emitter.complete();
             } catch (Exception e) {
-                log.error("流式发送消息异常: {}", e.getMessage(), e);
+                log.error("Streaming message exception: {}", e.getMessage(), e);
                 try {
                     Map<String, Object> errorData = new HashMap<>();
                     errorData.put("type", "error");
                     errorData.put("message", e.getMessage());
                     emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(errorData)));
                 } catch (IOException ex) {
-                    log.error("发送错误事件失败: {}", ex.getMessage());
+                    log.error("Failed to send error event: {}", ex.getMessage());
                 }
                 emitter.completeWithError(e);
             }
@@ -543,12 +543,12 @@ public class ChatServiceImpl implements ChatService {
 
         // 设置超时和完成回调
         emitter.onTimeout(() -> {
-            log.warn("SSE连接超时");
+            log.warn("SSE connection timed out");
             executor.shutdownNow();
         });
 
         emitter.onCompletion(() -> {
-            log.debug("SSE连接完成");
+            log.debug("SSE connection completed");
         });
 
         return emitter;
@@ -577,7 +577,7 @@ public class ChatServiceImpl implements ChatService {
                     @Override
                     public void onSessionCreated(String sessionId) {
                         try {
-                            log.info("收到新的 sessionId: {}, 将用作 conversationId", sessionId);
+                            log.info("Received new sessionId: {}, will be used as conversationId", sessionId);
 
                             // 更新 conversation 的 UUID 为 sessionId
                             tempConversation.setConversationUuid(sessionId);
@@ -590,7 +590,7 @@ public class ChatServiceImpl implements ChatService {
                             sendStartEvent(emitter, objectMapper, sessionId);
 
                         } catch (Exception e) {
-                            log.error("处理 sessionId 失败: {}", e.getMessage());
+                            log.error("Failed to process sessionId: {}", e.getMessage());
                         }
                     }
 
@@ -609,7 +609,7 @@ public class ChatServiceImpl implements ChatService {
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
                             fullContent.append("💭 ").append(reasoning).append("\n\n");
                         } catch (IOException e) {
-                            log.error("发送推理内容失败: {}", e.getMessage());
+                            log.error("Failed to send reasoning content: {}", e.getMessage());
                         }
                     }
 
@@ -622,7 +622,7 @@ public class ChatServiceImpl implements ChatService {
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
                             fullContent.append("⏳ ").append(status).append("\n\n");
                         } catch (IOException e) {
-                            log.error("发送状态更新失败: {}", e.getMessage());
+                            log.error("Failed to send status update: {}", e.getMessage());
                         }
                     }
 
@@ -634,9 +634,9 @@ public class ChatServiceImpl implements ChatService {
                             actionData.put("workflowId", workflowId);
                             actionData.put("result", result);
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(actionData)));
-                            log.info("发送工作流更新事件: workflowId={}", workflowId);
+                            log.info("Sending workflow update event: workflowId={}", workflowId);
                         } catch (IOException e) {
-                            log.error("发送工作流更新事件失败: {}", e.getMessage());
+                            log.error("Failed to send workflow update event: {}", e.getMessage());
                         }
                     }
 
@@ -659,7 +659,7 @@ public class ChatServiceImpl implements ChatService {
                             sendDoneEvent(emitter, objectMapper, finalConversation[0]);
 
                         } catch (IOException e) {
-                            log.error("发送完成事件失败: {}", e.getMessage());
+                            log.error("Failed to send completion event: {}", e.getMessage());
                         }
                     }
 
@@ -684,7 +684,7 @@ public class ChatServiceImpl implements ChatService {
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(errorData)));
 
                         } catch (IOException e) {
-                            log.error("发送错误事件失败: {}", e.getMessage());
+                            log.error("Failed to send error event: {}", e.getMessage());
                         }
                     }
                 }
@@ -720,7 +720,7 @@ public class ChatServiceImpl implements ChatService {
                     @Override
                     public void onSessionCreated(String sessionId) {
                         // 已有会话通常不会触发此回调，但以防万一
-                        log.info("已有会话收到新的 sessionId: {}", sessionId);
+                        log.info("Existing session received new sessionId: {}", sessionId);
                     }
 
                     @Override
@@ -733,7 +733,7 @@ public class ChatServiceImpl implements ChatService {
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
                             fullContent.append("💭 ").append(reasoning).append("\n\n");
                         } catch (IOException e) {
-                            log.error("发送推理内容失败: {}", e.getMessage());
+                            log.error("Failed to send reasoning content: {}", e.getMessage());
                         }
                     }
 
@@ -747,7 +747,7 @@ public class ChatServiceImpl implements ChatService {
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(chunkData)));
                             fullContent.append("⏳ ").append(status).append("\n\n");
                         } catch (IOException e) {
-                            log.error("发送状态更新失败: {}", e.getMessage());
+                            log.error("Failed to send status update: {}", e.getMessage());
                         }
                     }
 
@@ -760,9 +760,9 @@ public class ChatServiceImpl implements ChatService {
                             actionData.put("workflowId", workflowId);
                             actionData.put("result", result);
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(actionData)));
-                            log.info("发送工作流更新事件: workflowId={}", workflowId);
+                            log.info("Sending workflow update event: workflowId={}", workflowId);
                         } catch (IOException e) {
-                            log.error("发送工作流更新事件失败: {}", e.getMessage());
+                            log.error("Failed to send workflow update event: {}", e.getMessage());
                         }
                     }
 
@@ -788,7 +788,7 @@ public class ChatServiceImpl implements ChatService {
                             sendDoneEvent(emitter, objectMapper, conversation);
 
                         } catch (IOException e) {
-                            log.error("发送完成事件失败: {}", e.getMessage());
+                            log.error("Failed to send completion event: {}", e.getMessage());
                         }
                     }
 
@@ -816,7 +816,7 @@ public class ChatServiceImpl implements ChatService {
                             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(errorData)));
 
                         } catch (IOException e) {
-                            log.error("发送错误事件失败: {}", e.getMessage());
+                            log.error("Failed to send error event: {}", e.getMessage());
                         }
                     }
                 }
@@ -838,7 +838,7 @@ public class ChatServiceImpl implements ChatService {
                 }
             }
         } catch (Exception e) {
-            log.warn("提取 workflowId 失败: {}", e.getMessage());
+            log.warn("Failed to extract workflowId: {}", e.getMessage());
         }
         return null;
     }
@@ -1015,23 +1015,23 @@ public class ChatServiceImpl implements ChatService {
         // 尝试调用真实的AI Agent
         if (agentExecutor != null) {
             try {
-                log.info("调用AI Agent处理消息: {}", userMessage);
+                log.info("Invoking AI Agent to process message: {}", userMessage);
                 AgentResponse response = agentExecutor.executeSimple(userMessage);
 
                 if (response.getSuccess() && response.getResponse() != null) {
-                    log.info("AI Agent响应成功，耗时: {}ms", response.getExecutionTimeMs());
+                    log.info("AI Agent responded successfully, latency: {}ms", response.getExecutionTimeMs());
                     return response.getResponse();
                 } else {
-                    log.warn("AI Agent响应失败: {}", response.getError());
+                    log.warn("AI Agent response failed: {}", response.getError());
                     return getFallbackReply(userMessage, response.getError());
                 }
             } catch (Exception e) {
-                log.error("调用AI Agent异常: {}", e.getMessage(), e);
+                log.error("AI Agent invocation exception: {}", e.getMessage(), e);
                 return getFallbackReply(userMessage, e.getMessage());
             }
         } else {
             // Agent未启用，使用备用回复
-            log.warn("AI Agent未启用，使用备用回复");
+            log.warn("AI Agent not enabled, using fallback reply");
             return getFallbackReply(userMessage, "Agent服务未配置");
         }
     }
@@ -1040,7 +1040,7 @@ public class ChatServiceImpl implements ChatService {
      * 获取备用回复（Agent失败时使用）
      */
     private String getFallbackReply(String userMessage, String error) {
-        log.info("使用备用回复，原因: {}", error);
+        log.info("Using fallback reply, reason: {}", error);
         int index = (int) (Math.random() * FALLBACK_REPLIES.size());
         return FALLBACK_REPLIES.get(index);
     }
@@ -1161,7 +1161,7 @@ public class ChatServiceImpl implements ChatService {
         matcher.appendTail(result);
 
         if (foundAndReplaced) {
-            log.debug("从 markdown JSON 代码块中提取 reasoning 和 summary: 原长度={}, 提取后长度={}",
+            log.debug("Extracted reasoning and summary from markdown JSON code block: originalLength={}, extractedLength={}",
                     content.length(), result.length());
             return result.toString();
         }
@@ -1202,14 +1202,14 @@ public class ChatServiceImpl implements ChatService {
 
             // 跳过明显的思考过程句子
             if (isThinkingProcess(trimmed)) {
-                log.debug("过滤思考过程: {}", trimmed.substring(0, Math.min(50, trimmed.length())));
+                log.debug("Filtering thinking process: {}", trimmed.substring(0, Math.min(50, trimmed.length())));
                 continue;
             }
 
             // 跳过重复的关键词句子
             String keyPhrase = extractKeyPhrase(trimmed);
             if (keyPhrase != null && seenKeywords.contains(keyPhrase)) {
-                log.debug("过滤重复关键词句子: {}", keyPhrase);
+                log.debug("Filtering duplicate keyword sentence: {}", keyPhrase);
                 continue;
             }
             if (keyPhrase != null) {
@@ -1351,7 +1351,7 @@ public class ChatServiceImpl implements ChatService {
             return result.length() > 0 ? result.toString() : originalContent;
 
         } catch (Exception e) {
-            log.debug("JSON 解析失败: {}", e.getMessage());
+            log.debug("JSON parsing failed: {}", e.getMessage());
             return originalContent;
         }
     }
@@ -1385,7 +1385,7 @@ public class ChatServiceImpl implements ChatService {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            log.error("MD5 算法不可用", e);
+            log.error("MD5 algorithm not available", e);
             return String.valueOf(content.hashCode());
         }
     }

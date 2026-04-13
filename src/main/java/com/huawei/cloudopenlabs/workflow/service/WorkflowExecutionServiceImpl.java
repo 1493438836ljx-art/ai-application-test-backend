@@ -54,7 +54,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
     @Override
     @Transactional
     public String executeWorkflow(String workflowId, String triggeredBy, String inputData) {
-        log.info("开始执行工作流: workflowId={}, triggeredBy={}", workflowId, triggeredBy);
+        log.info("Starting workflow execution: workflowId={}, triggeredBy={}", workflowId, triggeredBy);
 
         // 1. 查询工作流定义
         WorkflowEntity workflow = workflowMapper.selectById(workflowId);
@@ -74,7 +74,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
                 inputMap = objectMapper.readValue(inputData,
                         new TypeReference<Map<String, Object>>() {});
             } catch (Exception e) {
-                log.warn("解析输入数据失败，使用空Map", e);
+                log.warn("Failed to parse input data, using empty Map", e);
             }
         }
 
@@ -94,7 +94,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
         WorkflowExecutionEntity execution = executionMapper.selectByExecutionUuid(executionUuid)
                 .orElseThrow(() -> BusinessException.systemError("创建执行记录失败"));
 
-        log.info("工作流执行已提交: workflowId={}, executionUuid={}, executionId={}",
+        log.info("Workflow execution submitted: workflowId={}, executionUuid={}, executionId={}",
                 workflowId, executionUuid, execution.getId());
 
         return execution.getId();
@@ -142,7 +142,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
     @Override
     @Transactional
     public void abortExecution(String id) {
-        log.info("中止执行: {}", id);
+        log.info("Aborting execution: {}", id);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
@@ -179,7 +179,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
     @Override
     @Transactional
     public void completeExecution(String id, String outputData, String nodeExecutions) {
-        log.info("完成执行: {}", id);
+        log.info("Completing execution: {}", id);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
@@ -199,7 +199,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
     @Override
     @Transactional
     public void failExecution(String id, String errorMessage) {
-        log.error("执行失败: {}, 错误: {}", id, errorMessage);
+        log.error("Execution failed: {}, error: {}", id, errorMessage);
 
         WorkflowExecutionEntity execution = executionMapper.selectById(id);
         if (execution == null) {
@@ -266,7 +266,7 @@ public class WorkflowExecutionServiceImpl implements WorkflowExecutionService {
                 }
             }
         } catch (Exception e) {
-            log.error("解析输出数据失败", e);
+            log.error("Failed to parse output data", e);
         }
 
         return result;

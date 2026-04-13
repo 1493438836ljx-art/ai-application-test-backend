@@ -85,7 +85,7 @@ public class FileUploadService {
 
             return fileId;
         } catch (IOException e) {
-            throw new RuntimeException("文件上传失败: " + e.getMessage(), e);
+            throw new RuntimeException("File upload failed: " + e.getMessage(), e);
         }
     }
 

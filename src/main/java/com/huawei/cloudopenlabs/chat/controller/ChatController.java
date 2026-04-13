@@ -56,7 +56,7 @@ public class ChatController {
      */
     @PostMapping("/send")
     public ResponseEntity<ChatSendResponse> sendMessage(@Valid @RequestBody ChatSendRequest request) {
-        log.info("发送消息: {}", request.getMessage());
+        log.info("Sending message: {}", request.getMessage());
         ChatSendResponse response = chatService.sendMessage(request);
         return ResponseEntity.ok(response);
     }
@@ -69,7 +69,7 @@ public class ChatController {
      */
     @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamMessage(@Valid @RequestBody ChatSendRequest request) {
-        log.info("流式发送消息: {}", request.getMessage());
+        log.info("Streaming message: {}", request.getMessage());
         return chatService.streamMessageRealtime(request);  // 使用真正的流式方法
     }
 
@@ -201,7 +201,7 @@ public class ChatController {
     @PostMapping("/action/confirm")
     public ResponseEntity<ActionConfirmResponse> confirmAction(
             @Valid @RequestBody ActionConfirmRequest request) {
-        log.info("收到操作确认请求: pendingActionId={}, confirmed={}",
+        log.info("Action confirmation request received: pendingActionId={}, confirmed={}",
                 request.getPendingActionId(), request.getConfirmed());
 
         if (request.getPendingActionId() == null || request.getPendingActionId().isEmpty()) {
@@ -213,8 +213,8 @@ public class ChatController {
         }
 
         if (!Boolean.TRUE.equals(request.getConfirmed())) {
-            // 用户拒绝执行
-            log.info("用户拒绝执行操作: pendingActionId={}", request.getPendingActionId());
+            // User declined execution
+            log.info("User declined action: pendingActionId={}", request.getPendingActionId());
             pendingActionService.removePendingAction(request.getPendingActionId());
             return ResponseEntity.ok(
                     ActionConfirmResponse.builder()
@@ -229,7 +229,7 @@ public class ChatController {
                 pendingActionService.getPendingAction(request.getPendingActionId());
 
         if (pendingAction == null) {
-            log.warn("待确认操作不存在或已过期: pendingActionId={}", request.getPendingActionId());
+            log.warn("Pending action not found or expired: pendingActionId={}", request.getPendingActionId());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     ActionConfirmResponse.builder()
                             .success(false)
@@ -242,7 +242,7 @@ public class ChatController {
             // 执行操作
             Map<String, Object> results = executePendingActions(pendingAction);
 
-            log.info("操作执行成功: pendingActionId={}, resultCount={}",
+            log.info("Action executed successfully: pendingActionId={}, resultCount={}",
                     request.getPendingActionId(), results.size());
 
             // 通过 SSE 发送操作结果给前端
@@ -267,7 +267,7 @@ public class ChatController {
                     Map<?, ?> actionResult = (Map<?, ?>) entry.getValue();
                     if (actionResult.containsKey("executionId")) {
                         executionId = actionResult.get("executionId");
-                        log.info("从操作结果中提取到 executionId: {}", executionId);
+                        log.info("Extracted executionId from action result: {}", executionId);
                         break;
                     }
                 }
@@ -286,12 +286,12 @@ public class ChatController {
             return ResponseEntity.ok(responseBuilder.build());
 
         } catch (Exception e) {
-            log.error("操作执行失败: pendingActionId={}, error={}",
+            log.error("Action execution failed: pendingActionId={}, error={}",
                     request.getPendingActionId(), e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     ActionConfirmResponse.builder()
                             .success(false)
-                            .message("操作执行失败: " + e.getMessage())
+                            .message("操作Execution failed: " + e.getMessage())
                             .pendingActionId(request.getPendingActionId())
                             .build());
         }
@@ -339,13 +339,13 @@ public class ChatController {
             @SuppressWarnings("unchecked")
             Map<String, Object> body = (Map<String, Object>) action.get("body");
 
-            log.info("执行操作: id={}, method={}, path={}", actionId, method, path);
+            log.info("Executing action: id={}, method={}, path={}", actionId, method, path);
 
             try {
                 Object result = executeWorkflowAction(method, path, body, pendingAction.getWorkflowId());
                 results.put(actionId, result);
             } catch (Exception e) {
-                log.error("操作执行失败: id={}, error={}", actionId, e.getMessage());
+                log.error("Action execution failed: id={}, error={}", actionId, e.getMessage());
                 Map<String, Object> errorResult = new java.util.LinkedHashMap<>();
                 errorResult.put("success", false);
                 errorResult.put("error", e.getMessage());
@@ -370,7 +370,7 @@ public class ChatController {
                 return result;
             }
 
-            log.info("动态执行 API 调用: method={}, path={}, workflowId={}", method, path, workflowId);
+            log.info("Executing dynamic API call: method={}, path={}, workflowId={}", method, path, workflowId);
 
             // 使用 WebClient 内部调用
             org.springframework.web.reactive.function.client.WebClient webClient =
@@ -410,7 +410,7 @@ public class ChatController {
                         .bodyToMono(String.class);
                     break;
                 default:
-                    log.warn("不支持的 HTTP 方法: {}", method);
+                    log.warn("Unsupported HTTP method: {}", method);
                     result.put("success", false);
                     result.put("error", "不支持的 HTTP 方法: " + method);
                     return result;
@@ -434,12 +434,12 @@ public class ChatController {
                         Object executionId = ((Map<?, ?>) responseData).get("executionId");
                         if (executionId != null) {
                             result.put("executionId", executionId);
-                            log.info("提取到 executionId: {}", executionId);
+                            log.info("Extracted executionId: {}", executionId);
                         }
                     } else if (responseData instanceof Number) {
                         // 如果响应是纯数字，则直接作为 executionId
                         result.put("executionId", responseData);
-                        log.info("响应为纯数字 executionId: {}", responseData);
+                        log.info("Response is plain number executionId: {}", responseData);
                     }
                 } catch (Exception e) {
                     // 尝试解析为数字（可能是纯数字响应）
@@ -447,28 +447,28 @@ public class ChatController {
                         String executionId = responseBody.trim();
                         result.put("executionId", executionId);
                         result.put("data", responseBody);
-                        log.info("解析纯数字响应为 executionId: {}", executionId);
+                        log.info("Parsed plain number response as executionId: {}", executionId);
                     } catch (Exception nfe) {
                         result.put("data", responseBody);
                     }
                 }
             }
             result.put("message", "操作执行成功");
-            log.info("API 调用成功: method={}, path={}", method, path);
+            log.info("API call successful: method={}, path={}", method, path);
 
         } catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {
-            log.error("API 调用错误: method={}, path={}, status={}, error={}",
+            log.error("API call error: method={}, path={}, status={}, error={}",
                     method, path, e.getStatusCode(), e.getMessage());
             result.put("success", false);
             result.put("statusCode", e.getStatusCode().value());
-            result.put("error", "HTTP 错误: " + e.getStatusText());
+            result.put("error", "HTTP error: " + e.getStatusText());
             try {
                 result.put("details", objectMapper.readValue(e.getResponseBodyAsString(), Object.class));
             } catch (Exception ex) {
                 result.put("details", e.getResponseBodyAsString());
             }
         } catch (Exception e) {
-            log.error("操作执行异常: method={}, path={}, error={}", method, path, e.getMessage(), e);
+            log.error("Action execution exception: method={}, path={}, error={}", method, path, e.getMessage(), e);
             result.put("success", false);
             result.put("error", e.getMessage());
         }
@@ -485,7 +485,7 @@ public class ChatController {
     private void continueAgentConversation(PendingActionService.PendingAction pendingAction,
                                            Map<String, Object> results) {
         try {
-            log.info("继续 AI 对话生成总结: conversationId={}, workflowId={}",
+            log.info("Continuing AI conversation for summary: conversationId={}, workflowId={}",
                     pendingAction.getConversationId(), pendingAction.getWorkflowId());
 
             // 构建操作结果上下文
@@ -501,7 +501,7 @@ public class ChatController {
                     if (Boolean.TRUE.equals(success)) {
                         contextBuilder.append("执行成功\n");
                     } else {
-                        contextBuilder.append("执行失败: ").append(resultMap.get("error")).append("\n");
+                        contextBuilder.append("Execution failed: ").append(resultMap.get("error")).append("\n");
                     }
                 } else {
                     contextBuilder.append(entry.getValue()).append("\n");
@@ -518,7 +518,7 @@ public class ChatController {
                     new AgentExecutor.StreamCallback() {
                         @Override
                         public void onStart(String sessionId) {
-                            log.debug("AI 总结会话开始: sessionId={}", sessionId);
+                            log.debug("AI summary session started: sessionId={}", sessionId);
                         }
 
                         @Override
@@ -545,11 +545,11 @@ public class ChatController {
                                             // 如果包含 summary 字段，使用 summary 作为显示内容
                                             if (jsonContent.containsKey("summary")) {
                                                 displayContent = (String) jsonContent.get("summary");
-                                                log.debug("从 JSON 中提取 summary: {}", displayContent);
+                                                log.debug("Extracted summary from JSON: {}", displayContent);
                                             }
                                         } catch (Exception e) {
                                             // 解析失败，保持原内容
-                                            log.debug("content 不是有效的 JSON，保持原样: {}", content);
+                                            log.debug("Content is not valid JSON, keeping as-is: {}", content);
                                         }
                                     }
 
@@ -564,14 +564,14 @@ public class ChatController {
                                                     .data(pendingAction.getObjectMapper().writeValueAsString(chunkData)));
                                 }
                             } catch (Exception e) {
-                                log.error("发送 chunk 失败: {}", e.getMessage());
+                                log.error("Failed to send chunk: {}", e.getMessage());
                             }
                         }
 
                         @Override
                         public void onDone(String sessionId, Long duration) {
                             try {
-                                log.info("AI 总结完成: sessionId={}, duration={}ms", sessionId, duration);
+                                log.info("AI summary completed: sessionId={}, duration={}ms", sessionId, duration);
 
                                 // 发送 done 事件
                                 Map<String, Object> doneData = new java.util.LinkedHashMap<>();
@@ -585,14 +585,14 @@ public class ChatController {
                                 // 关闭 SSE 连接
                                 pendingAction.getEmitter().complete();
                             } catch (Exception e) {
-                                log.error("发送 done 事件失败: {}", e.getMessage());
+                                log.error("Failed to send done event: {}", e.getMessage());
                             }
                         }
 
                         @Override
                         public void onError(String error) {
                             try {
-                                log.error("AI 总结失败: {}", error);
+                                log.error("AI summary failed: {}", error);
 
                                 // 发送错误事件
                                 Map<String, Object> errorData = new java.util.LinkedHashMap<>();
@@ -606,19 +606,19 @@ public class ChatController {
                                 // 关闭 SSE 连接
                                 pendingAction.getEmitter().complete();
                             } catch (Exception e) {
-                                log.error("发送 error 事件失败: {}", e.getMessage());
+                                log.error("Failed to send error event: {}", e.getMessage());
                             }
                         }
                     }
             );
 
         } catch (Exception e) {
-            log.error("继续 AI 对话失败: {}", e.getMessage(), e);
+            log.error("Failed to continue AI conversation: {}", e.getMessage(), e);
             // 即使失败，也要关闭 SSE 连接
             try {
                 pendingAction.getEmitter().complete();
             } catch (Exception ex) {
-                log.error("关闭 SSE 连接失败: {}", ex.getMessage());
+                log.error("Failed to close SSE connection: {}", ex.getMessage());
             }
         }
     }

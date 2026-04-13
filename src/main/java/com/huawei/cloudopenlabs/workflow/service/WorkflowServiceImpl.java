@@ -48,7 +48,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     @Transactional
     public WorkflowResponse createWorkflow(WorkflowCreateRequest request) {
-        log.info("创建工作流: {}, 节点数: {}, 连线数: {}, 关联数: {}",
+        log.info("Creating workflow: {}, nodeCount: {}, connectionCount: {}, associationCount: {}",
                 request.getName(),
                 request.getNodes() != null ? request.getNodes().size() : 0,
                 request.getConnections() != null ? request.getConnections().size() : 0,
@@ -113,7 +113,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 String targetNodeId = nodeUuidToIdMap.get(connData.getTargetNodeUuid());
 
                 if (sourceNodeId == null || targetNodeId == null) {
-                    log.warn("连线节点ID映射失败: sourceUuid={}, targetUuid={}",
+                    log.warn("Connection node ID mapping failed: sourceUuid={}, targetUuid={}",
                             connData.getSourceNodeUuid(), connData.getTargetNodeUuid());
                     continue;
                 }
@@ -141,7 +141,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                 String bodyNodeId = nodeUuidToIdMap.get(assocData.getBodyNodeUuid());
 
                 if (containerNodeId == null || bodyNodeId == null) {
-                    log.warn("关联节点ID映射失败: containerNodeUuid={}, bodyNodeUuid={}",
+                    log.warn("Association node ID mapping failed: containerNodeUuid={}, bodyNodeUuid={}",
                             assocData.getContainerNodeUuid(), assocData.getBodyNodeUuid());
                     continue;
                 }
@@ -157,7 +157,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
         }
 
-        log.info("工作流创建成功: ID={}", workflowId);
+        log.info("Workflow created successfully: ID={}", workflowId);
         return getWorkflowById(workflowId);
     }
 
@@ -198,7 +198,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     @Transactional
     public WorkflowResponse updateWorkflow(String id, WorkflowUpdateRequest request) {
-        log.info("更新工作流: {}", id);
+        log.info("Updating workflow: {}", id);
 
         WorkflowEntity workflow = workflowMapper.selectById(id);
         if (workflow == null) {
@@ -222,14 +222,14 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     @Transactional
     public void deleteWorkflow(String id) {
-        log.info("删除工作流: {}", id);
+        log.info("Deleting workflow: {}", id);
         workflowMapper.deleteById(id);
     }
 
     @Override
     @Transactional
     public WorkflowResponse publishWorkflow(String id) {
-        log.info("发布工作流: {}", id);
+        log.info("Publishing workflow: {}", id);
 
         WorkflowEntity workflow = workflowMapper.selectById(id);
         if (workflow == null) {
@@ -246,7 +246,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     @Transactional
     public WorkflowResponse unpublishWorkflow(String id) {
-        log.info("取消发布工作流: {}", id);
+        log.info("Unpublishing workflow: {}", id);
 
         WorkflowEntity workflow = workflowMapper.selectById(id);
         if (workflow == null) {
@@ -266,7 +266,7 @@ public class WorkflowServiceImpl implements WorkflowService {
     @Override
     @Transactional
     public WorkflowResponse copyWorkflow(String id) {
-        log.info("复制工作流: {}", id);
+        log.info("Copying workflow: {}", id);
 
         WorkflowEntity original = workflowMapper.selectById(id);
         if (original == null) {
@@ -338,7 +338,7 @@ public class WorkflowServiceImpl implements WorkflowService {
                                               List<WorkflowResponse.NodeDTO> nodes,
                                               List<WorkflowResponse.ConnectionDTO> connections,
                                               List<WorkflowResponse.AssociationDTO> associations) {
-        log.info("保存工作流数据: {}, 节点数: {}, 连线数: {}, 关联数: {}",
+        log.info("Saving workflow data: {}, nodeCount: {}, connectionCount: {}, associationCount: {}",
                 id, nodes.size(), connections.size(), associations.size());
 
         WorkflowEntity workflow = workflowMapper.selectById(id);
@@ -392,7 +392,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             }
 
             if (sourceNodeId == null || targetNodeId == null) {
-                log.warn("连线节点ID映射失败: sourceUuid={}, targetUuid={}",
+                log.warn("Connection node ID mapping failed: sourceUuid={}, targetUuid={}",
                         connDTO.getSourceNodeUuid(), connDTO.getTargetNodeUuid());
                 continue;
             }
@@ -417,7 +417,7 @@ public class WorkflowServiceImpl implements WorkflowService {
             String bodyNodeDbId = uuidToIdMap.get(assocDTO.getBodyNodeUuid());
 
             if (containerNodeDbId == null || bodyNodeDbId == null) {
-                log.warn("关联节点ID映射失败: containerNodeUuid={}, bodyNodeUuid={}",
+                log.warn("Association node ID mapping failed: containerNodeUuid={}, bodyNodeUuid={}",
                         assocDTO.getContainerNodeUuid(), assocDTO.getBodyNodeUuid());
                 continue;
             }
@@ -435,7 +435,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     public WorkflowResponse getDefaultWorkflow() {
-        log.info("获取默认工作流详情");
+        log.info("Getting default workflow details");
 
         WorkflowResponse response = new WorkflowResponse();
         response.setId("0");

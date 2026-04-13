@@ -61,7 +61,7 @@ public class PendingActionService {
         pending.setCreatedAt(System.currentTimeMillis());
 
         pendingActions.put(pendingActionId, pending);
-        log.info("存储待确认操作: pendingActionId={}, conversationId={}, actionCount={}",
+        log.info("Stored pending action: pendingActionId={}, conversationId={}, actionCount={}",
                 pendingActionId, conversationId, actions.size());
     }
 
@@ -79,7 +79,7 @@ public class PendingActionService {
 
         // 检查是否超时
         if (System.currentTimeMillis() - pending.getCreatedAt() > PENDING_ACTION_TIMEOUT_MS) {
-            log.warn("待确认操作已超时: pendingActionId={}", pendingActionId);
+            log.warn("Pending action expired: pendingActionId={}", pendingActionId);
             pendingActions.remove(pendingActionId);
             return null;
         }
@@ -94,7 +94,7 @@ public class PendingActionService {
      */
     public void removePendingAction(String pendingActionId) {
         pendingActions.remove(pendingActionId);
-        log.info("移除待确认操作: pendingActionId={}", pendingActionId);
+        log.info("Removed pending action: pendingActionId={}", pendingActionId);
     }
 
     /**
@@ -168,9 +168,9 @@ public class PendingActionService {
             confirmData.put("message", "即将执行 " + actions.size() + " 个修改操作，请确认是否继续？");
 
             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(confirmData)));
-            log.info("已发送确认请求: pendingActionId={}", pendingActionId);
+            log.info("Confirmation request sent: pendingActionId={}", pendingActionId);
         } catch (IOException e) {
-            log.error("发送确认请求失败: {}", e.getMessage());
+            log.error("Failed to send confirmation request: {}", e.getMessage());
         }
     }
 
@@ -196,9 +196,9 @@ public class PendingActionService {
             }
 
             emitter.send(SseEmitter.event().name("message").data(objectMapper.writeValueAsString(resultData)));
-            log.info("已发送操作结果: success={}", success);
+            log.info("Action result sent: success={}", success);
         } catch (IOException e) {
-            log.error("发送操作结果失败: {}", e.getMessage());
+            log.error("Failed to send action result: {}", e.getMessage());
         }
     }
 
@@ -226,10 +226,10 @@ public class PendingActionService {
                     pending.getEmitter().send(SseEmitter.event().name("message")
                             .data(pending.getObjectMapper().writeValueAsString(timeoutData)));
                 } catch (Exception e) {
-                    log.error("发送超时通知失败: {}", e.getMessage());
+                    log.error("Failed to send timeout notification: {}", e.getMessage());
                 }
             }
-            log.info("清理过期待确认操作: {}", id);
+            log.info("Cleaned up expired pending action: {}", id);
         }
     }
 

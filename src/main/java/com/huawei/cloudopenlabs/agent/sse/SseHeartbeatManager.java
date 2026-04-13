@@ -59,14 +59,14 @@ public class SseHeartbeatManager {
             t.setDaemon(true);
             return t;
         });
-        log.info("SSE 心跳管理器初始化完成");
+        log.info("SSE heartbeat manager initialized");
     }
 
     /**
      * 注册带心跳的 SSE 连接
      *
      * @param sessionId 会话ID
-     * @param timeout   连接超时时间（毫秒）
+     * @param timeout   Connection timeout时间（毫秒）
      * @return SseEmitter
      */
     public SseEmitter registerConnection(String sessionId, long timeout) {
@@ -91,7 +91,7 @@ public class SseHeartbeatManager {
         emitter.onTimeout(() -> cleanupConnection(sessionId, "timeout"));
         emitter.onError(e -> cleanupConnection(sessionId, "error: " + e.getMessage()));
 
-        log.info("注册 SSE 连接: sessionId={}, activeConnections={}",
+        log.info("Registering SSE connection: sessionId={}, activeConnections={}",
                 sessionId, activeConnections.size());
 
         return emitter;
@@ -118,17 +118,17 @@ public class SseHeartbeatManager {
             connection.resetFailedCount();
             connection.setLastHeartbeatTime(System.currentTimeMillis());
 
-            log.debug("发送心跳成功: sessionId={}", sessionId);
+            log.debug("Heartbeat sent successfully: sessionId={}", sessionId);
 
         } catch (IOException e) {
             // 发送失败
             int failedCount = connection.incrementFailedCount();
 
-            log.warn("发送心跳失败: sessionId={}, failedCount={}",
+            log.warn("Heartbeat send failed: sessionId={}, failedCount={}",
                     sessionId, failedCount);
 
             if (failedCount >= heartbeatTimeoutCount) {
-                log.error("心跳连续失败，清理连接: sessionId={}", sessionId);
+                log.error("Consecutive heartbeat failures, cleaning connection: sessionId={}", sessionId);
                 cleanupConnection(sessionId, "heartbeat_failed");
             }
         }
@@ -151,7 +151,7 @@ public class SseHeartbeatManager {
         SseConnection connection = activeConnections.remove(sessionId);
         if (connection != null) {
             connection.cancelHeartbeat();
-            log.info("清理 SSE 连接: sessionId={}, reason={}, activeConnections={}",
+            log.info("Cleaning SSE connection: sessionId={}, reason={}, activeConnections={}",
                     sessionId, reason, activeConnections.size());
         }
     }
@@ -167,7 +167,7 @@ public class SseHeartbeatManager {
     public boolean sendEvent(String sessionId, String eventName, Object data) {
         SseConnection connection = activeConnections.get(sessionId);
         if (connection == null) {
-            log.warn("连接不存在: sessionId={}", sessionId);
+            log.warn("Connection not found: sessionId={}", sessionId);
             return false;
         }
 
@@ -177,7 +177,7 @@ public class SseHeartbeatManager {
                     .data(data));
             return true;
         } catch (IOException e) {
-            log.error("发送事件失败: sessionId={}, event={}", sessionId, eventName, e);
+            log.error("Failed to send event: sessionId={}, event={}", sessionId, eventName, e);
             cleanupConnection(sessionId, "send_failed");
             return false;
         }
@@ -204,7 +204,7 @@ public class SseHeartbeatManager {
                             errorCode, message, System.currentTimeMillis()
                     )));
         } catch (IOException e) {
-            log.error("发送错误事件失败: sessionId={}", sessionId, e);
+            log.error("Failed to send error event: sessionId={}", sessionId, e);
         }
     }
 
@@ -219,7 +219,7 @@ public class SseHeartbeatManager {
             try {
                 connection.getEmitter().complete();
             } catch (Exception e) {
-                log.debug("完成连接异常: sessionId={}", sessionId, e);
+                log.debug("Connection completion exception: sessionId={}", sessionId, e);
             }
             cleanupConnection(sessionId, "completed");
         }
@@ -260,7 +260,7 @@ public class SseHeartbeatManager {
      */
     @PreDestroy
     public void shutdown() {
-        log.info("关闭 SSE 心跳管理器，活跃连接数: {}", activeConnections.size());
+        log.info("Shutting down SSE heartbeat manager, active connections: {}", activeConnections.size());
 
         heartbeatExecutor.shutdown();
 
@@ -269,7 +269,7 @@ public class SseHeartbeatManager {
                 connection.cancelHeartbeat();
                 connection.getEmitter().complete();
             } catch (Exception e) {
-                log.debug("关闭连接异常: sessionId={}", sessionId, e);
+                log.debug("Connection close exception: sessionId={}", sessionId, e);
             }
         });
 
@@ -284,7 +284,7 @@ public class SseHeartbeatManager {
             Thread.currentThread().interrupt();
         }
 
-        log.info("SSE 心跳管理器已关闭");
+        log.info("SSE heartbeat manager shut down");
     }
 
     /**

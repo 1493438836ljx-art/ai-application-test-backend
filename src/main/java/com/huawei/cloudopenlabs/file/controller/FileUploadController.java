@@ -41,7 +41,7 @@ public class FileUploadController {
     @PostMapping("/upload")
     public ResponseEntity<Map<String, Object>> uploadFile(
             @RequestParam("file") MultipartFile file) {
-        log.info("上传文件: {}", file.getOriginalFilename());
+        log.info("Uploading file: {}", file.getOriginalFilename());
 
         String fileId = fileUploadService.uploadFile(file);
         String filePath = fileUploadService.getFilePath(fileId);

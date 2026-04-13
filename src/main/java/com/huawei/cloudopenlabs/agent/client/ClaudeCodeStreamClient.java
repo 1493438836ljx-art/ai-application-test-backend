@@ -103,7 +103,7 @@ public class ClaudeCodeStreamClient {
                             .map(Optional::get);
                 })
                 .doOnNext(chunk -> log.info("收到流式块: type={}", chunk.getType()))
-                .doOnError(e -> log.error("流式请求错误: {}", e.getMessage(), e))
+                .doOnError(e -> log.error("流式请求error: {}", e.getMessage(), e))
                 .doOnComplete(() -> log.info("流式任务完成"))
                 .timeout(Duration.ofMinutes(10));
     }
@@ -139,7 +139,7 @@ public class ClaudeCodeStreamClient {
             StreamChunk chunk = parseChunk(jsonStr);
             return Optional.ofNullable(chunk);
         } catch (Exception e) {
-            log.warn("解析 SSE 行失败: {}, 错误: {}", line, e.getMessage());
+            log.warn("解析 SSE 行失败: {}, error: {}", line, e.getMessage());
             return Optional.empty();
         }
     }
@@ -151,7 +151,7 @@ public class ClaudeCodeStreamClient {
         try {
             return objectMapper.readValue(dataStr, StreamChunk.class);
         } catch (Exception e) {
-            log.warn("解析 JSON 失败: {}, 错误: {}", dataStr, e.getMessage());
+            log.warn("解析 JSON 失败: {}, error: {}", dataStr, e.getMessage());
             // 解析失败时，创建一个包含原始数据的 chunk
             StreamChunk fallbackChunk = new StreamChunk();
             fallbackChunk.setType("chunk");

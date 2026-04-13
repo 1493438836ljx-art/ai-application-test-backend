@@ -102,7 +102,7 @@ public class ActionExecutor {
                 throw new ActionExecutionException(
                         action.getId(),
                         action.getPath(),
-                        "操作执行失败: " + e.getMessage(),
+                        "操作Execution failed: " + e.getMessage(),
                         e
                 );
             }
@@ -125,7 +125,7 @@ public class ActionExecutor {
         String method = validateAndNormalizeMethod(action.getMethod());
         JsonNode body = action.getBody();
 
-        log.info("执行操作: id={}, method={}, path={}", actionId, method, path);
+        log.info("Executing action: id={}, method={}, path={}", actionId, method, path);
 
         // 验证路径
         validatePath(path);
@@ -149,7 +149,7 @@ public class ActionExecutor {
             log.error("操作失败: id={}, path={}, duration={}ms, error={}",
                     actionId, path, duration, e.getMessage());
 
-            throw new ActionExecutionException(actionId, path, "操作执行失败: " + e.getMessage(), e);
+            throw new ActionExecutionException(actionId, path, "操作Execution failed: " + e.getMessage(), e);
         }
     }
 

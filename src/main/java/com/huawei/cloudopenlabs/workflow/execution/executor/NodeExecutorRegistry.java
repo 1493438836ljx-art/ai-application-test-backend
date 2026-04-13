@@ -62,7 +62,7 @@ public class NodeExecutorRegistry {
         }
 
         executorMap.put(nodeType, executor);
-        log.info("注册节点执行器: nodeType={}, executor={}",
+        log.info("Registering node executor: nodeType={}, executor={}",
                 nodeType, executor.getClass().getSimpleName());
     }
 

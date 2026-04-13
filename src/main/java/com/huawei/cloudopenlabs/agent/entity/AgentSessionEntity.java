@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * Agent会话实体类
- * 用于多轮对话的会话管理，存储查询结果和操作结果
+ * 用于多 round, 的会话管理，存储查询结果和操作结果
  *
  * @author GNEEC LIVE
  * @version 27.0.1.1

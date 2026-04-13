@@ -116,7 +116,7 @@ public class ConditionEvaluator {
                     ErrorCode.PARAM_RESOLVE_FAILED,
                     currentNodeUuid,
                     null,
-                    "多条件评估失败: " + e.getMessage()
+                    "多Condition evaluation failed: " + e.getMessage()
             );
         }
     }

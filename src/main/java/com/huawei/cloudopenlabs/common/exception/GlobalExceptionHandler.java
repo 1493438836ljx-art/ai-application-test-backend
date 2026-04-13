@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(
             BusinessException ex, HttpServletRequest request) {
-        log.warn("业务异常: {} - {}", request.getRequestURI(), ex.getMessage());
+        log.warn("Business exception: {} - {}", request.getRequestURI(), ex.getMessage());
 
         return ResponseEntity
                 .status(ex.getHttpStatus())
@@ -54,11 +54,11 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
 
-        log.warn("参数校验失败: {} - {}", request.getRequestURI(), errorMessage);
+        log.warn("Parameter validation failed: {} - {}", request.getRequestURI(), errorMessage);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(400, "参数校验失败: " + errorMessage));
+                .body(ApiResponse.error(400, "Parameter validation failed: " + errorMessage));
     }
 
     /**
@@ -71,11 +71,11 @@ public class GlobalExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("; "));
 
-        log.warn("约束违反: {} - {}", request.getRequestURI(), errorMessage);
+        log.warn("Constraint violation: {} - {}", request.getRequestURI(), errorMessage);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(400, "参数校验失败: " + errorMessage));
+                .body(ApiResponse.error(400, "Parameter validation failed: " + errorMessage));
     }
 
     /**
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingParameterException(
             MissingServletRequestParameterException ex, HttpServletRequest request) {
-        log.warn("缺少请求参数: {} - {}", request.getRequestURI(), ex.getParameterName());
+        log.warn("Missing request parameter: {} - {}", request.getRequestURI(), ex.getParameterName());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
         String message = String.format("参数 '%s' 类型不正确，期望类型: %s",
                 ex.getName(), ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "未知");
 
-        log.warn("参数类型不匹配: {} - {}", request.getRequestURI(), message);
+        log.warn("Parameter type mismatch: {} - {}", request.getRequestURI(), message);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -113,7 +113,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException ex, HttpServletRequest request) {
-        log.warn("请求体解析失败: {} - {}", request.getRequestURI(), ex.getMessage());
+        log.warn("Request body parsing failed: {} - {}", request.getRequestURI(), ex.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -126,7 +126,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(
             NoHandlerFoundException ex, HttpServletRequest request) {
-        log.warn("资源未找到: {}", request.getRequestURI());
+        log.warn("Resource not found: {}", request.getRequestURI());
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -139,11 +139,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleRuntimeException(
             RuntimeException ex, HttpServletRequest request) {
-        log.error("运行时异常: {} - {}", request.getRequestURI(), ex.getMessage(), ex);
+        log.error("Runtime exception: {} - {}", request.getRequestURI(), ex.getMessage(), ex);
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(500, "服务器内部错误: " + ex.getMessage()));
+                .body(ApiResponse.error(500, "服务器内部error: " + ex.getMessage()));
     }
 
     /**
@@ -152,7 +152,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(
             Exception ex, HttpServletRequest request) {
-        log.error("未处理的异常: {} - {}", request.getRequestURI(), ex.getMessage(), ex);
+        log.error("Unhandled exception: {} - {}", request.getRequestURI(), ex.getMessage(), ex);
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)

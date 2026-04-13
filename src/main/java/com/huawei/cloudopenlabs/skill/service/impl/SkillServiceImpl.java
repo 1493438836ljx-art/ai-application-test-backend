@@ -68,7 +68,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public SkillResponse createSkill(SkillCreateRequest request, MultipartFile file) {
-        log.info("创建Skill: {}", request.getName());
+        log.info("Creating skill: {}", request.getName());
 
         // 检查名称是否已存在
         Long count = skillMapper.countByName(request.getName());
@@ -162,7 +162,7 @@ public class SkillServiceImpl implements SkillService {
             }
         }
 
-        log.info("Skill创建成功: ID={}", skillId);
+        log.info("Skill created successfully: ID={}", skillId);
         return getSkillById(skillId);
     }
 
@@ -226,7 +226,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public SkillResponse updateSkill(String id, SkillUpdateRequest request, MultipartFile file) {
-        log.info("更新Skill: {}", id);
+        log.info("Updating skill: {}", id);
 
         SkillEntity skill = skillMapper.selectById(id);
         if (skill == null || skill.getDeleted()) {
@@ -324,7 +324,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public void deleteSkill(String id) {
-        log.info("删除Skill: {}", id);
+        log.info("Deleting skill: {}", id);
         SkillEntity skill = skillMapper.selectById(id);
         if (skill == null || skill.getDeleted()) {
             throw BusinessException.notFound("Skill", id);
@@ -358,10 +358,10 @@ public class SkillServiceImpl implements SkillService {
             Path filePath = Paths.get(suitePath);
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
-                log.info("执行套件文件删除成功: {}", suitePath);
+                log.info("Suite file deleted successfully: {}", suitePath);
             }
         } catch (IOException e) {
-            log.warn("删除执行套件文件失败: {}", suitePath, e);
+            log.warn("Failed to delete suite file: {}", suitePath, e);
             // 文件删除失败不影响Skill删除
         }
     }
@@ -369,7 +369,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public SkillResponse publishSkill(String id) {
-        log.info("发布Skill: {}", id);
+        log.info("Publishing skill: {}", id);
 
         SkillEntity skill = skillMapper.selectById(id);
         if (skill == null || skill.getDeleted()) {
@@ -385,7 +385,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public SkillResponse unpublishSkill(String id) {
-        log.info("取消发布Skill: {}", id);
+        log.info("Unpublishing skill: {}", id);
 
         SkillEntity skill = skillMapper.selectById(id);
         if (skill == null || skill.getDeleted()) {
@@ -401,7 +401,7 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public SkillResponse copySkill(String id) {
-        log.info("复制Skill: {}", id);
+        log.info("Copying skill: {}", id);
 
         SkillEntity original = skillMapper.selectById(id);
         if (original == null || original.getDeleted()) {
@@ -575,10 +575,10 @@ public class SkillServiceImpl implements SkillService {
             Path filePath = uploadDir.resolve(newFilename);
             Files.copy(file.getInputStream(), filePath);
 
-            log.info("执行套件文件保存成功: {}", filePath.toString());
+            log.info("Suite file saved successfully: {}", filePath.toString());
             return filePath.toString();
         } catch (IOException e) {
-            log.error("保存执行套件文件失败", e);
+            log.error("Failed to save suite file", e);
             throw BusinessException.invalidParam("执行套件文件保存失败: " + e.getMessage());
         }
     }

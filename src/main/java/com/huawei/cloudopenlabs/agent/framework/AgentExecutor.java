@@ -163,7 +163,7 @@ public class AgentExecutor {
         long startTime = System.currentTimeMillis();
 
         try {
-            log.info("开始执行 Agent 任务: {}", request.getTaskContent());
+            log.info("Starting Agent task execution: {}", request.getTaskContent());
 
             // 请求前回调
             if (callback != null) {
@@ -195,7 +195,7 @@ public class AgentExecutor {
                     .executionTimeMs(executionTime)
                     .build();
 
-            log.info("Agent 任务执行完成，耗时: {}ms，成功: {}", executionTime, response.getSuccess());
+            log.info("Agent task execution completed, latency: {}ms，成功: {}", executionTime, response.getSuccess());
 
             // 请求后回调
             if (callback != null) {
@@ -206,7 +206,7 @@ public class AgentExecutor {
         } catch (Exception e) {
             long executionTime = System.currentTimeMillis() - startTime;
 
-            log.error("Agent 任务执行异常: {}", e.getMessage(), e);
+            log.error("Agent task execution exception: {}", e.getMessage(), e);
 
             AgentResponse response = AgentResponse.builder()
                     .success(false)
@@ -236,7 +236,7 @@ public class AgentExecutor {
     public void processMessage(String userMessage, String workflowId, String conversationId,
                               MultiRoundCallback callback) {
         try {
-            log.info("开始处理多轮消息: conversationId={}, workflowId={}", conversationId, workflowId);
+            log.info("Starting multi-round message processing: conversationId={}, workflowId={}", conversationId, workflowId);
 
             // 判断是否是新会话（原始 conversationId 为空）
             boolean isNewSession = conversationId == null || conversationId.isEmpty();
@@ -251,7 +251,7 @@ public class AgentExecutor {
             processRound(session, context, callback, isNewSession);
 
         } catch (Exception e) {
-            log.error("处理多轮消息异常: {}", e.getMessage(), e);
+            log.error("Multi-round message processing exception: {}", e.getMessage(), e);
             callback.onError("处理消息异常: " + e.getMessage());
         }
     }
@@ -271,7 +271,7 @@ public class AgentExecutor {
 
         // 检查最大轮次限制
         if (currentRound > MAX_ROUNDS) {
-            log.warn("超过最大轮次限制: currentRound={}, maxRounds={}", currentRound, MAX_ROUNDS);
+            log.warn("Exceeded max round limit: currentRound={}, maxRounds={}", currentRound, MAX_ROUNDS);
             callback.onError(buildMaxRoundsError(session));
             sessionService.markAsError(session.getConversationId(), "超过最大轮次限制");
             return;
@@ -279,14 +279,14 @@ public class AgentExecutor {
 
         // 检查执行超时
         if (isTimeout(session)) {
-            log.warn("执行超时: conversationId={}, elapsed={}ms, maxTime={}ms",
+            log.warn("Execution timeout: conversationId={}, elapsed={}ms, maxTime={}ms",
                     session.getConversationId(), getElapsedTime(session), MAX_EXECUTION_TIME_MS);
             callback.onError(buildTimeoutError(session));
             sessionService.markAsError(session.getConversationId(), "执行超时");
             return;
         }
 
-        log.info("开始第 {} 轮对话, conversationId={}, elapsed={}ms",
+        log.info("Starting round {}  round, , conversationId={}, elapsed={}ms",
                 currentRound, session.getConversationId(), getElapsedTime(session));
 
         try {
@@ -296,12 +296,12 @@ public class AgentExecutor {
             String sessionIdForApi = null;
 
             if (isNewSession) {
-                log.info("新会话，加载 Skill 文件: {}", skillFilePath);
+                log.info("New session, Loading skill file: {}", skillFilePath);
                 skillFileBytes = loadSkillFile();
                 skillFileName = "workflow-assistant.zip";
                 sessionIdForApi = null;  // 新会话不传 sessionId，让 Claude CLI 生成
             } else {
-                log.info("恢复会话，sessionId: {}", session.getConversationId());
+                log.info("Resuming session, sessionId: {}", session.getConversationId());
                 skillFileBytes = null;  // 已有会话不传 Skill 文件
                 skillFileName = null;
                 sessionIdForApi = session.getConversationId();  // 传 sessionId 恢复会话
@@ -318,14 +318,14 @@ public class AgentExecutor {
 
             if (!apiResponse.getSuccess()) {
                 sessionService.markAsError(session.getConversationId(), apiResponse.getError());
-                callback.onError("API调用失败: " + apiResponse.getError());
+                callback.onError("API call failed: " + apiResponse.getError());
                 return;
             }
 
             // 检查是否返回了新的 sessionId（首次调用时）
             if (apiResponse.getSessionId() != null && !apiResponse.getSessionId().equals(session.getConversationId())) {
                 String oldConversationId = session.getConversationId();
-                log.info("收到新的 sessionId: {}", apiResponse.getSessionId());
+                log.info("Received new sessionId: {}", apiResponse.getSessionId());
                 // 更新数据库中的 session 的 conversationId
                 session = sessionService.updateConversationId(oldConversationId, apiResponse.getSessionId());
                 if (session == null) {
@@ -363,15 +363,15 @@ public class AgentExecutor {
                     break;
 
                 case "parse_error":
-                    // 解析错误，将问题反馈给 Claude Code 让其重新生成
-                    log.warn("AI 响应格式解析错误，将问题反馈给 Claude Code: {}", plan.getSummary());
+                    // 解析错误, feeding back to Claude Code 让其重新生成
+                    log.warn("AI response format parsing error, feeding back to Claude Code: {}", plan.getSummary());
 
                     // 递增解析错误计数
                     int parseErrorCount = incrementParseErrorCount(session);
 
                     // 检查解析错误次数限制
                     if (parseErrorCount > MAX_PARSE_ERROR_ROUNDS) {
-                        log.warn("超过最大解析错误次数限制: parseErrorCount={}, maxParseErrorRounds={}",
+                        log.warn("Exceeded max parse error limit: parseErrorCount={}, maxParseErrorRounds={}",
                                 parseErrorCount, MAX_PARSE_ERROR_ROUNDS);
                         callback.onError("AI 响应格式持续异常，已尝试 " + MAX_PARSE_ERROR_ROUNDS +
                                 " 次仍无法解析。请尝试简化您的请求或稍后重试。");
@@ -385,15 +385,15 @@ public class AgentExecutor {
                     break;
 
                 default:
-                    // 未知的 status，将问题反馈给 Claude Code
-                    log.warn("未知的计划状态: {}，将问题反馈给 Claude Code", plan.getStatus());
+                    // 未知的 status, feeding back to Claude Code
+                    log.warn("Unknown plan status: {}, feeding back to Claude Code", plan.getStatus());
                     String unknownStatusContext = buildErrorContext(session,
                             "status 字段值无效",
                             "status 只能是 'query'、'action' 或 'complete'，但收到了: " + plan.getStatus());
                     processRound(session, unknownStatusContext, callback, false);
             }
         } catch (Exception e) {
-            log.error("处理单轮交互异常: {}", e.getMessage(), e);
+            log.error("Single-round interaction exception: {}", e.getMessage(), e);
             // 不直接标记为错误，而是将异常信息反馈给 Claude Code 让其处理
             String exceptionContext = buildErrorContext(session, "处理异常", e.getMessage());
             processRound(session, exceptionContext, callback, false);
@@ -409,7 +409,7 @@ public class AgentExecutor {
 
         List<AgentPlan.Query> queries = plan.getQueries();
         if (queries == null || queries.isEmpty()) {
-            log.warn("查询请求为空，继续下一轮");
+            log.warn("Query request is empty, continuing to next round");
             String newContext = buildContextWithResults(session, queryResults, "query");
             processRound(session, newContext, callback, false);  // 后续轮次不是新会话
             return;
@@ -418,7 +418,7 @@ public class AgentExecutor {
         // 执行所有查询
         for (AgentPlan.Query query : queries) {
             callback.onStatus("正在查询: " + query.getDescription());
-            log.info("执行查询: id={}, description={}", query.getId(), query.getDescription());
+            log.info("Executing query: id={}, description={}", query.getId(), query.getDescription());
 
             Object result = executeQuery(query.getMethod(), query.getPath(), query.getParams());
             queryResults.put(query.getId(), result);
@@ -441,7 +441,7 @@ public class AgentExecutor {
 
         List<AgentPlan.Action> actions = plan.getActions();
         if (actions == null || actions.isEmpty()) {
-            log.warn("操作请求为空，继续下一轮");
+            log.warn("Action request is empty, continuing to next round");
             String newContext = buildContextWithResults(session, actionResults, "action");
             processRound(session, newContext, callback, false);  // 后续轮次不是新会话
             return;
@@ -450,7 +450,7 @@ public class AgentExecutor {
         // 执行所有操作
         for (AgentPlan.Action action : actions) {
             callback.onStatus("正在执行: " + action.getDescription());
-            log.info("执行操作: id={}, method={}, path={}, description={}",
+            log.info("Executing action: id={}, method={}, path={}, description={}",
                     action.getId(), action.getMethod(), action.getPath(), action.getDescription());
 
             Object result = executeAction(action.getMethod(), action.getPath(), action.getBody());
@@ -475,7 +475,7 @@ public class AgentExecutor {
      * 根据 path 调用相应的服务方法获取数据
      */
     private Object executeQuery(String method, String path, Map<String, Object> params) {
-        log.info("执行查询: method={}, path={}", method, path);
+        log.info("Executing query: method={}, path={}", method, path);
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -492,39 +492,39 @@ public class AgentExecutor {
             if (path.matches("/api/workflow/[0-9a-fA-F\\-]+")) {
                 if (workflowService != null) {
                     String workflowId = path.substring(path.lastIndexOf('/') + 1);
-                    log.info("查询工作流详情: id={}", workflowId);
+                    log.info("Querying workflow details: id={}", workflowId);
                     WorkflowResponse workflow = workflowService.getWorkflowById(workflowId);
                     data = workflow;
                 } else {
-                    log.warn("WorkflowService 未注入");
+                    log.warn("WorkflowService  not injected");
                 }
             }
             // 匹配 /api/workflow/node-types - 获取节点类型列表
             else if (path.equals("/api/workflow/node-types")) {
                 if (nodeTypeService != null) {
-                    log.info("查询所有节点类型");
+                    log.info("Querying all node types");
                     List<NodeTypeResponse> nodeTypes = nodeTypeService.getAllEnabledNodeTypes();
                     data = nodeTypes;
                 } else {
-                    log.warn("NodeTypeService 未注入");
+                    log.warn("NodeTypeService  not injected");
                 }
             }
-            // 匹配 /api/workflow/list - 获取工作流列表
+            // 匹配 /api/workflow/list - Getting workflow list
             else if (path.equals("/api/workflow/list")) {
                 if (workflowService != null) {
-                    log.info("查询工作流列表");
+                    log.info("Querying workflow list");
                     Pageable pageable = PageRequest.of(0, 100);
                     Page<WorkflowResponse> workflows = workflowService.getWorkflowList(pageable);
                     data = workflows.getContent();
                 } else {
-                    log.warn("WorkflowService 未注入");
+                    log.warn("WorkflowService  not injected");
                 }
             }
             // 其他路径
             else {
-                log.warn("未知的查询路径: {}", path);
+                log.warn("Unknown query path: {}", path);
                 result.put("success", false);
-                result.put("error", "未知的查询路径: " + path);
+                result.put("error", "Unknown query path: " + path);
                 return result;
             }
 
@@ -535,7 +535,7 @@ public class AgentExecutor {
             result.put("message", "查询成功");
 
         } catch (Exception e) {
-            log.error("查询执行异常: path={}, error={}", path, e.getMessage(), e);
+            log.error("Query execution exception: path={}, error={}", path, e.getMessage(), e);
             result.put("success", false);
             result.put("error", e.getMessage());
         }
@@ -547,7 +547,7 @@ public class AgentExecutor {
      * 执行操作（真正调用后端服务）
      */
     private Object executeAction(String method, String path, Map<String, Object> body) {
-        log.info("执行操作: method={}, path={}", method, path);
+        log.info("Executing action: method={}, path={}", method, path);
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -561,7 +561,7 @@ public class AgentExecutor {
             if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/[0-9a-fA-F\\-]+/data/json")) {
                 if (workflowService != null && body != null) {
                     String workflowId = path.split("/")[3];
-                    log.info("保存工作流数据: workflowId={}", workflowId);
+                    log.info("Saving workflow data: workflowId={}", workflowId);
 
                     // 将 Map 转换为 DTO 列表
                     List<WorkflowResponse.NodeDTO> nodes = null;
@@ -598,16 +598,16 @@ public class AgentExecutor {
                     result.put("message", "工作流数据保存成功");
                     log.info("工作流数据保存成功: workflowId={}, nodes={}", workflowId, nodes != null ? nodes.size() : 0);
                 } else {
-                    log.warn("WorkflowService 未注入或 body 为空");
+                    log.warn("WorkflowService  not injected或 body 为空");
                     result.put("success", false);
-                    result.put("error", "WorkflowService 未注入或 body 为空");
+                    result.put("error", "WorkflowService  not injected或 body 为空");
                 }
             }
             // 匹配 POST /api/workflow/{id}/publish - 发布工作流
             else if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/[0-9a-fA-F\\-]+/publish")) {
                 if (workflowService != null) {
                     String workflowId = path.split("/")[3];
-                    log.info("发布工作流: workflowId={}", workflowId);
+                    log.info("Publishing workflow: workflowId={}", workflowId);
                     workflowService.publishWorkflow(workflowId);
                     result.put("success", true);
                     result.put("method", method);
@@ -615,16 +615,16 @@ public class AgentExecutor {
                     result.put("workflowId", workflowId);
                     result.put("message", "工作流发布成功");
                 } else {
-                    log.warn("WorkflowService 未注入");
+                    log.warn("WorkflowService  not injected");
                     result.put("success", false);
-                    result.put("error", "WorkflowService 未注入");
+                    result.put("error", "WorkflowService  not injected");
                 }
             }
             // 匹配 POST /api/workflow/{id}/execute - 执行工作流
             else if ("POST".equalsIgnoreCase(method) && path.matches("/api/workflow/[0-9a-fA-F\\-]+/execute")) {
                 if (workflowService != null) {
                     String workflowId = path.split("/")[3];
-                    log.info("执行工作流: workflowId={}", workflowId);
+                    log.info("Executing workflow: workflowId={}", workflowId);
                     // TODO: 调用 workflowService 执行工作流
                     result.put("success", true);
                     result.put("method", method);
@@ -633,9 +633,9 @@ public class AgentExecutor {
                     result.put("executionId", "exec-" + System.currentTimeMillis());
                     result.put("message", "工作流开始执行");
                 } else {
-                    log.warn("WorkflowService 未注入");
+                    log.warn("WorkflowService  not injected");
                     result.put("success", false);
-                    result.put("error", "WorkflowService 未注入");
+                    result.put("error", "WorkflowService  not injected");
                 }
             }
             // 其他操作
@@ -646,7 +646,7 @@ public class AgentExecutor {
             }
 
         } catch (Exception e) {
-            log.error("操作执行异常: method={}, path={}, error={}", method, path, e.getMessage(), e);
+            log.error("Action execution exception: method={}, path={}, error={}", method, path, e.getMessage(), e);
             result.put("success", false);
             result.put("error", e.getMessage());
         }
@@ -691,7 +691,7 @@ public class AgentExecutor {
         String context = sb.toString();
         if (context.length() > getMaxContextLength()) {
             context = emergencyTruncate(context, getMaxContextLength());
-            log.info("上下文已截断: 原长度={}, 截断后长度={}", sb.length(), context.length());
+            log.info("上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
         }
 
         return context;
@@ -733,7 +733,7 @@ public class AgentExecutor {
         String context = sb.toString();
         if (context.length() > getMaxContextLength()) {
             context = emergencyTruncate(context, getMaxContextLength());
-            log.info("带结果上下文已截断: 原长度={}, 截断后长度={}", sb.length(), context.length());
+            log.info("带结果上下文已截断: originalLength={}, 截断后长度={}", sb.length(), context.length());
         }
 
         return context;
@@ -838,7 +838,7 @@ public class AgentExecutor {
                 "1. 任务过于复杂，建议拆分为多个简单任务分别执行\n" +
                 "2. 请求描述不够明确，请尝试更清晰地描述您的需求\n" +
                 "3. 系统暂时繁忙，请稍后重试\n\n" +
-                "执行统计：已执行 %d 轮对话",
+                "执行统计：已执行 %d  round, ",
                 MAX_ROUNDS,
                 executedRounds
         );
@@ -858,7 +858,7 @@ public class AgentExecutor {
         long elapsed = System.currentTimeMillis() - startTime;
         boolean timeout = elapsed > MAX_EXECUTION_TIME_MS;
         if (timeout) {
-            log.warn("执行超时: elapsed={}ms, maxTime={}ms", elapsed, MAX_EXECUTION_TIME_MS);
+            log.warn("Execution timeout: elapsed={}ms, maxTime={}ms", elapsed, MAX_EXECUTION_TIME_MS);
         }
         return timeout;
     }
@@ -893,7 +893,7 @@ public class AgentExecutor {
                 "1. 任务过于复杂，建议拆分为多个简单任务分别执行\n" +
                 "2. AI 正在处理大量数据，请耐心等待或简化请求\n" +
                 "3. 系统暂时繁忙，请稍后重试\n\n" +
-                "执行统计：已执行 %d 轮对话，耗时 %d 秒",
+                "执行统计：已执行 %d  round, ，耗时 %d 秒",
                 elapsedSeconds,
                 MAX_EXECUTION_TIME_MS / 1000,
                 executedRounds,
@@ -915,7 +915,7 @@ public class AgentExecutor {
         if (content.length() <= maxLength) {
             return content;
         }
-        log.debug("内容已截断: 原长度={}, 最大长度={}", content.length(), maxLength);
+        log.debug("内容已截断: originalLength={}, 最大长度={}", content.length(), maxLength);
         return content.substring(0, maxLength) + "...(内容已截断)";
     }
 
@@ -1241,7 +1241,7 @@ public class AgentExecutor {
          * @param e        异常
          */
         default void onError(AgentRequest request, AgentResponse response, Exception e) {
-            log.error("Agent 任务执行异常: {}", e.getMessage());
+            log.error("Agent task execution exception: {}", e.getMessage());
         }
     }
 
@@ -1271,12 +1271,12 @@ public class AgentExecutor {
             }
 
             if (!Files.exists(path)) {
-                log.warn("Skill 文件不存在: {}", path.toAbsolutePath());
+                log.warn("Skill file not found: {}", path.toAbsolutePath());
                 return null;
             }
 
             byte[] bytes = Files.readAllBytes(path);
-            log.info("成功加载 Skill 文件: {}, 大小: {} bytes", path.toAbsolutePath(), bytes.length);
+            log.info("成功Loading skill file: {}, 大小: {} bytes", path.toAbsolutePath(), bytes.length);
             return bytes;
 
         } catch (IOException e) {
@@ -1347,7 +1347,7 @@ public class AgentExecutor {
          * @param sessionId 会话ID
          */
         default void onStart(String sessionId) {
-            log.debug("流式会话开始: sessionId={}", sessionId);
+            log.debug("Streaming session started: sessionId={}", sessionId);
         }
 
         /**
@@ -1369,7 +1369,7 @@ public class AgentExecutor {
         /**
          * 操作确认请求回调
          * <p>
-         * 当 AI 请求执行非查询操作时，需要用户确认。
+         * 当 AI 请求执行非查询操作时，Requires user confirmation。
          * 前端应显示确认对话框，用户确认后调用 /api/chat/action/confirm
          * </p>
          *
@@ -1401,7 +1401,7 @@ public class AgentExecutor {
 
     /**
      * 流式处理用户消息（真正的实时流式）
-     * 支持多轮对话和 Skill 文件
+     * 支持多 round, 和 Skill 文件
      *
      * @param userMessage    用户消息
      * @param workflowId     工作流ID
@@ -1471,7 +1471,7 @@ public class AgentExecutor {
 
                 // 检查最大轮次限制
                 if (currentRound > MAX_ROUNDS) {
-                    log.warn("超过最大轮次限制: currentRound={}, maxRounds={}", currentRound, MAX_ROUNDS);
+                    log.warn("Exceeded max round limit: currentRound={}, maxRounds={}", currentRound, MAX_ROUNDS);
                     callback.onError(buildMaxRoundsError(session));
                     // 异步标记错误状态
                     Mono.fromRunnable(() -> {
@@ -1486,7 +1486,7 @@ public class AgentExecutor {
 
                 // 检查执行超时
                 if (isTimeout(session)) {
-                    log.warn("执行超时: elapsed={}ms", getElapsedTime(session));
+                    log.warn("Execution timeout: elapsed={}ms", getElapsedTime(session));
                     callback.onError(buildTimeoutError(session));
                     // 异步标记错误状态
                     Mono.fromRunnable(() -> {
@@ -1499,7 +1499,7 @@ public class AgentExecutor {
                     return;
                 }
 
-                log.info("流式处理第 {} 轮对话, conversationId={}, elapsed={}ms",
+                log.info("流式处理第 {}  round, , conversationId={}, elapsed={}ms",
                         currentRound, session.getConversationId(), getElapsedTime(session));
             }
 
@@ -1512,7 +1512,7 @@ public class AgentExecutor {
             String sessionIdForApi = null;
 
             if (isNewSession && isFirstRound) {
-                log.info("新会话第一轮，加载 Skill 文件: {}", skillFilePath);
+                log.info("新会话第一轮，Loading skill file: {}", skillFilePath);
                 skillFileBytes = loadSkillFile();
                 skillFileName = "workflow-assistant.zip";
                 sessionIdForApi = null;  // 新会话不传 sessionId，让 Claude CLI 生成
@@ -1552,8 +1552,8 @@ public class AgentExecutor {
                                 }
                             },
                             error -> {
-                                log.error("流式处理错误: {}", error.getMessage());
-                                callback.onError("流式处理错误: " + error.getMessage());
+                                log.error("流式处理error: {}", error.getMessage());
+                                callback.onError("流式处理error: " + error.getMessage());
                             },
                             () -> {
                                 // 流完成时的回调
@@ -1636,14 +1636,14 @@ public class AgentExecutor {
 
                 case "parse_error":
                     // 解析错误，将问题反馈给 AI
-                    log.warn("响应格式解析错误: {}", plan.getSummary());
+                    log.warn("响应格式解析error: {}", plan.getSummary());
 
                     // 递增解析错误计数
                     int parseErrorCount = incrementParseErrorCount(session);
 
                     // 检查解析错误次数限制
                     if (parseErrorCount > MAX_PARSE_ERROR_ROUNDS) {
-                        log.warn("超过最大解析错误次数限制: parseErrorCount={}, maxParseErrorRounds={}",
+                        log.warn("Exceeded max parse error limit: parseErrorCount={}, maxParseErrorRounds={}",
                                 parseErrorCount, MAX_PARSE_ERROR_ROUNDS);
                         callback.onError("AI 响应格式持续异常，已尝试 " + MAX_PARSE_ERROR_ROUNDS +
                                 " 次仍无法解析。请尝试简化您的请求或稍后重试。");
@@ -1733,7 +1733,7 @@ public class AgentExecutor {
 
         // 如果有非查询操作，发送确认请求
         if (!mutationActions.isEmpty()) {
-            log.info("检测到 {} 个非查询操作，需要用户确认", mutationActions.size());
+            log.info("检测到 {} 个非查询操作，Requires user confirmation", mutationActions.size());
 
             // 生成待确认操作ID
             String pendingActionId = "pending-" + java.util.UUID.randomUUID().toString();
