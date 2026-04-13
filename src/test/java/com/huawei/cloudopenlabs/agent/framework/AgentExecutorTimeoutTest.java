@@ -4,6 +4,8 @@ import com.huawei.cloudopenlabs.agent.entity.AgentSessionEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * 验证 MAX_EXECUTION_TIME_MS 和超时检查功能
  */
 class AgentExecutorTimeoutTest {
+
+    private static final Logger log = LoggerFactory.getLogger(AgentExecutorTimeoutTest.class);
 
     private AgentSessionEntity session;
 
@@ -192,7 +196,7 @@ class AgentExecutorTimeoutTest {
         // 重要的是验证逻辑是 > 而不是 >=
         boolean isTimeout = checkTimeout(session);
         // 边界情况，不强制要求结果
-        System.out.println("边界测试（刚好5分钟）: isTimeout=" + isTimeout);
+        log.info("Boundary test (exactly 5 minutes): isTimeout={}", isTimeout);
     }
 
     @Test

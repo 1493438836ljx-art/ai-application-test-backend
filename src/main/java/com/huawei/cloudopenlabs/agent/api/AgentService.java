@@ -37,12 +37,12 @@ import com.huawei.cloudopenlabs.agent.framework.AgentExecutor.AgentCallback;
  * AgentResponse response = agentService.execute(request, new AgentCallback() {
  *     @Override
  *     public void beforeExecute(AgentRequest req) {
- *         System.out.println("开始执行: " + req.getTaskContent());
+ *         log.info("Starting execution: {}", req.getTaskContent());
  *     }
  *
  *     @Override
  *     public void afterExecute(AgentRequest req, AgentResponse res) {
- *         System.out.println("执行完成: " + res.getSuccess());
+ *         log.info("Execution completed: {}", res.getSuccess());
  *     }
  * });
  *

@@ -1,5 +1,8 @@
 package com.huawei.cloudopenlabs.db;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -11,6 +14,8 @@ import java.sql.Statement;
  */
 public class MigrationTool {
 
+    private static final Logger log = LoggerFactory.getLogger(MigrationTool.class);
+
     private static final String DB_URL = "jdbc:postgresql://8.218.55.180:5432/ai_studio?currentSchema=public";
     private static final String DB_USER = "remote_user";
     private static final String DB_PASSWORD = "Gauss@2026";
@@ -19,7 +24,7 @@ public class MigrationTool {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              Statement stmt = conn.createStatement()) {
 
-            System.out.println("Connected to OpenGauss database successfully!");
+            log.info("Connected to OpenGauss database successfully!");
 
             // 检查字段是否已存在
             String checkColumnSql = "SELECT COUNT(*) FROM information_schema.columns " +
@@ -32,7 +37,7 @@ public class MigrationTool {
             int count = rs.getInt(1);
 
             if (count > 0) {
-                System.out.println("Column 'parse_error_count' already exists in agent_session table.");
+                log.info("Column 'parse_error_count' already exists in agent_session table.");
             } else {
                 // 添加字段
                 String alterSql = "ALTER TABLE agent_session " +
@@ -43,7 +48,7 @@ public class MigrationTool {
                 String commentSql = "COMMENT ON COLUMN agent_session.parse_error_count IS 'Parse error count for limiting retry attempts'";
                 stmt.executeUpdate(commentSql);
 
-                System.out.println("Successfully added 'parse_error_count' column to agent_session table!");
+                log.info("Successfully added 'parse_error_count' column to agent_session table!");
             }
 
             // 检查 start_time 字段是否存在
@@ -65,14 +70,13 @@ public class MigrationTool {
                 String commentSql = "COMMENT ON COLUMN agent_session.start_time IS 'Execution start timestamp in milliseconds'";
                 stmt.executeUpdate(commentSql);
 
-                System.out.println("Successfully added 'start_time' column to agent_session table!");
+                log.info("Successfully added 'start_time' column to agent_session table!");
             } else {
-                System.out.println("Column 'start_time' already exists in agent_session table.");
+                log.info("Column 'start_time' already exists in agent_session table.");
             }
 
         } catch (Exception e) {
-            System.err.println("Migration failed: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Migration failed: {}", e.getMessage(), e);
             System.exit(1);
         }
     }

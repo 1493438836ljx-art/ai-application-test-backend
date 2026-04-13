@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 class AgentExecutorRoundLimitIntegrationTest {
+
+    private static final Logger log = LoggerFactory.getLogger(AgentExecutorRoundLimitIntegrationTest.class);
 
     @Autowired
     private AgentSessionService sessionService;
@@ -39,7 +43,7 @@ class AgentExecutorRoundLimitIntegrationTest {
         // 创建一个会话
         AgentSessionEntity session = sessionService.getOrCreateSession("test-workflow-1", null);
         String conversationId = session.getConversationId();
-        System.out.println("Created session: " + conversationId);
+        log.info("Created session: {}", conversationId);
 
         // 模拟设置解析错误计数为 3（达到限制）
         sessionService.updateParseErrorCount(conversationId, 3);
@@ -49,7 +53,7 @@ class AgentExecutorRoundLimitIntegrationTest {
                 .orElseThrow(() -> new AssertionError("Session not found after update"));
 
         Integer actualCount = updatedSession.getParseErrorCount();
-        System.out.println("Expected parse_error_count: 3, Actual: " + actualCount);
+        log.info("Expected parse_error_count: 3, Actual: {}", actualCount);
 
         assertNotNull(actualCount, "解析错误计数不应为 null");
         assertEquals(3, actualCount, "解析错误计数应该是 3");
@@ -122,7 +126,7 @@ class AgentExecutorRoundLimitIntegrationTest {
 
         // 验证初始解析错误计数为 0 或 null
         Integer initialCount = session.getParseErrorCount();
-        System.out.println("Initial parse_error_count: " + initialCount);
+        log.info("Initial parse_error_count: {}", initialCount);
         assertTrue(initialCount == null || initialCount == 0, "初始解析错误计数应该为 0 或 null");
 
         // 模拟解析错误递增
@@ -133,7 +137,7 @@ class AgentExecutorRoundLimitIntegrationTest {
                 .orElseThrow(() -> new AssertionError("Session not found after update"));
 
         Integer updatedCount = updatedSession.getParseErrorCount();
-        System.out.println("Updated parse_error_count: " + updatedCount);
+        log.info("Updated parse_error_count: {}", updatedCount);
 
         // 验证更新成功
         assertNotNull(updatedCount, "解析错误计数不应为 null");
