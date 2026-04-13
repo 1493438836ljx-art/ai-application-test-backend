@@ -51,6 +51,13 @@ public class ClaudeCodeStreamClient {
 
     /**
      * 流式执行任务
+     *
+     * @param taskContent   任务内容
+     * @param configJson    配置 JSON，可为null
+     * @param skillFile     Skill 文件字节数组，可为null
+     * @param skillFileName Skill 文件名，可为null
+     * @param sessionId     会话ID，可为null
+     * @return 流式响应数据流
      */
     public Flux<StreamChunk> executeTaskStream(String taskContent, String configJson,
                                                 byte[] skillFile, String skillFileName,
@@ -162,6 +169,10 @@ public class ClaudeCodeStreamClient {
 
     /**
      * 流式执行任务（简化版）
+     *
+     * @param taskContent 任务内容
+     * @param sessionId   会话ID
+     * @return 流式响应数据流
      */
     public Flux<StreamChunk> executeTaskStream(String taskContent, String sessionId) {
         return executeTaskStream(taskContent, null, null, null, sessionId);

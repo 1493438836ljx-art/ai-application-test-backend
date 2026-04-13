@@ -94,6 +94,10 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
 
     /**
      * 执行带重试的操作（使用默认最大重试次数）
+     *
+     * @param action 待执行的操作
+     * @param <T>    返回值类型
+     * @return 操作执行结果
      */
     public <T> T executeWithDefaultRetry(Supplier<T> action) {
         return executeWithRetry(action, e -> true, defaultMaxRetries);
@@ -101,6 +105,11 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
 
     /**
      * 执行带重试的操作（使用默认最大重试次数和自定义谓词）
+     *
+     * @param action      待执行的操作
+     * @param shouldRetry 判断异常是否应重试的谓词
+     * @param <T>         返回值类型
+     * @return 操作执行结果
      */
     public <T> T executeWithDefaultRetry(Supplier<T> action, Predicate<Exception> shouldRetry) {
         return executeWithRetry(action, shouldRetry, defaultMaxRetries);
@@ -116,6 +125,8 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
 
     /**
      * 获取当前配置的重试参数
+     *
+     * @return 重试配置信息
      */
     public RetryConfig getConfig() {
         return new RetryConfig(initialDelayMs, backoffMultiplier, maxDelayMs, defaultMaxRetries);

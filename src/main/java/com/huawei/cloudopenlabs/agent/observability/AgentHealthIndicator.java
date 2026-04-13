@@ -139,6 +139,8 @@ public class AgentHealthIndicator implements HealthIndicator {
 
     /**
      * 执行轻量级健康检查（用于内部监控）
+     *
+     * @return 健康时返回true，否则返回false
      */
     public boolean isHealthy() {
         try {
