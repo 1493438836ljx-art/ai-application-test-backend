@@ -42,39 +42,18 @@ public class DatabaseCreator {
         log.info("========================================");
 
         try {
-            // 加载驱动
             Class.forName("org.postgresql.Driver");
             log.info("OpenGauss driver loaded successfully");
 
-            // 连接到 OpenGauss 服务器
             log.info("Connecting to OpenGauss server...");
             Connection connection = DriverManager.getConnection(url, username, password);
             log.info("Successfully connected to OpenGauss server");
 
-            // 创建数据库
-            log.info("Checking database '{}'...", database);
+            ensureDatabaseExists(connection, database);
+
             Statement statement = connection.createStatement();
+            listDatabases(statement);
 
-            // 检查数据库是否已存在
-            var rs = statement.executeQuery(
-                    "SELECT 1 FROM pg_database WHERE datname = '" + database + "'");
-            if (rs.next()) {
-                log.info("Database '{}' already exists", database);
-            } else {
-                String createDbSQL = "CREATE DATABASE " + database + " ENCODING 'UTF8'";
-                statement.executeUpdate(createDbSQL);
-                log.info("Database '{}' created", database);
-            }
-
-            // 显示数据库列表
-            log.info("Databases on current server:");
-            rs = statement.executeQuery("SELECT datname FROM pg_database WHERE datistemplate = false");
-            while (rs.next()) {
-                log.info("  - {}", rs.getString(1));
-            }
-
-            // 关闭连接
-            rs.close();
             statement.close();
             connection.close();
             log.info("========================================");
@@ -94,5 +73,45 @@ public class DatabaseCreator {
             log.error("  5. Firewall blocking connection");
             System.exit(1);
         }
+    }
+
+    /**
+     * 确保数据库存在，不存在则创建
+     *
+     * @param connection 数据库连接
+     * @param database   目标数据库名
+     * @throws Exception SQL执行异常
+     */
+    private static void ensureDatabaseExists(Connection connection, String database) throws Exception {
+        log.info("Checking database '{}'...", database);
+        Statement statement = connection.createStatement();
+
+        var rs = statement.executeQuery(
+                "SELECT 1 FROM pg_database WHERE datname = '" + database + "'");
+        if (rs.next()) {
+            log.info("Database '{}' already exists", database);
+        } else {
+            String createDbSQL = "CREATE DATABASE " + database + " ENCODING 'UTF8'";
+            statement.executeUpdate(createDbSQL);
+            log.info("Database '{}' created", database);
+        }
+
+        rs.close();
+        statement.close();
+    }
+
+    /**
+     * 列出服务器上所有非模板数据库
+     *
+     * @param statement SQL语句对象
+     * @throws Exception SQL执行异常
+     */
+    private static void listDatabases(Statement statement) throws Exception {
+        log.info("Databases on current server:");
+        var rs = statement.executeQuery("SELECT datname FROM pg_database WHERE datistemplate = false");
+        while (rs.next()) {
+            log.info("  - {}", rs.getString(1));
+        }
+        rs.close();
     }
 }

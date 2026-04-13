@@ -110,57 +110,9 @@ public class SkillServiceImpl implements SkillService {
         skillMapper.insert(skill);
         String skillId = skill.getId();
 
-        // 保存入参
-        if (request.getInputParameters() != null && !request.getInputParameters().isEmpty()) {
-            int order = 1;
-            for (SkillCreateRequest.InputParameterDTO paramDTO : request.getInputParameters()) {
-                // 验证参数类型
-                if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
-                    ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
-                }
-                SkillParameterEntity param = new SkillParameterEntity();
-                param.setSkillId(skillId);
-                param.setParamDirection(SkillParamDirection.INPUT.name());
-                param.setParamOrder(order++);
-                param.setParamType(paramDTO.getParamType());
-                param.setParamName(paramDTO.getParamName());
-                param.setDefaultValue(paramDTO.getDefaultValue());
-                param.setDescription(paramDTO.getDescription());
-                param.setRequired(paramDTO.getRequired());
-                parameterMapper.insert(param);
-            }
-        }
-
-        // 保存出参
-        if (request.getOutputParameters() != null && !request.getOutputParameters().isEmpty()) {
-            int order = 1;
-            for (SkillCreateRequest.OutputParameterDTO paramDTO : request.getOutputParameters()) {
-                // 验证参数类型
-                if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
-                    ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
-                }
-                SkillParameterEntity param = new SkillParameterEntity();
-                param.setSkillId(skillId);
-                param.setParamDirection(SkillParamDirection.OUTPUT.name());
-                param.setParamOrder(order++);
-                param.setParamType(paramDTO.getParamType());
-                param.setParamName(paramDTO.getParamName());
-                param.setDescription(paramDTO.getDescription());
-                param.setRequired(paramDTO.getRequired());
-                parameterMapper.insert(param);
-            }
-        }
-
-        // 保存访问控制
-        if (request.getAccessControls() != null && !request.getAccessControls().isEmpty()) {
-            for (SkillCreateRequest.AccessControlDTO acDTO : request.getAccessControls()) {
-                SkillAccessControlEntity ac = new SkillAccessControlEntity();
-                ac.setSkillId(skillId);
-                ac.setTargetType(acDTO.getTargetType());
-                ac.setTargetId(acDTO.getTargetId());
-                accessControlMapper.insert(ac);
-            }
-        }
+        saveInputParameters(skillId, request.getInputParameters());
+        saveOutputParameters(skillId, request.getOutputParameters());
+        saveAccessControls(skillId, request.getAccessControls());
 
         log.info("Skill created successfully: ID={}", skillId);
         return getSkillById(skillId);
@@ -194,29 +146,7 @@ public class SkillServiceImpl implements SkillService {
 
         LambdaQueryWrapper<SkillEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SkillEntity::getDeleted, false);
-
-        if (query.getName() != null && !query.getName().isEmpty()) {
-            wrapper.like(SkillEntity::getName, query.getName());
-        }
-        if (query.getExecutionType() != null && !query.getExecutionType().isEmpty()) {
-            wrapper.eq(SkillEntity::getExecutionType, query.getExecutionType());
-        }
-        if (query.getCategory() != null && !query.getCategory().isEmpty()) {
-            wrapper.eq(SkillEntity::getCategory, query.getCategory());
-        }
-        if (query.getAccessType() != null && !query.getAccessType().isEmpty()) {
-            wrapper.eq(SkillEntity::getAccessType, query.getAccessType());
-        }
-        if (query.getStatus() != null && !query.getStatus().isEmpty()) {
-            wrapper.eq(SkillEntity::getStatus, query.getStatus());
-        }
-        if (query.getCreatedBy() != null && !query.getCreatedBy().isEmpty()) {
-            wrapper.eq(SkillEntity::getCreatedBy, query.getCreatedBy());
-        }
-        if (query.getIsContainer() != null) {
-            wrapper.eq(SkillEntity::getIsContainer, query.getIsContainer());
-        }
-
+        applySearchFilters(wrapper, query);
         wrapper.orderByDesc(SkillEntity::getCreatedAt);
 
         IPage<SkillEntity> result = skillMapper.selectPage(page, wrapper);
@@ -242,81 +172,12 @@ public class SkillServiceImpl implements SkillService {
             skill.setName(request.getName());
         }
 
-        if (request.getDescription() != null) {
-            skill.setDescription(request.getDescription());
-        }
-        // 如果上传了新文件，更新套件路径和文件名
-        if (file != null && !file.isEmpty()) {
-            String suitePath = saveSuiteFile(file);
-            skill.setSuitePath(suitePath);
-            skill.setSuiteFilename(file.getOriginalFilename());
-        }
-        if (request.getExecutionType() != null) {
-            skill.setExecutionType(request.getExecutionType());
-        }
-        if (request.getCategory() != null) {
-            skill.setCategory(request.getCategory());
-        }
-        if (request.getAccessType() != null) {
-            skill.setAccessType(request.getAccessType());
-        }
-        if (request.getIsContainer() != null) {
-            skill.setIsContainer(request.getIsContainer());
-        }
-        if (request.getAllowAddInputParams() != null) {
-            skill.setAllowAddInputParams(request.getAllowAddInputParams());
-        }
-        if (request.getAllowAddOutputParams() != null) {
-            skill.setAllowAddOutputParams(request.getAllowAddOutputParams());
-        }
-        if (request.getUpdatedBy() != null) {
-            skill.setUpdatedBy(request.getUpdatedBy());
-        }
+        updateSkillFields(skill, request, file);
 
         skillMapper.updateById(skill);
 
-        // 更新入参（先删除旧的，再插入新的）
-        if (request.getInputParameters() != null) {
-            parameterMapper.deleteBySkillIdAndDirection(id, SkillParamDirection.INPUT);
-            int order = 1;
-            for (SkillUpdateRequest.InputParameterDTO paramDTO : request.getInputParameters()) {
-                // 验证参数类型
-                if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
-                    ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
-                }
-                SkillParameterEntity param = new SkillParameterEntity();
-                param.setSkillId(id);
-                param.setParamDirection(SkillParamDirection.INPUT.name());
-                param.setParamOrder(order++);
-                param.setParamType(paramDTO.getParamType());
-                param.setParamName(paramDTO.getParamName());
-                param.setDefaultValue(paramDTO.getDefaultValue());
-                param.setDescription(paramDTO.getDescription());
-                param.setRequired(paramDTO.getRequired());
-                parameterMapper.insert(param);
-            }
-        }
-
-        // 更新出参（先删除旧的，再插入新的）
-        if (request.getOutputParameters() != null) {
-            parameterMapper.deleteBySkillIdAndDirection(id, SkillParamDirection.OUTPUT);
-            int order = 1;
-            for (SkillUpdateRequest.OutputParameterDTO paramDTO : request.getOutputParameters()) {
-                // 验证参数类型
-                if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
-                    ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
-                }
-                SkillParameterEntity param = new SkillParameterEntity();
-                param.setSkillId(id);
-                param.setParamDirection(SkillParamDirection.OUTPUT.name());
-                param.setParamOrder(order++);
-                param.setParamType(paramDTO.getParamType());
-                param.setParamName(paramDTO.getParamName());
-                param.setDescription(paramDTO.getDescription());
-                param.setRequired(paramDTO.getRequired());
-                parameterMapper.insert(param);
-            }
-        }
+        replaceInputParameters(id, request.getInputParameters());
+        replaceOutputParameters(id, request.getOutputParameters());
 
         return getSkillById(id);
     }
@@ -613,5 +474,205 @@ public class SkillServiceImpl implements SkillService {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFilename)
                 .body(resource);
+    }
+
+    /**
+     * 保存入参列表
+     *
+     * @param skillId       Skill ID
+     * @param inputParams   入参DTO列表
+     */
+    private void saveInputParameters(String skillId, List<SkillCreateRequest.InputParameterDTO> inputParams) {
+        if (inputParams == null || inputParams.isEmpty()) {
+            return;
+        }
+        int order = 1;
+        for (SkillCreateRequest.InputParameterDTO paramDTO : inputParams) {
+            if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
+                ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
+            }
+            SkillParameterEntity param = new SkillParameterEntity();
+            param.setSkillId(skillId);
+            param.setParamDirection(SkillParamDirection.INPUT.name());
+            param.setParamOrder(order++);
+            param.setParamType(paramDTO.getParamType());
+            param.setParamName(paramDTO.getParamName());
+            param.setDefaultValue(paramDTO.getDefaultValue());
+            param.setDescription(paramDTO.getDescription());
+            param.setRequired(paramDTO.getRequired());
+            parameterMapper.insert(param);
+        }
+    }
+
+    /**
+     * 保存出参列表
+     *
+     * @param skillId       Skill ID
+     * @param outputParams  出参DTO列表
+     */
+    private void saveOutputParameters(String skillId, List<SkillCreateRequest.OutputParameterDTO> outputParams) {
+        if (outputParams == null || outputParams.isEmpty()) {
+            return;
+        }
+        int order = 1;
+        for (SkillCreateRequest.OutputParameterDTO paramDTO : outputParams) {
+            if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
+                ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
+            }
+            SkillParameterEntity param = new SkillParameterEntity();
+            param.setSkillId(skillId);
+            param.setParamDirection(SkillParamDirection.OUTPUT.name());
+            param.setParamOrder(order++);
+            param.setParamType(paramDTO.getParamType());
+            param.setParamName(paramDTO.getParamName());
+            param.setDescription(paramDTO.getDescription());
+            param.setRequired(paramDTO.getRequired());
+            parameterMapper.insert(param);
+        }
+    }
+
+    /**
+     * 保存访问控制列表
+     *
+     * @param skillId   Skill ID
+     * @param controls  访问控制DTO列表
+     */
+    private void saveAccessControls(String skillId, List<SkillCreateRequest.AccessControlDTO> controls) {
+        if (controls == null || controls.isEmpty()) {
+            return;
+        }
+        for (SkillCreateRequest.AccessControlDTO acDTO : controls) {
+            SkillAccessControlEntity ac = new SkillAccessControlEntity();
+            ac.setSkillId(skillId);
+            ac.setTargetType(acDTO.getTargetType());
+            ac.setTargetId(acDTO.getTargetId());
+            accessControlMapper.insert(ac);
+        }
+    }
+
+    /**
+     * 更新 Skill 实体字段（仅更新非 null 字段）
+     *
+     * @param skill   Skill 实体
+     * @param request 更新请求
+     * @param file    上传的文件
+     */
+    private void updateSkillFields(SkillEntity skill, SkillUpdateRequest request, MultipartFile file) {
+        if (request.getDescription() != null) {
+            skill.setDescription(request.getDescription());
+        }
+        if (file != null && !file.isEmpty()) {
+            String suitePath = saveSuiteFile(file);
+            skill.setSuitePath(suitePath);
+            skill.setSuiteFilename(file.getOriginalFilename());
+        }
+        if (request.getExecutionType() != null) {
+            skill.setExecutionType(request.getExecutionType());
+        }
+        if (request.getCategory() != null) {
+            skill.setCategory(request.getCategory());
+        }
+        if (request.getAccessType() != null) {
+            skill.setAccessType(request.getAccessType());
+        }
+        if (request.getIsContainer() != null) {
+            skill.setIsContainer(request.getIsContainer());
+        }
+        if (request.getAllowAddInputParams() != null) {
+            skill.setAllowAddInputParams(request.getAllowAddInputParams());
+        }
+        if (request.getAllowAddOutputParams() != null) {
+            skill.setAllowAddOutputParams(request.getAllowAddOutputParams());
+        }
+        if (request.getUpdatedBy() != null) {
+            skill.setUpdatedBy(request.getUpdatedBy());
+        }
+    }
+
+    /**
+     * 替换入参（先删除旧入参，再插入新入参）
+     *
+     * @param skillId     Skill ID
+     * @param inputParams 新的入参列表
+     */
+    private void replaceInputParameters(String skillId, List<SkillUpdateRequest.InputParameterDTO> inputParams) {
+        if (inputParams == null) {
+            return;
+        }
+        parameterMapper.deleteBySkillIdAndDirection(skillId, SkillParamDirection.INPUT);
+        int order = 1;
+        for (SkillUpdateRequest.InputParameterDTO paramDTO : inputParams) {
+            if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
+                ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
+            }
+            SkillParameterEntity param = new SkillParameterEntity();
+            param.setSkillId(skillId);
+            param.setParamDirection(SkillParamDirection.INPUT.name());
+            param.setParamOrder(order++);
+            param.setParamType(paramDTO.getParamType());
+            param.setParamName(paramDTO.getParamName());
+            param.setDefaultValue(paramDTO.getDefaultValue());
+            param.setDescription(paramDTO.getDescription());
+            param.setRequired(paramDTO.getRequired());
+            parameterMapper.insert(param);
+        }
+    }
+
+    /**
+     * 替换出参（先删除旧出参，再插入新出参）
+     *
+     * @param skillId      Skill ID
+     * @param outputParams 新的出参列表
+     */
+    private void replaceOutputParameters(String skillId, List<SkillUpdateRequest.OutputParameterDTO> outputParams) {
+        if (outputParams == null) {
+            return;
+        }
+        parameterMapper.deleteBySkillIdAndDirection(skillId, SkillParamDirection.OUTPUT);
+        int order = 1;
+        for (SkillUpdateRequest.OutputParameterDTO paramDTO : outputParams) {
+            if (paramDTO.getParamType() != null && !paramDTO.getParamType().isEmpty()) {
+                ParameterTypeValidator.validateType(paramDTO.getParamType(), paramDTO.getParamName());
+            }
+            SkillParameterEntity param = new SkillParameterEntity();
+            param.setSkillId(skillId);
+            param.setParamDirection(SkillParamDirection.OUTPUT.name());
+            param.setParamOrder(order++);
+            param.setParamType(paramDTO.getParamType());
+            param.setParamName(paramDTO.getParamName());
+            param.setDescription(paramDTO.getDescription());
+            param.setRequired(paramDTO.getRequired());
+            parameterMapper.insert(param);
+        }
+    }
+
+    /**
+     * 应用查询过滤条件
+     *
+     * @param wrapper 查询条件构造器
+     * @param query   查询请求
+     */
+    private void applySearchFilters(LambdaQueryWrapper<SkillEntity> wrapper, SkillQueryRequest query) {
+        if (query.getName() != null && !query.getName().isEmpty()) {
+            wrapper.like(SkillEntity::getName, query.getName());
+        }
+        if (query.getExecutionType() != null && !query.getExecutionType().isEmpty()) {
+            wrapper.eq(SkillEntity::getExecutionType, query.getExecutionType());
+        }
+        if (query.getCategory() != null && !query.getCategory().isEmpty()) {
+            wrapper.eq(SkillEntity::getCategory, query.getCategory());
+        }
+        if (query.getAccessType() != null && !query.getAccessType().isEmpty()) {
+            wrapper.eq(SkillEntity::getAccessType, query.getAccessType());
+        }
+        if (query.getStatus() != null && !query.getStatus().isEmpty()) {
+            wrapper.eq(SkillEntity::getStatus, query.getStatus());
+        }
+        if (query.getCreatedBy() != null && !query.getCreatedBy().isEmpty()) {
+            wrapper.eq(SkillEntity::getCreatedBy, query.getCreatedBy());
+        }
+        if (query.getIsContainer() != null) {
+            wrapper.eq(SkillEntity::getIsContainer, query.getIsContainer());
+        }
     }
 }
