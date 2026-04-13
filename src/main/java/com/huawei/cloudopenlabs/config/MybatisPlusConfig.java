@@ -39,6 +39,8 @@ public class MybatisPlusConfig implements MetaObjectHandler {
 
     /**
      * 自动填充创建时间
+     *
+     * @param metaObject 元数据对象
      */
     @Override
     public void insertFill(MetaObject metaObject) {
@@ -50,6 +52,8 @@ public class MybatisPlusConfig implements MetaObjectHandler {
 
     /**
      * 自动填充更新时间
+     *
+     * @param metaObject 元数据对象
      */
     @Override
     public void updateFill(MetaObject metaObject) {

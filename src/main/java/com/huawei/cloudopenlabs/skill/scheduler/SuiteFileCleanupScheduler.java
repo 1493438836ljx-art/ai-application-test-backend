@@ -96,6 +96,9 @@ public class SuiteFileCleanupScheduler {
 
     /**
      * 获取文件系统中的所有执行套件文件名
+     *
+     * @param uploadDir 上传目录路径
+     * @return 文件名集合
      */
     private Set<String> getExistingSuiteFiles(Path uploadDir) {
         try (Stream<Path> paths = Files.list(uploadDir)) {
@@ -111,6 +114,9 @@ public class SuiteFileCleanupScheduler {
 
     /**
      * 从完整路径中提取文件名
+     *
+     * @param path 完整文件路径
+     * @return 文件名
      */
     private String extractFileName(String path) {
         if (path == null || path.isEmpty()) {
@@ -124,6 +130,9 @@ public class SuiteFileCleanupScheduler {
 
     /**
      * 删除文件
+     *
+     * @param fileName 文件名
+     * @return 删除成功返回true
      */
     private boolean deleteFile(String fileName) {
         try {
