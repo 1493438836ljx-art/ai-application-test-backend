@@ -61,7 +61,10 @@ public class ExecutionGraph {
     private Map<String, Map<String, List<String>>> branchConnections;
 
     /**
-     * 从工作流定义Building execution graph
+     * 从工作流定义构建执行图
+     *
+     * @param definition 工作流定义
+     * @return 构建完成的执行图
      */
     public static ExecutionGraph build(WorkflowDefinition definition) {
         ExecutionGraph graph = new ExecutionGraph();
@@ -174,6 +177,9 @@ public class ExecutionGraph {
 
     /**
      * 获取节点的所有前置节点
+     *
+     * @param nodeUuid 节点UUID
+     * @return 前置节点UUID列表
      */
     public List<String> getPredecessors(String nodeUuid) {
         List<String> predecessors = new ArrayList<>();
@@ -187,6 +193,9 @@ public class ExecutionGraph {
 
     /**
      * 获取节点的所有后续节点
+     *
+     * @param nodeUuid 节点UUID
+     * @return 后续节点UUID列表
      */
     public List<String> getSuccessors(String nodeUuid) {
         return outDegree.getOrDefault(nodeUuid, Collections.emptyList());
@@ -194,6 +203,10 @@ public class ExecutionGraph {
 
     /**
      * 根据分支标签获取后续节点
+     *
+     * @param nodeUuid    节点UUID
+     * @param branchLabel 分支标签
+     * @return 匹配分支的后续节点UUID列表
      */
     public List<String> getSuccessorsByBranch(String nodeUuid, String branchLabel) {
         if (branchLabel == null || branchLabel.isEmpty()) {
@@ -211,6 +224,9 @@ public class ExecutionGraph {
 
     /**
      * 获取节点实体
+     *
+     * @param nodeUuid 节点UUID
+     * @return 节点实体，不存在时返回null
      */
     public WorkflowNodeEntity getNode(String nodeUuid) {
         return nodes.get(nodeUuid);
@@ -218,6 +234,9 @@ public class ExecutionGraph {
 
     /**
      * 判断节点是否存在
+     *
+     * @param nodeUuid 节点UUID
+     * @return 存在返回true，否则返回false
      */
     public boolean hasNode(String nodeUuid) {
         return nodes.containsKey(nodeUuid);
@@ -225,6 +244,8 @@ public class ExecutionGraph {
 
     /**
      * 获取所有节点UUID
+     *
+     * @return 不可变的节点UUID集合
      */
     public Set<String> getAllNodeUuids() {
         return Collections.unmodifiableSet(nodes.keySet());
@@ -232,6 +253,8 @@ public class ExecutionGraph {
 
     /**
      * 获取节点总数
+     *
+     * @return 节点数量
      */
     public int size() {
         return nodes.size();
@@ -239,6 +262,8 @@ public class ExecutionGraph {
 
     /**
      * 拓扑排序 - 返回按执行顺序排列的节点列表
+     *
+     * @return 按拓扑排序的节点UUID列表
      */
     public List<String> topologicalSort() {
         List<String> result = new ArrayList<>();
@@ -268,6 +293,8 @@ public class ExecutionGraph {
 
     /**
      * 获取可以并行执行的节点层
+     *
+     * @return 按层分组的节点UUID列表，每层内的节点可并行执行
      */
     public List<List<String>> getParallelLayers() {
         List<List<String>> layers = new ArrayList<>();

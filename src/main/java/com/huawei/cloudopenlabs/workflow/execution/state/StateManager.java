@@ -53,6 +53,11 @@ public class StateManager {
 
     /**
      * 更新工作流执行状态
+     *
+     * @param executionId 执行记录ID
+     * @param status      执行状态
+     * @param progress    执行进度（0-100），为null时不更新
+     * @param outputData  输出数据，为null时不更新
      */
     @Transactional
     public void updateWorkflowStatus(String executionId,
@@ -99,6 +104,10 @@ public class StateManager {
 
     /**
      * 更新节点执行状态
+     *
+     * @param executionId 执行记录ID
+     * @param nodeUuid    节点UUID
+     * @param status      节点执行状态
      */
     @Transactional
     public void updateNodeStatus(String executionId,
@@ -109,6 +118,11 @@ public class StateManager {
 
     /**
      * 更新节点执行状态（带结果）
+     *
+     * @param executionId 执行记录ID
+     * @param nodeUuid    节点UUID
+     * @param status      节点执行状态
+     * @param result      节点执行结果
      */
     @Transactional
     public void updateNodeStatus(String executionId,
@@ -136,6 +150,10 @@ public class StateManager {
 
     /**
      * 获取节点执行状态
+     *
+     * @param executionId 执行记录ID
+     * @param nodeUuid    节点UUID
+     * @return 节点执行状态，不存在时返回null
      */
     public NodeExecutionStatus getNodeStatus(String executionId, String nodeUuid) {
         String cacheKey = buildCacheKey(executionId, nodeUuid);
@@ -172,6 +190,9 @@ public class StateManager {
 
     /**
      * 获取所有节点执行状态
+     *
+     * @param executionId 执行记录ID
+     * @return 节点UUID到执行状态的映射
      */
     public Map<String, NodeExecutionStatus> getAllNodeStatuses(String executionId) {
         Map<String, NodeExecutionStatus> statuses = new HashMap<>();
@@ -200,6 +221,10 @@ public class StateManager {
 
     /**
      * 统计特定状态的节点数量
+     *
+     * @param executionId  执行记录ID
+     * @param targetStatus 目标状态
+     * @return 符合条件的节点数量
      */
     public int countNodesByStatus(String executionId, NodeExecutionStatus targetStatus) {
         Map<String, NodeExecutionStatus> statuses = getAllNodeStatuses(executionId);
@@ -210,6 +235,10 @@ public class StateManager {
 
     /**
      * 获取节点输出
+     *
+     * @param executionId 执行记录ID
+     * @param nodeUuid    节点UUID
+     * @return 节点输出数据，不存在时返回空Map
      */
     public Map<String, Object> getNodeOutputs(String executionId, String nodeUuid) {
         String cacheKey = buildCacheKey(executionId, nodeUuid);
@@ -247,6 +276,8 @@ public class StateManager {
 
     /**
      * 清除执行相关的缓存
+     *
+     * @param executionId 执行记录ID
      */
     public void clearCache(String executionId) {
         String prefix = executionId + "_";
@@ -259,6 +290,9 @@ public class StateManager {
 
     /**
      * 更新工作流最终输出
+     *
+     * @param executionId 执行记录ID
+     * @param outputs     输出数据
      */
     @Transactional
     public void updateWorkflowOutput(String executionId, Map<String, Object> outputs) {

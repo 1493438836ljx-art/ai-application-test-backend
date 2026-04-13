@@ -145,6 +145,10 @@ public class ExecutionContext {
 
     /**
      * 添加单个节点输出
+     *
+     * @param nodeUuid  节点UUID
+     * @param paramName 参数名
+     * @param value     参数值
      */
     public void addNodeOutput(String nodeUuid, String paramName, Object value) {
         nodeOutputs.computeIfAbsent(nodeUuid, k -> new ConcurrentHashMap<>())
@@ -175,6 +179,8 @@ public class ExecutionContext {
 
     /**
      * 批量设置全局变量
+     *
+     * @param variables 变量名到变量值的映射
      */
     public void setGlobalVariables(Map<String, Object> variables) {
         if (variables != null) {
@@ -250,6 +256,9 @@ public class ExecutionContext {
 
     /**
      * 设置节点执行状态
+     *
+     * @param nodeUuid 节点UUID
+     * @param state    执行状态
      */
     public void setNodeState(String nodeUuid, String state) {
         nodeStates.put(nodeUuid, state);
@@ -257,6 +266,9 @@ public class ExecutionContext {
 
     /**
      * 获取节点执行状态
+     *
+     * @param nodeUuid 节点UUID
+     * @return 执行状态字符串
      */
     public String getNodeState(String nodeUuid) {
         return nodeStates.get(nodeUuid);
@@ -298,6 +310,8 @@ public class ExecutionContext {
 
     /**
      * 获取当前循环元素
+     *
+     * @return 当前循环元素，不在循环中时返回null
      */
     public Object getCurrentLoopItem() {
         LoopContext context = getCurrentLoopContext();
@@ -306,6 +320,8 @@ public class ExecutionContext {
 
     /**
      * 获取当前循环索引
+     *
+     * @return 当前循环索引，不在循环中时返回null
      */
     public Integer getCurrentLoopIndex() {
         LoopContext context = getCurrentLoopContext();
@@ -314,6 +330,8 @@ public class ExecutionContext {
 
     /**
      * 是否在循环中
+     *
+     * @return 在循环中返回true，否则返回false
      */
     public boolean isInLoop() {
         return !loopContextStack.isEmpty();
@@ -323,6 +341,9 @@ public class ExecutionContext {
 
     /**
      * 根据UUID获取节点
+     *
+     * @param nodeUuid 节点UUID
+     * @return 节点实体，不存在时返回null
      */
     public WorkflowNodeEntity getNode(String nodeUuid) {
         if (definition == null) {
@@ -333,6 +354,9 @@ public class ExecutionContext {
 
     /**
      * 根据名称获取节点
+     *
+     * @param name 节点名称
+     * @return 节点实体，不存在时返回null
      */
     public WorkflowNodeEntity getNodeByName(String name) {
         if (definition == null) {
@@ -343,6 +367,8 @@ public class ExecutionContext {
 
     /**
      * 获取开始节点
+     *
+     * @return 开始节点实体，不存在时返回null
      */
     public WorkflowNodeEntity getStartNode() {
         if (definition == null) {
@@ -353,6 +379,8 @@ public class ExecutionContext {
 
     /**
      * 获取结束节点
+     *
+     * @return 结束节点实体，不存在时返回null
      */
     public WorkflowNodeEntity getEndNode() {
         if (definition == null) {
