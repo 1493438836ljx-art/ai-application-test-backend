@@ -48,6 +48,9 @@ public class NodeTypeResponse {
 
     /**
      * 从实体转换为响应DTO
+     *
+     * @param entity 节点类型实体
+     * @return 节点类型响应DTO，实体为null时返回null
      */
     public static NodeTypeResponse fromEntity(WorkflowNodeTypeEntity entity) {
         if (entity == null) {

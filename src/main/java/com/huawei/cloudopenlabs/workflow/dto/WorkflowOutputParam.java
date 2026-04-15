@@ -113,6 +113,8 @@ public class WorkflowOutputParam {
 
     /**
      * 判断是否为文本类型参数
+     *
+     * @return 是文本类型时返回true
      */
     public boolean isTextType() {
         return "BASIC".equals(category) ||
@@ -121,6 +123,8 @@ public class WorkflowOutputParam {
 
     /**
      * 判断是否为单文件类型参数
+     *
+     * @return 是单文件类型时返回true
      */
     public boolean isFileType() {
         return type != null && type.startsWith("File<");
@@ -128,6 +132,8 @@ public class WorkflowOutputParam {
 
     /**
      * 判断是否为文件数组类型参数
+     *
+     * @return 是文件数组类型时返回true
      */
     public boolean isFileArrayType() {
         return type != null && type.startsWith("Array<File<");

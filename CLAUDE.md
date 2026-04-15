@@ -79,14 +79,24 @@ GaussDB100 使用 Oracle 风格语法，与标准 PostgreSQL 的主要语法差�
 
 项目已配置 OpenGauss 驱动，生产环境在 `application.yml` 中配置数据库连接。
 
+## 代码规范
+
+- **禁止在日志中打印中文**：所有日志消息必须使用英文。
+- **禁止使用 `System.out.printXXX`**：统一使用 SLF4J Logger（`log.info`、`log.warn`、`log.error` 等）。
+- **圈复杂度禁止超过 20**：单个方法的圈复杂度（McCabe）不得超过 20，超过时需通过提取私有方法等方式降低。
+- **版权声明**：新增 Java 类必须在文件头部添加以下版权信息：
+  ```java
+  /*
+  * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+  */
+  ```
+
 ## Git 工作流
 
 **重要：每次 `git push` 之前，必须先编译运行当前项目，确保代码可以正常构建和启动。**
 
 **禁止提交的文件：**
 - `src/main/resources/application.yml` - 包含数据库密码等敏感信息，禁止提交和推送。
-
-```bash
 
 ```bash
 # 推送前验证流程
